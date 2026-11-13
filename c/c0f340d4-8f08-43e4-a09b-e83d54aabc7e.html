@@ -247,10 +247,10 @@
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
-      <div class="sync-badge">自动同步更新: 2026-11-13 14:13:29</div>
+      <div class="sync-badge">自动同步更新: 2026-11-13 14:13:58</div>
     </div>
     <nav class="conv-list" aria-label="Conversations">
-      <a class="conv-item active" href="./c0f340d4-8f08-43e4-a09b-e83d54aabc7e.html"><div class="conv-title">检查一下我电脑上的deepseek harness的skill，...</div><div class="conv-meta"><span>14 msgs</span><span>2026-11-13 14:13</span></div></a>
+      <a class="conv-item active" href="./c0f340d4-8f08-43e4-a09b-e83d54aabc7e.html"><div class="conv-title">检查一下我电脑上的deepseek harness的skill，...</div><div class="conv-meta"><span>15 msgs</span><span>2026-11-13 14:13</span></div></a>
 <a class="conv-item" href="./8e491cda-d9db-4417-a196-9fe1a9a1b942.html"><div class="conv-title">@[c:\Users\Administrator\Desktop...</div><div class="conv-meta"><span>4 msgs</span><span>2026-11-13 11:22</span></div></a>
 <a class="conv-item" href="./c9eb2bf0-fed1-4de6-965b-944c2745224d.html"><div class="conv-title">@[c:\Users\Administrator\Desktop...</div><div class="conv-meta"><span>2 msgs</span><span>2026-11-13 11:18</span></div></a>
 <a class="conv-item" href="./bb1e7994-b052-407c-8be9-f5c7c55e9456.html"><div class="conv-title">我想知道antigravity的对话该怎么分享，因为我尝试了co...</div><div class="conv-meta"><span>14 msgs</span><span>2026-11-13 10:53</span></div></a>
@@ -266,7 +266,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1>检查一下我电脑上的deepseek harness的skill，...</h1>
-        <div class="sub-meta">会话 ID: c0f340d4-8f08-43e4-a09b-e83d54aabc7e | 轮次: 14 | 更新于: 2026-11-13 14:13</div>
+        <div class="sub-meta">会话 ID: c0f340d4-8f08-43e4-a09b-e83d54aabc7e | 轮次: 15 | 更新于: 2026-11-13 14:13</div>
       </div>
       <div class="header-actions">
         <button class="btn" id="copyBtn" onclick="copyLink()">复制当前分享链接</button>
@@ -591,6 +591,72 @@
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已盘点本地各平台（DeepSeek Harness / Antigravity &amp; Gemini / Codex / WorkBuddy）的 Skill 目录，目前正在后台拉取 <code>ppt-master</code>、<code>K-Dense scientific-agent-skills</code> 等 GitHub 上游仓库并与本地版本比对，等待克隆和哈希比对完成后继续分析与同步升级。</p>
 </div></article>
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>正在清理临时克隆与测试目录并执行四端本地 Skill（<code>.dsh</code> / <code>.gemini</code> / <code>.codex</code> / <code>.workbuddy</code>）与 32 个云端 ZIP 包的最终一致性与 YAML 校验，稍候汇报完整结果。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成 <strong><code>ppt-master</code> 升级、<code>course-ppt-lab</code> 同步更新、四端（DeepSeek Harness / Antigravity(Gemini) / Codex(ChatGPT) / WorkBuddy）Skill 全面盘点与跨平台互学同步，以及同济云端 ZIP 包更新</strong>，全部校验通过。</p>
+<hr>
+<h3>一、<code>ppt-master</code> 升级至 <code>6.9.0</code> &amp; <code>course-ppt-lab</code> 同步升级至 <code>0.2.3</code></h3>
+<ul>
+<li><strong><code>ppt-master</code> 升级与四端对齐</strong>：</li>
+<li>从 GitHub 上游 <code>v6.9.0</code>（commit <code>01fe549371b98f44be22cd337bbc911013452f09</code>，13,091 个文件）同步替换了 <code>.dsh\skills\ppt-master</code>（原 <code>6.7.2</code>）、<code>.gemini\config\skills\ppt-master</code>（原 <code>6.7.2</code>）、<code>.workbuddy\skills\ppt-master</code>（原 <code>6.6.0</code>），并首次安装至 <code>.codex\skills\ppt-master</code>。</li>
+<li>底层新增与修复重点：<code>svg_finalize/flatten_tspan.py</code> 保留 <code>display</code>/<code>visibility</code> 与文本身份属性、<code>embed_icons.py</code> 防 ID 冲突命名、<code>svg_quality/checker.py</code> 改进文本框定位与 roundtrip 图表校验、<code>svg_to_pptx</code> 增强原生公式/表格与 <code>chart_patch.py</code>。</li>
+<li>示例入口：<code>ppt-master/SKILL.md</code></li>
+</ul>
+<ul>
+<li><strong><code>course-ppt-lab</code> 同步至 <code>0.2.3</code> 并全链实测通过</strong>：</li>
+<li>更新 <code>upstream-lock.json</code> 为 <code>declared_version: &quot;6.9.0&quot;</code>、<code>local_git_commit: &quot;01fe549371b98f44be22cd337bbc911013452f09&quot;</code>、<code>recorded_date: &quot;2026-11-13&quot;</code>，锁定文件由 306 个增至 <strong>379 个</strong>（<code>LICENSE</code>、<code>SKILL.md</code>、<code>requirements.txt</code> 与全部 376 个 <code>scripts/**/*.py</code>）。</li>
+<li>更新 <code>scripts/build_deck.py</code>（<code>skill_version: &quot;0.2.3&quot;</code>）、<code>README.md</code>、<code>CHANGELOG.md</code>、<code>references/upstream.md</code> 与 <code>references/local-environment.md</code>（列明四端与同级 <code>ppt-master 6.9.0</code> 路径），并保留在四端之间同步。</li>
+<li><strong>实测结果</strong>：</li>
+<li><code>check_upstream.py</code> 在 <strong>DSH / Antigravity / Codex / WorkBuddy 四端</strong>均通过（<code>379</code> 个文件全部匹配，0 差异）。</li>
+<li><code>unittest discover -s tests -v</code>：<code>Ran 1 test in 0.010s OK</code>。</li>
+<li>端到端实测 <code>build_deck.py examples/two-combinations.json</code> 对接 <code>ppt-master 6.9.0</code>：生成 <code>presentation.pptx</code>（23,807 bytes），<code>delivery.log</code> 报错与告警均为 <code>[]</code>，<code>audit_pptx.py</code> 校验 <code>zip_valid: true</code>、<code>slide_count: 5</code>、全部原生可编辑形状与字体运行正常（临时输出目录已清理）。</li>
+</ul>
+<hr>
+<h3>二、全平台存量检查升级（DSH / Antigravity / Codex / WorkBuddy）</h3>
+<ul>
+<li><strong>DSH（<code>.dsh\skills</code>，共 36 个）</strong>：</li>
+<li>补齐之前未升级的 8 个 K-Dense 科研技能至 GitHub <code>v2.9.0</code>：</li>
+<li><code>hypothesis-generation</code> (<code>2.2 -&gt; 2.4</code>)、<code>latex-posters</code> (<code>1.7 -&gt; 1.10</code>)、<code>peer-review</code> (<code>2.2 -&gt; 2.4</code>)、<code>pptx-posters</code> (<code>2.2 -&gt; 2.4</code>)、<code>scientific-brainstorming</code> (<code>1.2 -&gt; 1.4</code>)、<code>scientific-critical-thinking</code> (<code>1.3 -&gt; 1.5</code>)、<code>statistical-power</code> (<code>1.1 -&gt; 1.3</code>)、<code>venue-templates</code> (<code>1.3 -&gt; 1.6</code>)</li>
+<li>升级 <code>wps-office-suite</code>（<code>5.3.5 -&gt; 5.4.0</code>，新增 <code>report_center.py</code>、周报/月报模板与 <code>wps</code> CLI/<code>--json</code> 统一入口）。</li>
+</ul>
+<ul>
+<li><strong>Codex / ChatGPT（<code>.codex\skills</code>，共 36 个；<code>.system</code> 原样保留）</strong>：</li>
+<li>核查原有 11 个用户 Skill：其中 <code>codex-ppt</code> 文本内容已与 GitHub <code>v0.6.0</code> 一致（仅换行符差异）；其余 <strong>10 个已全部升级</strong>（<code>exploratory-data-analysis 1.2-&gt;1.4</code>、<code>get-available-resources 1.3-&gt;1.5</code>、<code>hypothesis-generation 2.2-&gt;2.4</code>、<code>markdown-mermaid-writing 1.1-&gt;1.3</code>、<code>peer-review 2.2-&gt;2.4</code>、<code>scientific-critical-thinking 1.3-&gt;1.5</code>、<code>scientific-writing 2.1-&gt;2.3</code>、<code>venue-templates 1.3-&gt;1.6</code>、<code>lieflat-less-ai-tone v1-&gt;v2</code>、<code>grilling -&gt; mattpocock v1.3.2</code>）。</li>
+<li>补齐缺失的科研、写作、PPT 与办公核心套件（<code>course-ppt-lab 0.2.3</code>、<code>ppt-master 6.9.0</code>、<code>wps-office-suite 5.4.0</code>、<code>paper-lookup</code>、<code>citation-management</code>、<code>literature-review</code>、<code>experimental-design</code>、<code>statistical-analysis</code>、<code>statistical-power</code>、<code>uncertainty-and-units</code>、<code>scientific-slides</code>、<code>scientific-visualization</code>、<code>scientific-brainstorming</code>、<code>matplotlib</code>、<code>markitdown</code>、<code>liteparse</code>、<code>consciousness-council</code>、<code>what-if-oracle</code>、<code>latex-posters</code>、<code>pptx-posters</code> 等）。</li>
+</ul>
+<ul>
+<li><strong>Antigravity / Gemini（<code>.gemini\config\skills</code>，共 39 个）</strong>：</li>
+<li>原有 <code>domain-modeling</code>、<code>grill-me</code>、<code>grill-with-docs</code>、<code>grilling</code> 已确认为 <code>mattpocock v1.3.2</code> 最新版；宿主专属 <code>share-conversation</code> 保持仅留存本端。</li>
+<li>升级 <code>wps-office-suite</code>（<code>5.3.5 -&gt; 5.4.0</code>），并补齐上述 8 个 K-Dense 科研技能 + 跨平台新纳入的高价值技能。</li>
+</ul>
+<ul>
+<li><strong>WorkBuddy（<code>.workbuddy\skills</code>，共 38 个）</strong>：</li>
+<li>升级 <code>ppt-master</code>（<code>6.6.0 -&gt; 6.9.0</code>）、<code>lieflat-less-ai-tone</code>（<code>v1 -&gt; v2</code>），保留原 SkillHub 包 <code>self-improving-agent__skillhub</code> (<code>3.0.24</code>)、<code>find-skills__skillhub</code> (<code>1.7.0</code>)、<code>ppt-workflow__skillhub</code> (<code>1.0.0</code>)；同步安装了 <code>course-ppt-lab 0.2.3</code>、<code>wps-office-suite 5.4.0</code>、<code>codex-ppt 0.6.0</code> 与全套科研/论文/统计/绘图技能。</li>
+</ul>
+<ul>
+<li><strong><code>.agents\skills\hindsight-coding-agent</code></strong>：为 <code>npx @vectorize-io/hindsight-coding-agents</code> 独立记忆库插件，自带 <code>autoUpdate</code>，保持原样不动。</li>
+</ul>
+<hr>
+<h3>三、跨平台相互借鉴与取舍结论</h3>
+<p>| Skill 名称 | 原所在端 | 本轮处理 | 判断依据 |</p>
+<p>|---|---|---|---|</p>
+<p>| <code>docx-xlsx-extractor</code> (<code>1.0.0</code>) | WorkBuddy | <strong>已借鉴并安装到 DSH / Gemini / Codex（及云端）</strong> | 纯 Python（<code>python-docx</code> + <code>openpyxl</code>），可确定性提取 <code>.docx</code> 段落/字体颜色样式与 <code>.xlsx</code> 公式、<code>cached_value</code>、合并单元格到 JSON/MD；与 <code>markitdown</code>/<code>liteparse</code> 形成结构化互补 |</p>
+<p>| <code>codex-ppt</code> (<code>0.6.0</code>) | Codex | <strong>已借鉴并安装到 DSH / Gemini / WorkBuddy（仅本地）</strong> | 主打 AI 全页图像生成（<code>gpt-image-2.5-flare</code>/外部图像 API）并内置 <code>科研答辩风</code>、<code>教学课件风</code> 等 12 套中文视觉方案，与主打“SVG 转原生可编辑 PPTX”的 <code>course-ppt-lab + ppt-master</code> 互补（含本地预览 PNG，不塞入云端纯文本包） |</p>
+<p>| <code>prompt-engineering-expert</code> (<code>1.0.1</code>) | DSH | <strong>已同步至 Gemini / Codex / WorkBuddy（及云端）</strong> | 含系统提示词改写必走检查门禁（<code>optimization-workflow.md</code>），适合跨端调优 agent 指令 |</p>
+<p>| <code>domain-modeling</code> (<code>v1.3.2</code>) | Gemini | <strong>已同步至 DSH / Codex / WorkBuddy（及云端）</strong> | 轻量化（~3.3 KB）项目术语表/ADR 梳理，零冗余冲突 |</p>
+<p>| <code>self-improvement</code> &amp; <code>self-healing</code> | WorkBuddy (<code>3.0.24</code>) → GitHub <code>pskoett</code> 上游版 | <strong><code>self-improvement</code> 已按 GitHub 上游版装入 DSH / Gemini / Codex（及云端）；<code>self-healing</code> 已装入全部四端（仅本地）</strong> | WorkBuddy 已有 <code>self-improving-agent__skillhub</code>（其 <code>name</code> 即为 <code>self-improvement</code>），故未在 WorkBuddy 重复放置避免重名冲突；其余三端采用更现代的 <code>pskoett</code> 模块化拆分，去除 OpenClaw 硬编码，并补充运行期“修后必验再入账”的 <code>self-healing</code> |</p>
+<p>| <code>wps-office-suite</code> (<code>5.4.0</code>) | DSH / Gemini (<code>5.3.5</code>) → SkillHub <code>5.4.0</code> | <strong>已全端升级并普及至 Codex / WorkBuddy（仅本地）</strong> | 弥补 Windows 原生 WPS COM、GB/T 9704 公文排版与本地 HTML 报告生成（<code>SKILL.md</code> 25,877c 且依赖桌面环境，不上传云端） |</p>
+<p>| <code>ppt-workflow__skillhub</code> | WorkBuddy | <strong>不外迁</strong> | 纯静态流程模板且硬编码旧外部模型提示词，功能完全被 <code>course-ppt-lab + ppt-master + scientific-slides + codex-ppt</code> 覆盖 |</p>
+<p>| <code>find-skills__skillhub</code> | WorkBuddy | <strong>不外迁</strong> | 含 macOS 硬编码路径（<code>/Applications/WorkBuddy.app/...</code>）并依赖未安装前置技能；各端已有原生替代能力 |</p>
+<p>| <code>grill-me</code> / <code>grill-with-docs</code> / <code>share-conversation</code> | Gemini | <strong>保留仅在 Antigravity(Gemini)</strong> | 前两者依赖 Antigravity 显式斜杠触发（<code>disable-model-invocation: true</code>），跨端已统一采用可自动触发的 <code>grilling</code>；<code>share-conversation</code> 强绑定 Antigravity Share Hub 插件 |</p>
+<hr>
+<h3>四、验证与同济云端 ZIP 包刷新（32 个全部通过）</h3>
+<ul>
+<li>本地四端共 <strong>149 份 <code>SKILL.md</code></strong> 全部通过 Node <code>js-yaml</code> 解析校验，无重名冲突、无语法错误。</li>
+<li>已重新构建云端输出目录 <code>tongji-cloud-skills-zip</code> 与说明文档 <code>tongji-cloud-skills-zip/README.md</code>，共 <strong>32 个 <code>.zip</code> 包</strong>：</li>
+<li><code>00_已上传成功_无需重传/</code>（2 个）：已将 <code>course-ppt-lab.zip</code> 同步刷新为 <strong><code>0.2.3</code></strong>（86.0 KB，若需云端一并更新可覆盖上传）。</li>
+<li><code>01_核心高频推荐_已修复待传/</code>（7 个）与 <code>02_科研与拓展按需_已修复待传/</code>（11 个）：保持全部已裁剪与三段式版本规范。</li>
+<li>新增 <code>03_跨平台新增与科研补充_已适配/</code>（<strong>12 个</strong>）：8 个补齐升级的 K-Dense 科研技能 + <code>docx-xlsx-extractor.zip</code> + <code>prompt-engineering-expert.zip</code> + <code>domain-modeling.zip</code> + <code>self-improvement.zip</code>（均已剔除 PNG/<code>_skillhub_meta.json</code>/超限描述，全部满足纯 UTF-8、3 段式 semver、<code>description &lt;= 500c</code>、<code>SKILL.md &lt;= 20,000c</code>、<code>README &lt;= 20,000c</code> 与 <code>js-yaml</code> 解析校验）。</li>
+</ul>
 </div></article>
 
     </section>
