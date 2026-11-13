@@ -247,10 +247,10 @@
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
-      <div class="sync-badge">自动同步更新: 2026-11-13 13:24:27</div>
+      <div class="sync-badge">自动同步更新: 2026-11-13 13:41:26</div>
     </div>
     <nav class="conv-list" aria-label="Conversations">
-      <a class="conv-item active" href="./c0f340d4-8f08-43e4-a09b-e83d54aabc7e.html"><div class="conv-title">检查一下我电脑上的deepseek harness的skill，...</div><div class="conv-meta"><span>6 msgs</span><span>2026-11-13 13:24</span></div></a>
+      <a class="conv-item active" href="./c0f340d4-8f08-43e4-a09b-e83d54aabc7e.html"><div class="conv-title">检查一下我电脑上的deepseek harness的skill，...</div><div class="conv-meta"><span>9 msgs</span><span>2026-11-13 13:41</span></div></a>
 <a class="conv-item" href="./8e491cda-d9db-4417-a196-9fe1a9a1b942.html"><div class="conv-title">@[c:\Users\Administrator\Desktop...</div><div class="conv-meta"><span>4 msgs</span><span>2026-11-13 11:22</span></div></a>
 <a class="conv-item" href="./c9eb2bf0-fed1-4de6-965b-944c2745224d.html"><div class="conv-title">@[c:\Users\Administrator\Desktop...</div><div class="conv-meta"><span>2 msgs</span><span>2026-11-13 11:18</span></div></a>
 <a class="conv-item" href="./bb1e7994-b052-407c-8be9-f5c7c55e9456.html"><div class="conv-title">我想知道antigravity的对话该怎么分享，因为我尝试了co...</div><div class="conv-meta"><span>14 msgs</span><span>2026-11-13 10:53</span></div></a>
@@ -266,7 +266,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1>检查一下我电脑上的deepseek harness的skill，...</h1>
-        <div class="sub-meta">会话 ID: c0f340d4-8f08-43e4-a09b-e83d54aabc7e | 轮次: 6 | 更新于: 2026-11-13 13:24</div>
+        <div class="sub-meta">会话 ID: c0f340d4-8f08-43e4-a09b-e83d54aabc7e | 轮次: 9 | 更新于: 2026-11-13 13:41</div>
       </div>
       <div class="header-actions">
         <button class="btn" id="copyBtn" onclick="copyLink()">复制当前分享链接</button>
@@ -468,6 +468,70 @@
 <p>| <code><code>what-if-oracle.zip</code></code> | 5.9 KB | 2 | <code>version: 1.1</code> → <code>1.1.0</code> |</p>
 <p>| <code><code>get-available-resources.zip</code></code> | 38.2 KB | 9 | <code>version: 1.3</code> → <code>1.3.0</code> |</p>
 <blockquote>现在你可以先上传 <code><code>01_核心高频推荐_已修复待传/</code></code> 里的 7 个包测试；如果平台对某个包仍有额外校验提示，把报错贴给我即可立刻微调。</blockquote>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>scientific-slides，scientific-writing的指令正文和 README 各不超过 20000 字；consciousness-council，uncertainty-and-units，experimental-design，paper-lookup的能力描述不超过 500 字</p>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>scientific-slides，scientific-writing的指令正文和 README 各不超过 20000 字；consciousness-council，uncertainty-and-units，experimental-design，paper-lookup的能力描述不超过 500 字。顺便你去github上检查我这些skill都是否为最新版本的</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已按你的要求完成所有云端 Skill 上传包的长度裁剪与全局合规排查（<strong>本机 <code>.dsh/skills</code> 与 <code>.gemini/config/skills</code> 原件保持未改</strong>），并完成了全部 20 个 Skill 的 <strong>GitHub 上游版本核查</strong>。</p>
+<p>所有更新后的上传包均已输出至：<code>tongji-cloud-skills-zip</code>（详见总览 <code>README.md</code> 与打包脚本 <code>pack_cloud_skills.py</code>）。</p>
+<hr>
+<h3>一、已修复的长度与描述限制（共 20/20 个包全部验证通过）</h3>
+<p>除你提到的几个包外，我也顺带排查了其余全部包，<strong>一并提前修掉了同样超限但你还没报出来的几个包</strong>（如 <code>statistical-analysis</code>、<code>paper-lookup</code> 的正文长度及 <code>lieflat-less-ai-tone/README.en.md</code>）：</p>
+<p>| Skill 名称 | 原超限问题（字符数） | 云端包处理结果（字符数） | 对应链接 |</p>
+<p>| :--- | :--- | :--- | :--- |</p>
+<p>| <strong><code>scientific-slides</code></strong> | <code>SKILL.md</code> 全文 21,493 / 正文 20,853（&gt;20,000） | 全文 <strong>12,924</strong> / 正文 <strong>12,283</strong>；去重冗余命令与重复 <code>references/</code> 清单，保留完整协议、引用与模板 | <code>scientific-slides.zip</code> |</p>
+<p>| <strong><code>scientific-writing</code></strong> | *实测原本未超 20,000* | <code>SKILL.md</code> 全文 <strong>14,005</strong>（正文 <strong>13,364</strong>），<code>description</code> <strong>354</strong>，无 <code>README.md</code>；已核查确认为 <code>2.1.0</code> 合规包 *(见下方补充说明)* | <code>scientific-writing.zip</code> |</p>
+<p>| <strong><code>statistical-analysis</code></strong> *(主动同修)* | <code>description</code> 552（&gt;500）且 <code>SKILL.md</code> 20,842 / 正文 20,163（&gt;20,000） | <code>description</code> 精简为 <strong>424</strong>；<code>SKILL.md</code> 压缩为 <strong>18,428</strong>（正文 <strong>17,874</strong>），长示例段落改用单行 APA 模板并指向同包 <code>references/reporting_standards.md</code> | <code>statistical-analysis.zip</code> |</p>
+<p>| <strong><code>uncertainty-and-units</code></strong> | <code>description</code> 845（&gt;500）；<code>SKILL.md</code> 19,775 偏紧 | <code>description</code> 精简为 <strong>425</strong>（保留量纲、GUM、无量纲数等关键触发词）；<code>SKILL.md</code> 顺降为 <strong>19,357</strong>（正文 <strong>18,608</strong>） | <code>uncertainty-and-units.zip</code> |</p>
+<p>| <strong><code>lieflat-less-ai-tone</code></strong> *(主动同修)* | <code>README.en.md</code> 22,568（&gt;20,000），且 <code>README</code> 含已删 <code>.png</code> 断链 | 移除失效英雄图引用，精简 <code>README.en.md</code> 3.1/5 节详表（引导读同包 <code>RESEARCH.en.md</code>）至 <strong>18,581</strong>；中文 <code>README.md</code> <strong>9,265</strong>，<code>SKILL.md</code> <strong>11,062</strong> | <code>lieflat-less-ai-tone.zip</code> |</p>
+<p>| <strong><code>paper-lookup</code></strong> | <code>description</code> 797（&gt;500）且 <code>SKILL.md</code> 24,668 / 正文 23,495（&gt;20,000） | <code>description</code> 精简为 <strong>400</strong>；<code>SKILL.md</code> 压缩为 <strong>13,608</strong>（正文 <strong>12,874</strong>），保留全 18 个库、HTTP 200 假成功陷阱及 4 个脚本退出码 | <code>paper-lookup.zip</code> |</p>
+<p>| <strong><code>experimental-design</code></strong> | <code>description</code> 1,013（&gt;500） | 精简为 <strong>446</strong>（保留 DOE、区组、分层、交叉、自适应等全部设计方法） | <code>experimental-design.zip</code> |</p>
+<p>| <strong><code>consciousness-council</code></strong> | <code>description</code> 590（&gt;500） | 精简为 <strong>355</strong>（保留多视角议会、魔鬼代言人及常用触发短语） | <code>consciousness-council.zip</code> |</p>
+<ul>
+<li><strong>关于 <code>scientific-writing</code> 的补充说明</strong>：无论本地版（<code>14,005</code> 字符）还是 GitHub 最新版（<code>14,895</code> 字符），其 <code>SKILL.md</code> 都不超过 <code>20,000</code> 字符、无 <code>README.md</code>、<code>description</code> 为 <code>354</code> 字符，且包内最大单文件仅 <code>16,009</code> 字符（<code>reporting_guidelines.json</code>）。同目录下真正超 20,000 字符的是相邻的 <code>statistical-analysis</code>；如果重新上传 <code>scientific-writing.zip</code> 时云端仍报其他提示，可以把具体报错截图给我进一步定位。</li>
+<li><strong>全部校验结果</strong>：生成完成后已用 <code>DeepSeek Harness.exe</code> 内置 <code>js-yaml</code> 与 <code>inspect_limits.py</code> 对 <strong>全部 20 个 <code>.zip</code> 包</strong> 完成最后一次端到端校验：纯 UTF-8 文本、无二进制文件、CRC、POSIX <code>/</code> 路径、三段式版本号、<code>description &lt;= 500</code>（实测最大 <code>literature-review</code> 480）、<code>SKILL.md &lt;= 20,000</code>（实测最大 <code>uncertainty-and-units</code> 19,357）、<code>README*.md &lt;= 20,000</code> <strong>全部通过</strong>。</li>
+</ul>
+<hr>
+<h3>二、GitHub 上游版本检查结果</h3>
+<p>我通过 Git 拉取仓库树与 <code>raw.githubusercontent.com</code> 对照了你本机 <code>~/.dsh/skills</code> 里的这 20 个 Skill，<strong>结论是：除 <code>course-ppt-lab</code> 为自建外，其余 19 个公开 Skill 目前均不是 GitHub 最新版本</strong>：</p>
+<h4>1. K-Dense 科研技能套件（共 17 个，全部落后）</h4>
+<p>上游仓库 <a href="https://github.com/K-Dense-AI/scientific-agent-skills" target="_blank" rel="noopener noreferrer">K-Dense-AI/scientific-agent-skills</a> 最新已发到 <strong><code>v2.72.0</code></strong>（最近提交 <code>2026-11-09</code>），你本机均滞后 0.2～0.8 个小版本，其中几个还新增了 <code>references/</code> 参考文档（如 <code>statistical-analysis</code> 升至 <code>2.0</code>）：</p>
+<p>| Skill 名称 | 本机版本 | GitHub 最新版 | 差异摘要 |</p>
+<p>| :--- | :---: | :---: | :--- |</p>
+<p>| <code>scientific-slides</code> | <code>1.8</code> | <strong><code>1.12</code></strong> | <code>SKILL.md</code> 等多个参考/模板文件更新 |</p>
+<p>| <code>uncertainty-and-units</code> | <code>1.1</code> | <strong><code>1.3</code></strong> | 新增 <code>references/review.md</code>，<code>SKILL.md</code> 扩至 21,676 字 |</p>
+<p>| <code>exploratory-data-analysis</code> | <code>1.2</code> | <strong><code>1.4</code></strong> | <code>SKILL.md</code> 与 <code>references/</code> 更新 |</p>
+<p>| <code>scientific-visualization</code> | <code>1.2</code> | <strong><code>1.4</code></strong> | <code>SKILL.md</code> 与 <code>assets/</code> 更新 |</p>
+<p>| <code>statistical-analysis</code> | <code>1.2</code> | <strong><code>2.0</code></strong> | 跨大版本升级，<code>SKILL.md</code> 扩至 23,549 字 |</p>
+<p>| <code>scientific-writing</code> | <code>2.1</code> | <strong><code>2.3</code></strong> | <code>SKILL.md</code>（14,895 字）与多份文档/指南更新 |</p>
+<p>| <code>experimental-design</code> | <code>1.2</code> | <strong><code>1.5</code></strong> | <code>SKILL.md</code>（16,198 字）、脚本与文档更新 |</p>
+<p>| <code>matplotlib</code> | <code>1.2</code> | <strong><code>1.4</code></strong> | <code>SKILL.md</code>（16,615 字）、脚本与文档更新 |</p>
+<p>| <code>markdown-mermaid-writing</code> | <code>1.1</code> | <strong><code>1.3</code></strong> | 新增 <code>references/current-rendering.md</code>（原 <code>skill-source</code> 仓库 <code>SuperiorByteWorks-LLC/agent-project</code> 无同名目录，实际由 K-Dense 持续维护） |</p>
+<p>| <code>markitdown</code> | <code>2.2</code> | <strong><code>2.5</code></strong> | <code>SKILL.md</code> 与 <code>references/</code> 更新 |</p>
+<p>| <code>liteparse</code> | <code>1.2</code> | <strong><code>1.6</code></strong> | <code>SKILL.md</code>（12,360 字）与 <code>references/</code> 更新 |</p>
+<p>| <code>paper-lookup</code> | <code>2.2</code> | <strong><code>2.4</code></strong> | <code>SKILL.md</code> 扩至 26,048 字，23 个文件更新 |</p>
+<p>| <code>citation-management</code> | <code>2.1</code> | <strong><code>2.3</code></strong> | 新增 <code>references/api_contracts.md</code> |</p>
+<p>| <code>literature-review</code> | <code>1.8</code> | <strong><code>1.11</code></strong> | <code>SKILL.md</code> 反而精简为 12,849 字 |</p>
+<p>| <code>consciousness-council</code> | <code>1.0</code> | <strong><code>1.2</code></strong> | 原作者 <code>ashrafkahoush-ux/claude-consciousness-skills</code> 自 <code>2026-03-03</code> 未更新；你的本地版来自 K-Dense 分支，K-Dense 侧已更至 <code>1.2</code> |</p>
+<p>| <code>what-if-oracle</code> | <code>1.1</code> | <strong><code>1.3</code></strong> | 同上，K-Dense 侧已更至 <code>1.3</code>（11,788 字） |</p>
+<p>| <code>get-available-resources</code> | <code>1.3</code> | <strong><code>1.5</code></strong> | 全部 9 个文件（含检测脚本）均有更新 |</p>
+<h4>2. 其余 3 个非 K-Dense 技能</h4>
+<ul>
+<li><strong><code>lieflat-less-ai-tone</code></strong>（<a href="https://github.com/larashero3-dotcom/lieflat-less-ai-tone" target="_blank" rel="noopener noreferrer">larashero3-dotcom/lieflat-less-ai-tone</a>，无 Release Tag，最近提交 <code>2026-11-11</code>）：<strong>明显落后</strong>。</li>
+<li><strong>本机版</strong>：v1（基于 283 万字 / 629 篇对照，共 12 个文件含 <code>_icon.png</code>，改写一步输出）。</li>
+<li><strong>GitHub 最新版</strong>：已重构为 <strong>v2</strong>（<code># 去AI味 v2</code>，629 篇对照 + 270 对配对复测，新增 <code>examples/agent-memory-case/*</code> 共 24 个文件，上游已去掉 <code>_icon.png</code>，引入脚本分级检测 <code>A/B/C/X/F</code> 并先交付改前检测报告待确认后再改写）。</li>
+<li><strong><code>grilling</code></strong>（<a href="https://github.com/mattpocock/skills" target="_blank" rel="noopener noreferrer">mattpocock/skills</a> 下 <code>skills/productivity/grilling</code>，仓库最新 Tag <code>v1.3.2</code>，最近提交 <code>2026-11-12</code>）：<strong>基本最新</strong>，仅差 1 句微调措辞（<code>dispatch a sub-agent</code> → <code>dispatch a sub-agent with a fresh context window</code>），且你已成功上传云端。</li>
+<li><strong><code>course-ppt-lab</code></strong>（个人自建 <code>0.2.2</code>，无独立 GitHub 公开上游）：本机 <code>upstream-lock.json</code> 锁定的关联上游 <code>hugohe3/ppt-master</code> 为 <code>6.7.2</code>（<code>2026-10-21</code>），而 GitHub <code>hugohe3/ppt-master</code> 最新已到 <strong><code>v6.9.0</code></strong>（<code>2026-11-12</code>）。</li>
+</ul>
+<hr>
+<h3>下一步建议</h3>
+<ul>
+<li>你可以先用 <code>tongji-cloud-skills-zip</code> 里的已修复 <code>.zip</code> 直接重新上传云端（<code>00_已上传成功_无需重传</code> 中的两个无需重传）。</li>
+<li>如果你想把这批 Skill <strong>同步升级到 GitHub 最新版</strong>（尤其是变化较大的 <code>statistical-analysis 2.0</code>、<code>paper-lookup 2.4</code>、<code>lieflat-less-ai-tone v2</code> 等），直接告诉我“升级全部”或指定哪几个，我会：</li>
+<li>同步更新本机 <code>~/.dsh/skills</code> 与 <code>~/.gemini/config/skills</code>；</li>
+<li>注意很多新版 <code>SKILL.md</code> 在上游反而变得更长（如 <code>statistical-analysis</code> 23.5k、<code>uncertainty-and-units</code> 21.7k、<code>paper-lookup</code> 26.0k），升级后我会自动再用脚本按云端限制（≤500 字描述 + ≤20,000 字正文/README + 三段式版本号 + 纯文本）重新裁剪打包。</li>
+</ul>
 </div></article>
 
     </section>
