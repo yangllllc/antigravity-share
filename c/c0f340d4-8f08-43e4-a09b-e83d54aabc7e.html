@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>检查一下我电脑上的deepseek harness的skill，... - Antigravity Share</title>
+  <style>
+    :root {
+      --bg-main: #131314;
+      --bg-sidebar: #1e1f20;
+      --bg-active: #2b2c2f;
+      --bg-bubble-user: #2b2c2f;
+      --bg-bubble-ai: #1e1f20;
+      --text-main: #e3e3e3;
+      --text-sub: #c4c7c5;
+      --accent: #a8c7fa;
+      --border: #3c4043;
+      --code-bg: #0d0e11;
+      --badge-green: #34d399;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100vh;
+    }
+    #sidebar {
+      width: 310px;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+    .sidebar-header {
+      padding: 18px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-header h2 {
+      font-size: 16px;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sidebar-header a.home-link {
+      text-decoration: none;
+      color: inherit;
+    }
+    .sync-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--badge-green);
+      background: rgba(52, 211, 153, 0.1);
+      padding: 3px 8px;
+      border-radius: 12px;
+      margin-top: 8px;
+    }
+    .conv-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .conv-item {
+      display: block;
+      text-decoration: none;
+      padding: 11px 13px;
+      border-radius: 10px;
+      transition: background 0.15s;
+      border: 1px solid transparent;
+      color: inherit;
+    }
+    .conv-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .conv-item.active {
+      background: var(--bg-active);
+      border-color: var(--border);
+    }
+    .conv-title {
+      font-size: 14px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #fff;
+    }
+    .conv-meta {
+      font-size: 11px;
+      color: var(--text-sub);
+      margin-top: 4px;
+      display: flex;
+      justify-content: space-between;
+    }
+    #main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .main-header {
+      padding: 16px 28px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-sidebar);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .main-header h1 {
+      font-size: 17px;
+      color: #fff;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .sub-meta {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-top: 3px;
+    }
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .btn {
+      background: var(--bg-active);
+      color: var(--accent);
+      border: 1px solid var(--border);
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .btn:hover { background: #3c4043; }
+    .chat-canvas {
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 28px 24px 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .turn {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .turn.user { align-items: flex-end; }
+    .turn.assistant { align-items: flex-start; }
+    .role-tag {
+      font-size: 12px;
+      color: var(--text-sub);
+      font-weight: 600;
+      padding: 0 4px;
+    }
+    .bubble {
+      max-width: 88%;
+      padding: 16px 20px;
+      border-radius: 18px;
+      line-height: 1.7;
+      font-size: 15px;
+      word-break: break-word;
+    }
+    .turn.user .bubble {
+      background: var(--bg-bubble-user);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .turn.assistant .bubble {
+      background: var(--bg-bubble-ai);
+      color: var(--text-main);
+      border-bottom-left-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .bubble p { margin: 0 0 10px 0; }
+    .bubble p:last-child { margin-bottom: 0; }
+    .bubble h1, .bubble h2, .bubble h3, .bubble h4 {
+      margin: 14px 0 8px;
+      color: var(--accent);
+      line-height: 1.4;
+    }
+    .bubble h1 { font-size: 19px; }
+    .bubble h2 { font-size: 17px; }
+    .bubble h3 { font-size: 15.5px; }
+    .bubble ul, .bubble ol { margin: 8px 0 10px 22px; }
+    .bubble li { margin: 4px 0; }
+    .bubble blockquote {
+      border-left: 3px solid var(--accent);
+      padding-left: 12px;
+      margin: 8px 0;
+      color: var(--text-sub);
+    }
+    .bubble code {
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 5px;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 13.5px;
+    }
+    .bubble pre {
+      background: var(--code-bg);
+      padding: 14px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 10px 0;
+      border: 1px solid #2b2d31;
+    }
+    .bubble pre code {
+      background: transparent;
+      padding: 0;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .bubble a { color: var(--accent); }
+    .bubble hr {
+      border: 0;
+      border-top: 1px solid var(--border);
+      margin: 14px 0;
+    }
+    @media (max-width: 820px) {
+      body { flex-direction: column; }
+      #sidebar { width: 100%; height: auto; position: static; max-height: 280px; }
+      .bubble { max-width: 96%; }
+    }
+  </style>
+</head>
+<body>
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
+      <div class="sync-badge">自动同步更新: 2026-11-13 10:54:35</div>
+    </div>
+    <nav class="conv-list" aria-label="Conversations">
+      <a class="conv-item" href="./bb1e7994-b052-407c-8be9-f5c7c55e9456.html"><div class="conv-title">我想知道antigravity的对话该怎么分享，因为我尝试了co...</div><div class="conv-meta"><span>14 msgs</span><span>2026-11-13 10:53</span></div></a>
+<a class="conv-item active" href="./c0f340d4-8f08-43e4-a09b-e83d54aabc7e.html"><div class="conv-title">检查一下我电脑上的deepseek harness的skill，...</div><div class="conv-meta"><span>4 msgs</span><span>2026-11-13 10:09</span></div></a>
+<a class="conv-item" href="./f4ffdcb7-d524-471a-a991-b7406a3854b2.html"><div class="conv-title">我正在继续升级本地的同济双模型 MCP 红队探针（目前为 v3....</div><div class="conv-meta"><span>9 msgs</span><span>2026-11-12 20:18</span></div></a>
+<a class="conv-item" href="./bab10e4d-18f2-4057-835d-a823662b83aa.html"><div class="conv-title">我使用学校的api连接了deepseek的最新模型v4.1fla...</div><div class="conv-meta"><span>22 msgs</span><span>2026-11-11 15:35</span></div></a>
+<a class="conv-item" href="./ff410536-ea4e-4c07-bf35-c830fb27226d.html"><div class="conv-title">这是我和gemini的对话，其实是关于我目前的背景，可以供你了解...</div><div class="conv-meta"><span>11 msgs</span><span>2026-11-09 16:29</span></div></a>
+<a class="conv-item" href="./407db27e-f215-4f6f-b821-ee6c76bb5128.html"><div class="conv-title">hello</div><div class="conv-meta"><span>6 msgs</span><span>2026-11-07 22:47</span></div></a>
+<a class="conv-item" href="./aee43892-ac3d-45ec-b86d-2843da81a054.html"><div class="conv-title">我想在这里记录我的光路学习历程，目前是第一次学习，我是同济大学的...</div><div class="conv-meta"><span>11 msgs</span><span>2026-11-06 14:31</span></div></a>
+
+    </nav>
+  </aside>
+  <main id="main">
+    <header class="main-header">
+      <div style="min-width:0;">
+        <h1>检查一下我电脑上的deepseek harness的skill，...</h1>
+        <div class="sub-meta">会话 ID: c0f340d4-8f08-43e4-a09b-e83d54aabc7e | 轮次: 4 | 更新于: 2026-11-13 10:09</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn" id="copyBtn" onclick="copyLink()">复制当前分享链接</button>
+      </div>
+    </header>
+    <section class="chat-canvas" aria-label="Conversation Content">
+      <article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>检查一下我电脑上的deepseek harness的skill，你查看一下有没有需要的skill你自行安装，其中course-ppt-lab 这个skill必须安装</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>我已全面检查了你电脑上 <strong>DeepSeek Harness (DSH)</strong> 的全部技能库，并结合你的日常使用场景（中文课程汇报 PPT 制作、光学仿真 Python 数据处理与科学作图、文献检索阅读、Office 文档处理与去 AI 味写作），完成了精选技能的安装与依赖修复。</p>
+<hr>
+<h3>一、本机 DeepSeek Harness (DSH) 技能总盘点</h3>
+<p>本机 DSH 共有 <strong>53 个技能</strong>，分布在 4 个来源层：</p>
+<ul>
+<li><strong>用户技能目录</strong>（<code><code>.dsh/skills</code></code>，共 <strong>31 个</strong>）：包含 <code>course-ppt-lab</code>、<code>ppt-master</code>、科研绘图、文献检索、数据分析、办公套件与写作润色等通用高价值技能。</li>
+<li><strong>StudyMate 学习模式预设技能</strong>（<code>C:\Users\Administrator\.dsh\profiles\desktop\node_modules\@yunmiao\studymate\preset\skills</code>，共 <strong>12 个</strong>）：如 <code>learning-system</code>、<code>lesson-design</code>、<code>practice-evaluator</code> 等，专用于 DSH 学习模式子 Agent 调度。</li>
+<li><strong>DSH 系统内置技能</strong>（<code><code>office-skills</code></code> 等，共 <strong>9 个</strong>）：如 <code>office-*</code>、<code>archify</code>、<code>diagnose-windows-sandbox-acl</code>，强绑定 DSH 内部 <code>load_workspace_dependencies</code> 与 LibreOffice Kit sidecar。</li>
+<li><strong>Agent 记忆插件技能</strong>（<code><code>hindsight-coding-agent</code></code>，<strong>1 个</strong>）：DSH Hindsight 插件专属说明。</li>
+</ul>
+<hr>
+<h3>二、<code>course-ppt-lab</code> 专项检查与关键修复（必装项）</h3>
+<p>已将 <code><code>course-ppt-lab</code></code> 及其直接上游依赖 <code><code>ppt-master</code></code> 完整安装至 Antigravity 全局技能目录 <code>C:\Users\Administrator\.gemini\config\skills\</code>，并在检查中发现并修复了一个关键路径隐患：</p>
+<ul>
+<li><strong>上游 <code>ppt-master</code> 快照校验与修复</strong>：</li>
+<li><code><code>course-ppt-lab</code></code> 的构建脚本 <code><code>build_deck.py</code></code> 与校验脚本 <code><code>check_upstream.py</code></code> 强依赖外部 <code>ppt-master</code>（v6.7.2）的 306 个文件 SHA-256 快照。</li>
+<li>原先 <code><code>local-environment.md</code></code> 中指向的 <code>.workbuddy\skills\ppt-master</code> 经实测有 <strong>43 个文件哈希不匹配</strong>（校验退出码 <code>1</code>），而 <code>.dsh\skills\ppt-master</code> <strong>306 个文件 100% 匹配通过</strong>（<code>matches_validated_snapshot: true</code>）。</li>
+<li>我已将通过快照核验的 <code>.dsh\skills\ppt-master</code> 完整同步至 <code><code>C:\Users\Administrator\.gemini\config\skills\ppt-master</code></code>，并同步更新了 <code><code>local-environment.md</code></code> 中的运行副本路径与外部 <code>PPTMaster</code> 路径。</li>
+</ul>
+<hr>
+<h3>三、本次自行安装的 21 个精选技能清单</h3>
+<p>所有技能均已安装至 Antigravity 全局发现目录 <code><code>C:\Users\Administrator\.gemini\config\skills</code></code>：</p>
+<h4>1. PPT 与学术演示制作（3 个）</h4>
+<p>| 技能名称 | 配置文件 | 安装理由与用途 |</p>
+<p>| :--- | :--- | :--- |</p>
+<p>| <strong><code>course-ppt-lab</code></strong> | <code>SKILL.md</code> | <strong>【指定必装】</strong> 中文课程汇报 PPT 个人经验库（C/D/V/G/T/E 规则体系、来源核对、WPS 渲染验证与可编辑导出）。 |</p>
+<p>| <strong><code>ppt-master</code></strong> | <code>SKILL.md</code> | <strong>【核心依赖】</strong> <code>course-ppt-lab</code> 的直接上游导出后端（v6.7.2，已通过 306 文件快照校验），同时支持通用可编辑 PPTX 生成与视觉重构。 |</p>
+<p>| <strong><code>scientific-slides</code></strong> | <code>SKILL.md</code> | 科研组会汇报、学术会议报告幻灯片结构与视觉规范（支持 PowerPoint 与 LaTeX Beamer，与 <code>course-ppt-lab</code> 互补）。 |</p>
+<h4>2. 光学/物理计算、Python 数据处理与科研绘图（6 个）</h4>
+<p>| 技能名称 | 配置文件 | 安装理由与用途 |</p>
+<p>| :--- | :--- | :--- |</p>
+<p>| <strong><code>scientific-visualization</code></strong> | <code>SKILL.md</code> | 出版级科研图表设计与审计（含 <code>nature.mplstyle</code>、<code>publication.mplstyle</code>、<code>presentation.mplstyle</code> 预设及导出校验脚本）。 |</p>
+<p>| <strong><code>matplotlib</code></strong> | <code>SKILL.md</code> | Python Matplotlib 底层精细绘图控制与科学可视化规范。 |</p>
+<p>| <strong><code>uncertainty-and-units</code></strong> | <code>SKILL.md</code> | 物理单位换算、量纲检查与不确定度传播（基于 <code>pint</code> / <code>uncertainties</code>），支持物理量级合理性自检。 |</p>
+<p>| <strong><code>exploratory-data-analysis</code></strong> | <code>SKILL.md</code> | 本地 CSV/TSV/JSON/NumPy/HDF5 科学数据探索性分析与异常值审查，适合处理仿真导出数据。 |</p>
+<p>| <strong><code>statistical-analysis</code></strong> | <code>SKILL.md</code> | 实验与仿真数据的统计检验、回归、曲线拟合分析。 |</p>
+<p>| <strong><code>experimental-design</code></strong> | <code>SKILL.md</code> | 实验设计与多因素参数空间布局（DOE 全因子/部分因子设计、响应面优化），适用于规划多参数扫描。 |</p>
+<h4>3. 文献检索、文档解析与办公写作（9 个）</h4>
+<p>| 技能名称 | 配置文件 | 安装理由与用途 |</p>
+<p>| :--- | :--- | :--- |</p>
+<p>| <strong><code>wps-office-suite</code></strong> | <code>SKILL.md</code> | 本机 WPS / MS Office / LibreOffice / 纯 Python 四引擎办公套件（文档读写、格式转换、排版）。 |</p>
+<p>| <strong><code>lieflat-less-ai-tone</code></strong> | <code>SKILL.md</code> | “去 AI 味”白名单改写规则，用于清理汇报讲稿、技术报告、总结中的 AI 痕迹并保留原文结构。 |</p>
+<p>| <strong><code>paper-lookup</code></strong> | <code>SKILL.md</code> | 18 个学术 API（arXiv、OpenAlex、Crossref、Semantic Scholar 等）检索论文、DOI 与 OA 全文。 |</p>
+<p>| <strong><code>citation-management</code></strong> | <code>SKILL.md</code> | 文献元数据检索、引用核验与 DOI 转 BibTeX。 |</p>
+<p>| <strong><code>literature-review</code></strong> | <code>SKILL.md</code> | 多数据库系统性文献综述整理与引用规范化输出。 |</p>
+<p>| <strong><code>markitdown</code></strong> | <code>SKILL.md</code> | 将 PDF、Word、PPT、Excel 等异构文档快速转为结构化 Markdown。 |</p>
+<p>| <strong><code>liteparse</code></strong> | <code>SKILL.md</code> | 本地 PDF/Office 空间文本解析（带 bounding box 坐标）与页面光栅化渲染。 |</p>
+<p>| <strong><code>scientific-writing</code></strong> | <code>SKILL.md</code> | 科学报告与技术文档撰写、证据溯源与一致性检查。 |</p>
+<p>| <strong><code>markdown-mermaid-writing</code></strong> | <code>SKILL.md</code> | 科学文档 Markdown 与 Mermaid 图表写作规范（含 24 类图表参考与 9 套模板）。 |</p>
+<h4>4. 思维决策与本机资源工具（3 个）</h4>
+<p>| 技能名称 | 配置文件 | 安装理由与用途 |</p>
+<p>| :--- | :--- | :--- |</p>
+<p>| <strong><code>consciousness-council</code></strong> | <code>SKILL.md</code> | 多视角 Mind Council 辩论式决策分析，适合复杂抉择与多维利弊权衡。 |</p>
+<p>| <strong><code>what-if-oracle</code></strong> | <code>SKILL.md</code> | 4–6 分支 What-If 情景推演与风险预判。 |</p>
+<p>| <strong><code>get-available-resources</code></strong> | <code>SKILL.md</code> | 探测本机 CPU、内存、磁盘与 GPU 资源上限。 |</p>
+<hr>
+<h3>四、已跳过/未安装的技能说明（防上下文膨胀与冲突）</h3>
+<p>以下技能经评估后<strong>未重复或额外安装</strong>，以保持全局上下文精简并避免触发路由冲突：</p>
+<ul>
+<li><strong>本机已安装（1 个）</strong>：<code>grilling</code>（此前已存在于 <code><code>C:\Users\Administrator\.gemini\config\skills\grilling</code></code>）。</li>
+<li><strong>低频/特定后期场景的 <code>.dsh/skills</code> 技能（9 个）</strong>：</li>
+<li><code>pptx-posters</code>、<code>latex-posters</code>：专门制作大型张贴海报（Poster），暂不安装以避免与日常 PPT 汇报任务触发混淆。</li>
+<li><code>statistical-power</code>：主要用于生物医学/临床试验样本量（如动物实验只数）计算。</li>
+<li><code>peer-review</code>、<code>venue-templates</code>、<code>hypothesis-generation</code>、<code>scientific-brainstorming</code>、<code>scientific-critical-thinking</code>：偏审稿人写审稿意见或期刊投稿排版阶段，日常暂不需要常驻。</li>
+<li><code>prompt-engineering-expert</code>：面向 Claude 的通用提示词指南，Antigravity 自带的 <code>agy-customizations</code> 已更贴合当前环境。</li>
+<li><strong>DSH 宿主专属绑定技能（22 个）</strong>：StudyMate 的 12 个技能、DSH 内置的 9 个 <code>office-*</code>/<code>archify</code> 技能、以及 <code>hindsight-coding-agent</code>（依赖 DSH 专有运行时工具，不适用于 Antigravity）。</li>
+</ul>
+<blockquote><strong>提示</strong>：新安装的全局技能已全部就位（如你后续需要把上述暂未安装的 9 个海报/审稿类技能也加进来，随时告诉我即可）。在开启新会话或刷新后，这些技能会自动出现在系统可用技能列表中；即便在当前会话中，我也可以直接读取并调用它们。</blockquote>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>同济大学开放了云端智能体，他的模型目前可以使用deepseek v4.1 flash，支持deep seek harness。相比你们这些antigravity和gemini的智能体，他有什么优势，有什么不足，他适合应用的场景有哪些。然后为什么我将一部分skill的文件夹直接压缩成了rar但是却无法上传，难道因为只支持zip格式嘛，你来帮我压缩一些适用于云端智能体的skill。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>我已为你梳理了<strong>同济云端智能体（DeepSeek-V4.1-Flash + DeepSeek Harness）</strong>与 <strong>Antigravity / Gemini 智能体</strong>的定位差异、<code>.rar</code> 无法上传的根本原因，并筛选打包好了 <strong>22 个云端可用 <code>.zip</code> 技能包</strong>。</p>
+<hr>
+<h3>一、同济云端智能体（DeepSeek-V4.1-Flash + DSH）vs Antigravity / Gemini</h3>
+<p>两者不是替代关系，而是<strong>“云端轻算力工厂”与“本地全权指挥台”的互补关系</strong>：</p>
+<h4>1. 同济云端智能体的优势</h4>
+<ul>
+<li><strong>校内算力充沛且免费</strong>：依托同济 AI 平台额度（每周校内免费积分，支持 <code>DeepSeek-V4.1-Flash</code>），该模型采用非对称 MoE（CED + CSA2 稀疏注意力）架构，KV Cache 占用低、多轮工具调用吞吐快，极适合“高频试错、多轮循环、大量跑文本/脚本”而不心疼额度。</li>
+<li><strong>零代理国内直连 &amp; 校内合规</strong>：无需代理即可在浏览器直接访问，且不依赖你本机复杂的 Python/Node 环境配置；在实验室/宿舍/平板等多终端可随时接续任务。</li>
+<li><strong>开源 Harness 标准兼容</strong>：基于 DeepSeek Harness (<code>dsh</code>)，使用通用的 <code>SKILL.md</code> 目录标准，与你本机的 <code>.dsh/skills</code> 生态天然同源。</li>
+</ul>
+<h4>2. 相比 Antigravity / Gemini 的不足</h4>
+<ul>
+<li><strong>无法触达你的本机环境与桌面软件（最大短板）</strong>：</li>
+<li>Antigravity 直接运行在你电脑上，能直接读取桌面文献、处理 <code>COMSOL.6.4</code> 导出目录、调用本机 <code>WPS (KWPP.Application)</code> 把 PPTX 实际渲染成图片逐页核对、调用 <code>Edge</code> 预览、甚至直接访问本地 <code>localhost</code> 服务与多模型 MCP（如你配好的双引擎博弈探针）。</li>
+<li>云端智能体运行在<strong>隔离的远程沙箱容器（通常为无 GUI 的 Linux 环境）</strong>里：文件必须“手动上传→处理→下载”；<strong>无法启动本机 WPS、Edge、COMSOL、Zemax</strong>，也没有微软雅黑等 Windows 字体（做 <code>course-ppt-lab</code> 时只能先出结构、内容、讲稿或 SVG/PPTX 初稿，无法在云端做真实 WPS 渲染验收）。</li>
+<li><strong>模型深度与多模态审阅天花板差异</strong>：<code>DeepSeek-V4.1-Flash</code> 是高性价比的 Flash 级轻量模型，擅长数理验算、脚本编写和快速工具循环；但在<strong>复杂跨文件工程架构、精细视觉审美/图表纠错、超长复杂指令的防遗漏与稳定度</strong>上，Gemini 4 旗舰模型 + Antigravity 的深度工作区/Subagent 协同体验明显更稳。</li>
+<li><strong>网络与上传体积限制</strong>：云端容器对外网（尤其是部分海外学术 API、特定 PyPI 源）的连通性往往受策略限制，且对技能包格式、体积、同时挂载的技能数量都有约束（挂载过多 skill 的 description 会挤占系统提示词上下文，增加 Flash 模型误触发概率）。</li>
+</ul>
+<h4>3. 各自最适合的应用场景</h4>
+<ul>
+<li><strong>交给同济云端智能体（DeepSeek-V4.1-Flash + DSH）</strong>：</li>
+<li><strong>高 Token 消耗的文本/综述批处理</strong>：用 <code>lieflat-less-ai-tone</code> 批量去 AI 味、用 <code>scientific-writing</code> 润色报告初稿、用 <code>grilling</code> / <code>consciousness-council</code> / <code>what-if-oracle</code> 做多轮高强度头脑风暴与方案压测。</li>
+<li><strong>上传数据跑 Python 分析与作图</strong>：把 COMSOL 导出的 CSV/TXT 上传云端，结合 <code>exploratory-data-analysis</code>、<code>statistical-analysis</code>、<code>uncertainty-and-units</code>、<code>scientific-visualization</code> 让它反复试错脚本并输出矢量图/分析表。</li>
+<li><strong>PPT 早期策划与结构草拟</strong>：先在云端用 <code>course-ppt-lab</code> 梳理逐页逻辑、来源标注、讲稿和 <code>deck.json</code>。</li>
+<li><strong>移动端/无主力电脑时的轻量文档处理</strong>：上传 PDF/Word 转换提取或跑常规计算。</li>
+<li><strong>交给 Antigravity / Gemini</strong>：</li>
+<li><strong>需要本机软件闭环的任务</strong>：<code>course-ppt-lab</code> 最终排版生成 + 本机 WPS 实际渲染逐页视觉验收、读写桌面海量工程/文献文件。</li>
+<li><strong>复杂光学推导与视觉读图</strong>：需要看懂复杂光路图/论文插图细节 + 调用 <code>delegate_to_deepseek</code> 做红队博弈验证。</li>
+<li><strong>浏览器自动化与本地服务/项目开发</strong>。</li>
+</ul>
+<hr>
+<h3>二、为什么压缩成 <code>.rar</code> 无法上传？（不止是格式问题）</h3>
+<p>我检查了你电脑上刚刚生成的 <code><code>share-conversation.rar</code></code>，除了格式原因外，其实同时踩了 <strong>3 个坑</strong>：</p>
+<ul>
+<li><strong>格式原因（最直接）</strong>：</li>
+</ul>
+<p>   Web 端与云端智能体后台（包括 DSH 本身内置的压缩库如 <code>fflate</code>/<code>pako</code> 和常规 Python/Node 后端）<strong>几乎只支持标准 <code>.zip</code></strong>，<strong>不支持专有闭源的 <code>.rar</code> 格式</strong>。服务器收到 <code>.rar</code> 后要么在前端白名单就被拦截，要么后端无法解压。</p>
+<ul>
+<li><strong>你打包的 <code>share-conversation</code> 本身无法在云端运行（更隐蔽的坑）</strong>：</li>
+</ul>
+<p>   查看 <code><code>share-conversation/SKILL.md</code></code> 可知，它写死了你电脑上的本地路径 <code>C:\Users\Administrator\.gemini\config\plugins\antigravity-share-hub\server.ps1</code> 和 <code>http://localhost:5210/</code>。云端容器根本连不到你本机，即使改成 <code>.zip</code> 上传也没有用。</p>
+<ul>
+<li><strong>两个隐藏的 <code>.zip</code> 打包规范坑</strong>：</li>
+<li><strong>结构与路径斜杠坑</strong>：DSH 的技能扫描器<strong>只扫一层目录</strong>（<code>&lt;root&gt;/&lt;skill-name&gt;/SKILL.md</code>），且目录名必须与 <code>SKILL.md</code> frontmatter 里的 <code>name:</code> 一致；此外 Windows 自带的 <code>Compress-Archive</code> 有时会写入反斜杠 <code>\</code> 导致 Linux 云端解压出错。本次我已改用 Python <code>zipfile</code> 全部生成<strong>标准 POSIX 正斜杠 <code>/</code></strong> 路径的 <code>.zip</code>。</li>
+<li><strong>体积超限与本机配置污染坑</strong>：例如完整的 <code>ppt-master</code> 有 <strong>13,018 个文件 / 37.6 MB</strong>（压缩后仍达 <strong>20.88 MB</strong>，其中仅 <code>templates/sounds/</code> 音频和 <code>templates/icons/</code> 1.2 万个小图标就占了约 21.8 MB），极易触发云端单包体积/文件数限制；而 <code>course-ppt-lab</code> 里的 <code>references/local-environment.md</code> 写死了你本机的 <code>C:\Users\...</code> 路径和 <code>KWPP.Application</code>，传到云端会误导模型。</li>
+</ul>
+<hr>
+<h3>三、已为你打包好的云端可用 Skill <code>.zip</code> 集合</h3>
+<p>所有压缩包已生成到新目录：<code><code>C:\Users\Administrator\.gemini\antigravity\scratch\tongji-cloud-skills-zip</code></code>（建议如需后续管理可将该目录设为活动工作区），目录内附有完整说明文件 <code><code>README.md</code></code>。</p>
+<p>为避免云端加载过多技能导致提示词膨胀、影响 <code>DeepSeek-V4.1-Flash</code> 触发准确率，我分成了两个文件夹（<strong>建议优先只上传 <code>01_核心高频推荐/</code></strong>）：</p>
+<h4>1. <code><code>01_核心高频推荐/</code></code>（10 个，零本机绑定、最稳）</h4>
+<p>| 压缩包 | 大小 | 文件数 | 适配处理与云端用途说明 |</p>
+<p>| :--- | :---: | :---: | :--- |</p>
+<p>| <code><code>course-ppt-lab.zip</code></code> | 81.7 KB | 35 | <strong>已剔除仅限本机的 <code>references/local-environment.md</code></strong>；保留全套 C/D/V/G/T/E/A 规则、模板与脚本，适合云端规划内容/讲稿/SVG。 |</p>
+<p>| <code><code>ppt-master-lite.zip</code></code> | 6.94 MB | 798 | 包内顶层目录名已设为 <code>ppt-master/</code>（匹配 <code>name: ppt-master</code>）；剔除了 1.2 万个图标和 191 个音频，<strong>已实测与 <code>course-ppt-lab</code> 解压联调通过 <code>check_upstream.py</code> 306/306 快照校验</strong>。 |</p>
+<p>| <code><code>scientific-slides.zip</code></code> | 133.2 KB | 24 | 科研组会/英文学术汇报结构与 LaTeX Beamer 模板。 |</p>
+<p>| <code><code>lieflat-less-ai-tone.zip</code></code> | 238.5 KB | 12 | 中文文本去 AI 味白名单改写 + 结构/翻译腔检测脚本，零外网依赖。 |</p>
+<p>| <code><code>uncertainty-and-units.zip</code></code> | 71.1 KB | 14 | 物理单位换算、量纲检查、GUM 不确定度传播与数量级合理性自检。 |</p>
+<p>| <code><code>exploratory-data-analysis.zip</code></code> | 71.8 KB | 21 | CSV/TSV/JSON/NumPy/HDF5 科学数据探索性分析。 |</p>
+<p>| <code><code>scientific-visualization.zip</code></code> | 66.7 KB | 18 | 出版级科研图表设计、配色审计与 <code>.mplstyle</code> 样式预设。 |</p>
+<p>| <code><code>statistical-analysis.zip</code></code> | 43.1 KB | 7 | 统计检验、曲线拟合与报告规范。 |</p>
+<p>| <code><code>scientific-writing.zip</code></code> | 62.2 KB | 31 | 科研报告撰写与证据溯源检查。 |</p>
+<p>| <code><code>grilling.zip</code></code> | 1.3 KB | 2 | 设计树高强度追问（开题/需求/计划压测）。 |</p>
+<h4>2. <code><code>02_科研与拓展按需/</code></code>（12 个，按场景按需上传）</h4>
+<ul>
+<li><strong>工具与数据拓展</strong>：<code><code>experimental-design.zip</code></code> (23.6 KB)、<code><code>matplotlib.zip</code></code> (29.8 KB)、<code><code>markdown-mermaid-writing.zip</code></code> (114.1 KB)、<code><code>get-available-resources.zip</code></code> (38.2 KB，可用于探测同济云端容器真实 CPU/内存配额)。</li>
+<li><strong>文档解析与文献 API（视云端依赖包与外网权限而定）</strong>：<code><code>markitdown.zip</code></code> (40.5 KB)、<code><code>liteparse.zip</code></code> (14.4 KB)、<code><code>paper-lookup.zip</code></code> (73.3 KB)、<code><code>citation-management.zip</code></code> (93.3 KB)、<code><code>literature-review.zip</code></code> (48.0 KB)。</li>
+<li><strong>思维决策与完整后端</strong>：<code><code>consciousness-council.zip</code></code> (6.1 KB)、<code><code>what-if-oracle.zip</code></code> (5.9 KB)、<code><code>ppt-master-full.zip</code></code> (20.88 MB / 13,018 files，仅在云端允许超 20 MB 上传且需要全量内置图标时再用)。</li>
+</ul>
+<blockquote><strong>上传小贴士</strong>：目前所有 <code>.zip</code> 内均采用标准单层文件夹包装（<code>&lt;skill-name&gt;.zip</code> → <code>&lt;skill-name&gt;/SKILL.md</code>）。如果同济云端后台报错“未在压缩包根目录找到 <code>SKILL.md</code>”（少数自研前端要求扁平结构），告诉我一声，我把对应几个包一键改成扁平根目录结构即可。另保留了原 <code><code>share-conversation.rar</code></code> 未删，建议你可以手动清理掉，避免后续误加载。</blockquote>
+</div></article>
+
+    </section>
+  </main>
+  <script>
+    function copyLink() {
+      var url = window.location.href;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(function() {
+          var btn = document.getElementById('copyBtn');
+          btn.innerText = '已复制链接';
+          setTimeout(function() { btn.innerText = '复制当前分享链接'; }, 2000);
+        });
+      }
+    }
+  </script>
+</body>
+</html>
