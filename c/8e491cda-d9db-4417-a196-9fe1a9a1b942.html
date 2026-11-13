@@ -247,10 +247,10 @@
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
-      <div class="sync-badge">自动同步更新: 2026-11-13 11:18:52</div>
+      <div class="sync-badge">自动同步更新: 2026-11-13 11:22:34</div>
     </div>
     <nav class="conv-list" aria-label="Conversations">
-      <a class="conv-item active" href="./8e491cda-d9db-4417-a196-9fe1a9a1b942.html"><div class="conv-title">@[c:\Users\Administrator\Desktop...</div><div class="conv-meta"><span>2 msgs</span><span>2026-11-13 11:18</span></div></a>
+      <a class="conv-item active" href="./8e491cda-d9db-4417-a196-9fe1a9a1b942.html"><div class="conv-title">@[c:\Users\Administrator\Desktop...</div><div class="conv-meta"><span>4 msgs</span><span>2026-11-13 11:22</span></div></a>
 <a class="conv-item" href="./c9eb2bf0-fed1-4de6-965b-944c2745224d.html"><div class="conv-title">@[c:\Users\Administrator\Desktop...</div><div class="conv-meta"><span>2 msgs</span><span>2026-11-13 11:18</span></div></a>
 <a class="conv-item" href="./bb1e7994-b052-407c-8be9-f5c7c55e9456.html"><div class="conv-title">我想知道antigravity的对话该怎么分享，因为我尝试了co...</div><div class="conv-meta"><span>14 msgs</span><span>2026-11-13 10:53</span></div></a>
 <a class="conv-item" href="./c0f340d4-8f08-43e4-a09b-e83d54aabc7e.html"><div class="conv-title">检查一下我电脑上的deepseek harness的skill，...</div><div class="conv-meta"><span>4 msgs</span><span>2026-11-13 10:09</span></div></a>
@@ -266,7 +266,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1>@[c:\Users\Administrator\Desktop...</h1>
-        <div class="sub-meta">会话 ID: 8e491cda-d9db-4417-a196-9fe1a9a1b942 | 轮次: 2 | 更新于: 2026-11-13 11:18</div>
+        <div class="sub-meta">会话 ID: 8e491cda-d9db-4417-a196-9fe1a9a1b942 | 轮次: 4 | 更新于: 2026-11-13 11:22</div>
       </div>
       <div class="header-actions">
         <button class="btn" id="copyBtn" onclick="copyLink()">复制当前分享链接</button>
@@ -363,6 +363,40 @@
 <p>  核实 <code>site\c\*.md</code> 全部生成、耗时安全，且 <code>bb1e7994-b052-407c-8be9-f5c7c55e9456.md</code> 前 3,200 字符内完整覆盖 <code>T1</code> 目标、<code>T13</code> 指令与 <code>T14</code> 断点。</p>
 <hr>
 <p>请确认是否按上述方案执行<strong>单步修改 <code>sync_share.ps1</code></strong>（确认后我将仅改动该文件并向您汇报本地 <code>-SkipGitPush</code> 验证结果）。</p>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>确认</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成<strong>单步修改</strong>（仅改动 <code>sync_share.ps1</code> 一个文件，未触碰 <code>template.html</code>、<code>hooks.json</code> 或其他文件），并完成本地生成验收。</p>
+<h3>一、 已落地变更（<code>sync_share.ps1</code>）</h3>
+<p>在 <code>sync_share.ps1</code> 中新增了纯 PowerShell 5.1 / .NET 辅助函数并在会话遍历循环中同步产出 <code>site\c\&lt;id&gt;.md</code>：</p>
+<ul>
+<li><strong>UTF-16 代理对安全截断</strong>：<code>Safe-TruncateHead</code> / <code>Safe-TruncateTail</code>（截断边界校验 <code>[char]::IsHighSurrogate</code> / <code>IsLowSurrogate</code>，防止切碎 Emoji）。</li>
+<li><strong>线性代码折叠</strong>：<code>Compress-ForSummary</code> 采用逐行状态机，仅在摘要区将超过 <code>300</code> 字符的 fenced 代码块折叠为 <code>[CODE BLOCK: N chars folded]</code> 并合并多余空行，避免跨行正则回溯。</li>
+<li><strong>三明治摘要 + 倒序全量归档</strong>：<code>Build-AgentMarkdown</code> 以 LF 换行与 UTF-8 无 BOM 编码生成：</li>
+<li><strong>顶部 <code>[BREAKPOINT SUMMARY]</code></strong>：含元信息头、<code>T1 (Initial Goal)</code> 头部（<code>≤280</code> 字符）、最新 User 指令头部（<code>≤280</code> 字符）、最新 Assistant 经折叠后的尾部（<code>≤1500</code> 字符），以及总轮次 <code>&gt; 4</code> 时追加的 <code>[USER TIMELINE]</code>（<code>≤500</code> 字符）。</li>
+<li><strong>下方 <code>[FULL TRANSCRIPT (REVERSE: LATEST -&gt; EARLIEST)]</code></strong>：从 <code>Turn N</code> 倒序无损输出至 <code>Turn 1</code>。</li>
+<li><strong>内容比对原子写入</strong>：<code>Write-TextIfChanged</code> 在目标 <code>.md</code> 内容未变化（<code>-ceq</code>）时跳过写盘，变更时先写临时文件再 <code>Move-Item -Force</code> 覆盖。</li>
+</ul>
+<hr>
+<h3>二、 本地验收结果（<code>-SkipGitPush</code>）</h3>
+<p>执行本地生成测试：</p>
+<pre><code>powershell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;C:\Users\Administrator\.gemini\config\plugins\antigravity-share-hub\sync_share.ps1&quot; -SkipGitPush</code></pre>
+<ul>
+<li><strong>运行结果</strong>：退出码 <code>0</code>，输出 <code>{&quot;decision&quot;:&quot;stop&quot;}</code>，总耗时 <strong><code>986 ms</code></strong>（远低于 <code>hooks.json</code> 的 <code>25</code> 秒超时）。</li>
+<li><strong>生成清单</strong>：在 <code>site\c\</code> 成功生成 <strong>9 个</strong> <code>.md</code> 文件，全部实测 <code>HasUTF8Bom = False</code>：</li>
+<li>9 个文件的置顶摘要区长度（<code>SummaryBlockChars</code>）实测分布在 <strong><code>917 ~ 2671</code> 字符</strong>，全部稳居 4,000 字符抓取上限的安全裕度内：</li>
+<li><code>bb1e7994-b052-407c-8be9-f5c7c55e9456.md</code>：总长 <code>18,155</code> 字符，摘要区仅 <strong><code>2,420</code> 字符</strong>（实读前 100 行确认已完整包含 <code>T1</code> 原始需求、<code>T13</code> 最新反馈、<code>T14</code> 收尾断点、<code>T11/T9/T7/T5/T3</code> 指令脉络及紧接其后的倒序正文开头）。</li>
+<li>最长摘要区样本 <code>ff410536-ea4e-4c07-bf35-c830fb27226d.md</code>：总长 <code>21,842</code> 字符，摘要区 <code>2,671</code> 字符。</li>
+<li><strong>Git 工作区状态</strong>：<code>git -C site status -sb</code> 显示 9 个新增 <code>.md</code> 与对应更新的 <code>.html</code>、<code>index.html</code> 均已就绪（本次使用 <code>-SkipGitPush</code>，尚未手动推送；正常对话结束触发 <code>Stop</code> Hook 时会自动 <code>git add -A &amp;&amp; commit &amp;&amp; push</code>）。</li>
+</ul>
+<hr>
+<h3>三、 后续可选单步动作（请确认是否需要）</h3>
+<p>请确认您接下来希望执行哪一个独立动作（或先测试公网同步效果后决定）：</p>
+<ul>
+<li><strong>立即触发一次全量 Git 推送与公网可用性核查</strong>：执行 <code>sync_share.ps1</code>（不带 <code>-SkipGitPush</code>）推上 GitHub，并用 <code>curl.exe -sI</code> 实测 <code>https://yangllllc.github.io/antigravity-share/c/bb1e7994-b052-407c-8be9-f5c7c55e9456.md</code> 的 HTTP 状态与 <code>Content-Type</code> 响应头。</li>
+<li><strong>仅在网页 UI 增加直达按钮（需单独一步修改 <code>template.html</code>）</strong>：在 <code>template.html</code> 顶栏添加一个“复制 <code>.md</code> 直链”或“查看纯净 Markdown”按钮，方便日常一键复制 <code>.md</code> 链接。</li>
+<li><strong>本步到此结束</strong>：直接等待本轮结束 <code>Stop</code> Hook 自动推送后，用 Gemini 网页版实测 <code>.../c/bb1e7994-b052-407c-8be9-f5c7c55e9456.md</code>。</li>
+</ul>
 </div></article>
 
     </section>
