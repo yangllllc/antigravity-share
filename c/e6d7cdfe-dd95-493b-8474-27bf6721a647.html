@@ -247,11 +247,11 @@
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
-      <div class="sync-badge">自动同步更新: 2026-11-15 11:24:43</div>
+      <div class="sync-badge">自动同步更新: 2026-11-15 11:39:16</div>
     </div>
     <nav class="conv-list" aria-label="Conversations">
-      <a class="conv-item" href="./cafe9681-e78c-45dd-9866-5dfeeacf7425.html"><div class="conv-title">@[c:\Users\Administrator\Desktop...</div><div class="conv-meta"><span>2 msgs</span><span>2026-11-15 11:24</span></div></a>
-<a class="conv-item active" href="./e6d7cdfe-dd95-493b-8474-27bf6721a647.html"><div class="conv-title">我刚刚新建了一个项目，是根据zemax文件夹建的，但是我不知道按...</div><div class="conv-meta"><span>2 msgs</span><span>2026-11-15 11:10</span></div></a>
+      <a class="conv-item active" href="./e6d7cdfe-dd95-493b-8474-27bf6721a647.html"><div class="conv-title">我刚刚新建了一个项目，是根据zemax文件夹建的，但是我不知道按...</div><div class="conv-meta"><span>4 msgs</span><span>2026-11-15 11:39</span></div></a>
+<a class="conv-item" href="./cafe9681-e78c-45dd-9866-5dfeeacf7425.html"><div class="conv-title">@[c:\Users\Administrator\Desktop...</div><div class="conv-meta"><span>2 msgs</span><span>2026-11-15 11:24</span></div></a>
 <a class="conv-item" href="./222deb6b-4c6e-4154-b587-357f3d17da1e.html"><div class="conv-title">请严格按 @[c:\Users\Administrator\De...</div><div class="conv-meta"><span>2 msgs</span><span>2026-11-15 10:59</span></div></a>
 <a class="conv-item" href="./c0f340d4-8f08-43e4-a09b-e83d54aabc7e.html"><div class="conv-title">检查一下我电脑上的deepseek harness的skill，...</div><div class="conv-meta"><span>15 msgs</span><span>2026-11-13 14:13</span></div></a>
 <a class="conv-item" href="./8e491cda-d9db-4417-a196-9fe1a9a1b942.html"><div class="conv-title">@[c:\Users\Administrator\Desktop...</div><div class="conv-meta"><span>4 msgs</span><span>2026-11-13 11:22</span></div></a>
@@ -269,7 +269,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1>我刚刚新建了一个项目，是根据zemax文件夹建的，但是我不知道按...</h1>
-        <div class="sub-meta">会话 ID: e6d7cdfe-dd95-493b-8474-27bf6721a647 | 轮次: 2 | 更新于: 2026-11-15 11:10</div>
+        <div class="sub-meta">会话 ID: e6d7cdfe-dd95-493b-8474-27bf6721a647 | 轮次: 4 | 更新于: 2026-11-15 11:39</div>
       </div>
       <div class="header-actions">
         <button class="btn" id="copyBtn" onclick="copyLink()">复制当前分享链接</button>
@@ -339,6 +339,60 @@
 <li><strong>Sidecar Web 路由与鉴权冒烟测试</strong>：验证 <code>/</code>、<code>/styles.css</code>、<code>/app.js</code>、<code>/preload.js</code>、<code>/api/state</code> 均返回 HTTP <code>200</code>，无 Token 的 <code>POST</code> 请求被拒绝（<code>401</code>），非法 UUID 参数返回 JSON <code>400</code>。</li>
 <li><strong>Antigravity 实时插件与服务状态</strong>（<code>GetAllPlugins</code> &amp; <code>GetSidecars</code>）：<code>antigravity-archive-manager</code> 已无报错加载（<code>loadError: null</code>、<code>disabled: null</code>），内置技能 <code>archive-manager</code> 已注册，<code>antigravity-archive-manager/archive_manager</code> 状态为 <strong><code>SIDECAR_STATUS_RUNNING</code></strong>（无错误）。</li>
 </ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>Zemax项目我已经看到了，不过你制作的插件的使用流程我不太懂，我观察了一圈只发现了多了两个项目。你可以在界面上多设置一项专门是这个插件的嘛，或者在settings里面也可以。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>先把两个关键现象说清楚：<strong>你没有看漏，也无法在不改 Antigravity 软件主程序的前提下，把第三方插件硬塞进 <code>Settings</code> 菜单或左侧主栏成为独立一级按钮</strong>。但你已经可以通过对话按钮、<code>Customizations</code>（插件中心）或对话右侧面板直接打开完整中文界面。</p>
+<hr>
+<h2>一、为什么会这样？（实查结论）</h2>
+<ul>
+<li><strong>为什么左侧主栏和 <code>Settings</code> 里没有单独多出这个插件按钮</strong></li>
+<li>核查 Antigravity 主程序前端逻辑与运行时开关（<code>GetMendelFlags</code>）：左侧主栏插件独立分区（<code>x2c</code> / <code>pluginSidebarSection</code>）当前被特性开关 <code>enable-plugin-sidebar-section</code> 关闭；<code>Settings</code> 菜单项也是内置硬编码列表（<code>Account / General / Appearance / Notifications / Customizations / Browser / App / Shortcuts / Models / Developer / Running</code>）。</li>
+<li>第三方插件只能挂载到 Antigravity 开放的两个原生位置：<strong>Customizations（插件中心）</strong> 与 <strong>对话右侧辅助面板（Extensions / Aux Pane）</strong>。</li>
+<li><strong>为什么观察一圈发现“多了两个项目”</strong></li>
+<li>Antigravity 的语言服务会自动为带 Web UI 服务的插件创建一个<strong>后台沙盒载体项目</strong>。目前你的本地项目共有 4 个非临时项目 ID：</li>
+<li>你的真实业务项目：<code>Zemax</code>（已恢复到首位）和 <code>光路</code>；</li>
+<li>插件服务载体项目：<code>antigravity-archive-manager/archive_manager</code>（我们刚创建的归档管理后台服务）和 <code>swarm/swarm_board</code>（Antigravity 内置多智能体扩展自带的后台服务）。</li>
+<li>主界面左侧栏会隐藏这类带 <code>sidecar</code> 标记的服务载体，但 <strong><code>Settings</code> 设置页左侧的 <code>Projects</code> 列表（<code>YRb</code>）没有过滤掉它们</strong>，所以你会同时看到它们。<strong>不要手动删除这两个带 <code>/</code> 名称的项目</strong>（插件面板里的“项目列表”已自动隔离它们，不会让你误删）。</li>
+</ul>
+<hr>
+<h2>二、三种打开与使用方式（推荐按方式 1 最快）</h2>
+<p>已在插件目录新增中文说明文档 <code>README.md</code>，现在整个插件共 12 个文件，均已通过测试与实时服务检查：</p>
+<h3>方式 1：在本对话内一键直达（最快）</h3>
+<p>直接点击下面这个内置快捷入口，会在右侧展开完整的中文管理界面：</p>
+<p>[打开归档与项目管理面板](sidecar://antigravity-archive-manager/archive_manager/)</p>
+<h3>方式 2：从 Antigravity 原生界面“插件中心”打开</h3>
+<p>如果你当前没有打开对话、或者想从一个固定管理入口进去：</p>
+<ul>
+<li>点击下方入口（或打开左侧栏 / Settings 里的 <strong>Customizations -&gt; Installed</strong>）：</li>
+</ul>
+<p>   [归档与项目管理器](customization://antigravity-archive-manager)</p>
+<ul>
+<li>进入插件详情页后：</li>
+<li>顶部会显示插件中文说明和 <strong>3 个快捷指令</strong>（点击即可直接发起对应操作对话）；</li>
+<li>向下滚动到 <strong>UI Extensions</strong>，点击 <strong><code>归档管理</code></strong>，在弹窗里点击 <strong><code>Open in Side Pane</code></strong>，即可直接在右侧面板打开管理界面。</li>
+</ul>
+<h3>方式 3：在任意对话中调出或用 <code>/archive-manager</code></h3>
+<ul>
+<li><strong>右侧面板菜单</strong>：打开任意对话 -&gt; 展开右上角辅助面板（Aux Pane）-&gt; 点击右上角 <strong><code>+</code></strong>（或概览区 <strong><code>Extensions</code></strong>）-&gt; 选择 <strong><code>归档与项目管理</code></strong>。</li>
+<li><strong>命令触发</strong>：在聊天框输入 <strong><code>/archive-manager</code></strong>，或直接打字告诉我需求（例如“查看已归档对话并恢复”“删除某条对话”）。</li>
+</ul>
+<hr>
+<h2>三、打开面板后的操作流程</h2>
+<ul>
+<li><strong>已归档对话 / 全部对话</strong>：上方支持关键字搜索与状态筛选；单条点<strong>恢复</strong>或勾选多条批量点<strong>恢复到侧边栏 / 删除</strong>（取消归档后立即回到主侧边栏）。</li>
+<li><strong>项目与侧栏诊断</strong>：只展示你的真实业务项目（当前为 <code>Zemax</code> 和 <code>光路</code>），自动检测诸如 <code>projectsOrder</code> 缺失、折叠或未对齐等异常并一键修复。</li>
+<li><strong>回收站安全保护</strong>：删除对话默认先进入插件的 <code>.trash/</code> 回收站目录，可随时还原；确认不再需要后再在回收站内<strong>彻底删除</strong>（当前还检测到 4 条历史孤立索引残留，可在面板内查看后决定是否清理）。</li>
+</ul>
+<p>&lt;details&gt;</p>
+<p>&lt;summary&gt;本次补充与运行自检记录（已验证通过）&lt;/summary&gt;</p>
+<ul>
+<li>新增文件：<code>README.md</code>（已验证 12 个插件文件全部为无 BOM UTF-8）。</li>
+<li>实时插件注册检查（<code>GetAllPlugins</code>）：<code>antigravity-archive-manager</code> 已加载，<code>hasReadme: true</code>，包含技能 <code>archive-manager</code> 与界面服务 <code>antigravity-archive-manager/archive_manager</code>。</li>
+<li>实时服务状态检查（<code>GetSidecars</code>）：<code>antigravity-archive-manager/archive_manager</code> 状态为 <code>SIDECAR_STATUS_RUNNING</code>（本地监听端口 <code>54449</code>）。</li>
+<li>单元测试与状态检查（<code>test_store.mjs</code> 与 <code>cli.mjs</code>）：<code>ALL STORE TESTS PASSED</code>；当前检出 12 个活跃对话、0 个已归档对话、2 个用户项目（<code>Zemax</code>、<code>光路</code>）、2 个 <code>sidecarProjects</code> 与 4 条孤立索引残留。</li>
+</ul>
+<p>&lt;/details&gt;</p>
 </div></article>
 
     </section>
