@@ -259,7 +259,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1>请挂载 @.agent/rules/optics-tutor.m...</h1>
-        <div class="sub-meta">会话 ID: c9eb2bf0-fed1-4de6-965b-944c2745224d | 轮次: 5 | 更新于: 2026-11-17 17:38</div>
+        <div class="sub-meta">会话 ID: c9eb2bf0-fed1-4de6-965b-944c2745224d | 轮次: 6 | 更新于: 2026-11-17 17:39</div>
       </div>
       <div class="header-actions">
         <a class="btn" id="mdViewBtn" href="./c9eb2bf0-fed1-4de6-965b-944c2745224d.md" target="_blank" rel="noopener noreferrer">📄 纯净 .md</a>
@@ -332,6 +332,43 @@
 <ul>
 <li><strong>消色差双胶合透镜</strong>：用一片冕牌玻璃（色散小）的正透镜，胶合一片火石玻璃（色散大）的负透镜。两者的色散方向相反，可以互</li>
 </ul>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><h2>3. 消色差光路（接上文）</h2>
+<p><strong>解法</strong>：</p>
+<ul>
+<li><strong>消色差双胶合透镜</strong>：一片冕牌玻璃正透镜（色散小）加一片火石玻璃负透镜（色散大）。设计条件是</li>
+</ul>
+<p>  $$\frac{\phi_1}{V_1} + \frac{\phi_2}{V_2} = 0$$</p>
+<p>  其中 φ 是光焦度，V 是阿贝数（数值越大，色散越小）。满足这个条件，两个波长（通常取 F 线和 C 线）的焦点就会重合。总光焦度 φ₁+φ₂ 不为零，所以透镜仍然能成像。</p>
+<ul>
+<li><strong>复消色差（APO）</strong>：让三个波长的焦点重合，用于宽带成像。</li>
+<li><strong>反射式光路</strong>：用离轴抛物面镜等反射元件代替透镜。反射角与波长无关，从原理上就没有色差，代价是不好调。</li>
+</ul>
+<p><strong>为什么组里在意</strong>：角分辨光谱依靠&quot;后焦面上的位置 ↔ 出射角&quot;这一一一对应关系。如果 631 nm 和 690 nm 的后焦面位置不同，同一角度在不同波长下会落在不同位置，色散图就会被拉歪，反推出的 NA 也就不准。</p>
+<p>一条典型的傅里叶成像链路：</p>
+<pre><code>样品 → 物镜(NA 0.7) → 后焦面 → 透镜L1 → 透镜L2(把后焦面成像到光谱仪狭缝) → 光谱仪 + CCD</code></pre>
+<p>L1 和 L2 都应选消色差双胶合透镜，<strong>而且要冕牌那一面朝向平行光</strong>，这样球差最小。</p>
+<h2>4. 莫尔转角：建议的学习顺序</h2>
+<ul>
+<li><strong>几何</strong>：两套周期为 a 的晶格相对转 θ，莫尔周期 $a_M \approx a/(2\sin(\theta/2)) \approx a/\theta$。用 Python 画两套六角点阵叠加，亲眼看看图案（30 分钟就能完成）。</li>
+<li><strong>魔角石墨烯</strong>：θ ≈ 1.1&#176; 时能带变平，出现超导。这是这个领域的起点，可以读 Cao et al., *Nature* 556, 43 (2018)。</li>
+<li><strong>莫尔激子</strong>：二维半导体（如 WSe₂/WS₂）扭转后，激子被困在莫尔势阱里。这一步和你们组最相关。</li>
+<li><strong>莫尔光子学</strong>：把&quot;扭转&quot;思想用到光子晶体上（twisted photonic lattices），从而控制光的局域和色散。</li>
+</ul>
+<p>问老师之前，先确认一下任务是哪一类：<strong>材料里的莫尔激子</strong>，还是<strong>光子结构的莫尔转角</strong>？两条路线需要读的文献几乎不重合。</p>
+<hr>
+<h2>本轮留给你的 3 个问题（每题一句话作答即可）</h2>
+<p><strong>❓ Q1</strong> </p>
+<p>DBR 每层为什么要取 λ/4 光学厚度，而不是 λ/2？</p>
+<blockquote>➡️ 从相邻两个界面反射光的光程差入手，还要考虑在&quot;低折射率到高折射率&quot;界面反射时的半波损失。</blockquote>
+<p><strong>❓ Q2</strong> </p>
+<p>如果反推出的实际 NA 只有 0.6，可能是光路中哪个元件出了问题？</p>
+<blockquote>➡️ 联系清单 #4（欠填充），再想想后焦面经 L1、L2 成像时，可能被哪个孔径&quot;切边&quot;。</blockquote>
+<p><strong>❓ Q3 - 悬置的 Q4（原题保留）</strong> </p>
+<p>L→∞ 和 d1→0 时，r 分别趋于什么？</p>
+<hr>
+<blockquote>[!NOTE]</blockquote>
+<blockquote>本轮是概念扫盲，还没有经过问答过关。按照之前的约定，暂不写入两份文档。你答完上面的问题后，我会把<strong>组会词汇表</strong>作为&quot;第 2 次&quot;补进 <code>01_光路学习历程.md</code>，并把&quot;莫尔转角学习&quot;和&quot;NA 反推&quot;加入 <code>02_探讨与理解记录.md</code> 的未解问题清单。</blockquote>
 </div></article>
 
     </section>
