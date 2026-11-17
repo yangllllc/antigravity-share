@@ -239,40 +239,32 @@
     @media (max-width: 820px) {
       body { flex-direction: column; }
       #sidebar { width: 100%; height: auto; position: static; max-height: 280px; }
+      .main-header { flex-wrap: wrap; padding: 14px 16px; }
+      .header-actions { flex-wrap: wrap; }
       .bubble { max-width: 96%; }
     }
   </style>
 </head>
-<body>
+<body data-conv-id="222deb6b-4c6e-4154-b587-357f3d17da1e" data-base-prefix="./c/">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="./index.html">Antigravity 对话分享</a></h2>
-      <div class="sync-badge">自动同步更新: 2026-11-17 12:00</div>
+      <div class="sync-badge" id="syncBadge">自动同步加载中...</div>
     </div>
-    <nav class="conv-list" aria-label="Conversations">
-      <a class="conv-item active" href="./c/222deb6b-4c6e-4154-b587-357f3d17da1e.html"><div class="conv-title">请严格按 @[c:\Users\Administrator\De...</div><div class="conv-meta"><span>6 msgs</span><span>2026-11-17 12:00</span></div></a>
-<a class="conv-item" href="./c/8e491cda-d9db-4417-a196-9fe1a9a1b942.html"><div class="conv-title">@[c:\Users\Administrator\Desktop...</div><div class="conv-meta"><span>6 msgs</span><span>2026-11-17 11:53</span></div></a>
-<a class="conv-item" href="./c/e6d7cdfe-dd95-493b-8474-27bf6721a647.html"><div class="conv-title">我刚刚新建了一个项目，是根据zemax文件夹建的，但是我不知道按...</div><div class="conv-meta"><span>4 msgs</span><span>2026-11-15 11:39</span></div></a>
-<a class="conv-item" href="./c/cafe9681-e78c-45dd-9866-5dfeeacf7425.html"><div class="conv-title">@[c:\Users\Administrator\Desktop...</div><div class="conv-meta"><span>2 msgs</span><span>2026-11-15 11:24</span></div></a>
-<a class="conv-item" href="./c/c0f340d4-8f08-43e4-a09b-e83d54aabc7e.html"><div class="conv-title">检查一下我电脑上的deepseek harness的skill，...</div><div class="conv-meta"><span>15 msgs</span><span>2026-11-13 14:13</span></div></a>
-<a class="conv-item" href="./c/c9eb2bf0-fed1-4de6-965b-944c2745224d.html"><div class="conv-title">@[c:\Users\Administrator\Desktop...</div><div class="conv-meta"><span>2 msgs</span><span>2026-11-13 11:18</span></div></a>
-<a class="conv-item" href="./c/bb1e7994-b052-407c-8be9-f5c7c55e9456.html"><div class="conv-title">我想知道antigravity的对话该怎么分享，因为我尝试了co...</div><div class="conv-meta"><span>14 msgs</span><span>2026-11-13 10:53</span></div></a>
-<a class="conv-item" href="./c/f4ffdcb7-d524-471a-a991-b7406a3854b2.html"><div class="conv-title">我正在继续升级本地的同济双模型 MCP 红队探针（目前为 v3....</div><div class="conv-meta"><span>9 msgs</span><span>2026-11-12 20:18</span></div></a>
-<a class="conv-item" href="./c/bab10e4d-18f2-4057-835d-a823662b83aa.html"><div class="conv-title">我使用学校的api连接了deepseek的最新模型v4.1fla...</div><div class="conv-meta"><span>22 msgs</span><span>2026-11-11 15:35</span></div></a>
-<a class="conv-item" href="./c/ff410536-ea4e-4c07-bf35-c830fb27226d.html"><div class="conv-title">这是我和gemini的对话，其实是关于我目前的背景，可以供你了解...</div><div class="conv-meta"><span>11 msgs</span><span>2026-11-09 16:29</span></div></a>
-<a class="conv-item" href="./c/407db27e-f215-4f6f-b821-ee6c76bb5128.html"><div class="conv-title">hello</div><div class="conv-meta"><span>6 msgs</span><span>2026-11-07 22:47</span></div></a>
-<a class="conv-item" href="./c/aee43892-ac3d-45ec-b86d-2843da81a054.html"><div class="conv-title">我想在这里记录我的光路学习历程，目前是第一次学习，我是同济大学的...</div><div class="conv-meta"><span>11 msgs</span><span>2026-11-06 14:31</span></div></a>
-
+    <nav class="conv-list" id="convList" aria-label="Conversations">
+      <noscript><div style="padding:12px;color:#c4c7c5;font-size:12px;">请启用 JavaScript 查看全部历史对话列表，或直接访问对应对话链接。</div></noscript>
     </nav>
   </aside>
   <main id="main">
     <header class="main-header">
       <div style="min-width:0;">
         <h1>请严格按 @[c:\Users\Administrator\De...</h1>
-        <div class="sub-meta">会话 ID: 222deb6b-4c6e-4154-b587-357f3d17da1e | 轮次: 6 | 更新于: 2026-11-17 12:00</div>
+        <div class="sub-meta">会话 ID: 222deb6b-4c6e-4154-b587-357f3d17da1e | 轮次: 8 | 更新于: 2026-11-17 12:04</div>
       </div>
       <div class="header-actions">
-        <button class="btn" id="copyBtn" onclick="copyLink()">复制当前分享链接</button>
+        <a class="btn" id="mdViewBtn" href="./c/222deb6b-4c6e-4154-b587-357f3d17da1e.md" target="_blank" rel="noopener noreferrer">📄 纯净 .md</a>
+        <button class="btn" id="copyMdBtn" type="button" onclick="copyCanonicalUrl('./c/222deb6b-4c6e-4154-b587-357f3d17da1e.md', 'copyMdBtn', '已复制 .md 链接')">复制 AI 纯净版 (.md)</button>
+        <button class="btn" id="copyBtn" type="button" onclick="copyCanonicalUrl('./c/222deb6b-4c6e-4154-b587-357f3d17da1e.html', 'copyBtn', '已复制直链')">复制对话直链</button>
       </div>
     </header>
     <section class="chat-canvas" aria-label="Conversation Content">
@@ -471,18 +463,56 @@ description: 全局交互与工程推理协议：中文交互与推理外显；�
 <li>删除 <code>chinese-language.md</code>，避免语言要求在两份文件里重复。</li>
 </ul>
 </div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>确认了，你直接覆盖了把，但是旧文件直接删了，没必要备份，因为对话记录里面其实也还是有的</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已经按你说的改好了：新版覆盖了旧协议，旧的语言规则文件直接删了，没有备份。</p>
+<p>| 文件 | 操作 | 结果 |</p>
+<p>|---|---|---|</p>
+<p>| <code>core-reasoning-protocol.md</code> | 用合并版覆盖 | 2598 字节，28 行；回读确认开头的生效设置（<code>trigger: always_on</code>）和结尾内容都完整 |</p>
+<p>| <code>chinese-language.md</code> | 删除 | 已删除 |</p>
+<p>| <code>deepseek-subagent.md</code> | 没动 | 保留，只在 AI 判断需要时才加载 |</p>
+<p>现在全局规则目录里只剩这两个文件，作用范围是全局，本机所有工作区都会用到。</p>
+<p><strong>需要注意：</strong> 规则是在对话开始时载入的，所以当前这个对话还在用旧版本。新规则要从下一个新对话起才生效，可以照上一条消息里的两个问题来测：</p>
+<ul>
+<li>问“小型项目用 SQLite 还是 PostgreSQL”：回复应该用中文，写出放弃另一个选项的理由，结尾有 1–2 个针对你项目情况的追问。</li>
+<li>问“Python 里怎么反转列表”：回复应该直接给答案，不带追问。</li>
+</ul>
+</div></article>
 
     </section>
   </main>
+  <script src="./sidebar.js"></script>
   <script>
-    function copyLink() {
-      var url = window.location.href;
+    function fallbackCopy(text, onDone) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try {
+        if (document.execCommand('copy')) { onDone(); }
+      } catch (e) {}
+      document.body.removeChild(ta);
+    }
+    function copyCanonicalUrl(relPath, btnId, doneLabel) {
+      var btn = document.getElementById(btnId);
+      if (!btn) return;
+      var orig = btn.getAttribute('data-orig') || btn.innerText;
+      btn.setAttribute('data-orig', orig);
+      var targetUrl = window.location.href;
+      try {
+        targetUrl = new URL(relPath, window.location.href).href;
+      } catch (e) {}
+      var onDone = function() {
+        btn.innerText = doneLabel;
+        setTimeout(function() { btn.innerText = orig; }, 2000);
+      };
       if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(url).then(function() {
-          var btn = document.getElementById('copyBtn');
-          btn.innerText = '已复制链接';
-          setTimeout(function() { btn.innerText = '复制当前分享链接'; }, 2000);
-        });
+        navigator.clipboard.writeText(targetUrl).then(onDone, function() { fallbackCopy(targetUrl, onDone); });
+      } else {
+        fallbackCopy(targetUrl, onDone);
       }
     }
   </script>

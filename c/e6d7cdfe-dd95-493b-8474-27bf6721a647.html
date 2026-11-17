@@ -239,30 +239,20 @@
     @media (max-width: 820px) {
       body { flex-direction: column; }
       #sidebar { width: 100%; height: auto; position: static; max-height: 280px; }
+      .main-header { flex-wrap: wrap; padding: 14px 16px; }
+      .header-actions { flex-wrap: wrap; }
       .bubble { max-width: 96%; }
     }
   </style>
 </head>
-<body>
+<body data-conv-id="e6d7cdfe-dd95-493b-8474-27bf6721a647" data-base-prefix="./">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
-      <div class="sync-badge">自动同步更新: 2026-11-17 12:00</div>
+      <div class="sync-badge" id="syncBadge">自动同步加载中...</div>
     </div>
-    <nav class="conv-list" aria-label="Conversations">
-      <a class="conv-item" href="./222deb6b-4c6e-4154-b587-357f3d17da1e.html"><div class="conv-title">请严格按 @[c:\Users\Administrator\De...</div><div class="conv-meta"><span>6 msgs</span><span>2026-11-17 12:00</span></div></a>
-<a class="conv-item" href="./8e491cda-d9db-4417-a196-9fe1a9a1b942.html"><div class="conv-title">@[c:\Users\Administrator\Desktop...</div><div class="conv-meta"><span>6 msgs</span><span>2026-11-17 11:53</span></div></a>
-<a class="conv-item active" href="./e6d7cdfe-dd95-493b-8474-27bf6721a647.html"><div class="conv-title">我刚刚新建了一个项目，是根据zemax文件夹建的，但是我不知道按...</div><div class="conv-meta"><span>4 msgs</span><span>2026-11-15 11:39</span></div></a>
-<a class="conv-item" href="./cafe9681-e78c-45dd-9866-5dfeeacf7425.html"><div class="conv-title">@[c:\Users\Administrator\Desktop...</div><div class="conv-meta"><span>2 msgs</span><span>2026-11-15 11:24</span></div></a>
-<a class="conv-item" href="./c0f340d4-8f08-43e4-a09b-e83d54aabc7e.html"><div class="conv-title">检查一下我电脑上的deepseek harness的skill，...</div><div class="conv-meta"><span>15 msgs</span><span>2026-11-13 14:13</span></div></a>
-<a class="conv-item" href="./c9eb2bf0-fed1-4de6-965b-944c2745224d.html"><div class="conv-title">@[c:\Users\Administrator\Desktop...</div><div class="conv-meta"><span>2 msgs</span><span>2026-11-13 11:18</span></div></a>
-<a class="conv-item" href="./bb1e7994-b052-407c-8be9-f5c7c55e9456.html"><div class="conv-title">我想知道antigravity的对话该怎么分享，因为我尝试了co...</div><div class="conv-meta"><span>14 msgs</span><span>2026-11-13 10:53</span></div></a>
-<a class="conv-item" href="./f4ffdcb7-d524-471a-a991-b7406a3854b2.html"><div class="conv-title">我正在继续升级本地的同济双模型 MCP 红队探针（目前为 v3....</div><div class="conv-meta"><span>9 msgs</span><span>2026-11-12 20:18</span></div></a>
-<a class="conv-item" href="./bab10e4d-18f2-4057-835d-a823662b83aa.html"><div class="conv-title">我使用学校的api连接了deepseek的最新模型v4.1fla...</div><div class="conv-meta"><span>22 msgs</span><span>2026-11-11 15:35</span></div></a>
-<a class="conv-item" href="./ff410536-ea4e-4c07-bf35-c830fb27226d.html"><div class="conv-title">这是我和gemini的对话，其实是关于我目前的背景，可以供你了解...</div><div class="conv-meta"><span>11 msgs</span><span>2026-11-09 16:29</span></div></a>
-<a class="conv-item" href="./407db27e-f215-4f6f-b821-ee6c76bb5128.html"><div class="conv-title">hello</div><div class="conv-meta"><span>6 msgs</span><span>2026-11-07 22:47</span></div></a>
-<a class="conv-item" href="./aee43892-ac3d-45ec-b86d-2843da81a054.html"><div class="conv-title">我想在这里记录我的光路学习历程，目前是第一次学习，我是同济大学的...</div><div class="conv-meta"><span>11 msgs</span><span>2026-11-06 14:31</span></div></a>
-
+    <nav class="conv-list" id="convList" aria-label="Conversations">
+      <noscript><div style="padding:12px;color:#c4c7c5;font-size:12px;">请启用 JavaScript 查看全部历史对话列表，或直接访问对应对话链接。</div></noscript>
     </nav>
   </aside>
   <main id="main">
@@ -272,7 +262,9 @@
         <div class="sub-meta">会话 ID: e6d7cdfe-dd95-493b-8474-27bf6721a647 | 轮次: 4 | 更新于: 2026-11-15 11:39</div>
       </div>
       <div class="header-actions">
-        <button class="btn" id="copyBtn" onclick="copyLink()">复制当前分享链接</button>
+        <a class="btn" id="mdViewBtn" href="./e6d7cdfe-dd95-493b-8474-27bf6721a647.md" target="_blank" rel="noopener noreferrer">📄 纯净 .md</a>
+        <button class="btn" id="copyMdBtn" type="button" onclick="copyCanonicalUrl('./e6d7cdfe-dd95-493b-8474-27bf6721a647.md', 'copyMdBtn', '已复制 .md 链接')">复制 AI 纯净版 (.md)</button>
+        <button class="btn" id="copyBtn" type="button" onclick="copyCanonicalUrl('./e6d7cdfe-dd95-493b-8474-27bf6721a647.html', 'copyBtn', '已复制直链')">复制对话直链</button>
       </div>
     </header>
     <section class="chat-canvas" aria-label="Conversation Content">
@@ -397,15 +389,38 @@
 
     </section>
   </main>
+  <script src="../sidebar.js"></script>
   <script>
-    function copyLink() {
-      var url = window.location.href;
+    function fallbackCopy(text, onDone) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try {
+        if (document.execCommand('copy')) { onDone(); }
+      } catch (e) {}
+      document.body.removeChild(ta);
+    }
+    function copyCanonicalUrl(relPath, btnId, doneLabel) {
+      var btn = document.getElementById(btnId);
+      if (!btn) return;
+      var orig = btn.getAttribute('data-orig') || btn.innerText;
+      btn.setAttribute('data-orig', orig);
+      var targetUrl = window.location.href;
+      try {
+        targetUrl = new URL(relPath, window.location.href).href;
+      } catch (e) {}
+      var onDone = function() {
+        btn.innerText = doneLabel;
+        setTimeout(function() { btn.innerText = orig; }, 2000);
+      };
       if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(url).then(function() {
-          var btn = document.getElementById('copyBtn');
-          btn.innerText = '已复制链接';
-          setTimeout(function() { btn.innerText = '复制当前分享链接'; }, 2000);
-        });
+        navigator.clipboard.writeText(targetUrl).then(onDone, function() { fallbackCopy(targetUrl, onDone); });
+      } else {
+        fallbackCopy(targetUrl, onDone);
       }
     }
   </script>
