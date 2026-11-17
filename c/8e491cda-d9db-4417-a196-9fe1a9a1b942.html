@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex">
-  <title>@[c:\Users\Administrator\Desktop... - Antigravity Share</title>
+  <title>你现在是我的首席状态架构师与 Windows 自动化工程专家。请... - Antigravity Share</title>
   <style>
     :root {
       --bg-main: #131314;
@@ -258,8 +258,8 @@
   <main id="main">
     <header class="main-header">
       <div style="min-width:0;">
-        <h1>@[c:\Users\Administrator\Desktop...</h1>
-        <div class="sub-meta">会话 ID: 8e491cda-d9db-4417-a196-9fe1a9a1b942 | 轮次: 7 | 更新于: 2026-11-17 12:04</div>
+        <h1>你现在是我的首席状态架构师与 Windows 自动化工程专家。请...</h1>
+        <div class="sub-meta">会话 ID: 8e491cda-d9db-4417-a196-9fe1a9a1b942 | 轮次: 9 | 更新于: 2026-11-17 12:06</div>
       </div>
       <div class="header-actions">
         <a class="btn" id="mdViewBtn" href="./8e491cda-d9db-4417-a196-9fe1a9a1b942.md" target="_blank" rel="noopener noreferrer">📄 纯净 .md</a>
@@ -464,6 +464,45 @@
 </ul>
 </div></article>
 <article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>直接将三个都进行修改把</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已同步完成 <code>template.html</code> 与 <code>sync_share.ps1</code> 的三项升级改造，当前正在运行冷/热缓存双轮验收测试，完成后立即汇报全部实测数据。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已一次性完成全部三项架构与功能升级，修改了 <code>template.html</code> 与 <code>sync_share.ps1</code>，并通过冷/热缓存双轮全量实测。</p>
+<hr>
+<h3>一、 三项核心升级落地详情</h3>
+<ul>
+<li><strong>外置共享侧边栏 <code>sidebar.js</code> + 网页顶栏 <code>.md</code> 直链按钮</strong></li>
+<li><strong><code>template.html</code></strong>：移除页面内联侧边栏列表 <code>{{SIDEBAR_ITEMS}}</code> 与全局同步时间戳，改为挂载 <code>data-conv-id</code> / <code>data-base-prefix</code> 属性并引入共享脚本 <code>sidebar.js</code>，通过安全 DOM API（<code>textContent</code>）渲染全部历史对话与更新时间；静态 <code>&lt;aside&gt;</code> 固定收敛至 <strong><code>423</code> 字符</strong>，彻底消除历史 <code>.html</code> 跨文件 Git 写放大。</li>
+<li><strong>顶栏新增 AI 分享入口</strong>：在 <code>.header-actions</code> 新增 <strong><code>📄 纯净 .md</code></strong> 直达链接、<strong><code>复制 AI 纯净版 (.md)</code></strong> 与 <strong><code>复制对话直链</code></strong> 按钮（通过 <code>new URL(relPath, window.location.href).href</code> 解析标准绝对链接，并附 <code>textarea</code> 降级复制兼容与移动端自动换行）。</li>
+</ul>
+<ul>
+<li><strong>超长对话顺序分片机制（<code>./c/&lt;id&gt;.p1.md</code>, <code>p2.md</code> ...）</strong></li>
+<li>在 <code>sync_share.ps1</code> 中新增 <code>Split-TurnIntoPieces</code> 与 <code>Build-AgentChunks</code>：当会话 <code>.md</code> 超出 <code>3,600</code> 字符或需要多片才能承载时，按<strong>时间正序</strong>（<code>T1 -&gt; TN</code>）切分为单片严格 <code>&lt;= 3,300</code> 字符的 <code>.pK.md</code> 分片文件；即便单轮正文自身超过 <code>2,850</code> 字符也会按换行边界切分为 <code>Part a/b</code> 子片，且每片自带 <code>Main</code> / <code>Prev</code> / <code>Next</code> 导航头尾与轮次范围标注。</li>
+<li>在主 <code>.md</code> 的 <code>[BREAKPOINT SUMMARY]</code> 中自动嵌入紧凑分片索引（如 <code>Pages (15 chunks, &lt;=3.3k each, chronological): ./c0f340d4...p1.md(T1) .. ./c0f340d4...p15.md(T15) [pattern: ...p{1..15}.md]</code>），并用动态预算限制 <code>[USER TIMELINE]</code> 确保摘要区恒定 <code>&lt;= 3,150</code> 字符；同时自动清理缩短会话遗留的孤立旧分片。</li>
+</ul>
+<ul>
+<li><strong>基于文件指纹的本地增量解析缓存（<code>sync_cache.json</code>）</strong></li>
+<li>在插件目录引入 <code>sync_cache.json</code>（位于 <code>site\</code> 外，不进 Git 仓库），同时校验 <code>sync_share.ps1</code> 与 <code>template.html</code> 的双文件修改时间戳+字节数签名（<code>generator_sig</code>），以及各会话 <code>transcript.jsonl</code> / <code>transcript_full.jsonl</code> 的精确 UTC ticks 与长度并校验输出产物存在性。</li>
+<li>未变更的历史会话直接复用缓存元数据，跳过 JSON 解析、HTML/MD 渲染与磁盘写入；若 <code>index.html</code> 指向会话发生变化则按需单条补读。</li>
+</ul>
+<hr>
+<h3>二、 实测验收结果（冷启动 + 热缓存双轮校验）</h3>
+<ul>
+<li><strong>语法与执行速度</strong></li>
+<li>PowerShell AST 解析：<code>PARSE_ERRORS=0</code>。</li>
+<li>冷启动全量重建（12 个会话 + 62 个分片）：<code>COLD_EXIT=0</code>，耗时 <strong><code>5017 ms</code></strong>。</li>
+<li>热缓存复用运行（无会话变更）：<code>WARM_EXIT=0</code>，耗时降至 <strong><code>539 ms</code></strong>（提速近 <strong>10 倍</strong>），且实测 <code>SKIP_HTML=True | SKIP_CACHE=True</code>（零多余磁盘写入）。</li>
+<li><strong>HTML 瘦身与分页达标</strong></li>
+<li><code>&lt;aside id=&quot;sidebar&quot;&gt;</code> 从原先 <code>1,811</code> 字符降为恒定 <strong><code>423</code> 字符</strong>，且 <code>HAS_COPY_MD_BTN=True</code>、<code>HAS_SIDEBAR_JS=True</code>、<code>SIDEBAR_JS_BYTES=3198</code>。</li>
+<li>全部 9 条超长会话共生成 <strong><code>62</code> 个</strong>分片，实测所有分片最大长度 <strong><code>MAX_CHUNK_CHARS=3269</code></strong>（全部严守 <code>&lt;= 3,300</code> 字符红线）；3 条短会话（<code>407db27e</code>、<code>c9eb2bf0</code>、<code>cafe9681</code>，正文均 <code>&lt;= 3,408</code> 字符）<code>Chunks=0</code>，无冗余切片。</li>
+<li>所有 12 条会话的主 <code>.md</code> 摘要区长度 <code>SummaryChars</code> 分布在 <strong><code>844 ~ 2,662</code> 字符</strong>（如 15 轮 <code>c0f340d4</code> 主文件摘要区 <code>2,433</code> 字符，搭配 <code>p1..p15</code> 完整分页；14 轮 <code>bb1e7994</code> 摘要区 <code>2,636</code> 字符，搭配 <code>p1..p6</code>）。</li>
+</ul>
+<hr>
+<h3>三、 同步生效说明</h3>
+<ul>
+<li>本地验证运行使用 <code>-SkipGitPush</code>，因此当前全部新版 <code>.html</code>、<code>.md</code>、<code>.p*.md</code>、<code>sidebar.js</code> 与 <code>index.html</code> 已就绪于 <code>site\</code>。</li>
+<li>本轮回复结束时，<code>hooks.json</code> 的 <code>Stop</code> Hook 会自动触发 <code>sync_share.ps1</code> 将本次改造产物提交并推送至 GitHub Pages（如您想立即看推送日志，也可手动运行 <code>sync_share.ps1</code> 后用浏览器或 <code>curl.exe -sI</code> 检验公网页头）。</li>
+</ul>
 </div></article>
 
     </section>
