@@ -259,7 +259,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1>请挂载 @.agent/rules/optics-tutor.m...</h1>
-        <div class="sub-meta">会话 ID: c9eb2bf0-fed1-4de6-965b-944c2745224d | 轮次: 2 | 更新于: 2026-11-13 11:18</div>
+        <div class="sub-meta">会话 ID: c9eb2bf0-fed1-4de6-965b-944c2745224d | 轮次: 5 | 更新于: 2026-11-17 17:38</div>
       </div>
       <div class="header-actions">
         <a class="btn" id="mdViewBtn" href="./c9eb2bf0-fed1-4de6-965b-944c2745224d.md" target="_blank" rel="noopener noreferrer">📄 纯净 .md</a>
@@ -293,6 +293,45 @@
 <blockquote>➡️ L→∞ 时，转 M1 在两个光阑上造成的移动量之比趋于多少？这时候 M1 更像&quot;纯平移&quot;还是&quot;纯转动&quot;？d1→0 时，I1 变成了谁的替身？r=0 意味着几轮收敛？</blockquote>
 <hr>
 <p>请逐题作答，Q2 必须写出推导过程，Q3 必须给出实测数字。我会先给出红黑榜诊断，你过关后再更新两份文档。</p>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>1，2，3的问题我不想回答。4可以保留一下。我先说我今天组会接收到的信息。已经开了两次组会了，但是其中大部分内容其实还是比较晦涩的听不太懂，因为我的组是实验物理的嘛。我比对了一些高频词，希望你能解释一下让我方便理解，最好进行拓展。高Q值，判断激光的生成的条件，局域场，DBR。其中有一段我不太懂，老师和博士师姐争论，给了一副波长的图，是从631nm到690nm的波长的单峰值图，然后有公式NA，NA=0.7，求解出θ=44.4&#176;。从而判断这是正确的，具体过程我就不了解了。但是因为老师的需求是通过波长，（可能是根据色散关系）通过公式求解出实际NA。接下去是消色差的光路，这个要具体讲解，玻色爱因斯坦凝聚和激发激子，哈密顿量，非厄米哈密顿量。然后是摩尔转角，我不知道具体的词是不是这个，可能有错别字，但是老师给我派了个任务，让我先学习这个摩尔转角</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>组会上这些词基本都围绕一个方向：<strong>DBR 微腔中的激子极化激元</strong>。我按这条线串起来讲。Q4 先挂着，之后再答。</p>
+<hr>
+<h2>0. 先给一张总图</h2>
+<p>两块 DBR 镜子夹一层发光材料（比如二维半导体），就构成一个微腔。腔里的<strong>光子</strong>和材料里的<strong>激子</strong>强耦合，形成半光半物质的准粒子，叫<strong>激子极化激元（polariton）</strong>。极化激元很轻，又是玻色子，数量够多时会发生类似 BEC 的<strong>凝聚</strong>，发出相干光。它的损耗不可忽略，所以要用<strong>非厄米哈密顿量</strong>描述。<strong>摩尔转角</strong>是把两层二维材料扭一个小角度，借此调控激子或光子能带的</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>这些词能串成一条线，我判断课题组做的是<strong>DBR 微腔里的激子极化激元</strong>（这是根据词汇推断的，未验证，可以找师姐确认一下）。</p>
+<h2>1. 名词速通</h2>
+<p>| 词 | 物理图像 | 和课题的关系 |</p>
+<p>|---|---|---|</p>
+<p>| <strong>DBR</strong> | 分布式布拉格反射镜：两种折射率的材料交替堆叠，每层光学厚度 λ/4，各界面的反射同相叠加，在一个波长带（&quot;阻带&quot;）内反射率可以超过 99.9% | 两块 DBR 相对放置就构成微腔 |</p>
+<p>| <strong>高 Q 值</strong> | Q = λ/Δλ ≈ 光在腔里存活的周期数。Q 越高，谱线越窄，光子寿命越长 | 光子寿命长，才来得及和物质发生强相互作用 |</p>
+<p>| <strong>局域场</strong> | 光场被压缩在很小的体积里，局部场强被放大 | 场越强，光和物质耦合越强；Purcell 因子正比于 Q/V |</p>
+<p>| <strong>激子</strong> | 半导体中电子和空穴靠库仑力束缚成的&quot;类氢原子&quot;，是一种玻色子 | 提供&quot;物质&quot;部分 |</p>
+<p>| <strong>激子极化激元</strong> | 腔光子和激子强耦合后形成的半光半物质准粒子，谱上表现为上下两支能带分裂（Rabi 分裂） | 课题主角 |</p>
+<p>| <strong>BEC（玻色-爱因斯坦凝聚）</strong> | 大量玻色子占据同一个最低量子态 | 极化激元质量极小，室温附近也可能凝聚，凝聚后发出相干光 |</p>
+<p>| <strong>哈密顿量</strong> | 描述系统能量的算符，它的本征值就是能带 | 最简单的是 2&#215;2 矩阵：对角元是光子能量和激子能量，非对角元是耦合强度 g |</p>
+<p>| <strong>非厄米哈密顿量</strong> | 把损耗（虚部 −iγ）写进对角元，本征值变成复数 | 腔会漏光、激子会衰减。这类系统有&quot;奇异点（EP）&quot;等新物理 |</p>
+<p>| <strong>摩尔转角</strong> | 应为 <strong>moir&#233; twist angle</strong>（莫尔/摩尔转角）。两层周期结构扭一个小角 θ，叠出周期大得多的莫尔超晶格，周期 ≈ a/θ | 用转角来调控激子或光子的能带，是当前的热点方向 |</p>
+<p><strong>判断激光产生的条件</strong>（组会上常用的三个判据，要同时满足）：</p>
+<ul>
+<li>输出强度对泵浦功率的曲线出现<strong>阈值拐点</strong>（双对数坐标下呈 S 形）；</li>
+<li>过阈值后<strong>线宽突然变窄</strong>；</li>
+<li>出现<strong>相干性</strong>：用干涉测一阶相干 g⁽&#185;⁾，或用 HBT 测 g⁽&#178;⁾→1。</li>
+</ul>
+<p>极化激元凝聚和普通激光的区别在于：前者不需要粒子数反转，阈值更低，而且能量随密度会发生<strong>蓝移</strong>。</p>
+<h2>2. NA = 0.7 → θ = 44.4&#176; 是怎么回事</h2>
+<p>$$\sin\theta_{max} = NA = 0.7 \;\Rightarrow\; \theta_{max} = \arcsin 0.7 = 44.4^\circ$$</p>
+<p>这是<strong>角分辨光谱（傅里叶成像）</strong>：物镜后焦面上的每个点对应一个出射角，所以图上的横轴是角度，也就是面内波矢</p>
+<p>$$k_\parallel = \frac{2\pi}{\lambda}\sin\theta$$</p>
+<p>你看到的 631–690 nm 的图应该就是<strong>色散图</strong>（波长对角度）。物镜能收集到的最大角度由 NA 决定，色散曲线在图上的截止边缘就对应 44.4&#176;。老师的思路是<strong>反过来用</strong>：从截止处的波长和 k 读出实际的 sinθ_max，也就是实际 NA，再和标称值 0.7 对照，以此检验光路有没有用满 NA。</p>
+<h2>3. 消色差光路</h2>
+<p><strong>问题</strong>：玻璃的折射率随波长变化（色散），焦距也跟着变，f(λ)。631 nm 和 690 nm 的光，傅里叶面不在同一个位置。</p>
+<p><strong>解法</strong>：</p>
+<ul>
+<li><strong>消色差双胶合透镜</strong>：用一片冕牌玻璃（色散小）的正透镜，胶合一片火石玻璃（色散大）的负透镜。两者的色散方向相反，可以互</li>
+</ul>
 </div></article>
 
     </section>
