@@ -247,14 +247,14 @@
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
-      <div class="sync-badge">自动同步更新: 2026-11-15 11:39:16</div>
+      <div class="sync-badge">自动同步更新: 2026-11-17 11:52</div>
     </div>
     <nav class="conv-list" aria-label="Conversations">
-      <a class="conv-item" href="./e6d7cdfe-dd95-493b-8474-27bf6721a647.html"><div class="conv-title">我刚刚新建了一个项目，是根据zemax文件夹建的，但是我不知道按...</div><div class="conv-meta"><span>4 msgs</span><span>2026-11-15 11:39</span></div></a>
+      <a class="conv-item" href="./222deb6b-4c6e-4154-b587-357f3d17da1e.html"><div class="conv-title">请严格按 @[c:\Users\Administrator\De...</div><div class="conv-meta"><span>4 msgs</span><span>2026-11-17 11:52</span></div></a>
+<a class="conv-item" href="./8e491cda-d9db-4417-a196-9fe1a9a1b942.html"><div class="conv-title">@[c:\Users\Administrator\Desktop...</div><div class="conv-meta"><span>5 msgs</span><span>2026-11-17 11:52</span></div></a>
+<a class="conv-item" href="./e6d7cdfe-dd95-493b-8474-27bf6721a647.html"><div class="conv-title">我刚刚新建了一个项目，是根据zemax文件夹建的，但是我不知道按...</div><div class="conv-meta"><span>4 msgs</span><span>2026-11-15 11:39</span></div></a>
 <a class="conv-item" href="./cafe9681-e78c-45dd-9866-5dfeeacf7425.html"><div class="conv-title">@[c:\Users\Administrator\Desktop...</div><div class="conv-meta"><span>2 msgs</span><span>2026-11-15 11:24</span></div></a>
-<a class="conv-item" href="./222deb6b-4c6e-4154-b587-357f3d17da1e.html"><div class="conv-title">请严格按 @[c:\Users\Administrator\De...</div><div class="conv-meta"><span>2 msgs</span><span>2026-11-15 10:59</span></div></a>
 <a class="conv-item" href="./c0f340d4-8f08-43e4-a09b-e83d54aabc7e.html"><div class="conv-title">检查一下我电脑上的deepseek harness的skill，...</div><div class="conv-meta"><span>15 msgs</span><span>2026-11-13 14:13</span></div></a>
-<a class="conv-item" href="./8e491cda-d9db-4417-a196-9fe1a9a1b942.html"><div class="conv-title">@[c:\Users\Administrator\Desktop...</div><div class="conv-meta"><span>4 msgs</span><span>2026-11-13 11:22</span></div></a>
 <a class="conv-item" href="./c9eb2bf0-fed1-4de6-965b-944c2745224d.html"><div class="conv-title">@[c:\Users\Administrator\Desktop...</div><div class="conv-meta"><span>2 msgs</span><span>2026-11-13 11:18</span></div></a>
 <a class="conv-item" href="./bb1e7994-b052-407c-8be9-f5c7c55e9456.html"><div class="conv-title">我想知道antigravity的对话该怎么分享，因为我尝试了co...</div><div class="conv-meta"><span>14 msgs</span><span>2026-11-13 10:53</span></div></a>
 <a class="conv-item" href="./f4ffdcb7-d524-471a-a991-b7406a3854b2.html"><div class="conv-title">我正在继续升级本地的同济双模型 MCP 红队探针（目前为 v3....</div><div class="conv-meta"><span>9 msgs</span><span>2026-11-12 20:18</span></div></a>
@@ -366,8 +366,8 @@
 <ul>
 <li><strong>MCP 服务端脚本（核心改造）</strong>：<code>tongji_deepseek_mcp.ps1</code></li>
 <li><strong>入参收敛为纯数据契约</strong>：仅要求传入 <code>{ question, draft_answer }</code> 两个必填字段（同时在代码层保留了对旧会话残留参数名的向下兼容）。</li>
-<li><strong>下行硬编码（<code><code>$RED_TEAM_SYS_PROMPT</code></code>）</strong>：在服务端内部锁死高强度红队逆向证伪 System Prompt 与 <code>&lt;question&gt;</code> / <code>&lt;draft_answer&gt;</code> XML 隔离模板，强制 <code>DeepSeek-V4.1-Flash</code>（温度锁定 <code>0.15</code>）按 <strong>【1. 隐含前提刺破】【2. 致命反例与失效边界】【3. 幸存逻辑压力测试】</strong> 三个正交模块输出，对主模型完全隐形（0 Token 占用）。</li>
-<li><strong>上行硬编码（<code><code>$wrappedOutput</code></code>）</strong>：在工具返回文本尾部自动挂载 <strong>【系统协议锁：阶段 3 主模型终审裁决指令】</strong>，提醒主模型甄别 Flash 模型的“伪反例”并锁死最终裁决权。</li>
+<li><strong>下行硬编码（<code>`$RED_TEAM_SYS_PROMPT`</code>）</strong>：在服务端内部锁死高强度红队逆向证伪 System Prompt 与 <code>&lt;question&gt;</code> / <code>&lt;draft_answer&gt;</code> XML 隔离模板，强制 <code>DeepSeek-V4.1-Flash</code>（温度锁定 <code>0.15</code>）按 <strong>【1. 隐含前提刺破】【2. 致命反例与失效边界】【3. 幸存逻辑压力测试】</strong> 三个正交模块输出，对主模型完全隐形（0 Token 占用）。</li>
+<li><strong>上行硬编码（<code>`$wrappedOutput`</code>）</strong>：在工具返回文本尾部自动挂载 <strong>【系统协议锁：阶段 3 主模型终审裁决指令】</strong>，提醒主模型甄别 Flash 模型的“伪反例”并锁死最终裁决权。</li>
 <li><strong>编码与代理加固</strong>：已保存为带 BOM 的 UTF-8 格式（杜绝 Windows PowerShell 5.1 多行中文字符串解析报错），并加入 <code>[System.Net.WebRequest]::DefaultWebProxy = $null</code> 自动绕过系统代理。</li>
 <li><strong>主模型侧路由规则</strong>：<code>deepseek-subagent.md</code></li>
 <li>剥离了原本冗长的“如何向 DeepSeek 提问”说明，浓缩为 <strong>【角色正交定位】+【阶段 2 $\rightarrow$ 阶段 3 唯一调用节点】+【零隐式上下文传参锁】</strong>。</li>
