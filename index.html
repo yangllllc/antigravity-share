@@ -259,7 +259,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1>我正在继续升级本地的同济双模型 MCP 红队探针（目前为 v3....</h1>
-        <div class="sub-meta">会话 ID: f4ffdcb7-d524-471a-a991-b7406a3854b2 | 轮次: 12 | 更新于: 2026-11-18 00:16</div>
+        <div class="sub-meta">会话 ID: f4ffdcb7-d524-471a-a991-b7406a3854b2 | 轮次: 14 | 更新于: 2026-11-18 00:22</div>
       </div>
       <div class="header-actions">
         <a class="btn" id="mdViewBtn" href="./c/f4ffdcb7-d524-471a-a991-b7406a3854b2.md" target="_blank" rel="noopener noreferrer">📄 纯净 .md</a>
@@ -424,6 +424,64 @@
 <li>精确验证了 $\lambda(\theta_{\max})=630.99\text{ nm}$、$NA=0.55$ 截断边界与 TE/TM 劈裂两类定义歧义及一阶灵敏度分析。</li>
 </ul>
 <p>正在等待<strong>测试 C</strong>（重放昨晚 <code>c9eb2bf0</code> 180s 超时物理长用例）完成并返回最终结果。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>正在等待最终修改后的 <strong>测试 C</strong>（<code>c9eb2bf0</code> 长用例四核并发重放）完成。刚才的 <strong>测试 A</strong>（<code>tools/list</code> 注册两项工具 <code>v5.0.0</code>）与 <strong>测试 B</strong>（<code>consult_tongji_brain</code> <code>fast_dual</code> 模式，耗时 <strong>14.4s</strong>、3 次校内调用）已全部通过。稍后测试 C 返回后我将为您完整汇报原理解析与所有变更细节。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p><strong>核心矛盾</strong>：校内每周 1000 积分没怎么消耗，不是因为同济接口没通，而是 <strong>v4.0.0 存在“日常触发率极低（单门禁死锁）+ 复杂调用必撞 180s 超时强杀 + 串行架构仅用到 12 个模型中的 2 个”三重阻塞</strong>。</p>
+<hr>
+<h3>一、 实证诊断与原理解析（基于本地日志与集群实测）</h3>
+<p>我排查了 <code>2026-11-12</code> 至 <code>2026-11-18</code> 的本地会话日志及同济 API 实测数据，定位到 <strong>4 个根因</strong>：</p>
+<ul>
+<li><strong>触发率极低（一周仅实际调用 2 次，且成功 1 次、超时 1 次）</strong></li>
+<li>审计近期约 10 个活跃会话（含百余步的排错、技能配置、规则评审、考研/组会问答），只有 <code>8e491cda</code>（11-13）与 <code>c9eb2bf0</code>（11-17）真正调用过 <code>delegate_to_deepseek</code>。</li>
+<li><strong>原因</strong>：原规则 <code>deepseek-subagent.md</code> 设为 <code>trigger: model_decision</code>（默认不注入上下文），且将触发条件死锁在“仅在【阶段 2→阶段 3】交界点调用一次”。大量多轮答疑、代码审校、公式核对任务因此 <strong>0 调用</strong>。</li>
+<li><strong>串行“思考黑洞”必然撞死 Antigravity 180s 硬超时</strong></li>
+<li>昨晚 <code>c9eb2bf0</code> 会话（18:54:54）调用 <code>delegate_to_deepseek</code> 时直接报错：<code>timed out after 3m0s: context deadline exceeded</code>；前几天唯一成功的 <code>8e491cda</code> 也耗时 <strong>143 秒</strong>。</li>
+<li><strong>实测原理</strong>：用相同光学推导短题实测同济集群发现，当默认开启推理思考且 <code>max_tokens=2048</code> 时，<code>DeepSeek-V4.1-Flash</code>（18.7s）、<code>GLM-5.3</code>（17.9s）、<code>MiMo-V2.6-Pro</code>（15.2s）<strong>全部把 2048 token 耗尽在内部 <code>reasoning</code> 上导致 <code>contentLen=0</code></strong>（<code>Kimi-K3.1-Pro</code> 在 60s 内直接超时）；同时同济 vLLM 后端<strong>忽略</strong> <code>reasoning_effort=&quot;low&quot;</code> 参数，只能通过 <code>chat_template_kwargs.enable_thinking=false</code> 控制。而 v4.0.0 让 Kimi 先跑 + DeepSeek 带着 8192 思考预算再串行跑 + 空正文后再触发 60s 补救，最坏总时长 <strong>300s &gt; 180s 宿主死线</strong>。</li>
+<li><strong>12 个校内模型只用了 2 个，且“全串行”浪费并发吞吐</strong></li>
+<li><code>agi.tongji.edu.cn/v1/models</code> 实测挂载了 12 个模型。关闭思考后，<code>MiMo-V2.6-Pro</code>（7.0s）、<code>DeepSeek-V4.1-Flash</code>（8.7s）、<code>Qwen3.8-Flash-Next</code>（12.3s）、<code>GLM-5.3</code>（17.8s）及限时约束下的 <code>Kimi-K3.1-Pro</code>（5.0s）均极快；但 v4.0.0 仅串行调用了 2 个，且在推理模型耗尽 <code>max_tokens</code> 时直接丢弃了已有几千字的 <code>reasoning</code> 结论。</li>
+<li><strong>隐藏工程缺陷（实测发现）</strong></li>
+<li>PowerShell 5.1 下单元素数组返回会被自动解包（leading comma 缺失会导致单任务 Wave 2 <code>$w2Res[0]</code> 取值 <code>$null</code> 静默降级）；且带中文字符的 <code>.ps1</code> 若无 UTF-8 BOM 会触发解析异常。</li>
+</ul>
+<hr>
+<h3>二、 v5.0.0 核心改进与修改落地</h3>
+<p>为在不撑爆 Antigravity 上下文的前提下把校内算力利用率拉高 2.5 倍并彻底消除超时，已对配置与脚本完成 <strong>v5.0.0 升级</strong>：</p>
+<ul>
+<li><strong>核心脚本重构（“Wave 1 四核并发围攻 + Wave 2 极速仲裁” + 145s 硬锁）</strong></li>
+<li>已修改：<code>tongji_deepseek_mcp.ps1</code> 并同步备份 <code>tongji_deepseek_mcp.ps1</code>（SHA-256 已校验完全一致）。</li>
+<li><strong><code>delegate_to_deepseek</code> 并发架构</strong>：</li>
+<li><strong>Wave 1（4 路并发，共享 48s 硬死线，在 <code>10.67.0.251</code> / <code>10.67.0.252</code> 间轮询发包）</strong>：同时发车 <code>Kimi-K3.1-Pro</code>（机制断层）+ <code>GLM-5.3</code>（系统与工程边界）+ <code>MiMo-V2.6-Pro</code>（数值/代码反例）+ <code>DeepSeek-V4.1-Flash</code>（开启深度思考，<code>max_tokens</code> 锁至 <code>3800</code>）。并新增 <code>Extract-ModelReply</code>：即使思考触顶导致 <code>content</code> 为空，也自动抢救 <code>reasoning</code> 尾段核心计算，且共享计时器到点仅 kill 慢进程、绝不拖死全链。</li>
+<li><strong>Wave 2（免思考极速仲裁合成）</strong>：将 Wave 1 多路攻击报告送入 <code>DeepSeek-V4.1-Flash</code>（<code>DisableThinking</code> 约 9~15s 必返；失败自动切 <code>Qwen3.8-Flash-Next</code> 补位），执行共性投票、剔除伪反例并压缩输出。</li>
+<li><strong>新增高频轻量外脑工具 <code>consult_tongji_brain</code></strong></li>
+<li>解决日常中复杂度任务“没有轻量化卸载通道”的问题，支持 4 种模式，10~35s 内并发调动 3~4 次校内模型并浓缩返回：</li>
+<li><code>fast_dual</code>（默认，约 14s）：<code>DeepSeek</code> + <code>MiMo</code> 双核互验 $\rightarrow$ <code>Qwen</code> 去重融合；</li>
+<li><code>math_check</code>（约 25s）：<code>DeepSeek思考</code> + <code>GLM思考</code> + <code>MiMo</code> 三核验算公式与数值 $\rightarrow$ <code>DeepSeek</code> 核定；</li>
+<li><code>code_audit</code>：<code>DeepSeek</code> + <code>Qwen</code> + <code>GLM</code> 三核审查边界漏洞与兼容性；</li>
+<li><code>deep_panel</code>：<code>Kimi</code> + <code>GLM</code> + <code>MiMo</code> 三视角拆解概念与机理 $\rightarrow$ <code>DeepSeek</code> 合成。</li>
+<li><strong>注册表、Schema 与路由规则同步更新</strong></li>
+<li>放行双工具：<code>mcp_config.json（Antigravity）</code> 与 <code>mcp_config.json（Config）</code> 的 <code>enabledTools</code> 均已添加 <code>&quot;consult_tongji_brain&quot;</code>。</li>
+<li>更新本地 Lazy Schema 与指令：<code>delegate_to_deepseek.json</code>、<code>consult_tongji_brain.json</code>、<code>instructions.md</code>。</li>
+<li>提高触发可见度：<code>deepseek-subagent.md</code> 改为 <code>trigger: always_on</code>（精简为 25 行，确立“简单直出 / 中度调 <code>consult_tongji_brain</code> / 重度调 <code>delegate_to_deepseek</code>”的三级分层路由）。</li>
+</ul>
+<hr>
+<h3>三、 最终改后实测结果（非跳过真实全链路运行）</h3>
+<p>在全部编辑保存（含 UTF-8 BOM）之后，对实际 MCP 进程执行了 3 组端到端实测：</p>
+<ul>
+<li><strong>测试 A（协议握手与工具暴露）</strong>：<code>initialize</code> 返回 <code>version: &quot;5.0.0&quot;</code>，<code>tools/list</code> 正确列出 <code>delegate_to_deepseek</code> 与 <code>consult_tongji_brain</code>。</li>
+<li><strong>测试 B（<code>consult_tongji_brain</code> <code>fast_dual</code> 模式）</strong>：实测 <strong>14.4s</strong>（总进程 14.8s）完成 3 次校内模型调用（<code>DeepSeek</code> + <code>MiMo</code> $\rightarrow$ <code>Qwen</code>），输出 1564 字符对比报告。</li>
+<li><strong>测试 C（重放昨晚 <code>c9eb2bf0</code> 180s 超时失败的光学微腔完整长用例）</strong>：</li>
+<li><strong>总耗时降至 54.6 秒</strong>（Wave 1 并发 44.8s $\rightarrow$ Wave 2 仲裁 9.3s，相比昨晚 180s 超时提速 3 倍以上）；</li>
+<li>该高负载下 Wave 1 中 <code>Kimi</code>、<code>GLM</code>、<code>MiMo</code> 三路按期完赛，超时的 <code>DS深水推导</code> 在 44s 处被安全隔离熔断未拖累全局，Wave 2 <code>DeepSeek</code> 综合 3 路完成仲裁（共 4 次有效模型调用），输出 <strong>1878 字符</strong>，成功定位“循环论证/欠定性”、“Abbe 正弦条件 vs $\tan\theta$ 40% 误差”、“$N\text{-}BK7$ 色差溢狭缝”等核心漏洞并剔除了 GLM 的自纠误判。</li>
+</ul>
+<hr>
+<h3>四、 边界提醒与后续确认</h3>
+<blockquote>[!NOTE]</blockquote>
+<blockquote>新增的 <code>consult_tongji_brain</code> 工具需要 Antigravity 重新加载 MCP 服务端（重启客户端或新开会话重新初始化 MCP）后才会在新对话的工具列表中生效；另外 <code>index.js</code> 的 DSH 直连补丁已核查完好。</blockquote>
+<p><strong>两个针对本次升级的边界追问（供你按需微调）</strong>：</p>
+<ul>
+<li>实测中 <code>consult_tongji_brain</code>（<code>fast_dual</code>）和 <code>delegate_to_deepseek</code> 在保留完整 LaTeX 公式和四节结构时实际输出在 <strong>1560～1880 字符</strong>左右（略高于 1200/1500 字理想线）。你是希望脚本在末尾做硬截断/进一步压缩细节到 1200 字内，还是认为 1500–1900 字符对公式不丢失更合适？</li>
+<li>当你遇到重度数学问题、且希望 Wave 1 里开启深度思考的 <code>DeepSeek-V4.1-Flash</code> 也尽可能跑完而不被 44s 切掉时，是否允许把 <code>delegate_to_deepseek</code> 的 Wave 1 预算从 48s 放宽到 <strong>65s</strong>（总耗时约 75s，仍远低于 180s 死线）？</li>
+</ul>
 </div></article>
 
     </section>
