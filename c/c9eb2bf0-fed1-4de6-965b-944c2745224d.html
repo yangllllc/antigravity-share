@@ -245,7 +245,7 @@
     }
   </style>
 </head>
-<body data-conv-id="c9eb2bf0-fed1-4de6-965b-944c2745224d" data-base-prefix="./">
+<body data-conv-id="c9eb2bf0-fed1-4de6-965b-944c2745224d" data-base-prefix="./" data-turn-count="12" data-update-time="2026-11-17 19:00" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -502,7 +502,17 @@
 
     </section>
   </main>
-  <script src="../sidebar.js"></script>
+  <script>
+    (function() {
+      var src = '../sidebar.js';
+      if (window.location.protocol !== 'file:') {
+        src += (src.indexOf('?') >= 0 ? '&' : '?') + '_t=' + Date.now();
+      }
+      var s = document.createElement('script');
+      s.src = src;
+      document.body.appendChild(s);
+    })();
+  </script>
   <script>
     function triggerBlobDownload(blob, filename) {
       var url = URL.createObjectURL(blob);

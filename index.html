@@ -245,7 +245,7 @@
     }
   </style>
 </head>
-<body data-conv-id="8e491cda-d9db-4417-a196-9fe1a9a1b942" data-base-prefix="./c/">
+<body data-conv-id="8e491cda-d9db-4417-a196-9fe1a9a1b942" data-base-prefix="./c/" data-turn-count="12" data-update-time="2026-11-18 10:40" data-is-index="1">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="./index.html">Antigravity 对话分享</a></h2>
@@ -259,7 +259,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1>你现在是我的首席状态架构师与 Windows 自动化工程专家。请...</h1>
-        <div class="sub-meta">会话 ID: 8e491cda-d9db-4417-a196-9fe1a9a1b942 | 轮次: 12 | 更新于: 2026-11-18 10:38</div>
+        <div class="sub-meta">会话 ID: 8e491cda-d9db-4417-a196-9fe1a9a1b942 | 轮次: 12 | 更新于: 2026-11-18 10:40</div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./c/8e491cda-d9db-4417-a196-9fe1a9a1b942.md" download="你现在是我的首席状态架构师与_Windows_自-8e491cda.md" onclick="return downloadMarkdown(event, './c/8e491cda-d9db-4417-a196-9fe1a9a1b942.md', '你现在是我的首席状态架构师与_Windows_自-8e491cda.md')">⬇️ 下载 Markdown (.md)</a>
@@ -541,7 +541,17 @@
 
     </section>
   </main>
-  <script src="./sidebar.js"></script>
+  <script>
+    (function() {
+      var src = './sidebar.js';
+      if (window.location.protocol !== 'file:') {
+        src += (src.indexOf('?') >= 0 ? '&' : '?') + '_t=' + Date.now();
+      }
+      var s = document.createElement('script');
+      s.src = src;
+      document.body.appendChild(s);
+    })();
+  </script>
   <script>
     function triggerBlobDownload(blob, filename) {
       var url = URL.createObjectURL(blob);
