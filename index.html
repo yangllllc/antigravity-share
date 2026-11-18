@@ -245,7 +245,7 @@
     }
   </style>
 </head>
-<body data-conv-id="f4ffdcb7-d524-471a-a991-b7406a3854b2" data-base-prefix="./c/" data-turn-count="26" data-update-time="2026-11-18 10:59" data-is-index="1">
+<body data-conv-id="f4ffdcb7-d524-471a-a991-b7406a3854b2" data-base-prefix="./c/" data-turn-count="27" data-update-time="2026-11-18 11:00" data-is-index="1">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="./index.html">Antigravity 对话分享</a></h2>
@@ -259,7 +259,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1>我正在继续升级本地的同济双模型 MCP 红队探针（目前为 v3....</h1>
-        <div class="sub-meta">会话 ID: f4ffdcb7-d524-471a-a991-b7406a3854b2 | 轮次: 26 | 更新于: 2026-11-18 10:59</div>
+        <div class="sub-meta">会话 ID: f4ffdcb7-d524-471a-a991-b7406a3854b2 | 轮次: 27 | 更新于: 2026-11-18 11:00</div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./c/f4ffdcb7-d524-471a-a991-b7406a3854b2.md" download="我正在继续升级本地的同济双模型_MCP_红队探针-f4ffdcb7.md" onclick="return downloadMarkdown(event, './c/f4ffdcb7-d524-471a-a991-b7406a3854b2.md', '我正在继续升级本地的同济双模型_MCP_红队探针-f4ffdcb7.md')">⬇️ 下载 Markdown (.md)</a>
@@ -558,6 +558,51 @@
 <li><strong>Test 3（<code>fast_dual</code>）</strong>：<strong>11.1 秒</strong>完成（<strong>537 字符</strong>），双强模型并发直出无触发超时。</li>
 </ul>
 <p>正等待 <strong>Test 4（<code>c9eb2bf0</code> 重度长用例重放）</strong> 返回后向您汇总完整审计与修改报告。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p><strong>一句话结论</strong>：ChatGPT 6.2 写的 <strong>v5.2.0 工程底座非常扎实</strong>（比 v5.1.0 明显更稳），完全值得以它为基线；但我在对现网代码审计和实测后，抓出了 <strong>1 个会导致整理阶段必挂的致命 Bug 和 2 个实测短板</strong>，现已全部修复并升级覆盖为 <strong>v5.2.1</strong>。</p>
+<hr>
+<h3>一、 v5.2.0 审计评价：哪些极强、哪些有暗坑</h3>
+<h4>1. 值得全盘保留的工程亮点</h4>
+<ul>
+<li><strong>零凭据泄漏</strong>：通过 <code>curl.exe --disable --config -</code> 从 stdin 管道注入 Bearer 与请求体，脚本和子进程命令行里不留密钥、也不落盘临时文件。</li>
+<li><strong>异步主调度 + Windows Job Object (<code>WorkerProcessGroup</code>)</strong>：父进程跑异步事件循环，慢请求期间照样响应 <code>ping</code> 和 <code>notifications/cancelled</code>，超时或宿主退出时由内核 Job 对象连根清理 <code>curl</code> 进程树。</li>
+<li><strong>全包体句子级硬截断 (<code>Enforce-CompactBudget</code>)</strong>：连同状态提示整段计数，确保 <code>delegate_to_deepseek</code> 恒定 $\le 1100$ 字符、<code>consult_tongji_brain</code> 恒定 $\le 900$ 字符，优先在句号/换行处收尾。</li>
+<li><strong>双内网 IP 建连回退 + 诚实降级</strong>：<code>--resolve ...:10.67.0.251,10.67.0.252</code> 与显式降级提示。</li>
+</ul>
+<h4>2. 实测揪出的 3 个真实缺陷（附实测证据）</h4>
+<ul>
+<li><strong>【致命 Bug】<code>DeepSeek-V4.1-Flash</code> 免思考字段丢失，导致 <code>math_check</code> 第二轮整理 100% 失败</strong></li>
+<li><strong>根因</strong>：v5.2.0 在 <code>Start-CampusCurlAsync</code> 第 315 行只传了 <code>chat_template_kwargs = @{ enable_thinking = $Thinking }</code>，删掉了 <code>thinking = $false</code>。而同济接口中 <code>Kimi</code> 认 <code>enable_thinking</code>，<strong><code>DeepSeek-V4.1-Flash</code> 只认 <code>thinking</code></strong>：实测（<code>task-413</code>）<code>only_enable_thinking</code> 仍会烧满 <code>reasoning_tokens=400</code>、<code>contentLen=0</code>，必须同时传 <code>thinking = $false</code> 才能关闭思考（<code>reasoning_tokens=0</code>）。</li>
+<li><strong>实测后果</strong>：在 <code>math_check</code> 实测（<code>task-386</code>、<code>task-408</code>）中，Wave 2 <code>DeepSeek 整理</code>（<code>MaxTokens=1500</code>）因默默开着思考耗尽 1500 <code>reasoning_tokens</code> 返回 <code>thinking limit</code>，两次全部退化为 <strong><code>整合未完成</code></strong>，并把第一轮 Kimi 盲算错的假数值（<code>631.6 nm</code> / <code>659 nm</code>）直接原样吐给了主模型！</li>
+<li><strong>【逻辑损耗】<code>Read-CampusJobReply</code> 对触顶输出一律“一刀清零”</strong></li>
+<li>原版在 <code>finish_reason == &#39;length&#39;</code> 时，即便 <code>message.content</code> 已经生成了 95% 的有效结论，也会被置为空串丢弃；且思考触顶时的 <code>reasoning</code> 尾段未保留给 Wave 2 做内部参考，导致重度题目容易直接报错或单路退化。</li>
+<li><strong>【实测退化与 Prompt 短板】<code>c9eb2bf0</code> 长用例下 Kimi 首轮超时，且 PS 5.1 JSON 转义污染数学/代码符号</strong></li>
+<li>在 v5.2.0 上重放 <code>c9eb2bf0</code>（<code>task-383</code>）时，<code>Kimi 机制</code> 在 60s 处触发 <code>timeout</code> 仅剩单路结果；同时 <code>ConvertTo-Json</code> 会把 <code>&lt;</code>、<code>&gt;</code>、<code>&amp;</code>、<code>&#39;</code> 转义为 <code>\u003c</code> 等 6 字符编码，浪费 Token 且干扰数学/代码理解；且缺少针对“算术错误/伪反例驳回”与“勿让 Kimi 盲算复杂开方”的约束。</li>
+</ul>
+<hr>
+<h3>二、 v5.2.1 完善修改明细（已直接覆盖落盘）</h3>
+<p>已更新 <code>tongji_deepseek_mcp.ps1</code> 与同步副本 <code>tongji_deepseek_mcp.ps1</code>（UTF-8 BOM，SHA-256 一致：<code>8DEE6A62B7BDA2CA1C7E9F5AB4DDE1A316F8473FDC2B882825DDBCAE0AFFA178</code>），并同步版本号至 <code>deepseek-subagent.md</code> 与 <code>instructions.md</code>：</p>
+<ul>
+<li><strong>修复双参数免思考控制</strong>：仅在 <code>$Thinking = $true</code> 时保留模型默认思考；当 <code>$Thinking = $false</code> 时同时发送 <code>enable_thinking = $false</code> 与 <code>thinking = $false</code>，彻底恢复 <code>DeepSeek-V4.1-Flash</code> 的 10s 级免思考高速整理。</li>
+<li><strong>分级挽救触顶输出（不向用户泄草稿，只供内部 Wave 2 复核）</strong>：</li>
+<li><code>content limit</code> 时保留已有正文并标记达上限状态；</li>
+<li><code>thinking limit</code> 时仍<strong>禁止</strong>在 <code>Get-FallbackText</code> 中直接把原始 <code>reasoning</code> 吐给用户（严守 v5.2.0 原则），但提取最后 800 字存入内部 <code>Reasoning</code> 字段供 Wave 2 <code>DeepSeek 整理</code> 交叉复核，若 Wave 2 失败仍诚实降级或报错。</li>
+<li><strong>Prompt 与长题抗超时优化</strong>：</li>
+<li>新增 <code>ConvertTo-CleanJson</code> 还原 PS 5.1 对 <code>&lt;</code>、<code>&gt;</code>、<code>&amp;</code>、<code>&#39;</code> 的 <code>\u003c</code> 转义，保留 JSON 注入隔离同时减少 Token 噪音；</li>
+<li>明确禁止 Kimi 在 <code>math_check</code> 中盲算复杂开方，聚焦量纲与物理边界陷阱；在 Wave 2 显式要求<strong>主动驳回探针中的算术误差与伪反例</strong>、严禁复述原题；</li>
+<li>将 <code>delegate_to_deepseek</code> Wave 1 预算微调至 <code>72s</code>（Kimi <code>1050 tokens / 65s</code>，DeepSeek <code>68s</code>）、Wave 2 <code>1600 tokens</code>。</li>
+</ul>
+<hr>
+<h3>三、 最终改后实测结果（全部真实链路通过）</h3>
+<p>| 测试项目 | v5.2.0 改前实测 | v5.2.1 改后实测（终稿后跑通） |</p>
+<p>| :--- | :--- | :--- |</p>
+<p>| <strong>Test 1：协议与配置核对</strong> | <code>5.2.0</code> | <code>version: 5.2.1</code>，<code>tools/list</code> 双工具 + <code>ping</code> 正常，两处 <code>mcp_config.json</code> SHA-256 一致 |</p>
+<p>| <strong>Test 2：<code>consult_tongji_brain</code> (<code>math_check</code>)</strong> | <strong>28.0s</strong>，Wave 2 挂成 <strong><code>整合未完成</code></strong>，直接把 Kimi 错算的 <code>631.6/659 nm</code> 吐回 | <strong>23.5s / 676 字符</strong>，Wave 2 正常仲裁，精准抓出并修正 Kimi <code>654.0 nm</code> 舍入误差为 <code>654.201 nm</code>，且指出 <code>n_eff sinθ_cav=NA</code> 成立前提 |</p>
+<p>| <strong>Test 3：<code>consult_tongji_brain</code> (<code>fast_dual</code>)</strong> | 依赖短题不触发思考截断 | <strong>11.1s / 537 字符</strong>，DeepSeek + Kimi 双路并发正常返回 |</p>
+<p>| <strong>Test 4：<code>delegate_to_deepseek</code> (<code>c9eb2bf0</code> 重放)</strong> | <strong>61.8s</strong>，<code>单路结果（Kimi 机制 timeout）</code> | <strong>66.8s / 1072 字符</strong>，Wave 1 Kimi 与 DeepSeek 双路完赛、Wave 2 成功合成；新增抓出 <code>$e^{\pm i\omega t}$</code> 非厄米虚部符号约定漏洞并驳回探针不可核实的数值 |</p>
+<blockquote>[!NOTE]</blockquote>
+<blockquote>所有修改已直接覆盖生效。若当前 IDE 进程内常驻了旧版 MCP Worker 缓存，新开会话或重启客户端后会立刻接入 <strong>v5.2.1</strong>。</blockquote>
+<p><strong>1 个收尾确认</strong>：Test 4 中最后一句因严格遵守 <code>1100</code> 字符整包上限在 1072 字符处自动于句界截断（<code>...需配合阈值 S 曲线、k=0 宏观占据与相干性。…（已截断）</code>）。在当前 <code>$target = 0.8 * limit</code>（约 880 字）的整理目标下偶有超 1000 字被轻截，你觉得维持现有 <code>1100</code> 硬上限保护上下文即可，还是希望把 <code>$synthesisPrompt</code> 内的引导字数系数从 <code>0.8</code> 收紧到 <code>0.72</code>（约 790 字）以彻底消除末尾截断标记？</p>
 </div></article>
 
     </section>
