@@ -259,7 +259,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1>我正在继续升级本地的同济双模型 MCP 红队探针（目前为 v3....</h1>
-        <div class="sub-meta">会话 ID: f4ffdcb7-d524-471a-a991-b7406a3854b2 | 轮次: 19 | 更新于: 2026-11-18 10:01</div>
+        <div class="sub-meta">会话 ID: f4ffdcb7-d524-471a-a991-b7406a3854b2 | 轮次: 20 | 更新于: 2026-11-18 10:01</div>
       </div>
       <div class="header-actions">
         <a class="btn" id="mdViewBtn" href="./c/f4ffdcb7-d524-471a-a991-b7406a3854b2.md" target="_blank" rel="noopener noreferrer">📄 纯净 .md</a>
@@ -494,6 +494,53 @@
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>正在对微调收尾后的 <strong>v5.1.0 精兵双核版</strong> 执行最终全套验收测试（含 <code>fast_dual</code> 30s 双强并发验证及 <code>c9eb2bf0</code> 长用例无截断收尾校验），完成后立即汇报最终结果。</p>
 </div></article>
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p><strong>测试 1 与测试 2 已全部通过</strong>（<code>fast_dual</code> 模式下 <code>DeepSeek</code> + <code>Kimi</code> 双强并发并蒸馏去重，<strong>23.8 秒</strong>返回，仅占 <strong>383 字符</strong>，无截断、零废话）。正等待 <strong>测试 3（<code>c9eb2bf0</code> 复杂长用例）</strong> 返回最后结果。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>完全认同您的判断！刚才我也用实际数据印证了这一点：不计校内积分成本时，把 <code>GLM-5.3</code>、<code>MiMo-V2.6-Pro</code>、<code>Qwen</code> 拉进来“凑数”反而会在长推导里引入低级算术误差和噪音（污染上下文、逼着主模型或仲裁官多花 Token 去纠偏）。</p>
+<p><strong>核心矛盾与改进原则</strong>：校内积分没怎么少、且主模型上下文需要严格保护，根源不在“模型数量不够多”，而在 <strong>v4.0.0 触发太死板（一周 10 个对话只调了 2 次，且重度调用因串行+思考黑洞撞死 180s 超时）</strong>。因此我已将架构重构定型为 <strong>v5.1.0“精兵双核 + 极限省上下文”</strong>。</p>
+<hr>
+<h3>一、 根因诊断与设计原理（基于实测与日志）</h3>
+<ul>
+<li><strong>为什么之前对话很多但校内积分几乎没动？</strong></li>
+<li><strong>触发率极低</strong>：排查 <code>2026-11-12</code> 至 <code>2026-11-18</code> 的历史日志（约 10 个活跃会话），仅 <code>8e491cda</code> 与 <code>c9eb2bf0</code> 真正调过 <code>delegate_to_deepseek</code>。原规则设为 <code>trigger: model_decision</code> 且锁死在“阶段 2→阶段 3 唯一节点”，导致 80% 的日常排错、代码审校、概念答疑会话 <strong>0 调用</strong>。</li>
+<li><strong>重度调用必撞 180s 超时强杀</strong>：昨晚 <code>c9eb2bf0</code> 调用直接报错 <code>timed out after 3m0s</code>。实测证明 <code>DeepSeek-V4.1-Flash</code> 开启思考后，即使面对短题也会烧满 <code>max_tokens</code> 在 <code>reasoning</code> 上；v4.0.0 让 Kimi 先跑、再串行等 DeepSeek 思考（最坏 120s+120s+60s=300s &gt; 180s 宿主死线），结果直接被掐断。</li>
+<li><strong>为什么 v5.1.0 只保留 <code>Kimi-K3.1-Pro</code> &#215; <code>DeepSeek-V4.1-Flash</code>？</strong></li>
+<li>实测同济 12 个模型后确认：<code>Kimi-K3.1-Pro</code> 擅长物理/工程机制与隐含假设解构，<code>DeepSeek-V4.1-Flash</code>（开启深度思考）擅长硬核数理/代码推演与逻辑仲裁。</li>
+<li>在不计校内成本的前提下，<strong>把同济算力预算集中砸在 <code>DeepSeek</code> 的 4800 token 深度思考与 <code>Kimi</code> 的机制对抗上</strong>，同时彻底删除次级模型噪音。</li>
+<li><strong>如何同时做到“不超时”和“极限省 Antigravity 上下文”？</strong></li>
+<li><strong>并行替代串行</strong>：<code>delegate_to_deepseek</code> Wave 1 同时发车 <code>Kimi</code>（免思考 ~20s）与 <code>DeepSeek</code>（开启 4800 token 深度思考 ~40s），耗时由“相加”变“取最大值”，且自动抢救触顶时的 <code>reasoning</code> 尾段结论；Wave 2 再用 <code>DeepSeek</code>（免思考 ~12s）交叉去伪，总预算硬锁 <strong>145s</strong>（实测 <strong>~55s</strong>）。</li>
+<li><strong>只输出纯增量、硬控字符上限</strong>：禁止子模型复述原题/初稿/客套，并在脚本层加入 <code>Enforce-CompactBudget</code> 硬上限保护（<code>consult_tongji_brain</code> 严控 ~380–900 字，<code>delegate_to_deepseek</code> 严控 ~1150 字）。</li>
+</ul>
+<hr>
+<h3>二、 修改落地清单</h3>
+<ul>
+<li><strong>核心 MCP 服务端升级至 v5.1.0</strong></li>
+<li>主脚本：<code>tongji_deepseek_mcp.ps1</code>（UTF-8 BOM，已与备份 <code>tongji_deepseek_mcp.ps1</code> 校验 SHA-256 一致）</li>
+<li><strong><code>delegate_to_deepseek</code></strong>（重度红队终审，45~80s，≤1200 字）：Wave 1 并发 <code>Kimi-K3.1-Pro</code> + <code>DeepSeek-V4.1-Flash(深度思考)</code> $\rightarrow$ Wave 2 <code>DeepSeek-V4.1-Flash</code> 交叉仲裁提纯，轮询 <code>10.67.0.251/252</code> 物理网卡直连。</li>
+<li><strong><code>consult_tongji_brain</code></strong>（新增高频轻量外脑，10~45s，≤900 字）：日常多轮任务随时卸载，支持 <code>fast_dual</code>（双强快查）、<code>math_check</code>（DeepSeek 深度思考硬算）、<code>code_audit</code>（双审代码/契约）、<code>deep_panel</code>（机理/边界拆解）；仅当需消化思考或超字数时才触发二次压缩，默认直出更省耗时。</li>
+<li><strong>宿主配置、Schema 与精简规则同步</strong></li>
+<li>放行双工具：<code>mcp_config.json（Antigravity）</code> 与 <code>mcp_config.json（Config）</code> 的 <code>enabledTools</code> 均已纳入 <code>consult_tongji_brain</code>。</li>
+<li>更新 Schema 与指令：<code>delegate_to_deepseek.json</code>、<code>consult_tongji_brain.json</code>、<code>instructions.md</code>。</li>
+<li>精简常驻路由规则：<code>deepseek-subagent.md</code>（改为 <code>trigger: always_on</code>，全文压缩至 16 行，几乎不占每轮上下文）。</li>
+</ul>
+<hr>
+<h3>三、 最终改后端到端实测结果（全真实链路运行）</h3>
+<p>在最终定稿保存后，已针对实际脚本执行全部 3 项验证：</p>
+<ul>
+<li><strong>测试 1（协议注册）</strong>：<code>initialize</code> 返回 <code>version: &quot;5.1.0&quot;</code>，<code>tools/list</code> 正确输出 <code>delegate_to_deepseek</code> 与 <code>consult_tongji_brain</code>。</li>
+<li><strong>测试 2（<code>consult_tongji_brain</code> <code>fast_dual</code> 模式）</strong>：</li>
+<li><strong>耗时 23.8s</strong>（总进程 24.2s，<code>DS核心解 + Kimi盲区</code> 双强并发 + DeepSeek 蒸馏去重，3 次校内调用）；</li>
+<li><strong>返回长度仅 383 字符</strong>，精准对比光子激光与极化激元 BEC 阈值与蓝移特征，零废话。</li>
+<li><strong>测试 3（重放昨晚 <code>c9eb2bf0</code> 180s 超时光学长用例）</strong>：</li>
+<li><strong>总耗时 54.5s</strong>（Wave 1 <code>Kimi机制 + DS深水推演</code> 41.1s 全部完赛 $\rightarrow$ Wave 2 <code>DeepSeek-V4.1-Flash</code> 仲裁 13.4s），彻底消除 180s 超时；</li>
+<li><strong>返回总长 1270 字符</strong>（相比此前 2000+ 字版本节省近 40% 主模型上下文；第 3 节末尾因触及 <code>1150</code> 字符硬上限被 <code>...(已精简截断)</code> 安全收尾，核心死穴“循环论证、图义欠定、$n_{\text{eff}}(λ,θ)$ 常数化误区、Abbe 正弦条件 <code>0.98</code> 误差、BK7 色差 <code>0.39 mm</code> vs 焦深 <code>1.3 μm</code>”均已完整落盘）。</li>
+</ul>
+<blockquote>[!NOTE]</blockquote>
+<blockquote>请重启 Antigravity 或新开会话触发 MCP 客户端重载，使新工具 <code>consult_tongji_brain</code> 与 <code>always_on</code> 短规则正式接入新对话；DSH 桌面端穿透补丁 <code>index.js</code> 已确认完好无损。</blockquote>
+<p><strong>两个边界微调确认</strong>：</p>
+<ul>
+<li>测试 3 中 <code>1150</code> 字符硬上限导致第 3 节“伪反例剔除 &amp; 交付抓手”末尾略微截断。你是偏向<strong>保持严格截断（绝对锁死 ≤1200 字省上下文）</strong>，还是希望把指令压缩到 <code>700 字</code> 并把硬截断放宽到 <code>1300 字</code> 以保第 3 节完整收尾？</li>
+<li>日常普通问答（如概念解释）调用 <code>consult_tongji_brain</code> 需要额外 <strong>15~25 秒</strong> 并发等待，你觉得这个延迟在日常多轮互动中完全可接受，还是希望把 <code>fast_dual</code> 默认精简为单调 1 次 <code>DeepSeek-V4.1-Flash</code>（约 <strong>6~9 秒</strong>返回）？</li>
+</ul>
 </div></article>
 
     </section>
