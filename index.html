@@ -245,7 +245,7 @@
     }
   </style>
 </head>
-<body data-conv-id="f4ffdcb7-d524-471a-a991-b7406a3854b2" data-base-prefix="./c/" data-turn-count="29" data-update-time="2026-11-18 11:11" data-is-index="1">
+<body data-conv-id="f4ffdcb7-d524-471a-a991-b7406a3854b2" data-base-prefix="./c/" data-turn-count="30" data-update-time="2026-11-18 11:12" data-is-index="1">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="./index.html">Antigravity 对话分享</a></h2>
@@ -259,7 +259,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1>我正在继续升级本地的同济双模型 MCP 红队探针（目前为 v3....</h1>
-        <div class="sub-meta">会话 ID: f4ffdcb7-d524-471a-a991-b7406a3854b2 | 轮次: 29 | 更新于: 2026-11-18 11:11</div>
+        <div class="sub-meta">会话 ID: f4ffdcb7-d524-471a-a991-b7406a3854b2 | 轮次: 30 | 更新于: 2026-11-18 11:12</div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./c/f4ffdcb7-d524-471a-a991-b7406a3854b2.md" download="我正在继续升级本地的同济双模型_MCP_红队探针-f4ffdcb7.md" onclick="return downloadMarkdown(event, './c/f4ffdcb7-d524-471a-a991-b7406a3854b2.md', '我正在继续升级本地的同济双模型_MCP_红队探针-f4ffdcb7.md')">⬇️ 下载 Markdown (.md)</a>
@@ -607,6 +607,45 @@
 <article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>最后你查看一下使用条件，就是他的提示词，我觉得功能已经很好了，你看看有什么不足的地方可以修改的，直接进行修改但是要告诉我为什么要这样修改，它不足的原因是什么</p>
 </div></article>
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成使用条件、路由规则、Schema 与整理端提示词的同步优化，正在执行最后一轮 <code>c9eb2bf0</code> 长用例实测以验证收尾无截断（协议握手及 SHA-256 一致校验已通过），马上向您汇报修改原因与结果。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已全面排查并修改了所有使用条件与提示词层文件（涵盖规则、MCP 服务指令、工具 Schema 与整理端 Prompt）。核心问题是：<strong>原提示词的触发阈值偏主观且隐含“单次调用”限制，导致主模型惰性跳过，同时缺乏“传参瘦身”约束与防截断条数收口。</strong></p>
+<hr>
+<h3>一、 原提示词/使用条件的 4 个不足与根因</h3>
+<ul>
+<li><strong>触发条件模糊（依赖主模型主观判断“中/重复杂度”）</strong></li>
+<li><strong>不足</strong>：原 <code>deepseek-subagent.md</code> 仅写“简单问答直接处理、中复杂度核查使用 <code>consult_tongji_brain</code>、重度推导调用 <code>delegate_to_deepseek</code>”。</li>
+<li><strong>原因</strong>：对强主模型而言，没有客观信号界定什么是“中复杂度”。遇到多概念答疑、代码修改排查或带 2~3 步公式的追问时，主模型默认认为“我自己就能答”，于是再次跳过调用。</li>
+<li><strong>存在“整个对话仅调一次”的隐含互斥与自我限制</strong></li>
+<li><strong>不足</strong>：原规则和 <code>delegate_to_deepseek.json</code> 均写“调用 <code>delegate_to_deepseek</code> 一次”，且未说明 <code>consult_tongji_brain</code> 支持跨轮多轮调用。</li>
+<li><strong>原因</strong>：当对话进入第 2 轮需求变更、或先用 <code>consult_tongji_brain</code> 查了某处细节后，主模型容易产生“我已经调过一次了，这轮不该再调”的错误收敛。</li>
+<li><strong>缺“入参瘦身”约束，且懒加载查找多耗一轮工具调用</strong></li>
+<li><strong>不足</strong>：规则未提供 Schema 目录路径，也未约束主模型向子模型传参时的冗余散文。</li>
+<li><strong>原因</strong>：我们查看历史日志（<code>c9eb2bf0</code>）发现，主模型曾额外花一轮 <code>run_command</code> 列目录才定位到 JSON Schema；且经常把几千字整段解释塞进 <code>draft_answer</code>，白白消耗主模型自身的生成 Token（<code>output_tokens</code>）。</li>
+<li><strong>整理端无条数收口，导致复杂题偶发末尾被截断</strong></li>
+<li><strong>不足</strong>：此前 Test 4 返回 <code>1072</code> 字符时，第三节末尾恰好触及 <code>1100</code> 字符整包上限而被 <code>…（已截断）</code>。</li>
+<li><strong>原因</strong>：<code>$target = 0.8 * bodyLimit</code>（约 880 字）加上无条数限制，遇到密集物理公式时容易撑超 <code>1100</code> 上限。</li>
+</ul>
+<hr>
+<h3>二、 修改落地清单（全部同步覆盖）</h3>
+<ul>
+<li><strong>重构 <code>always_on</code> 核心路由条件</strong>：<code>deepseek-subagent.md</code></li>
+<li><strong>改为客观信号清单</strong>：明确 4 类“只要命中即积极卸载 <code>consult_tongji_brain</code>”的场景（① 多概念辨析/实验机理/学习答疑；② 含 $\ge 2$ 步公式/单位/数值计算；③ 非平凡代码改写、排错或补丁审计；④ 方案快速交叉对照），并明写<strong>支持同对话多轮按需调用</strong>。</li>
+<li><strong>明确多轮重大交付边界</strong>：将 <code>delegate_to_deepseek</code> 从模糊的“调用一次”改为“<strong>每轮重大交付可调一次</strong>”。</li>
+<li><strong>直给目录与精炼传参铁律</strong>：标注 Schema 目录 <code>C:\Users\Administrator\.gemini\antigravity\mcp\tongji-deepseek-subagent\</code>，明确要求“<strong>只传核心骨架/公式/代码，禁止灌入大段冗余散文以省主模型输出 Token</strong>”，同时全文仍压在 10 行以内不增加常驻上下文负担。</li>
+<li><strong>同步运行时指令、Schema 与防截断收敛</strong>：</li>
+<li>更新 <code>tongji_deepseek_mcp.ps1</code> 与副本 <code>tongji_deepseek_mcp.ps1</code>（SHA-256 一致：<code>F0159313F54A3B868FDA4196EA49533C0D66816C5B0712E0FCB8B2337A46900C</code>），并同步更新 <code>instructions.md</code>、<code>delegate_to_deepseek.json</code>、<code>consult_tongji_brain.json</code>。</li>
+<li>将 Wave 2 <code>$target</code> 系数由 <code>0.8</code> 调整为 <code>0.72</code>（<code>delegate</code> 引导在 ~790 字内），明确限定“只保留最核心的 3~4 条致命修正/判据与 1~2 条伪反例/算术误差驳回、严禁尾句残缺”。</li>
+</ul>
+<hr>
+<h3>三、 最终修改后实测验证</h3>
+<ul>
+<li><strong>协议与同步核验</strong>：<code>initialize</code> 返回 <code>v5.2.1</code>（<code>instructions</code> 精简至 <code>340</code> 字符），<code>tools/list</code> 正常列出 <code>delegate_to_deepseek</code> 与 <code>consult_tongji_brain</code>。</li>
+<li><strong>重放 <code>c9eb2bf0</code> 复杂光学长用例</strong>：</li>
+<li><strong>耗时 <code>63.6s</code> | <code>isError: False</code> | 整包长度 <code>882</code> 字符 | <code>Truncated: False</code></strong>（无任何截断尾巴！）；</li>
+<li>Wave 2 完整输出 4 条致命修正、2 条驳回（精准抓出“$\tan/\sin=1.4$ 误比”及“$\arcsin(\tan 44.4^\circ)$ 溢出无定义”），并诚实标出 <code>探针触顶，已由整理阶段交叉复核</code> 与双方 <code>待核冲突</code>。</li>
+</ul>
+<blockquote>[!NOTE]</blockquote>
+<blockquote>所有规则与脚本已就位，<strong>下一轮新开会话（或重启 Antigravity 重载 MCP 后）</strong> 将按新版触发清单自动生效。</blockquote>
 </div></article>
 
     </section>
