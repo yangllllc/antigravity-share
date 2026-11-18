@@ -262,8 +262,7 @@
         <div class="sub-meta">会话 ID: e6d7cdfe-dd95-493b-8474-27bf6721a647 | 轮次: 4 | 更新于: 2026-11-15 11:39</div>
       </div>
       <div class="header-actions">
-        <a class="btn" id="mdViewBtn" href="./e6d7cdfe-dd95-493b-8474-27bf6721a647.md" target="_blank" rel="noopener noreferrer">📄 纯净 .md</a>
-        <button class="btn" id="copyMdBtn" type="button" onclick="copyCanonicalUrl('./e6d7cdfe-dd95-493b-8474-27bf6721a647.md', 'copyMdBtn', '已复制 .md 链接')">复制 AI 纯净版 (.md)</button>
+        <a class="btn" id="downloadMdBtn" href="./e6d7cdfe-dd95-493b-8474-27bf6721a647.md" download="我刚刚新建了一个项目，是根据zemax文件夹建的-e6d7cdfe.md" onclick="return downloadMarkdown(event, './e6d7cdfe-dd95-493b-8474-27bf6721a647.md', '我刚刚新建了一个项目，是根据zemax文件夹建的-e6d7cdfe.md')">⬇️ 下载 Markdown (.md)</a>
         <button class="btn" id="copyBtn" type="button" onclick="copyCanonicalUrl('./e6d7cdfe-dd95-493b-8474-27bf6721a647.html', 'copyBtn', '已复制直链')">复制对话直链</button>
       </div>
     </header>
@@ -391,6 +390,54 @@
   </main>
   <script src="../sidebar.js"></script>
   <script>
+    function triggerBlobDownload(blob, filename) {
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function() { URL.revokeObjectURL(url); }, 1500);
+    }
+    function downloadMarkdown(e, relPath, filename) {
+      if (window.location.protocol === 'file:' || !window.fetch || !window.Blob) {
+        return true;
+      }
+      if (e) e.preventDefault();
+      var btn = document.getElementById('downloadMdBtn');
+      var orig = btn ? (btn.getAttribute('data-orig') || btn.innerText) : '';
+      if (btn) {
+        btn.setAttribute('data-orig', orig);
+        btn.innerText = '正在下载...';
+      }
+      var targetUrl = relPath;
+      try { targetUrl = new URL(relPath, window.location.href).href; } catch (err) {}
+      fetch(targetUrl, { cache: 'no-cache' })
+        .then(function(resp) {
+          if (!resp.ok) throw new Error('HTTP ' + resp.status);
+          return resp.text();
+        })
+        .then(function(text) {
+          var blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
+          triggerBlobDownload(blob, filename);
+          if (btn) {
+            btn.innerText = '已下载 .md';
+            setTimeout(function() { btn.innerText = orig; }, 2000);
+          }
+        })
+        .catch(function() {
+          if (btn) btn.innerText = orig;
+          var a = document.createElement('a');
+          a.href = targetUrl;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        });
+      return false;
+    }
     function fallbackCopy(text, onDone) {
       var ta = document.createElement('textarea');
       ta.value = text;

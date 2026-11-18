@@ -259,11 +259,10 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1>你现在是我的首席状态架构师与 Windows 自动化工程专家。请...</h1>
-        <div class="sub-meta">会话 ID: 8e491cda-d9db-4417-a196-9fe1a9a1b942 | 轮次: 9 | 更新于: 2026-11-17 12:06</div>
+        <div class="sub-meta">会话 ID: 8e491cda-d9db-4417-a196-9fe1a9a1b942 | 轮次: 10 | 更新于: 2026-11-18 10:32</div>
       </div>
       <div class="header-actions">
-        <a class="btn" id="mdViewBtn" href="./8e491cda-d9db-4417-a196-9fe1a9a1b942.md" target="_blank" rel="noopener noreferrer">📄 纯净 .md</a>
-        <button class="btn" id="copyMdBtn" type="button" onclick="copyCanonicalUrl('./8e491cda-d9db-4417-a196-9fe1a9a1b942.md', 'copyMdBtn', '已复制 .md 链接')">复制 AI 纯净版 (.md)</button>
+        <a class="btn" id="downloadMdBtn" href="./8e491cda-d9db-4417-a196-9fe1a9a1b942.md" download="你现在是我的首席状态架构师与_Windows_自-8e491cda.md" onclick="return downloadMarkdown(event, './8e491cda-d9db-4417-a196-9fe1a9a1b942.md', '你现在是我的首席状态架构师与_Windows_自-8e491cda.md')">⬇️ 下载 Markdown (.md)</a>
         <button class="btn" id="copyBtn" type="button" onclick="copyCanonicalUrl('./8e491cda-d9db-4417-a196-9fe1a9a1b942.html', 'copyBtn', '已复制直链')">复制对话直链</button>
       </div>
     </header>
@@ -504,11 +503,62 @@
 <li>本轮回复结束时，<code>hooks.json</code> 的 <code>Stop</code> Hook 会自动触发 <code>sync_share.ps1</code> 将本次改造产物提交并推送至 GitHub Pages（如您想立即看推送日志，也可手动运行 <code>sync_share.ps1</code> 后用浏览器或 <code>curl.exe -sI</code> 检验公网页头）。</li>
 </ul>
 </div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>我发现了新的问题，就是你在点击纯净.md后出现的是他的内容，这个还好；然后是点击复制ai纯净版后出现的是复制的链接，但是我交给gemini它打不开这个链接，显示：网页读取工具访问目标链接时返回底层异常状态（URL_FETCH_STATUS_MISC_ERROR），我无法访问你提供的该网页内容，已严格停止任何推断与脑补。</p>
+<p>可能的原因是该 .md 文件刚推送至 GitHub Pages 尚未完成 CDN 分发（返回 404），或该直链路径当前不可公开抓取。所以我想着可不可以直接变成点击后下载成markdown格式的文件，供我分享，把这两个按钮合并成一个下载，分享链接的按钮依然存在使用</p>
+</div></article>
 
     </section>
   </main>
   <script src="../sidebar.js"></script>
   <script>
+    function triggerBlobDownload(blob, filename) {
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function() { URL.revokeObjectURL(url); }, 1500);
+    }
+    function downloadMarkdown(e, relPath, filename) {
+      if (window.location.protocol === 'file:' || !window.fetch || !window.Blob) {
+        return true;
+      }
+      if (e) e.preventDefault();
+      var btn = document.getElementById('downloadMdBtn');
+      var orig = btn ? (btn.getAttribute('data-orig') || btn.innerText) : '';
+      if (btn) {
+        btn.setAttribute('data-orig', orig);
+        btn.innerText = '正在下载...';
+      }
+      var targetUrl = relPath;
+      try { targetUrl = new URL(relPath, window.location.href).href; } catch (err) {}
+      fetch(targetUrl, { cache: 'no-cache' })
+        .then(function(resp) {
+          if (!resp.ok) throw new Error('HTTP ' + resp.status);
+          return resp.text();
+        })
+        .then(function(text) {
+          var blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
+          triggerBlobDownload(blob, filename);
+          if (btn) {
+            btn.innerText = '已下载 .md';
+            setTimeout(function() { btn.innerText = orig; }, 2000);
+          }
+        })
+        .catch(function() {
+          if (btn) btn.innerText = orig;
+          var a = document.createElement('a');
+          a.href = targetUrl;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        });
+      return false;
+    }
     function fallbackCopy(text, onDone) {
       var ta = document.createElement('textarea');
       ta.value = text;
