@@ -245,7 +245,7 @@
     }
   </style>
 </head>
-<body data-conv-id="8e491cda-d9db-4417-a196-9fe1a9a1b942" data-base-prefix="./" data-turn-count="13" data-update-time="2026-11-18 10:41" data-is-index="0">
+<body data-conv-id="8e491cda-d9db-4417-a196-9fe1a9a1b942" data-base-prefix="./" data-turn-count="14" data-update-time="2026-11-18 10:41" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -259,7 +259,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1>你现在是我的首席状态架构师与 Windows 自动化工程专家。请...</h1>
-        <div class="sub-meta">会话 ID: 8e491cda-d9db-4417-a196-9fe1a9a1b942 | 轮次: 13 | 更新于: 2026-11-18 10:41</div>
+        <div class="sub-meta">会话 ID: 8e491cda-d9db-4417-a196-9fe1a9a1b942 | 轮次: 14 | 更新于: 2026-11-18 10:41</div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./8e491cda-d9db-4417-a196-9fe1a9a1b942.md" download="你现在是我的首席状态架构师与_Windows_自-8e491cda.md" onclick="return downloadMarkdown(event, './8e491cda-d9db-4417-a196-9fe1a9a1b942.md', '你现在是我的首席状态架构师与_Windows_自-8e491cda.md')">⬇️ 下载 Markdown (.md)</a>
@@ -539,6 +539,33 @@
 <article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>你真的修改了吗，我在桌面上点击的对话分享中心显示的依然是以前的内容，没有修改过，你直接进行修改，我觉得你的方案可以的</p>
 </div></article>
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已加入浏览器防缓存自刷新机制（动态 <code>?_t=</code> 加载 <code>sidebar.js</code> 与版本化跳转），正在构建并推送至 GitHub Pages，完成后立即向您汇报线上实测结果。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>确实已经修改并推上 GitHub Pages，刚才让您看到“旧页面”的元凶是 <strong>GitHub Pages 的 10 分钟强缓存</strong>（<code>Cache-Control: max-age=600</code>）。</p>
+<hr>
+<h3>一、 实测排查真相：为什么双击桌面快捷方式还是旧画面？</h3>
+<ul>
+<li>核查桌面唯一入口 <code>Antigravity 对话分享中心.url</code>，目标就是 <code>https://yangllllc.github.io/antigravity-share/</code>。</li>
+<li>用 <code>curl.exe</code> 绕过本地浏览器缓存直连线上实测：</li>
+<li>线上页面（<code>Last-Modified: 2026-11-18 10:38:54</code>）已经包含新的 <strong><code>⬇️ 下载 Markdown (.md)</code></strong>（<code>downloadMdBtn</code>）和最新对话 <code>8e491cda</code>。</li>
+<li>问题出在响应头 <strong><code>Cache-Control: max-age=600</code></strong>：您在改版前打开过一次网页后，浏览器把旧版 <code>index.html</code> 和 <code>sidebar.js</code> 强缓存了 <strong>10 分钟</strong>；随后您再次双击桌面快捷方式时，浏览器直接从本地磁盘缓存读取旧页，<strong>根本没有向 GitHub 发请求</strong>。</li>
+</ul>
+<hr>
+<h3>二、 本步追加的防缓存自愈改造（已提交推送 <code>c188c90</code>）</h3>
+<p>为彻底避免以后每更新一次还要干等 10 分钟，我刚刚在 <code>template.html</code> 与 <code>sync_share.ps1</code> 中追加了浏览器防缓存机制并重新推送：</p>
+<ul>
+<li><strong>动态破缓存加载 <code>sidebar.js</code></strong>：在 <code>template.html</code> 底部改用 <code>sidebar.js?_t=Date.now()</code> 动态挂载侧边栏数据（<code>file:///</code> 离线打开时保持无参兼容），确保每次打开页面都能实时拉到最新会话列表与轮次。</li>
+<li><strong>侧边栏链接自动带版本号 <code>?v=</code></strong>：<code>sidebar.js</code> 生成左侧导航链接时自动附加 <code>?v=&lt;轮次&gt;_&lt;更新时间&gt;</code>，任意会话有新增对话，跳转 URL 立即变化从而强制穿透浏览器和 CDN 缓存（顶栏“复制对话直链”依然只复制干净的无参 <code>.html</code> URL）。</li>
+<li><strong>旧页缓存自动自愈刷新</strong>：页面加载 <code>sidebar.js</code> 后会自动比对当前页 <code>data-conv-id</code> / <code>data-turn-count</code> / <code>data-update-time</code> 与最新快照；若命中浏览器旧缓存，经 <code>sessionStorage</code> 单次防死循环保护后自动 <code>location.replace</code> 跳至带 <code>?v=</code> 的最新版本。</li>
+</ul>
+<p><strong>已验证状态</strong>：<code>PARSE_ERRORS=0</code>，本地 <code>index.html</code>（<code>LOCAL_IDX_IS_INDEX=True | LOCAL_IDX_CACHE_BUST=True</code>）与 <code>sidebar.js</code>（<code>4643</code> 字节，<code>SIDEBAR_JS_HAS_GUARD=True</code>）均已生成并通过校验，新提交 <strong><code>c188c90</code></strong> 已推送至 <code>origin/main</code>（<code>PUSH_EXIT=0</code>）。</p>
+<hr>
+<h3>三、 您只需做这最后一步（破除浏览器里那份旧缓存）</h3>
+<p>因为您浏览器里现在存着的那份“改版前”的旧 <code>index.html</code> 本身还没有这段自愈脚本且仍在 10 分钟缓存有效期内：</p>
+<ul>
+<li>请等待约 <strong>30–60 秒</strong>让 GitHub Pages 完成 <code>c188c90</code> 发布；</li>
+<li>然后在浏览器打开 <code>https://yangllllc.github.io/antigravity-share/</code>，按一次 <strong><code>Ctrl + F5</code>（强制刷新）</strong>（或直接在地址栏打开 <code>https://yangllllc.github.io/antigravity-share/?v=1</code>）。</li>
+</ul>
+<p>完成这一次强制刷新、让浏览器换上带自愈脚本的新版页面后，以后再双击桌面快捷方式就会一直自动拉取最新对话与按钮了。</p>
 </div></article>
 
     </section>
