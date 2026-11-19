@@ -245,7 +245,7 @@
     }
   </style>
 </head>
-<body data-conv-id="7489c4f3-dd43-4782-ba24-4c7be4646657" data-base-prefix="./" data-turn-count="11" data-update-time="2026-11-19 21:34" data-is-index="0">
+<body data-conv-id="7489c4f3-dd43-4782-ba24-4c7be4646657" data-base-prefix="./" data-turn-count="12" data-update-time="2026-11-19 21:40" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -259,7 +259,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1>你现在接手一个已经跑通多期成品的本科生科普 PPT 动画视频制作...</h1>
-        <div class="sub-meta">会话 ID: 7489c4f3-dd43-4782-ba24-4c7be4646657 | 轮次: 11 | 更新于: 2026-11-19 21:34</div>
+        <div class="sub-meta">会话 ID: 7489c4f3-dd43-4782-ba24-4c7be4646657 | 轮次: 12 | 更新于: 2026-11-19 21:40</div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./7489c4f3-dd43-4782-ba24-4c7be4646657.md" download="你现在接手一个已经跑通多期成品的本科生科普_PP-7489c4f3.md" onclick="return downloadMarkdown(event, './7489c4f3-dd43-4782-ba24-4c7be4646657.md', '你现在接手一个已经跑通多期成品的本科生科普_PP-7489c4f3.md')">⬇️ 下载 Markdown (.md)</a>
@@ -513,6 +513,33 @@
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已启动 <strong>Step 4 终稿渲染与视频导出流水线</strong>（先渲染 P13 / P19 两段 <code>1824&#215;656</code> 30fps H.264 定量联动视频并嵌入终稿 PPTX，再调用 PowerPoint 16 导出 1080p 无字幕 MP4，最后基于实测换片时间戳生成零漂移 <code>.srt</code>/<code>.ass</code> 字幕并压制无配音字幕版 1080p MP4）。后台完成后将自动执行关键帧抽帧核验并交付全部成品。</p>
 </div></article>
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>抽帧验收时发现 P19 动画中段（<code>t=202.5s</code>）两处未显隐标签的边框提前露出空框，其余 9 帧（含 P13 三联动、Morph 过渡、底部字幕与 3 分 59.45 秒总时长）均已达标。已原地修复 P19 脚本的显隐控制并正在重新封装终稿 MP4 与复检抽帧，完成后立即交付最终成品与验收图集。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成 <strong>Step 4（终稿 Python 定量曲线渲染、PowerPoint 1080p MP4 导出、实测零漂移字幕压制与抽帧验收）</strong>，全流程闭环交付完毕。</p>
+<h3>一、最终成品清单（均存于 <code>迈克尔逊干涉仪测量光波长</code>）</h3>
+<p>| 交付文件 | 规格 / 校验 | 用途说明 |</p>
+<p>|---|---|---|</p>
+<p>| <code>迈克尔逊干涉仪测量光波长_无配音字幕版1080p.mp4</code> | <code>1920&#215;1080</code> &#183; <code>H.264 / yuv420p</code> &#183; <code>30 fps</code> &#183; <strong><code>03:59.45</code></strong>（14.5 MB） | <strong>直接展示版</strong>：底部安全区压制 62 条零漂移同步字幕，严守 ≤ 4 分钟上限 |</p>
+<p>| <code>迈克尔逊干涉仪测量光波长_无字幕1080p.mp4</code> | <code>1920&#215;1080</code> &#183; PowerPoint 16 原生导出 &#183; <code>03:59.45</code> | <strong>剪映/后期二次加工底片</strong>：底部 15% 净空无硬字幕 |</p>
+<p>| <code>迈克尔逊干涉仪测量光波长_终稿含视频22页.pptx</code> | 22 页 &#183; 1.79 MB &#183; 16 处原生 <code>m:oMath</code> &#183; <code>audit_pptx</code> v4 全项 0 告警 | <strong>可编辑终稿源文件</strong>：内嵌 P13/P19 自动播放视频，文字/公式/光路全可编辑 |</p>
+<p>| <code>迈克尔逊干涉仪测量光波长.srt</code> / <code>.ass</code> | 62 条短字幕（≤ 22 字/条），基于实出视频 Viterbi 换片时间轴对齐 | 外挂字幕与样式源文件 |</p>
+<p>| <code>p13_equal_inclination_3way.mp4</code> / <code>p19_dn_slope_convergence.mp4</code> | <code>1824&#215;656</code>（mod-16）&#183; <code>30 fps</code> &#183; <code>13.5 s</code> / <code>12.5 s</code> | 2 段独立 Python 定量联动视频（对应脚本均归档于 <code>assets/scripts</code>） |</p>
+<p>| <code>CONTEXT_迈克尔逊干涉仪测量光波长.md</code> | 单文件状态与排雷记录锚点 | 完整约束、决策与复测记录 |</p>
+<h3>二、抽帧验收与本阶段排雷摘要</h3>
+<ul>
+<li><strong>终稿抽帧验收图集</strong>（10 帧实抽核验）：请查阅 <code>step4_video_acceptance.md</code>。</li>
+<li><strong>实测捕获并原地消除的 4 项工程隐患</strong>：</li>
+<li><strong>内嵌视频自动播放</strong>：<code>python-pptx</code> 的 <code>add_movie()</code> 默认仅生成单击触发节点；已通过纯 OOXML <code>set_movie_autoplay()</code> 注入 <code>withEffect(delay=200ms) + playFrom(0.0)</code>，经抽帧实测 P13/P19 在 PowerPoint 原生导出中全程流畅播放。</li>
+<li><strong>DirectX 硬件缩放 1px 绿边</strong>：首次冒烟实测 <code>1836&#215;666</code>（高度非 4/16 倍数）在视频下沿出现 1px 暗绿边；改为严格 mod-16 分辨率 <strong><code>1824&#215;656</code></strong> 后彻底消失，与 <code>#101216</code> 舞台无接缝融合。</li>
+<li><strong>消除 13.45 秒字幕累加漂移</strong>：实测 PowerPoint <code>CreateVideo</code> 累加转场后总时长为 <code>239.45 s</code>（高于理论 <code>advTm</code> 之和 <code>226.0 s</code>）；<code>sync_subtitles_and_burn.py</code> 直接对实出 MP4 顶部静态标题区做单调 Viterbi 对齐，精准锚定全部 22 页实测时间点。</li>
+<li><strong>P19 动画中段空框残留</strong>：首轮抽帧在 <code>t=202.5 s</code> 检出 Matplotlib <code>set_alpha(0)</code> 未隐藏标签 <code>bbox</code> 边框；已改用 <code>set_visible(False)</code> 重渲染并复检 10/10 帧全部清零通过。</li>
+</ul>
+<hr>
+<h3>后续可选微调</h3>
+<ul>
+<li>如果你亲自回看 <code>迈克尔逊干涉仪测量光波长_无配音字幕版1080p.mp4</code> 后希望调大/调小字幕字号、更换字幕样式，或微调某页停留秒数，只需改 <code>迈克尔逊干涉仪测量光波长.ass</code> / 对应脚本即可几秒钟无损重压。</li>
+<li>日后若去实验室测得真实 He-Ne 鼓轮读数，可把 <code>slides_act4_5.py</code> 中的 <code>THEORY_DATA</code> 替换为实测数组并去掉理论算例微标，一键生成实测版。</li>
+</ul>
+<blockquote>提示：本次沉淀的 mod-16 防绿边、<code>set_movie_autoplay</code> 纯 OOXML 自动播放及 Viterbi 实测字幕对齐等经验，如果你希望同步固化进 <code>course-ppt-lab</code> skill 供以后所有科普视频复用，可以用 <code>/learn</code> 或直接告诉我为你归档。</blockquote>
 </div></article>
 
     </section>
