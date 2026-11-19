@@ -245,7 +245,7 @@
     }
   </style>
 </head>
-<body data-conv-id="f4ffdcb7-d524-471a-a991-b7406a3854b2" data-base-prefix="./" data-turn-count="30" data-update-time="2026-11-18 11:12" data-is-index="0">
+<body data-conv-id="f4ffdcb7-d524-471a-a991-b7406a3854b2" data-base-prefix="./" data-turn-count="34" data-update-time="2026-11-19 14:20" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -259,7 +259,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1>我正在继续升级本地的同济双模型 MCP 红队探针（目前为 v3....</h1>
-        <div class="sub-meta">会话 ID: f4ffdcb7-d524-471a-a991-b7406a3854b2 | 轮次: 30 | 更新于: 2026-11-18 11:12</div>
+        <div class="sub-meta">会话 ID: f4ffdcb7-d524-471a-a991-b7406a3854b2 | 轮次: 34 | 更新于: 2026-11-19 14:20</div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./f4ffdcb7-d524-471a-a991-b7406a3854b2.md" download="我正在继续升级本地的同济双模型_MCP_红队探针-f4ffdcb7.md" onclick="return downloadMarkdown(event, './f4ffdcb7-d524-471a-a991-b7406a3854b2.md', '我正在继续升级本地的同济双模型_MCP_红队探针-f4ffdcb7.md')">⬇️ 下载 Markdown (.md)</a>
@@ -646,6 +646,50 @@
 </ul>
 <blockquote>[!NOTE]</blockquote>
 <blockquote>所有规则与脚本已就位，<strong>下一轮新开会话（或重启 Antigravity 重载 MCP 后）</strong> 将按新版触发清单自动生效。</blockquote>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>我使用的sakuracat更新了，所以我将他卸载又重装了一遍。但是我才想起来我之前设置的那些都没有了。本来应该是可以在连接同济校园网的情况下成功使用这个mcp</p>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>我使用的sakuracat更新了，所以我将他卸载又重装了一遍。但是我才想起来我之前设置的那些都没有了。本来应该是可以在连接同济校园网的情况下成功使用这个mcp，然后也可以通过校园网的学校赠送的api使用deep seek harness，但是现在我不清楚能不能使用了。而且tun模式在更新后消失了，增强模式不知道可不可行，虽然现在一样能打开antigravity，我觉得还行吧。然后你检查一下，也可以检查之前的对话来了解我的需求。</p>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>我使用的sakuracat更新了，所以我将他卸载又重装了一遍。但是我才想起来我之前设置的那些都没有了。本来应该是可以在连接同济校园网的情况下成功使用这个mcp，然后也可以通过校园网的学校赠送的api使用deep seek harness，但是现在我不清楚能不能使用了。而且tun模式在更新后消失了，增强模式不知道可不可行，虽然现在一样能打开antigravity，我觉得还行吧。然后你检查一下，也可以检查之前的对话来了解我的需求。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p><strong>先说核心结论</strong>：<strong>不用担心，旧版 SakuraCat 设置丢失后，你的同济双核 MCP（Antigravity + Codex/ChatGPT 共用）和 DeepSeek Harness (DSH) 底层直连穿透目前在实测中全部正常可用；而且“TUN 模式”其实并没有消失，新版里的“增强模式”就是它。</strong></p>
+<hr>
+<h3>一、 现状核查与原理解析（含新版 SakuraCat 2.4.6 变化）</h3>
+<ul>
+<li><strong>为什么 TUN 模式不见了？“增强模式”可行吗？</strong></li>
+<li><strong>内核换代改名</strong>：旧版 SakuraCat <code>1.6.2</code> 是 Clash Meta（虚拟网卡 <code>Meta</code>，Fake-IP <code>198.18.0.1</code>）；你刚重装的 <strong><code>2.4.6</code></strong> 底层已重写为 <strong><code>sing-box</code></strong> 内核，<strong>“增强模式”本质上就是旧版的 TUN 模式</strong>。</li>
+<li><strong>实测证据</strong>：当前系统已生成虚拟网卡 <code>tun0 (172.19.0.1/30)</code>，且默认路由 <code>0.0.0.0/0 -&gt; 172.19.0.2 (metric 0)</code> 已生效，同时系统代理指向 <code>http://127.0.0.1:12450</code>，当前代理模式为 <strong><code>global</code>（全局模式，节点：<code>日本优选</code>）</strong>。</li>
+<li><strong>结论</strong>：<strong>增强模式完全可行</strong>，对 Antigravity / Codex 这类部分子进程不吃 Windows 系统代理的工具反而更稳。</li>
+</ul>
+<ul>
+<li><strong>为什么重装清空了 SakuraCat 设置，MCP 和 DSH 却依然能用？</strong></li>
+<li>核查历史对话（<code>bab10e4d</code> 与本会话），当初因为旧版 SakuraCat 每次重启都会用订阅覆写规则，我们早把穿透逻辑下沉到了 <strong>OS 物理网卡绑定层</strong>（强制从校园网物理网卡 <code>WLAN: 100.73.220.134</code> 直发同济内网 <code>10.67.0.251/252</code> 与国内直连 IP），<strong>完全不依赖 SakuraCat 内部规则</strong>。</li>
+</ul>
+<hr>
+<h3>二、 在当前 SakuraCat 2.4.6（全局 + 增强模式）下的实测结果</h3>
+<p>| 检测链路 | 测试方式 | 实测结果 | 判定 |</p>
+<p>| :--- | :--- | :--- | :--- |</p>
+<p>| <strong>无穿透对照（模拟浏览器/走代理）</strong> | 默认路由及走 <code>127.0.0.1:12450</code> 访问 <code>agi.tongji.edu.cn</code>、<code>platform.deepseek.com</code> | 全部返回 <strong><code>HTTP 403</code></strong>（被 <code>tun0</code> / 代理送往日本节点拦截） | 说明全局模式下未直连仍会被拦 |</p>
+<p>| <strong>同济双核 MCP (v5.2.1)</strong> | 真实执行 <code>tongji_deepseek_mcp.ps1</code> <code>consult_tongji_brain (fast_dual)</code> | <strong>4.5s</strong> 返回，<code>isError: False</code>，<code>DeepSeek</code> 与 <code>Kimi</code> 双路直连 <code>10.67.0.251</code>（26ms）均成功；<code>config.toml</code> 中 Codex 配置亦正常 | <strong>完全可用</strong> |</p>
+<p>| <strong>DSH 底层穿透补丁</strong> | 用 DSH 自带 <code>node.exe (v24.21.0)</code> 加载 <code>index.js</code> 补丁发起 <code>fetch</code> | <code>agi.tongji.edu.cn/v1/models</code> $\to$ <strong>HTTP 200 (83ms)</strong>；<code>platform.deepseek.com</code> $\to$ <strong>HTTP 200 (132ms)</strong>；<code>api.deepseek.com</code> $\to$ <strong>HTTP 401 (217ms，已直达无 403)</strong> | <strong>后端直连可用</strong> |</p>
+<hr>
+<h3>三、 发现的 2 个潜在隐患（及你只需手动调 1 处的建议）</h3>
+<ul>
+<li><strong>当前开着“全局模式（<code>global</code>）+ 系统代理 <code>127.0.0.1:12450</code>”的副作用</strong>：</li>
+<li>虽然 <strong>MCP 脚本</strong> 与 <strong>DSH Node 后端</strong> 的 socket 穿透已经绕开了 <code>tun0</code>，但 <strong>Chrome/Edge 浏览器</strong> 以及 <strong>DSH 桌面前端界面（Electron 渲染层如果读取系统代理 <code>127.0.0.1:12450</code>，目前未启动 DSH 实测，属未验证风险）</strong> 一旦走 <code>127.0.0.1:12450</code> 访问 <code>agi.tongji.edu.cn</code> 或 <code>platform.deepseek.com</code>，仍会撞上实测到的 <strong>HTTP 403</strong>。</li>
+<li><strong>建议操作（二选一）</strong>：</li>
+<li><strong>推荐</strong>：在 SakuraCat 2.4.6 首页把 <strong>全局模式</strong> 切回 <strong>规则模式（智能分流）</strong>——我查到它的数据目录已内置 <code>geosite-cn.srs</code> 和 <code>geoip-cn.srs</code>，切到规则模式后国内/校内站点自动直连，Antigravity 与海外服务照常走代理。</li>
+<li><strong>若必须保持全局模式</strong>：在 SakuraCat 2.4.6 右下角 <strong>设置 → 进阶选项 → 路由规则</strong> 中，将 <code>agi.tongji.edu.cn</code>、<code>tongji.edu.cn</code>、<code>platform.deepseek.com</code>、<code>api.deepseek.com</code> 加入 <strong>直连（DIRECT）</strong> 即可（新版 <code>config.json</code> 已加密，需在客户端 UI 里添加，不能直接改明文文件）。</li>
+<li><strong>网卡黑名单防御补齐（可选加固）</strong>：</li>
+<li>目前 <code>tongji_deepseek_mcp.ps1</code> 与 DSH 补丁 <code>index.js</code> 靠白名单（<code>WLAN|Wi-Fi|以太网|Ethernet</code>）天然排除了新版 <code>tun0 (172.19.0.1)</code>，暂时没受影响；但显式把 <code>tun\d*</code>、<code>172.19.</code> 加入黑名单，并在 DSH 补丁中追加 <code>NO_PROXY</code> 白名单会更防未来改名冲突。</li>
+</ul>
+<hr>
+<p><strong>确认与边界追问</strong>：</p>
+<ul>
+<li>你可以现在直接打开一次 <strong>DeepSeek Harness 桌面端</strong>，确认在当前 SakuraCat 2.4.6（增强模式）下：<strong>账号资料是否正常显示、选同济 <code>Kimi-K3.1-Pro</code> / <code>DeepSeek-V4.1-Flash</code> 发一句测试能否收到回复</strong>？如果界面仍报 403 或密钥无效，就说明前端走了 <code>127.0.0.1:12450</code> 系统代理，告诉我我立刻给你补 <code>NO_PROXY</code> / 桌面端代理豁免。</li>
+<li>你平时用 SakuraCat 是因为特定工具需要才开 <strong>全局模式</strong>，还是切到 <strong>规则模式</strong> 就够用？如果是后者，切完规则模式后整个电脑的校内网、DeepSeek 网页版、DSH 和 Antigravity 会全部无冲突共存。</li>
+</ul>
 </div></article>
 
     </section>
