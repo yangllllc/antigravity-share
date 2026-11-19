@@ -245,7 +245,7 @@
     }
   </style>
 </head>
-<body data-conv-id="7489c4f3-dd43-4782-ba24-4c7be4646657" data-base-prefix="./c/" data-turn-count="6" data-update-time="2026-11-19 20:59" data-is-index="1">
+<body data-conv-id="7489c4f3-dd43-4782-ba24-4c7be4646657" data-base-prefix="./c/" data-turn-count="8" data-update-time="2026-11-19 21:16" data-is-index="1">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="./index.html">Antigravity 对话分享</a></h2>
@@ -259,7 +259,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1>你现在接手一个已经跑通多期成品的本科生科普 PPT 动画视频制作...</h1>
-        <div class="sub-meta">会话 ID: 7489c4f3-dd43-4782-ba24-4c7be4646657 | 轮次: 6 | 更新于: 2026-11-19 20:59</div>
+        <div class="sub-meta">会话 ID: 7489c4f3-dd43-4782-ba24-4c7be4646657 | 轮次: 8 | 更新于: 2026-11-19 21:16</div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./c/7489c4f3-dd43-4782-ba24-4c7be4646657.md" download="你现在接手一个已经跑通多期成品的本科生科普_PP-7489c4f3.md" onclick="return downloadMarkdown(event, './c/7489c4f3-dd43-4782-ba24-4c7be4646657.md', '你现在接手一个已经跑通多期成品的本科生科普_PP-7489c4f3.md')">⬇️ 下载 Markdown (.md)</a>
@@ -478,6 +478,35 @@
 <li><strong>底部字幕风格预览</strong>：当前每页底部 15%（<code>y = 918–1080 px</code>）均保持纯净深黑净空，待 Step 4 用 FFmpeg 统一压制字幕（无配音字幕版，每条 ≤ 20 汉字、白色微阴影居中）。你是否希望保持这种“PPTX 纯净留空 + Step 4 压制 <code>.srt</code> 与硬字幕 MP4”的分离方案（推荐，后期改字幕不碰 PPT），还是希望把底部 1 句静态核心结论条提前放进 PPT 安全区上方？</li>
 </ul>
 <p>如无修改意见，回复 <strong>“确认 Step 2，进入 Step 3”</strong> 即可扩展完整 22 页可编辑 PPTX（含 P19 静态样帧核验与全 22 页 1080p PNG 自检）。</p>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>我很满意，确认 Step 2，进入 Step 3” 即可扩展完整 22 页可编辑 PPTX（含 P19 静态样帧核验与全 22 页 1080p PNG 自检）。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成 <strong>Step 3（全片 22 页可编辑 PPTX + P19 静态样帧核验 + 全部 22 页 1920&#215;1080 PNG 逐页巡检）</strong>。现严守 Step 4 闸门与 <code>S20</code> 终稿渲染锁，<strong>尚未渲染任何 MP4</strong>，待你审阅全片后明确下达导出指令。</p>
+<h3>本阶段交付物</h3>
+<ul>
+<li><strong>全片 22 页可编辑 PPTX</strong>：<code>迈克尔逊干涉仪测量光波长_全片22页.pptx</code>（SHA-256 <code>e8406b28...</code>）</li>
+<li><strong>全片 22 页实渲总览与重点页轮播预览</strong>：<code>full_22p_preview.md</code>（单张 1080p 原图存于 <code>full_22p_png</code>）</li>
+<li><strong>新增可复现脚本与状态锚点</strong>：<code>slides_act1_3.py</code>、<code>slides_act4_5.py</code>、<code>build_full_22p.py</code>、<code>render_preview_frame_p19.py</code>、<code>CONTEXT_迈克尔逊干涉仪测量光波长.md</code></li>
+</ul>
+<h3>全片 22 页实测验收结果</h3>
+<p>| 检查项 | 实测结果 | 备注 |</p>
+<p>|---|---|---|</p>
+<p>| <strong>页数与总时长</strong> | <strong>22 页 / 226.0 秒（3 分 46 秒）</strong> | 严格 ≤ 4 分钟硬上限，留 14 秒缓冲 |</p>
+<p>| <strong>原生公式与字体</strong> | <strong>16 处原生 <code>m:oMath</code></strong>；全片仅 2 种字体 | <code>Microsoft YaHei</code> + <code>Cambria Math</code>，副本编辑回读通过 |</p>
+<p>| <strong><code>audit_pptx.py</code> v4</strong> | <strong>全项 0 告警</strong> | 5 组纯线性 <code>!!</code> Morph 链（零旋转），0 假定格/白屏/节奏失配 |</p>
+<p>| <strong>底部字幕安全区</strong> | <strong>0 违规</strong>（全部可见元素 <code>y ≤ 6.38 in</code>） | 底部 15%（<code>y = 918–1080 px</code>）全程纯净留空 |</p>
+<p>| <strong>备注去 AI 味复测</strong> | <strong>A 级 0、B 级 0、分号 0</strong> | 纯汉字 756 字，与确认脚本逐字一致 |</p>
+<p>| <strong>全 22 页实渲巡检</strong> | <strong>22/22 通过</strong> | 首轮巡检已原地修复 P08/P09/P10/P14/P16/P17/P19/P21/P22 共 9 处细节（含 P19 随机抖动改非周期真实 ~5–6&#215; 收敛、消除右上微注孤字换行与遮挡）并复检通过 |</p>
+<hr>
+<h3>进入 Step 4（终稿渲染与视频导出）前确认 2 个细节</h3>
+<ul>
+<li><strong>Python 渲染与终稿交付包</strong>：当你回复 <strong>“可以导出视频”</strong> 后，我将按顺序一次性执行：</li>
+<li>① 用 Python（<code>numpy + matplotlib + FFmpeg libx264 yuv420p 30fps</code>）渲染 P13（14.5 s 等倾干涉三联动）与 P19（13.5 s $d$–$N$ 采样与逐差收敛）两段无边框 MP4 并自动嵌入 PPTX（同步产出带内嵌视频的终稿 <code>.pptx</code>）；</li>
+<li>② 调用 PowerPoint 16 COM（<code>powerpoint_video.py</code>）导出纯净无配音 1080p MP4（30fps）；</li>
+<li>③ 按 22 页精确 <code>advTm</code> 生成同步 <code>.srt</code> 外挂字幕（每条拆分为 ≤ 20 汉字的短字幕），并用 FFmpeg 压制一版底部带微阴影居中硬字幕的 1080p 无配音展示版 MP4，最后抽帧核验关键动画（无穿透、无重影、按序出现）与总时长。</li>
+<li><strong>字幕外观小确认</strong>：硬字幕拟采用<strong>底部居中（安全区 <code>y ≈ 975–1045 px</code>）、微软雅黑 36–38 px 柔和白字 + 半透明深色圆角底衬</strong>，兼顾电脑与手机端清晰度；若你偏好无底衬纯白字加黑描边，可一并说明。</li>
+</ul>
+<p>审阅无误后，回复 <strong>“可以导出视频”</strong> 即可启动 Step 4。</p>
 </div></article>
 
     </section>
