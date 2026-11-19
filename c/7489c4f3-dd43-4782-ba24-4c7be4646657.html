@@ -245,7 +245,7 @@
     }
   </style>
 </head>
-<body data-conv-id="7489c4f3-dd43-4782-ba24-4c7be4646657" data-base-prefix="./" data-turn-count="4" data-update-time="2026-11-19 20:45" data-is-index="0">
+<body data-conv-id="7489c4f3-dd43-4782-ba24-4c7be4646657" data-base-prefix="./" data-turn-count="6" data-update-time="2026-11-19 20:59" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -259,7 +259,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1>你现在接手一个已经跑通多期成品的本科生科普 PPT 动画视频制作...</h1>
-        <div class="sub-meta">会话 ID: 7489c4f3-dd43-4782-ba24-4c7be4646657 | 轮次: 4 | 更新于: 2026-11-19 20:45</div>
+        <div class="sub-meta">会话 ID: 7489c4f3-dd43-4782-ba24-4c7be4646657 | 轮次: 6 | 更新于: 2026-11-19 20:59</div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./7489c4f3-dd43-4782-ba24-4c7be4646657.md" download="你现在接手一个已经跑通多期成品的本科生科普_PP-7489c4f3.md" onclick="return downloadMarkdown(event, './7489c4f3-dd43-4782-ba24-4c7be4646657.md', '你现在接手一个已经跑通多期成品的本科生科普_PP-7489c4f3.md')">⬇️ 下载 Markdown (.md)</a>
@@ -454,6 +454,30 @@
 <li><strong>Step 2 样稿是否需要同步先看一张 Python 曲线静态样帧</strong>（仅生成 1 帧 PNG 静态预览图贴在 P13 占位框内确认配色与坐标可读性，不渲染完整 MP4，严格守住 <code>S20</code> 终稿一次性视频渲染锁）？</li>
 </ul>
 <p>确认大纲及这两点后，回复 <strong>“确认 Step 1，进入 Step 2”</strong> 即可推进。</p>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>确认 Step 1，进入 Step 2</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成 <strong>Step 2（22 页逐页制作表 + 5 页代表性可编辑 PPTX 样稿 + 1920&#215;1080 实渲预览与工程自检）</strong>，本轮停在 Step 2 闸门等待你的审阅确认。</p>
+<h3>交付物与可复现脚本</h3>
+<ul>
+<li><strong>22 页完整逐页制作表</strong>：<code>storyboard_22p.md</code></li>
+<li><strong>5 页代表性可编辑 PPTX 样稿</strong>（覆盖 P01 / P05 / P06 / P12 / P13）：<code>迈克尔逊干涉仪_样稿5页.pptx</code></li>
+<li><strong>PowerPoint 16 实渲 1080p 预览轮播</strong>（已将 5 张实渲 PNG 嵌入可翻页卡片）：<code>sample_5p_preview.md</code></li>
+<li><strong>可复现工程脚本与状态锚点</strong>：<code>ppt_helpers.py</code>、<code>build_sample_5p.py</code>、<code>render_preview_frame_p13.py</code>、<code>CONTEXT_迈克尔逊干涉仪测量光波长.md</code></li>
+</ul>
+<h3>本轮实测与自检修复摘要</h3>
+<ul>
+<li><strong>原生公式与 Morph</strong>：直接复用 <code>ppt-master</code> v6.9.0 内置 <code>formula_compiler.py</code> 生成 4 处原生可编辑 Cambria Math <code>m:oMath</code>（含 <code>\textcolor</code> 跨镜色锁）；P05→P06 共享 34 个 <code>!!</code> 命名锁对象，<code>!!G2-slab</code> 纯直线平移动效入位（零旋转重影），附 <code>&lt;mc:Fallback&gt;</code> 回退。</li>
+<li><strong>实渲巡检与原地修复</strong>：PowerPoint COM 实渲后通过逐页视觉检查，已修复 4 处细节——Matplotlib 缺字方块改数学下标、P06 <code>后表面半透半反膜</code> 标注移至左下消除与 <code>补偿板 G₂</code> 重叠、P05/P06 右卡精简消除孤字换行、P13 移除底部遮挡横轴标签的占位条并移至右上微注。</li>
+<li><strong>验收过关</strong>：<code>audit_pptx.py</code> v4 全项 0 告警（<code>zip_valid=true</code>、Morph 锁/假定格/<code>cut</code>/白屏/节奏全清零）；副本编辑回读通过；严格遵守 <code>S20</code> 终稿锁，尚未渲染任何 MP4。</li>
+</ul>
+<hr>
+<h3>进入 Step 3（全片 22 页）前请确认 2 个细节</h3>
+<ul>
+<li><strong>文字密度与字号体感</strong>：审阅 <code>sample_5p_preview.md</code> 后，P05/P06 右侧解析卡、P12 公式字号及 P13 三联动静态样帧的配色与留白是否合意？有没有需要把局部字号再调大或把卡片文字再压精简的地方？</li>
+<li><strong>底部字幕风格预览</strong>：当前每页底部 15%（<code>y = 918–1080 px</code>）均保持纯净深黑净空，待 Step 4 用 FFmpeg 统一压制字幕（无配音字幕版，每条 ≤ 20 汉字、白色微阴影居中）。你是否希望保持这种“PPTX 纯净留空 + Step 4 压制 <code>.srt</code> 与硬字幕 MP4”的分离方案（推荐，后期改字幕不碰 PPT），还是希望把底部 1 句静态核心结论条提前放进 PPT 安全区上方？</li>
+</ul>
+<p>如无修改意见，回复 <strong>“确认 Step 2，进入 Step 3”</strong> 即可扩展完整 22 页可编辑 PPTX（含 P19 静态样帧核验与全 22 页 1080p PNG 自检）。</p>
 </div></article>
 
     </section>
