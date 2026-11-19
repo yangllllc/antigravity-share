@@ -245,7 +245,7 @@
     }
   </style>
 </head>
-<body data-conv-id="7489c4f3-dd43-4782-ba24-4c7be4646657" data-base-prefix="./c/" data-turn-count="2" data-update-time="2026-11-19 20:26" data-is-index="1">
+<body data-conv-id="7489c4f3-dd43-4782-ba24-4c7be4646657" data-base-prefix="./c/" data-turn-count="4" data-update-time="2026-11-19 20:45" data-is-index="1">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="./index.html">Antigravity 对话分享</a></h2>
@@ -259,7 +259,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1>你现在接手一个已经跑通多期成品的本科生科普 PPT 动画视频制作...</h1>
-        <div class="sub-meta">会话 ID: 7489c4f3-dd43-4782-ba24-4c7be4646657 | 轮次: 2 | 更新于: 2026-11-19 20:26</div>
+        <div class="sub-meta">会话 ID: 7489c4f3-dd43-4782-ba24-4c7be4646657 | 轮次: 4 | 更新于: 2026-11-19 20:45</div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./c/7489c4f3-dd43-4782-ba24-4c7be4646657.md" download="你现在接手一个已经跑通多期成品的本科生科普_PP-7489c4f3.md" onclick="return downloadMarkdown(event, './c/7489c4f3-dd43-4782-ba24-4c7be4646657.md', '你现在接手一个已经跑通多期成品的本科生科普_PP-7489c4f3.md')">⬇️ 下载 Markdown (.md)</a>
@@ -368,6 +368,92 @@
 <li><strong>光路物理口径</strong>：在讲分束板 $G_1$ 的半波损失时，你希望保留经典教材的完整说明（两束光在镀膜面经历的反射介质侧不同，仅带来常量相位差，<strong>不改变位移差公式 $\Delta d = \Delta N \cdot \lambda/2$</strong>），还是直接以“等效空气薄膜间距 $d$ 的变化 $\Delta d$”跳过半波损失细节以节省 15 秒？</li>
 <li><strong>字幕用途</strong>：最终成品是<strong>直接作为无配音默片字幕版展示</strong>，还是<strong>会导入剪映配音</strong>？这直接决定 Step 4 是否需要做硬字幕烧录以及每页是否留出更充裕的默读停顿。</li>
 </ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>1.A。2.A。3.A，不需要插入历史片段。4.A。保留经典教材的完整说明把，直接作为无配音字幕版展示</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已锁定全部 6 项需求口径，并在工程目录建立单文件状态锚点 <code>CONTEXT_迈克尔逊干涉仪测量光波长.md</code>。现交付 <strong>Step 1（完整分镜大纲、字数秒数核算、科学前提清单与动画拆分规划）</strong>，经你确认后进入 <strong>Step 2（逐页制作表 + 5 页代表性可编辑样稿）</strong>。</p>
+<hr>
+<h2>一、总控预算与实测校验（无配音字幕版 &#183; 4 分钟硬上限）</h2>
+<p>| 指标 | 本片预排实测值 | 约束边界与校验结论 |</p>
+<p>|---|---|---|</p>
+<p>| <strong>总页数 / 总时长</strong> | <strong>22 页 / 226.0 秒（3 分 46 秒）</strong> | 严守 ≤ 240 秒硬上限，预留 <strong>14 秒</strong> 缓冲 |</p>
+<p>| <strong>字幕纯净字数</strong> | <strong>756 汉字</strong>（含数字/符号 922 非空字符） | 默读均值 <strong>200.7 汉字/分</strong>（244.8 字符/分），留足边看动画边读字幕的消化窗口 |</p>
+<p>| <strong><code>audit_pptx</code> 节奏核验</strong> | <strong>0 页失配</strong>（每页 <code>advTm</code> 9.0–14.5 s） | 全部满足 <code>E16</code> 声画耦合边界，无过快/静默告警 |</p>
+<p>| <strong>去 AI 味初筛（<code>detect.py</code>）</strong> | <strong>A 级 0 处、B 级 0 处、分号 0 处</strong> | 全片仅 1 处破折号，为用户指定片首原句（按 <code>T01</code> 豁免保留） |</p>
+<p>| <strong>同机位连续 Morph 上限</strong> | <strong>最长 2 次（3 页，P04→P06）</strong> | 严守 <code>S03</code> ≤ 4 镜景别切换，且<strong>零圆形/刚体旋转 Morph</strong> |</p>
+<p>| <strong>底部字幕安全区（<code>S08</code>）</strong> | 画布底部 <strong>15%</strong>（1080p 下 <code>y = 918–1080 px</code>） | 全程净空，供后期外挂 <code>.srt</code> 及 FFmpeg 硬字幕烧录（每条 ≤ 20 汉字） |</p>
+<h3>跨镜物理量—颜色—符号锁（<code>S09</code> / <code>G11</code>）</h3>
+<ul>
+<li><strong>画布底色</strong>：<code>#101216</code>（副面板 <code>#181C24</code>，分割线 <code>#2A3140</code>）；字体仅用 <code>Microsoft YaHei</code> + 原生公式 <code>Cambria Math</code>。</li>
+<li><strong>青蓝 <code>#58C6E8</code></strong>：参考臂（定镜 $M_2$、虚像 $M_2&#39;$、光束 2）；<strong>琥珀金 <code>#F3BD68</code></strong>：测量臂（动镜 $M_1$、间距 $d$、位移 $\Delta d$、光束 1）；<strong>珊瑚红 <code>#EF7B6C</code></strong>：He-Ne 632.8 nm 激光干涉条纹、级次变化 $\Delta N$、反例红叉；<strong>柔和白 <code>#F2F2EF</code></strong>：原生 <code>m:oMath</code> 公式与标尺。</li>
+</ul>
+<hr>
+<h2>二、五幕 22 页完整分镜大纲与字数/秒数预排</h2>
+<h3>分幕汇总</h3>
+<p>| 幕次 | 页码 | 页数 | 时长 | 纯汉字 / 非空字符 | 核心叙事任务 |</p>
+<p>|---|---|---:|---:|---:|---|</p>
+<p>| 第一幕：设问导入与核心矛盾 | P01–P03 | 3 | 30.5 s | 97 / 111 | 抛出片首问题、速览 4 法、锚定“微米测纳米”矛盾 |</p>
+<p>| 第二幕：光路结构、补偿板与半波损失 | P04–P09 | 6 | 60.0 s | 201 / 246 | 光路分合、$G_2$ 穿玻璃 3 次对称、半波损失抵消、等效空气膜 |</p>
+<p>| 第三幕：等倾原理、主公式与三联动 | P10–P14 | 5 | 53.0 s | 170 / 210 | 等倾圆环、纠偏 $2\Delta d$、主公式、<strong>Python 视频 #1</strong>、$d\to 0$ 与平行度 |</p>
+<p>| 第四幕：测量策略、防空程与逐差算例 | P15–P19 | 5 | 54.0 s | 179 / 230 | 250 倍放大直觉、单向防空程、10 组理论算例与逐差法、<strong>Python 视频 #2</strong> |</p>
+<p>| 第五幕：闭环回扣、边界声明与 LIGO 延伸 | P20–P22 | 3 | 28.5 s | 109 / 125 | 三步闭环回答开头、三条科学边界、实验室→4 km LIGO 尺度对照 |</p>
+<p>| <strong>合计</strong> | <strong>P01–P22</strong> | <strong>22</strong> | <strong>226.0 s</strong> | <strong>756 / 922</strong> | <strong>3 分 46 秒（预留 14 s 裕量）</strong> |</p>
+<h3>逐页大纲与动画拆分规划（<code>E11</code> 自动轨 + <code>E12</code> <code>!!</code> Morph 锁）</h3>
+<p>| 页 | 幕 | 页面主题与景别 | 转场 / 核心动效（均无旋转 Morph） | <code>advTm</code> | 汉字/字符 | 纯净字幕文案（写入 Notes，分 2 条短字幕出屏） |</p>
+<p>|---|---|---|---|:---:|:---:|---|</p>
+<p>| <strong>P01</strong> | 1 | 片首设问：如何测光波波长（全幅悬念） | <code>fade(400)</code>；标尺淡入（发丝 $70\ \mu\text{m}$ vs 可见光 $0.6\ \mu\text{m}$） | 9.5 s | 32/35 | 你能想出几种方法测量光波波长？可见光波长只有几百纳米，普通尺子量不到。 |</p>
+<p>| <strong>P02</strong> | 1 | 四法速览与聚光锁定（四格聚光 <code>V13</code>） | <code>fade(400)</code>；前 3 法压暗至 30%，迈克尔逊金框高亮 | 10.5 s | 33/38 | 双缝、光栅和牛顿环都能测波长。今天我们来介绍其中的一种——迈克尔逊干涉仪法。 |</p>
+<p>| <strong>P03</strong> | 1 | 核心矛盾：微米鼓轮测纳米光波（双标尺） | <code>fade(400)</code>；左右量级对峙 + 锚定全片 2 问 | 10.5 s | 32/38 | 最小分度 0.1 微米的鼓轮，怎么量出几百纳米的波长？靠干涉条纹把微小位移放大。 |</p>
+<p>| <strong>P04</strong> | 2 | 干涉仪核心结构（全景光路 1） | <code>fade(400)</code>；布置 <code>!!M1</code>（金）、<code>!!M2</code>（青）、<code>!!S</code>、<code>!!E</code> | 9.5 s | 35/42 | 这套仪器的核心是两面互相垂直的平面镜，上方动镜 M1 能精密平移，右侧定镜 M2 固定不动。 |</p>
+<p>| <strong>P05</strong> | 2 | 45&#176; 分束板 $G_1$ 分合光路（全景光路 2） | <code>morph(900)</code>（共享 <code>!!M1/M2/S/E</code>）；插入 <code>!!G1</code> 后表面镀膜，金色/青色光束擦除走通 | 10.0 s | 32/39 | 单色光射向 45 度分束板 G1，在后表面镀膜处分成两束，经两镜反射后汇合到观察屏。 |</p>
+<p>| <strong>P06</strong> | 2 | 补偿板 $G_2$ 穿玻璃对称（全景光路 3） | <code>morph(900)</code>（共享全光路 <code>!!</code>）；插入 <code>!!G2</code>，计数标牌 1→3 次 + 误区微标 | 11.0 s | 35/45 | 光束 1 穿 G1 玻璃三次，光束 2 原本只穿一次。加入补偿板 G2 让两臂各穿三次，消除色散并保对称。 |</p>
+<p>| <strong>P07</strong> | 2 | 特写：$G_1$ 镀膜处半波损失（镀膜特写 1） | <code>fade(400)</code> 切景别；放大镀膜界面（玻璃侧内反 vs 空气侧外反）+ 原生公式 $\Delta L = 2d\cos\theta + \frac{\lambda}{2}$ | 10.0 s | 35/40 | 放大看 G1 镀膜，两束光分别从玻璃侧和空气侧反射，经典教材模型下相差一次半波损失。 |</p>
+<p>| <strong>P08</strong> | 2 | 半波损失为何不影响测量（镀膜特写 2） | <code>morph(800)</code>（共享 <code>!!film</code>/<code>!!eq-box</code>）；两态作差，划去常量 $+\frac{\lambda}{2}$（含 $\varphi_0$ 微注） | 10.0 s | 35/38 | 不论半波损失还是实际镀膜附加相位，都不随动镜位移改变，求位移差时会自动抵消。 |</p>
+<p>| <strong>P09</strong> | 2 | 模型抽离：等效空气薄膜（等效薄膜 1） | <code>fade(400)</code> 切回中景；$M_2$ 压暗，$M_2&#39;$ 虚像在上方浮现，标明厚度 <code>!!gap-d</code> | 9.5 s | 29/42 | 把定镜 M2 通过分束板折成虚像 M2&#39;，光路就等效为 M1 与 M2&#39; 之间厚度为 d 的空气薄膜。 |</p>
+<p>| <strong>P10</strong> | 3 | 等倾干涉同心圆环（等效薄膜 2） | <code>morph(900)</code>（共享 <code>!!M1/M2p/gap-d</code>）；加倾角 $\theta$ 平行光线，右侧呈现同心圆环 | 9.5 s | 33/41 | M1 与 M2&#39; 严格平行时，相同倾角的光线光程差相等，屏上出现明暗相间的等倾同心圆环。 |</p>
+<p>| <strong>P11</strong> | 3 | 反直觉纠偏：为什么是 $\lambda/2$（反例+前态 <code>S05</code>） | <code>fade(400)</code>；左红叉反例“误区：移 $\lambda$ 变 1 条”，右展示 <code>!!M1</code> 初始位 $d_0$ | 9.5 s | 36/39 | 不少人以为动镜移一个波长才变一条纹。其实光在动镜前要走一个来回，光程差会翻倍。 |</p>
+<p>| <strong>P12</strong> | 3 | 动镜平移 $\Delta d$ 与测量主式（后态+公式） | <code>morph(900)</code>（共享 <code>!!M1</code> 线性上移 $\Delta d$，去回程双段伸长）；原生 <code>m:oMath</code> 分步淡入至 $\lambda = \frac{2\Delta d}{\Delta N}$ | 10.0 s | 27/45 | 动镜每平移 Δd，光程差就变 2Δd。盯住圆环中心，每变 ΔN 条纹，就能由 2Δd 除以 ΔN 算出 λ。 |</p>
+<p>| <strong>P13</strong> | 3 | <strong>【Python 视频 #1】等倾干涉三联动</strong> | <code>fade(400)</code>；顶部原生锁色公式 $I(\Delta d)=I_0\cos^2(\frac{2\pi}{\lambda}\Delta d+\frac{\varphi_0}{2})$，主舞台嵌入无边框 30fps MP4（动镜移 $\leftrightarrow$ 圆环涌出/吞进 $\leftrightarrow$ 光强曲线实时描点与计数） | 14.5 s | 39/45 | 间距 d 增大时，新圆环从中心不断向外涌出，光强同步起伏。每走完一个周期，动镜刚好移半个波长。 |</p>
+<p>| <strong>P14</strong> | 3 | 临界态：$d\to 0$ 与平行度判据（双窗对照） | <code>fade(400)</code>；左窗 $d$ 减小圆环变疏粗，右窗未平行出现偏心环/等厚直条纹 | 9.5 s | 35/40 | d 越小圆环越疏粗。如果圆环偏心或变成等厚直条纹，说明两镜还不平行，得先调准再测。 |</p>
+<p>| <strong>P15</strong> | 4 | 量级放大：为何连数 250 条（双轨标尺） | <code>fade(400)</code>；最小分度 $0.1\ \mu\text{m}$ 下 $\Delta N=1$（31.6% 红）vs $\Delta N=250$（0.13% 青） | 10.0 s | 38/49 | 鼓轮最小分度 0.1 微米，只数 1 条分度占比超过三成。连数 250 条，分度占比降到原来的二百五十分之一。 |</p>
+<p>| <strong>P16</strong> | 4 | 实操防坑：单向缓旋消空程（丝杠剖面 <code>S05</code>） | <code>fade(400)</code>；正向啮合贴实 vs 反转齿隙悬空（红标空程误差）+ 三条操作铁律 | 9.5 s | 38/42 | 精密丝杠存在机械间隙，中途反转会带来空程误差。预转消除间隙后，全程只能同向缓慢转动。 |</p>
+<p>| <strong>P17</strong> | 4 | 理论算例与相邻差分陷阱（数据表 1） | <code>fade(400)</code>；排布 <code>!!d0</code>–<code>!!d9</code> 理论读数芯片，红线划掉 $\frac{1}{9}\sum(d_{i+1}-d_i)=\frac{d_9-d_0}{9}$ | 10.5 s | 32/46 | 取 He-Ne 激光 10 组理论读数，每 50 条记一次位置。直接相邻相减求平均，中间 8 组会全被约掉。 |</p>
+<p>| <strong>P18</strong> | 4 | 逐差法配对算出 632.8 nm（数据表 2） | <code>morph(900)</code>（<code>!!d0</code>–<code>!!d9</code> 平移成 5 对配对连线）；右侧原生 <code>m:oMath</code> 算得 $\lambda=632.8\text{ nm}$ | 10.5 s | 31/46 | 用逐差法前后配对，每对跨 250 条纹，10 个读数全部参与计算，代回主式得 λ 等于 632.8 纳米。 |</p>
+<p>| <strong>P19</strong> | 4 | <strong>【Python 视频 #2】$d$–$N$ 直线与斜率收敛</strong> | <code>fade(400)</code>；顶部原生公式 $d(N)=d_0+\frac{\lambda}{2}N$，主舞台嵌入无边框 30fps MP4（10 点落位 + 模拟随机抖动下相邻斜率发散 vs 逐差跨距收敛至 $k=\lambda/2$） | 13.5 s | 40/47 | 把位移对条纹数作图，数据落在斜率为 λ/2 的直线上。拉大跨距并配对逐差，能有效压低读数随机抖动。 |</p>
+<p>| <strong>P20</strong> | 5 | 闭环回扣：三步把纳米放大到微米（三步图） | <code>fade(400)</code>；折返放大 $\to$ 累积计数 $\to$ 逐差求 $\lambda$，显式回扣 P03 矛盾 | 9.0 s | 36/39 | 回到开头的设问，迈克尔逊干涉仪以光波为尺，把亚微米波长转换成可累积的微米位移。 |</p>
+<p>| <strong>P21</strong> | 5 | 科学边界：三条前提与算例声明（三栏卡） | <code>fade(400)</code>；光学前提 / 误差边界 / 理论算例声明 | 9.5 s | 36/40 | 想测准还得守住三条边界，两镜严格平行，全程单向防空程，且逐差法修不了数错的条纹。 |</p>
+<p>| <strong>P22</strong> | 5 | 精度延伸与开放收尾（尺度对照 <code>T07</code>） | <code>fade(400)</code>；桌面干涉仪（臂长 ~$10\text{ cm}$，分辨 ~$\lambda/2$）vs LIGO（$4\text{ km}$，探测 $10^{-18}\text{ m}$ 级微变） | 10.0 s | 37/46 | 把这套干涉测距放大到 4 公里臂长，就是探测引力波的 LIGO。测光波波长，你还能想到哪几种办法？ |</p>
+<hr>
+<h2>三、科学前提清单与数值验算核查（已用脚本精确复核）</h2>
+<ul>
+<li><strong>光学模型前提（逐页就地微标）</strong>：</li>
+<li>光路图均标 <code>示意，不按比例</code>；公式基于近轴单色扩展光源、空气折射率 $n \approx 1$、$M_1 \parallel M_2&#39;$ 严格平行条件。</li>
+<li><strong>补偿板 $G_2$ 严谨口径</strong>：$G_1$ 后表面镀膜时，光束 1 穿 $G_1$ 玻璃 <strong>3 次</strong>，无 $G_2$ 时光束 2 仅穿 <strong>1 次</strong>；加 $G_2$ 后两臂各穿玻璃 <strong>3 次</strong>。显式声明：单色激光因相干长度极长，无 $G_2$ 也能干涉；$G_2$ 的根本作用是消除玻璃色散（使白光可在零光程差附近形成彩色条纹）并保证两臂光程对称。</li>
+<li><strong>半波损失严谨口径</strong>：保留经典教材界面模型（$G_1$ 镀膜处玻璃侧内反射 vs 空气侧外反射，相差 $\lambda/2$）；同时注明实际金属/介质半透膜引入常量附加相位差 $\varphi_0$，两者在取位移变化量 $\Delta d$ 时均严格抵消，不影响 $\Delta d = \Delta N \cdot \lambda/2$。</li>
+<li><strong>条纹运动方向严谨口径</strong>：$d$ 增大时中心级次 $k_0 = 2d/\lambda$ 升高，圆环从中心<strong>向外涌出（吐出）</strong>；$d$ 减小时向中心<strong>缩进（吞进）</strong>；P13 短暂演示反向缩进时将在画面微标 <code>仅演示方向，实测中途不可反转</code>。</li>
+<li><strong>理论算例与误差口径（绝不冒充实测）</strong>：</li>
+<li>采用 He-Ne 激光标称波长 $\lambda = 632.8\text{ nm}$，起始位 $d_0 = 32.0000\text{ mm}$，每 $\Delta N = 50$ 条记一次，每步理想位移 $50\lambda/2 = 0.015820\text{ mm} = 15.820\ \mu\text{m}$；$d_0 \sim d_9$ 从 $32.00000\text{ mm}$ 递增至 $32.14238\text{ mm}$。</li>
+<li>逐差法 5 组跨距（$\Delta N_5 = 250$）理论位移均为 $0.07910\text{ mm} = 79.10\ \mu\text{m}$，反算 $\lambda = 2 \times 0.07910 / 250 = 632.8\text{ nm}$。<strong>不宣称“相当于 5 次独立测量误差缩 $\sqrt{5}$ 倍”</strong>（5 对共享端点误差相关，其价值在全数据参与与大跨距），且明确逐差法不能消除空程系统误差或条纹误计。</li>
+<li><strong>分度占比口径</strong>：最小分度 $0.0001\text{ mm}$（$0.1\ \mu\text{m}$）在 $\Delta N = 1$（$0.3164\ \mu\text{m}$）时占比 $31.6\%$，在 $\Delta N = 250$（$79.10\ \mu\text{m}$）时占比 $0.13\%$（降 250 倍）；画面明确微标 <code>最小分度占比示意，非实测总不确定度</code>。</li>
+<li><strong>Python 视频 #2 随机抖动说明</strong>：为肉眼看清逐差法对随机抖动的抑制效果，模拟点将叠加放大的高斯读数抖动，并显式微标 <code>数值模拟对比，非实验室实测数据</code>。</li>
+<li><strong>参考来源口径</strong>：</li>
+<li>原理与仪器结构口径对照大学物理通行教材（程守洙/江之永《普通物理学》、马文蔚《物理学》、姚启钧《光学教程》迈克尔逊干涉仪章节）；LIGO 臂长 $4\text{ km}$ 与 $10^{-18}\text{ m}$ 级灵敏度量级取自 LIGO Scientific Collaboration 公开科普口径（仅作概念尺度对比，不引入外部未授权实拍图）。</li>
+</ul>
+<hr>
+<h2>四、Step 2 样稿拟选范围与 2 个边界确认</h2>
+<p>若本大纲通过，下一步 <strong>Step 2</strong> 将交付“22 页完整制作表”+ 下列 <strong>5 页代表性可编辑 PPTX 样稿</strong>（含 PowerPoint COM 导出的 1920&#215;1080 PNG 逐页预览 + <code>audit_pptx.py</code> v4 体检）：</p>
+<ul>
+<li><strong>P01</strong>（封面悬念 + 标尺对比 + 字幕安全区模板）</li>
+<li><strong>P05 → P06</strong>（双页连续 <code>!!</code> Morph 实测：45&#176; 分束光路 → 补偿板 $G_2$ 穿玻璃次数对比）</li>
+<li><strong>P12</strong>（动镜位移后态 + 原生可编辑 <code>m:oMath</code> 公式链 $\Delta L \to \Delta d \to \lambda$）</li>
+<li><strong>P13</strong>（Python 定量三联动视频占位框 + 顶部原生锁色公式 + 边角假设微标，验证 <code>S19–S20</code> 混排规范）</li>
+</ul>
+<h3>进入 Step 2 前的 2 个针对性边界追问</h3>
+<ul>
+<li><strong>P13 反向“吞进”演示取舍</strong>：在 P13（14.5 秒）的 Python 三联动动画里，你更希望<strong>（推荐）全程保持单向增大 $d$ 涌出 2 条完整条纹，把“减小 $d$ 吞进”留在 P14 静态对比说明</strong>（避免观众对“实测不可反转”产生潜意识混淆），还是<strong>在 P13 末尾用 3 秒演示一次反向吞进并配警示微标</strong>？</li>
+<li><strong>Step 2 样稿是否需要同步先看一张 Python 曲线静态样帧</strong>（仅生成 1 帧 PNG 静态预览图贴在 P13 占位框内确认配色与坐标可读性，不渲染完整 MP4，严格守住 <code>S20</code> 终稿一次性视频渲染锁）？</li>
+</ul>
+<p>确认大纲及这两点后，回复 <strong>“确认 Step 1，进入 Step 2”</strong> 即可推进。</p>
 </div></article>
 
     </section>
