@@ -245,7 +245,7 @@
     }
   </style>
 </head>
-<body data-conv-id="61796df0-a9c9-4a39-a790-1db7f3cafbbe" data-base-prefix="./" data-turn-count="4" data-update-time="2026-11-20 19:41" data-is-index="0">
+<body data-conv-id="61796df0-a9c9-4a39-a790-1db7f3cafbbe" data-base-prefix="./" data-turn-count="6" data-update-time="2026-11-20 20:34" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -259,7 +259,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1>读取 接管约束与断点，勿复述。 1. 单次只读核验断点磁盘状态，...</h1>
-        <div class="sub-meta">会话 ID: 61796df0-a9c9-4a39-a790-1db7f3cafbbe | 轮次: 4 | 更新于: 2026-11-20 19:41</div>
+        <div class="sub-meta">会话 ID: 61796df0-a9c9-4a39-a790-1db7f3cafbbe | 轮次: 6 | 更新于: 2026-11-20 20:34</div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./61796df0-a9c9-4a39-a790-1db7f3cafbbe.md" download="读取_接管约束与断点，勿复述。_1._单次只读核-61796df0.md" onclick="return downloadMarkdown(event, './61796df0-a9c9-4a39-a790-1db7f3cafbbe.md', '读取_接管约束与断点，勿复述。_1._单次只读核-61796df0.md')">⬇️ 下载 Markdown (.md)</a>
@@ -401,6 +401,43 @@
 <ul>
 <li><strong>状态锚定更新</strong>：按“覆写先确认”原则，本轮未动 <code>memory.md</code>。是否现在原地更新其 <code>## 2</code>（追加本轮已验证摘要与备份指针）和 <code>## 3</code>（推进断点至下一项）？</li>
 <li><strong>下一优先级选择</strong>：审计中剩余的中等工程隐患主要是 <strong>#7/#8</strong>（<code>extractor.py</code> 末锚漏检历史修改 + compact/full 错配可能改变说话人）与 <strong>#11</strong>（SQLite 在线备份 + 全字段脱敏）。你希望下一单点先攻 <strong>#7/#8</strong>，还是先暂停工程改造直接跑一次真实 <code>/dream</code> 验证现网体验？</li>
+</ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>直接现在原地更新把，我希望你直接继续改进，不过要注意一下不要额度用完了还没结束。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成 <code>memory.md</code> 原地更新，并集中完成了审计 <strong>#7、#8、#11</strong> 的完整闭环（TDD 红→绿→备份部署→生产隔离冒烟→最终断点刷新），当前状态已安全停靠，无半拉子改动。</p>
+<h3>1. 本轮落地改动（审计 #7 / #8 / #11）</h3>
+<ul>
+<li><strong><code>extractor.py</code></strong>（<code>a56a4188396395ea</code>，32,643 B）：</li>
+<li><strong>#7（防漏读 &amp; 止反复扫描）</strong>：在代码折叠和截断前对完整脱敏正文计算事件哈希并维护累计前缀摘要 <code>prefix_digest</code>（向后兼容生产现有 16 条旧水印平滑升级），历史轮次或末轮 800 字后改动均触发回放并标记 <code>REPLAY - RECHECK_OLD_SOURCES</code>；有效事件未变但文件签名变动时在 <code>ProcessLock</code> 下仅确认 <code>compact_sig</code>/<code>full_sig</code>（不动步数）；<code>check_due</code> 与 <code>extract_incremental</code> 共用同一 <code>_is_watermark_unchanged</code>（同时核对 <code>compact</code> 与 <code>full</code>）。</li>
+<li><strong>#8（分支剪枝 &amp; 防错配变说话人）</strong>：改为先在完整事件流（含工具事件）上核定回退分支，再过滤 <code>USER_INPUT</code>/<code>PLANNER_RESPONSE</code>；同 <code>step_index</code> 不同身份的合法事件不再被 <code>&lt;=</code> 误删，保留原序并标 <code>ORDER_UNCERTAIN</code>；<code>transcript_full.jsonl</code> 回填强校验 <code>type</code>、<code>step_index</code>、<code>source</code>、<code>created_at</code> 与事件身份且要求唯一匹配，错配时保留 <code>compact</code> 原文、记入 <code>retry_sessions</code> 且<strong>不推进水位</strong>。</li>
+<li><strong>#11（SQLite 在线备份 &amp; 故障 fail-closed &amp; 全字段脱敏）</strong>：<code>_read_summaries_isolated</code> 改用只读连接的 <code>sqlite3</code> 原生在线 <code>backup()</code> 替代逐文件拷贝 <code>db/wal/shm</code>；摘要库损坏或 <code>.pbtxt</code> 注释不可读时 fail-closed 记入 <code>retry_sessions</code>，严禁把未知/子代理会话放进批次或推进水位；对 <code>title</code>、<code>workspaces</code>、<code>last_modified_time</code> 等元数据字段统一执行 <code>redact_secrets</code>。</li>
+<li><strong><code>governance.py</code></strong>（<code>bf40cf565799f488</code>，61,679 B）：</li>
+<li><code>stage_proposal</code> 二次防泄露检查改为递归扫描操作对象内<strong>全部字符串字段</strong>（补齐 <code>topic_title</code>、<code>topic_tags</code> 等遗漏字段）。</li>
+<li><strong><code>SKILL.md</code></strong>（<code>823141a67c17ac80</code>，6,387 B）：</li>
+<li>明确写明凭据脱敏覆盖的内置正则范围与边界，取消“全量凭据脱敏”的过度承诺。</li>
+</ul>
+<hr>
+<h3>2. 外部验证结果（全部达标）</h3>
+<ul>
+<li><strong>TDD 红灯复现（改前）</strong>：在 <code>test_audit_remediation.py</code> 新增 <code>TestFix7WatermarkPrefixAndDueConsistency</code>、<code>TestFix8BranchPruningAndFullMismatch</code>、<code>TestFix11BackupMetadataFailClosedAndFullRedaction</code> 共 6 项测试，改前 <strong>6/6 按预期失败（Exit 1）</strong>。</li>
+<li><strong>TDD 绿灯回归（改后）</strong>：双测试集全量通过（<strong>28/28 全绿，Exit 0</strong>）：</li>
+<li><code>test_dream_e2e.py</code>：7/7 OK</li>
+<li><code>test_audit_remediation.py</code>：21/21 OK（含 P0 #1–#3、#7、#8、#9、#11、#12）</li>
+<li><strong>备份与双端哈希对齐</strong>：</li>
+<li>旧生产文件备份于插件扫描目录外：<code>backup_manifest.json</code>。</li>
+<li>沙盒与生产全部 <strong>11/11 核心文件 SHA-256 100% 匹配</strong>，插件目录零临时/备份残留。</li>
+<li><strong>生产隔离冒烟与零漂移</strong>：</li>
+<li>独立 <code>TemporaryDirectory</code> 上用生产 <code>dream_cli.py</code> 跑通 <code>status</code> / <code>compile</code>（与生产 <code>AGENTS.md</code> 逐字节一致）/ <code>extract --dry-run</code>（SQLite 在线备份）/ <code>check-due</code>。</li>
+<li>真实生产 12 个受管文件 <strong>SHA-256 零字节漂移</strong>。</li>
+<li><strong>状态锚定已同步</strong>：<code>memory.md</code> 已刷新至最新断点（<code>## 1</code> 与【排雷墓碑】零改动），后续开新对话可直接接管，不依赖本轮上下文。</li>
+</ul>
+<hr>
+<h3>3. 下一阶段边界提示（随时可在新会话继续）</h3>
+<p>目前审计报告中所有 P0 与高风险数据/安全工程缺陷（#1–#3、#4/#5、#7、#8、#9、#11、#12）已全部上线验证；剩余项均属可独立推进的低紧迫度收口：</p>
+<ul>
+<li><strong>工程收口</strong>：审计 #10（<code>stage</code> 同批字节解析算基线、目录副作用与 <code>run_id</code>/<code>snapshot_id</code> 合法名校验）+ 半年容量预防（审阅页显示主题余量、晋升双来源校验与编译规则完整可见预检）。</li>
+<li><strong>现网实操</strong>：直接运行一次真实 <code>/dream</code> 增量验收，并顺手按 #6 与“六主题删减归并”微调主题正文粒度。</li>
 </ul>
 </div></article>
 
