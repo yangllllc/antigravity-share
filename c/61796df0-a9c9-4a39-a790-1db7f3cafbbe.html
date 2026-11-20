@@ -245,7 +245,7 @@
     }
   </style>
 </head>
-<body data-conv-id="61796df0-a9c9-4a39-a790-1db7f3cafbbe" data-base-prefix="./" data-turn-count="1" data-update-time="2026-11-20 19:27" data-is-index="0">
+<body data-conv-id="61796df0-a9c9-4a39-a790-1db7f3cafbbe" data-base-prefix="./" data-turn-count="2" data-update-time="2026-11-20 19:31" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -259,7 +259,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1>读取 接管约束与断点，勿复述。 1. 单次只读核验断点磁盘状态，...</h1>
-        <div class="sub-meta">会话 ID: 61796df0-a9c9-4a39-a790-1db7f3cafbbe | 轮次: 1 | 更新于: 2026-11-20 19:27</div>
+        <div class="sub-meta">会话 ID: 61796df0-a9c9-4a39-a790-1db7f3cafbbe | 轮次: 2 | 更新于: 2026-11-20 19:31</div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./61796df0-a9c9-4a39-a790-1db7f3cafbbe.md" download="读取_接管约束与断点，勿复述。_1._单次只读核-61796df0.md" onclick="return downloadMarkdown(event, './61796df0-a9c9-4a39-a790-1db7f3cafbbe.md', '读取_接管约束与断点，勿复述。_1._单次只读核-61796df0.md')">⬇️ 下载 Markdown (.md)</a>
@@ -273,6 +273,97 @@
 <li>状态不符即停手汇报；一致则执行【唯一单点下一步】。</li>
 <li>严禁触碰【排雷墓碑】，覆写先确认，按【外部验证判据】自检。</li>
 </ul>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><h3>1. 断点磁盘状态与哈希核验结果（完全一致，本轮零写盘）</h3>
+<p>已执行单次只读核验，断点与磁盘完全吻合，无异常漂移或悬空事务：</p>
+<ul>
+<li><strong>沙盒 vs 生产代码哈希（11/11 核心文件 100% 一致）</strong>：</li>
+<li><code>dream.ps1</code> (<code>f14fd44e...</code>)、<code>scripts/__init__.py</code> (<code>b4b23938...</code>)、<code>scripts/config_io.py</code> (<code>ee1037c5...</code>)、<code>scripts/dream_cli.py</code> (<code>76ed57b9...</code>)、<code>scripts/extractor.py</code> (<code>7aba005f...</code>)、<code>scripts/governance.py</code> (<code>5f618ce5...</code>)、<code>scripts/redact.py</code> (<code>be300901...</code>)、<code>scripts/review_ui.py</code> (<code>edb9a9ab...</code>)、<code>scripts/store.py</code> (<code>df072e67...</code>)、<code>plugin.json</code> (<code>fb3109ed...</code>)、<code>skills/dream/SKILL.md</code> (<code>04d5ac7f...</code>) 全部 SHA-256 精确匹配。</li>
+<li>仅预期环境差异文件不同：<code>dream_config.json</code>（生产 <code>sandbox_mode=false</code>）与 <code>AGENTS.md</code>（生产实测 <strong><code>20 行 / 2,297 B</code></strong>，SHA-256 <code>3e487d7b...</code>）。</li>
+<li><strong>生产数据目录与先决项</strong>：</li>
+<li>6 个主题 / 17 条活跃条目（逐份检查确认<strong>目前 0 条多行结论</strong>，部署后无需迁库）、<code>promoted_rules.md</code> 含已收窄的 <code>RULE-001</code>/<code>RULE-002</code>（23 行 / 2,591 B）；<code>state/pending_tx.json</code> 不存在、<code>state/feedback_ledger.jsonl</code> 为空（0 B）；插件扫描目录无旧备份残留。</li>
+<li>审计源 <code>dream-architecture-audit.md</code>、旧备份目录 <code>program_backups/20261120_063317_pre_audit_fix/</code> 与 <code>deepseek-subagent.md</code>（11 行 / 1,371 B，SHA-256 <code>a86a81aa...</code>）均在位。</li>
+</ul>
+<hr>
+<h3>2. 审计 #9 / #12 修复设计与 TDD 方案</h3>
+<h4>2.1 审计 #9（负反馈 ID 复用误拦、无序指纹失真、审阅对比与锁内重查）</h4>
+<p><strong>核心矛盾</strong>：当前 <code>governance.py</code> 将无作用域裸 <code>entry_id</code> 设为硬拦条件、用 <code>sorted(set)</code> 丢弃词序与否定极性，且 <code>apply_decisions</code> 未在 <code>ProcessLock</code> 内重查最新账本。</p>
+<p><strong>拟定最小改动（涉及 <code>governance.py</code>、<code>review_ui.py</code>）</strong>：</p>
+<ul>
+<li><strong>永久单调 ID + 移除裸 <code>entry_id</code> 一票否决</strong>：</li>
+<li>删除 <code>check_feedback_collision</code> 中 <code>blocked_entry_id</code> 分支（旧账本 <code>entry_id</code> 仅作历史溯源，不封禁未来新项）。</li>
+<li><code>_next_entry_id(prefix, used_ids)</code> 改为取匹配 <code>^{prefix}-(\d+)$</code> 的 <code>max + 1</code>（不再填空洞）；<code>stage_proposal</code> 的 <code>used_ids</code> 合并同 <code>(tier, topic)</code> 下现存条目 + 历史账本记录 + 同批已分配 ID，确保已拒/已撤编号不再复分配。</li>
+<li>*放弃的方案*：新建 <code>state/id_counters.json</code> 独立计数器——需新增受管目标接入快照 v2 与事务清单，增加复杂度而收益有限。</li>
+<li><strong>v2 保序精确指纹（保留词序、否定、适用范围）</strong>：</li>
+<li><code>normalize_text_ordered(text)</code> 做 NFKC 规范化、小写化、标点转单空格、折叠空白（保留全部单字如 <code>不/勿/非/仅</code> 及英文短词 <code>no/not</code> 与词序）。</li>
+<li>同时校验整条指纹 <code>v2|{tier}|{topic}|{norm_title}|{norm_claim}</code> 与非空主张指纹 <code>v2c|{tier}|{topic}|{norm_claim}</code>（防止仅改标题绕过精确禁止）。</li>
+<li>兼容旧账本：比对旧记录时优先基于其保留的 <code>title</code>/<code>claim</code> 现场重算 v2 指纹，避免旧词袋指纹把反序新提案误判为 <code>exact_fingerprint</code>。</li>
+<li><code>banned_keyword</code> 默认限定同作用域（除非账本记录显式 <code>global_ban: true</code>）。</li>
+<li><strong>近似命中（<code>semantic_token_overlap</code>）降误报 + 审阅页并列展示</strong>：</li>
+<li>增加显式禁止/肯定极性检测（如一方含 <code>禁止/严禁/禁用/不要/勿/不得/forbid/never/disable/not</code> 而另一方不含，不按同义重复拦截，避免“禁用 X”误杀“使用 X 时加参数 Y”）；收紧短集合门槛为 <code>jaccard &gt;= 0.50 or (min_sz &gt;= 6 and overlap &gt;= 0.70 and jaccard &gt;= 0.35)</code>（已核验 <code>test_dream_e2e.py</code> 的 <code>test_03</code> 同义改写案例 <code>jaccard=0.517, overlap=0.682</code> 仍稳命中）。</li>
+<li><code>feedback_match</code> 扩展携带 <code>severity</code>（<code>&quot;hard&quot;</code> vs <code>&quot;advisory&quot;</code>）、<code>matched_title</code>、<code>matched_claim</code>、<code>matched_type</code>、<code>matched_at</code>；在 <code>review_ui.py</code> 与 <code>review_summary.md</code> 中<strong>并列展示旧主张、历史理由与本次新主张</strong>。</li>
+<li><strong><code>apply_decisions</code> 锁内重查最新账本</strong>：</li>
+<li>在 <code>ProcessLock</code> 内重新调用 <code>load_feedback_ledger(cfg)</code> 对待执行操作实时重查 <code>check_feedback_collision</code>：</li>
+<li>命中且未勾选 <code>override_feedback</code> → 阻止落盘（不重复写入冗余负反馈）；</li>
+<li>勾选了 <code>override_feedback=True</code> 但命中了 <code>stage</code> 后<strong>新增的不同 <code>ledger_id</code></strong> → 抛出 <code>RuntimeError</code> 拒绝覆盖并要求重新 <code>stage</code> 审阅（整批零落盘）；</li>
+<li>勾选了 <code>override_feedback=True</code> 且 <code>ledger_id</code> 与审阅时一致 → 放行。</li>
+</ul>
+<h4>2.2 审计 #12（多行结论静默截断及连带破坏 CAS Revert）</h4>
+<p><strong>核心矛盾</strong>：<code>store.py</code> 允许 <code>claim</code> 原样换行输出，但 <code>_parse_entry_block</code>（<code>L113-L128</code>）只读取 <code>- **结论**:</code> 首行并静默丢弃后续行；这不仅在下一次重渲染时永久删除限制条件，还会导致刚批准的多行条目触发 <code>revert_item</code> 的 CAS 冲突失败；另外 <code>governance.py</code> 把 <code>prev_claim[:80]</code> 直接塞进 <code>changelog</code>，多行时会连带截断溯源行。</p>
+<p><strong>拟定最小改动（涉及 <code>store.py</code>、<code>governance.py</code>、<code>review_ui.py</code>）</strong>：</p>
+<ul>
+<li><strong>Tier 3 支持 2 空格缩进续行 + 兼容读取既有多行</strong>：</li>
+<li><code>MemoryEntry.render()</code>：单行 <code>claim</code> 保持原样（与现有生产 17 条逐字节一致）；多行 <code>claim</code> 首行 <code>- **结论**: &lt;line0&gt;</code>，后续每行渲染为 <code>&quot;  &quot; + line_i</code>。</li>
+<li><code>_parse_entry_block()</code>：新增 <code>in_claim</code> 状态，遇到 <code>- **结论**:</code> 后持续吸收后续行（规范 2 空格缩进剥离前 2 空格；历史未缩进多行兼容保留），直至遇到 <code>- **替代旧条目**:</code> / <code>- **变更溯源**:</code> / <code>### </code> 结束。</li>
+<li><strong>结构安全与单行字段硬校验</strong>：</li>
+<li><code>stage_proposal</code> 强制拒绝：<code>title</code>、<code>change_note</code>、<code>topic_title</code>、<code>topic_summary</code> 以及 <strong>Tier 1 <code>promoted_rule</code> 的 <code>claim</code></strong>（防破坏 <code>AGENTS.md</code> 列表与行预算）含 <code>\r</code>/<code>\n</code>；并拒绝任意 <code>claim</code> 内含 <code>&lt;!-- ENTRY_START</code> / <code>&lt;!-- ENTRY_END</code> 或顶格 <code>- **结论**:</code> / <code>- **变更溯源**:</code> / <code>- **替代旧条目**:</code> / <code>### </code> 等结构边界标记。</li>
+<li><code>governance.py:233</code> 的 <code>[旧结论: ...]</code> 改为 <code>&quot; &quot;.join(prev_claim.splitlines())[:80]</code>，杜绝换行污染 <code>changelog</code>。</li>
+<li><code>review_ui.py</code> 为主张展示区补 <code>white-space: pre-wrap</code>，确保审阅页直观呈现多行。</li>
+<li><strong>代码级往返不变量断言</strong>：</li>
+<li>在 <code>store.py</code> 新增 <code>assert_entry_roundtrip(entry)</code>（验证 <code>parse_topic_text(entry.render())</code> 完整保留 <code>title</code>、<code>claim</code>、<code>changelog</code>），在 <code>stage_proposal</code> 与 <code>apply_decisions</code> 写盘前均执行校验；<code>_fit_lines_within_budget</code> 同步按真实换行符计行兜底。</li>
+</ul>
+<h4>2.3 TDD 用例矩阵（新增至 <code>test_audit_remediation.py</code>）</h4>
+<p>| 用例 | 复现缺陷（改前必红灯） | 修复后验收断言（改后必绿灯） |</p>
+<p>| :--- | :--- | :--- |</p>
+<p>| <code>test_p9_01_rejected_auto_id_never_blocks_unrelated_add</code> | 同主题自动编号新增被拒后，下一条无关新增复用首空 ID 触发 <code>blocked_entry_id</code> | 分配新单调 ID（跳过已拒号）、<code>blocked_by_feedback=False</code> 正常落盘；手动复用旧号提无关主张亦不被裸 ID 拦截 |</p>
+<p>| <code>test_p9_02_ordered_fingerprint_distinguishes_order_negation_scope</code> | 中/英反序主张命中 <code>exact_fingerprint</code>；同术语反极性修正误触重叠 | 反序/反范围/反极性均不误判，仅标点空白差异的真重复精准命中 <code>exact_fingerprint</code>；旧词袋账本重算 v2 兼容无误杀 |</p>
+<p>| <code>test_p9_03_similar_hit_side_by_side_review_and_lock_recheck_on_apply</code> | 审阅页无旧主张对照；<code>stage</code> 后新增账本记录在 <code>apply</code> 时被绕过落盘 | <code>review.html</code> 与 <code>review_summary.md</code> 并列含旧主张/理由/新主张；<code>apply</code> 锁内重查拦下新增禁令，且拒绝用旧 <code>override_feedback</code> 覆盖新 <code>ledger_id</code> |</p>
+<p>| <code>test_p12_01_multiline_topic_claim_survives_apply_reload_and_revert</code> | 3 行 Tier 3 <code>claim</code> 写入后重载只剩首行，且 <code>revert_item</code> 报 CAS 冲突 | 重载、同主题二次写入、更新生成单行 <code>changelog</code> 及 <code>revert_item</code> 全程逐字符保真通过 |</p>
+<p>| <code>test_p12_02_legacy_unindented_multiline_file_parsed_and_rewritten_cleanly</code> | 旧版未缩进多行文件首读即截断 | 首读完整保留，写回规范为 2 空格缩进续行，二次重载零丢失 |</p>
+<p>| <code>test_p12_03_structural_injection_and_single_line_fields_rejected_at_stage</code> | Tier 1 多行、<code>title</code>/<code>change_note</code> 换行、块边界标记注入通过 <code>stage</code> | 全部在 <code>stage_proposal</code> 抛出 <code>ValueError</code> 拦截，零写盘 |</p>
+<hr>
+<h3>3. <code>deepseek-subagent.md</code> 例外 Diff（等待确认后再手动写入）</h3>
+<p>目标文件：<code>deepseek-subagent.md</code>（仅改动第 8 行，保留原触发清单与 11 行长度，避免稀释常规任务 MCP 触发率）：</p>
+<pre><code>--- a/C:/Users/Administrator/.gemini/config/rules/deepseek-subagent.md
++++ b/C:/Users/Administrator/.gemini/config/rules/deepseek-subagent.md
+@@ -5,7 +5,7 @@
+ 
+ # 同济双核协同路由（Schema 目录：`C:\Users\Administrator\.gemini\antigravity\mcp\tongji-deepseek-subagent\`）
+ 
+-- **直出（免调）**：纯闲聊、简单事实查询、单步语法/格式修改，或用户明确指令勿调 MCP。
++- **直出（免调，最高优先）**：纯闲聊、简单事实查询、单步语法/格式修改、用户明确指令勿调 MCP，以及 `/dream` 记忆整理、审阅、撤回及其批次分析（只走本地流程与原生代理；显式另起任务审计已脱敏材料除外）。
+ - **积极调用 `consult_tongji_brain`（≤900 字符，支持同对话多轮按需调用）**：遇以下任一信号即调用卸载算力——① 多概念辨析/实验机理/学习答疑（`deep_panel`）；② 含≥2步公式/单位/数值计算（`math_check`）；③ 非平凡代码改写、排错或补丁审计（`code_audit`）；④ 方案快速交叉对照（`fast_dual`）。入参 `{ query, mode }`。
+ - **重大交付调用 `delegate_to_deepseek`（≤1100 字符，每轮重大交付可调一次）**：涉多步物理/光学推导、架构决策或核心算法，先形成精炼初稿骨架再调。入参 `{ question, draft_answer }`。
+ - **省上下文与自包含铁律**：子模型看不到历史或本地文件，入参必须自包含关键参数/公式/代码片段，但**禁止灌入大段冗余散文**以省主模型输出 Token；单次总预算 145 秒，最终裁决权归主模型。</code></pre>
+<hr>
+<h3>4. 外部验证判据与执行闭环（确认后执行）</h3>
+<ul>
+<li><strong>红灯复现</strong>：在沙盒写入上述 6 组新用例，跑 <code>test_dream_e2e.py</code> + <code>test_audit_remediation.py</code>，验证旧 16 项全绿、新 6 项按预期失败。</li>
+<li><strong>绿灯修复</strong>：在沙盒修改 <code>governance.py</code> / <code>store.py</code> / <code>review_ui.py</code>，重跑双测试集至 <strong>22/22 全绿（Exit 0）</strong>。</li>
+<li><strong>备份与部署</strong>：将生产旧脚本备份至 <code>plugin_data/antigravity-dream-memory/program_backups/&lt;ts&gt;_pre_fix_9_12/</code>（不放插件目录），同步脚本并校验沙盒 vs 生产 SHA-256 一致；应用 <code>deepseek-subagent.md</code> Diff（不留 <code>.bak</code>）。</li>
+<li><strong>生产隔离冒烟</strong>：只读拷贝生产 <code>plugin_data</code> 至独立 <code>TemporaryDirectory</code> 跑生产脚本 <code>status</code> / <code>compile</code> 冒烟，并核验真实 <code>plugin_data</code> 与 <code>rules/AGENTS.md</code> <strong>零字节漂移</strong>。</li>
+</ul>
+<hr>
+<h3>5. 动手前需你拍板的 2 个边界条件</h3>
+<ul>
+<li><strong>#9 近似命中（<code>semantic_token_overlap</code>）的放行策略</strong>：</li>
+<li><strong>选项 A（推荐）</strong>：审阅页并列展示旧主张/理由/新主张并标注“近似提醒”，但 <code>apply</code> 仍需人工显式勾选 <code>override_feedback</code> 才放行（与现有 <code>test_03</code> 防同义绕过契约 100% 兼容）。</li>
+<li><strong>选项 B</strong>：仅 <code>exact_fingerprint</code> / <code>banned_keyword</code> / <code>revert</code>（硬禁）要求勾选 <code>override_feedback</code>，普通 <code>reject</code> 触发的近似命中仅并列告警、直接选 <code>Approve</code> 即放行（需明确将 <code>revert</code> 归为硬禁以保 <code>test_03</code>）。</li>
+<li><strong>#12 Tier 3 <code>claim</code> 多行策略</strong>：</li>
+<li><strong>选项 A（推荐）</strong>：Tier 3 支持 2 空格缩进续行 + 兼容旧未缩进多行 + <code>parse(render)</code> 往返强断言；仅对 Tier 1 <code>promoted_rule.claim</code>、<code>title</code>、<code>change_note</code> 强制单行。</li>
+<li><strong>选项 B</strong>：<code>stage</code> 直接拒绝<strong>所有</strong>含换行的 <code>claim</code>（含 Tier 3），解析器仍保留既有多行兼容与往返断言兜底。</li>
+</ul>
+<p>若确认上述两个选项（或直接回复“按推荐方案 + Diff 执行”），我即开始按红灯→绿灯→备份部署→隔离冒烟流程落地。</p>
 </div></article>
 
     </section>
