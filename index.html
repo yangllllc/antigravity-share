@@ -245,7 +245,7 @@
     }
   </style>
 </head>
-<body data-conv-id="012b6894-2e81-44de-a00d-a54e062faf7b" data-base-prefix="./c/" data-turn-count="2" data-update-time="2026-11-20 12:39" data-is-index="1">
+<body data-conv-id="012b6894-2e81-44de-a00d-a54e062faf7b" data-base-prefix="./c/" data-turn-count="4" data-update-time="2026-11-20 12:59" data-is-index="1">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="./index.html">Antigravity 对话分享</a></h2>
@@ -259,7 +259,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1>请先完整阅读当前工作目录下的 `CONTEXT_dream_sk...</h1>
-        <div class="sub-meta">会话 ID: 012b6894-2e81-44de-a00d-a54e062faf7b | 轮次: 2 | 更新于: 2026-11-20 12:39</div>
+        <div class="sub-meta">会话 ID: 012b6894-2e81-44de-a00d-a54e062faf7b | 轮次: 4 | 更新于: 2026-11-20 12:59</div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./c/012b6894-2e81-44de-a00d-a54e062faf7b.md" download="请先完整阅读当前工作目录下的_CONTEXT_d-012b6894.md" onclick="return downloadMarkdown(event, './c/012b6894-2e81-44de-a00d-a54e062faf7b.md', '请先完整阅读当前工作目录下的_CONTEXT_d-012b6894.md')">⬇️ 下载 Markdown (.md)</a>
@@ -369,6 +369,110 @@ Skipped:
 <ul>
 <li><strong>非工程/个人隐私对话的过滤边界</strong>：实机 dry-run 中看到了如 <code>政治规划</code>、<code>Navigating Graduate School Anxiety And Study Methods</code>、<code>已过期1</code>（已归档）这类个人规划/非技术会话。正式启用前，是否需要给 <code>dream_config.json</code> 增加<strong>默认跳过已归档对话</strong>或<strong>标题/工作区黑名单</strong>（例如排除非工作区闲聊，避免把阶段性个人情绪或隐私状态提炼进记忆库）？</li>
 <li><strong>冷启动方式偏好</strong>：当前存量 16 个历史会话（14 个 batch，共 200 轮）——你更希望在沙盒验收时先<strong>挑最近 3 个技术会话小范围试跑</strong>看提炼口味，还是等转生产后一次性全量冷启动回填（或者直接跳过早期存量，只从今天起增量巩固）？</li>
+</ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>你直接启用把，但是我没有看懂你最后敲定的方案的原理是怎么样得，你和我说一下是怎么实现的，这样有什么好处，然后有没有什么缺点或者不足的地方。我觉得把归档了的对话要默认跳过，其他的对话都放进去会比较好，因为日常对话也能体现我的需求，当然我说的也不一定对。你可以先提炼最近的三个，然后和我讲一下有什么发生了改变，然后我在看情况是否将前面的全部提炼</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已正式启用生产版插件，并已对<strong>最近 3 个非归档真实对话</strong>完成了抽取、提炼与预检（<code>run_id: trial_recent_3</code>）。因为铁律要求<strong>高权重规则不得静默生效</strong>，目前我停在<strong>人工审阅闸门</strong>——你看完下面到底会发生什么变化、点头批复后，我再一键原子落盘。</p>
+<hr>
+<h2>一、用大白话讲透：这套记忆系统到底是怎么运转的？</h2>
+<p>你可以把它理解成<strong>“大脑白天的聊天记录 → 晚上按需整理成笔记本 → 贴一张精简目录在桌面上”</strong>的三层结构：</p>
+<pre><code>[你每天的 Antigravity 对话] (底层明文 transcript.jsonl + summaries.db)
+        │
+        ▼ ① Python 脚本（隔离拷贝、跳过已归档/子代理、脱敏密钥、砍掉超长工具日志）
+[干净的增量对话批次 batch_*.md]
+        │
+        ▼ ② Antigravity 强模型读批次 + 读旧索引 + 读你过去的驳回记录
+[精简变更提案 proposal.json]（只说“新增/覆写/废弃哪几条”，绝不乱改原文件）
+        │
+        ▼ ③ Python 脚本验预算、查泄露、撞负反馈账本、算 Diff、渲染审阅页
+[人工审阅闸门]（聊天直接批复 / 浏览器 review.html 一键确认）
+        │
+        ▼ ④ 自动建只读快照 → 原子写入 → 确定性重新编译桌面目录
+┌──────────────────────────────────────────────────────────┐
+│ Tier 0（绝不碰）：你手写的 core-reasoning-protocol.md / CONTEXT_*.md │
+│ Tier 1 + Tier 2（自动编译到插件 rules/AGENTS.md，每次对话常驻，硬顶≤12KB）│
+│   ├─ Tier 1：经你点头晋升的极少数“全局铁律”                          │
+│   └─ Tier 2：一张极短的“主题目录表”（只写每个主题管啥、存在哪）          │
+│ Tier 3（plugin_data/.../topics/*.md，平时不占上下文，聊到相关领域才读） │
+└──────────────────────────────────────────────────────────┘</code></pre>
+<h3>为什么这样设计？（核心好处）</h3>
+<ul>
+<li><strong>贴合 Antigravity 原生机制，零常驻负担</strong>：因为它是原生插件 <code>antigravity-dream-memory</code>，Antigravity 会自动在每次新对话加载它的 <code>AGENTS.md</code>（只是一张很轻的目录 + 极少数晋升规则，占不到 1.5 KB），而详细的踩坑经验全藏在 <code>topics/*.md</code> 里，<strong>聊光路才读光路、做 PPT 才读 PPT</strong>，不会越用越臃肿。</li>
+<li><strong>能“改错”而不是“只增不减”</strong>：传统向量记忆库（RAG）只会越塞越多，新旧结论打架全靠碰运气；这套系统每次整理都对照旧条目，发现新结论推翻了旧结论时直接原地覆写并留一行“旧结论溯源”。</li>
+<li><strong>重体力活全交脚本，防 60 秒断连、防误删、防死循环</strong>：</li>
+<li>脚本按每个会话记录“读到第几步 + 锚点哈希”，下次只抽新增发言；</li>
+<li>写盘前一定先锁死一份只读时间戳快照，随时能单条 <code>revert</code> 或整批 <code>rollback</code>；</li>
+<li>你只要驳回或撤回某条记忆，原因就会写进 <code>feedback_ledger.jsonl</code>，以后哪怕模型换个说法重新提议，也会被指纹+中文词袋重合检测直接拦下来。</li>
+</ul>
+<h3>实话实说：这套方案有哪些缺点和不足？</h3>
+<ul>
+<li><strong>不是实时记忆，靠你主动 <code>/dream</code> 触发</strong>：刚聊完的新偏好在下次跑 <code>/dream</code> 前不会自动进全局记忆（优点是干净可控、不卡顿，代价是需要偶尔手动触发一次，如每周一次）。</li>
+<li><strong>Tier 3 的“按需读取”依赖模型自觉查目录</strong>：虽然目录表每次都会注入上下文，但如果用户在某次对话问法非常隐晦、没命中目录里的关键词，模型偶尔可能忘了主动去 <code>read_file</code> 对应的 <code>topics/*.md</code>（相比向量库自动召回，这里用“完全透明可审计”换取了少量“隐式召回率”）。</li>
+<li><strong>纯规则/词袋防复提的边界</strong>：<code>feedback_ledger.jsonl</code> 目前能拦住原话和较高字面重合的同义改写；但如果模型彻底换了一套完全不同字眼的说法，主要靠提示词层的语义遵守，脚本层无法 100% 硬拦。</li>
+<li><strong>本次实测刚抓出一个小瑕疵</strong>：在读你 <code>Optics Grilling Tutor Session</code>（<code>c9eb2bf0</code>）的真实记录时，我发现 Antigravity 在你编辑重发同一条消息时，会在 <code>transcript.jsonl</code> 里留下多条相同 <code>step_index</code> 的旧草稿（如 <code>step=11</code> 出现了 4 次）。目前不影响强模型读懂，但会多耗一点批次字数，后续在 <code>extractor.py</code> 加 5 行按 <code>step_index</code> 保留最后一条的去重即可消除。</li>
+<li><strong>对你“默认跳过已归档、纳入日常对话”想法的客观评估</strong>：你的直觉整体是对的——日常对话确实最能反映你的表达习惯和真实诉求。唯一风险是<strong>把阶段性情绪或一时决定误固化成永久规则</strong>；靠“反死板提炼（只留持久习惯）+ Tier 3/Tier 1 分级 + 你审阅兜底”可以把这个风险压到很低。另据实机核查，你目前 <code>annotations/</code> 中标记 <code>archived:true</code> 的会话数是 <strong>0 条</strong>（哪怕标题叫 <code>已过期1</code> 的也没点过归档），今后凡是在左侧栏或归档插件里归档过的对话都会自动跳过。</li>
+</ul>
+<hr>
+<h2>二、正式启用状态（已落盘）</h2>
+<ul>
+<li><strong>插件路径（已默认启用）</strong>：<code>C:\Users\Administrator\.gemini\config\plugins\antigravity-dream-memory\</code></li>
+<li>清单与技能：<code>plugin.json</code>、<code>SKILL.md</code>（新会话可直接输入 <code>/dream</code>）</li>
+<li>配置与引擎：<code>dream_config.json</code>（已开启 <code>skip_archived_by_default: true</code>）、<code>dream.ps1</code></li>
+<li>自动编译的常驻规则入口：<code>AGENTS.md</code></li>
+<li><strong>数据存储路径</strong>：<code>C:\Users\Administrator\.gemini\antigravity\plugin_data\antigravity-dream-memory\</code></li>
+<li><strong>隔离状态</strong>：你的 <code>core-reasoning-protocol.md</code>、<code>deepseek-subagent.md</code> 及所有课题 <code>CONTEXT_*.md</code> 全部在写保护名单内，零改动。</li>
+</ul>
+<hr>
+<h2>三、首批试跑：最近 3 个真实对话提炼了什么？批复后会发生什么改变？</h2>
+<h3>本次扫描的 3 个最近会话（35 轮对话，已排除当前会话）</h3>
+<ul>
+<li><code>7489c4f3</code> — <strong>迈克尔逊干涉仪测光波长科普视频制作</strong>（<code>Desktop/ppt</code>）</li>
+<li><code>e1773243</code> — <strong>科普视频 PPT 制作 Skill 升级</strong>（<code>Desktop/ppt</code>）</li>
+<li><code>c9eb2bf0</code> — <strong>Optics Grilling Tutor Session</strong>（<code>Desktop/光路</code>）</li>
+</ul>
+<blockquote><strong>刻意没有提炼进记忆库的内容</strong>（防臃肿原则）：单期视频的 22 页页码/62 条字幕细节（属于该视频自己的 <code>CONTEXT_*.md</code>）、<code>course-ppt-lab</code> 里已经写全的规则编号（避免重复）、光路临时问答题目（属于 <code>02_探讨与理解记录.md</code>）。</blockquote>
+<h3>提炼出的 7 条变更提案（待你审阅）</h3>
+<p>| 编号 | 层级 | 目标文件 | 提炼内容与原因 |</p>
+<p>| :--- | :--- | :--- | :--- |</p>
+<p>| <strong><code>OP-001</code></strong> | <strong>Tier 1 常驻规则（人工必审）</strong> | <code>promoted_rules.md</code> → 编译进 <code>AGENTS.md</code> | <strong><code>[RULE-001]</code> 本机未注册全局 <code>python</code>/<code>ffmpeg</code>/<code>node</code> PATH</strong>：执行脚本前禁止盲猜 PATH，应按需查 <code>topics/local-windows-env.md</code> 用已验证绝对路径。（跨 <code>7489c4f3</code>、<code>e1773243</code> 两次实测确认） |</p>
+<p>| <strong><code>OP-002</code></strong> | Tier 3 按需主题 | <code>topics/local-windows-env.md</code> | <strong><code>[MEM-ENV-001]</code> 两套 Python/FFmpeg 绝对路径地图</strong>：记录 <code>.workbuddy/.../python.exe</code>（Python 3.13 + numpy/matplotlib/pptx/win32com/ffmpeg 7.1）与 <code>~/.local/bin/python3.12.exe</code>，以后不用每次重探环境。 |</p>
+<p>| <strong><code>OP-003</code></strong> | Tier 3 按需主题 | <code>topics/local-windows-env.md</code> | <strong><code>[MEM-ENV-002]</code> 四端 Skill 同步与备份避坑</strong>：记录 <code>.gemini</code>/<code>.dsh</code>/<code>.codex</code>/<code>.workbuddy</code> 四端副本同步约定，且旧备份不可残留在 <code>skills/</code> 同级目录防扫出重名 Skill。 |</p>
+<p>| <strong><code>OP-004</code></strong> | Tier 3 按需主题 | <code>topics/ppt-video-workflow.md</code> | <strong><code>[MEM-PPT-001]</code> 80/20 混合出片与同济模板隔离</strong>：80% 原生形状 + 20% Python 动画，确认静态样帧后再一次性出 MP4；同济汇报皮肤与科普暗场物理隔离。 |</p>
+<p>| <strong><code>OP-005</code></strong> | Tier 3 按需主题 | <code>topics/ppt-video-workflow.md</code> | <strong><code>[MEM-PPT-002]</code> Python 嵌入视频 3 个实测坑点</strong>：mod-16 分辨率+<code>h264/yuv420p/30fps</code> 防绿边黑屏；Matplotlib 隐藏 <code>bbox</code> 必须用 <code>set_visible(False)</code> 而不是 <code>set_alpha(0)</code>；压字幕需对齐实出视频换片轴防漂移。（这 3 条在 <code>7489c4f3</code> 末尾尚未归档进 skill） |</p>
+<p>| <strong><code>OP-006</code></strong> | Tier 3 按需主题 | <code>topics/optics-research-profile.md</code> | <strong><code>[MEM-OPT-001]</code> 科研方向与课题背景</strong>：同济光学研究生，实验物理课题组方向为 DBR 高 Q 微腔、激子极化激元、超快光谱、角分辨消色差光路、莫尔转角（导师已布置先入门），笔记在 <code>Desktop/光路/</code>。 |</p>
+<p>| <strong><code>OP-007</code></strong> | Tier 3 按需主题 | <code>topics/optics-research-profile.md</code> | <strong><code>[MEM-OPT-002]</code> 物理推导讲解偏好（来自你的直接纠偏）</strong>：解释公式禁止压缩跳步（必须写全相邻步骤的连接方程，如色散→磨镜者公式→高斯公式）；声明听不懂或不想答的点直接挂起，不强迫连续刷题。 |</p>
+<h3>你批复同意后，每次新对话实际多出来的内容（<code>AGENTS.md</code> 精确 Diff）</h3>
+<p>你会发现真正常驻到以后每次对话里的内容<strong>极其克制</strong>——整份 <code>AGENTS.md</code> 总计只有 <strong>16 行 / 1,404 字节</strong>（上限 140 行 / 12,000 字节）：</p>
+<pre><code> ## Tier 1：已人工批复的晋升规则
+-- （暂无已晋升规则；跨会话验证且经人工审批后自动编译至此。）
++- **[RULE-001] 本机未注册全局 python/ffmpeg/node PATH**：执行 Python、FFmpeg 或脚本前禁止假设系统 PATH 存在 python/ffmpeg/node，应按需读取 topics/local-windows-env.md 并显式调用已验证绝对路径。
+ 
+ ## Tier 2：按需读取的主题记忆索引
+ | 主题 Slug | 适用范围 | 标签 | 条目 |
+ | :--- | :--- | :--- | :---: |
++| `topics/local-windows-env.md` | 本机可用 Python/FFmpeg 绝对路径及四端 Skill 同步约定 | windows, python, ffmpeg | 2 |
++| `topics/optics-research-profile.md` | 微腔激子极化激元实验方向背景与讲解节奏/推导连续性偏好 | optics, physics, research | 2 |
++| `topics/ppt-video-workflow.md` | 80/20 混合出片路线、Matplotlib/PPT 渲染实测坑点与同济模板隔离约定 | ppt, video, matplotlib | 2 |</code></pre>
+<ul>
+<li><strong>之后的新对话体感变化</strong>：</li>
+<li>以后你开新对话写 Python 脚本，AI 一眼看到 <code>RULE-001</code>，不再傻傻执行报错的 <code>python</code>，而是直奔 <code>local-windows-env.md</code> 调对应环境；</li>
+<li>以后你问莫尔转角或微腔光学问题，AI 看到索引去读 <code>optics-research-profile.md</code>，一上来就知道你的实验室背景，而且<strong>不会再跳步推导或强塞一堆考题</strong>；</li>
+<li>平时聊毫不相干的话题，这 3 个 <code>topics/*.md</code> 的正文完全不会被读进上下文。</li>
+</ul>
+<hr>
+<h2>四、接下来怎么走？（等你一句话批复）</h2>
+<p>你可以直接任选以下一种方式审阅 <code>trial_recent_3</code>：</p>
+<ul>
+<li><strong>直接在聊天里批复（最省事）</strong>：告诉我比如“<strong>7 条全部同意</strong>”，或者“<strong>同意 OP-002~007，驳回 OP-001 原因：……</strong>”（你也可以顺手挑一条试试驳回或降级），我立刻执行原子 <code>apply</code>（自动建只读快照 + 推进这 3 个会话的水位线）。</li>
+<li><strong>用网页审阅台看完整 Diff</strong>：直接双击打开 <code>review.html</code> 或看摘要 <code>review_summary.md</code>。</li>
+</ul>
+<p>批复完这 3 个会话后，如果你觉得这个提炼颗粒度合胃口，我再按同样流程分批提炼前面剩余的 <strong>13 个非归档历史会话</strong>（顺手把刚才发现的同 <code>step_index</code> 重试去重一起补上）。</p>
+<hr>
+<h3>两个顺手确认的小问题</h3>
+<ul>
+<li>你觉得上面这 7 条的“提炼口味”（特别是把 <code>OP-007</code> 这种学习/沟通偏好放到 Tier 3 而不是直接升成 Tier 1 全局规则，或者你想不想把 <code>OP-007</code> 也升成 Tier 1）是偏保守、偏激进，还是刚好？</li>
+<li>审阅完这 3 条后，剩余的 13 个历史会话中，有没有哪几个你打算先在侧边栏点一下“归档”跳过，还是全部按现在这套口味一并提炼给我审阅？</li>
 </ul>
 </div></article>
 
