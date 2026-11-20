@@ -245,7 +245,7 @@
     }
   </style>
 </head>
-<body data-conv-id="a7ae9856-4fca-4df9-b47d-3b3b94f53f1a" data-base-prefix="./c/" data-turn-count="8" data-update-time="2026-11-20 20:04" data-is-index="1">
+<body data-conv-id="a7ae9856-4fca-4df9-b47d-3b3b94f53f1a" data-base-prefix="./c/" data-turn-count="10" data-update-time="2026-11-20 20:19" data-is-index="1">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="./index.html">Antigravity 对话分享</a></h2>
@@ -259,7 +259,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1>先读 @ mcp.md，勿复述历史。 1. 单次只读核验断点磁盘...</h1>
-        <div class="sub-meta">会话 ID: a7ae9856-4fca-4df9-b47d-3b3b94f53f1a | 轮次: 8 | 更新于: 2026-11-20 20:04</div>
+        <div class="sub-meta">会话 ID: a7ae9856-4fca-4df9-b47d-3b3b94f53f1a | 轮次: 10 | 更新于: 2026-11-20 20:19</div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./c/a7ae9856-4fca-4df9-b47d-3b3b94f53f1a.md" download="先读_@_mcp.md，勿复述历史。_1._单次-a7ae9856.md" onclick="return downloadMarkdown(event, './c/a7ae9856-4fca-4df9-b47d-3b3b94f53f1a.md', '先读_@_mcp.md，勿复述历史。_1._单次-a7ae9856.md')">⬇️ 下载 Markdown (.md)</a>
@@ -380,6 +380,60 @@
 </ul>
 </div></article>
 <article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>deepseek harness还是显示API 密钥无效 ，你是不是哪里弄错了，找清楚问题的根源，到底哪里出了问题，然后把原理讲给我听，然后直接进行修复</p>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>刚刚因为额度耗尽所以中断了，你看看能不能弥补，尽量接上刚刚的思路</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已经把<strong>真实根因</strong>彻底查清并完成修复与前后对照实测。之前的补丁逻辑本身没错，错在<strong>DSH 里还有一个隐藏的“第二进程”把你的 GUI 聊天流量全劫走了</strong>。</p>
+<hr>
+<h3>一、问题根源与完整原理（四环相扣）</h3>
+<pre><code>DSH GUI 聊天框发 &quot;hello&quot;
+  │
+  ▼  [进程 1: dsh-desktop-host (PID 3640) — 已打 dsh-better-sidebar 补丁]
+  │   ① billion-context 插件的 dsh-native.js 劫持了全局 fetch
+  │   ② 它把 https://agi.tongji.edu.cn/v1/chat/completions 改写成
+  │      http://127.0.0.1:18787/bili/https://agi.tongji.edu.cn/v1/chat/completions
+  │   ③ 原补丁只看到发往 127.0.0.1 的本地环回连接，根本没触发！
+  ▼
+  [进程 2: billion-context 守护进程 (PID 4404, 端口 18787) — 独立进程，没有任何补丁！]
+  │   ④ 独立进程直接解析 DNS：当前校园 DNS 与 tun0 DNS 都会把 agi.tongji.edu.cn
+  │      解析成【公网 VIP 202.120.188.251/252】，而不是【内网 VIP 10.67.0.251/252】
+  │   ⑤ 同济网关的公网 VIP 202.120.188.251 即便你从校园 WLAN 直连也会直接拒绝：
+  │      返回 HTTP 403 {&quot;error&quot;:{&quot;code&quot;:403,&quot;message&quot;:&quot;当前网络环境不支持&quot;}}
+  ▼
+  [回到 DSH 前端]
+  │   ⑥ dsh-llm-pi-ai 把【所有 401/403】统一归类为 code: &quot;AUTH&quot;
+  │   ⑦ 前端把 message.failure.auth 固定翻译成中文 —— &quot;API 密钥无效&quot;</code></pre>
+<p><strong>关键实证（全盘铁证，无猜测）</strong>：</p>
+<ul>
+<li><strong>解压你的会话日志</strong> <code>session.v4.jsonl.zstd</code> 与 <code>bili.log</code>：<code>19:42:29</code> 请求经 <code>billion-context</code> 发出，同济返回的原文是 <code>403: {&quot;code&quot;:403,&quot;message&quot;:&quot;当前网络环境不支持&quot;}</code>，你的 API Key 从头到尾都有效。</li>
+<li><strong>公网 VIP vs 内网 VIP 实测对照</strong>（同一把 Key、同一张校园 <code>WLAN 100.73.220.134</code>）：</li>
+<li>连内网 VIP <code>10.67.0.251</code> → <strong><code>HTTP 200 OK</code></strong>；</li>
+<li>连公网 VIP <code>202.120.188.251</code> → <strong><code>HTTP 403 {&quot;error&quot;:{&quot;code&quot;:403,&quot;message&quot;:&quot;当前网络环境不支持&quot;}}</code></strong>。</li>
+<li><strong>为什么不走 <code>billion-context</code> 的测试都通过了</strong>：经 <code>PID 3640</code> 自带网关 <code>127.0.0.1:8326</code> 测 <code>tongji/DeepSeek-V4.1-Flash</code>（甚至原样重放了你会话里的 13KB 系统提示 + 84 个工具）全都命中了 <code>dsh-better-sidebar/lib/index.js</code> 补丁、直连 <code>10.67.0.251</code> 返回 <code>HTTP 200</code>；只有带 <code>sessionId</code> 的 GUI 对话被 <code>billion-context</code> 拐进了未打补丁的 <code>PID 4404</code>。</li>
+</ul>
+<hr>
+<h3>二、已完成的直接修复与前后实测</h3>
+<ul>
+<li><strong>打补丁</strong>：在 <code>billion-context/dist/index.js</code> 顶部（紧接 <code>const require = __biliCreateRequire(import.meta.url);</code> 之后）注入 <code>v2.1</code> 同济内网直连补丁：</li>
+<li>拦截 <code>dns.lookup</code> / <code>dns.promises.lookup</code> / <code>tls.connect</code> / <code>net.Socket.prototype.connect</code>（兼容归一化数组参数）；</li>
+<li>强制将 <code>agi.tongji.edu.cn</code> 定向到校内内网 VIP <code>10.67.0.251</code>（同时覆盖 <code>platform.deepseek.com</code> / <code>api.deepseek.com</code>），并绑定物理网卡 <code>WLAN</code>（带 <code>sing-tun|\btun\d*\b</code> 与 <code>172.19.</code> 黑名单）；</li>
+<li>通过 DSH 内置 Node <code>24.21.0</code> 语法校验（<code>node --check</code> 退出码 <code>0</code>）。</li>
+<li><strong>修复前后经 <code>127.0.0.1:18787</code> 同路径实测对比</strong>：</li>
+<li><strong>修复前</strong>（旧 <code>PID 4404</code>）：<code>POST http://127.0.0.1:18787/bili/https://agi.tongji.edu.cn/v1/chat/completions</code> → <strong><code>HTTP 403 {&quot;error&quot;:{&quot;code&quot;:403,&quot;message&quot;:&quot;当前网络环境不支持&quot;}}</code></strong>；</li>
+<li><strong>修复后</strong>（加载新补丁的守护进程）：</li>
+<li><code>DeepSeek-V4.1-Flash</code> → <strong><code>HTTP 200</code></strong></li>
+<li><code>Kimi-K3.1-Pro</code> → <strong><code>HTTP 200</code></strong></li>
+<li><code>Get-NetTCPConnection</code> 实锤：<code>100.73.220.134 -&gt; 10.67.0.251:443 Established</code>。</li>
+<li><strong>清理与同步</strong>：已停掉未打补丁的旧守护进程 <code>PID 4404</code>（测试拉起的临时守护进程随命令沙箱已自动回收），并已将本次根因与新补丁路径同步至 <code>mcp.md</code>。</li>
+</ul>
+<hr>
+<h3>三、现在你需要做的唯一一步</h3>
+<p>请<strong>重启一次 DeepSeek Harness</strong>（或直接在当前聊天框重发一条消息，触发 <code>billion-context</code> 自动用新代码重拉 <code>18787</code> 守护进程；重启一次最稳妥），选择 <strong><code>同济 agi.tongji.edu.cn</code></strong> 下的 <code>DeepSeek V4.1 Flash (校园免费)</code> 或 <code>Kimi K3.1 Pro (校园免费)</code> 发一句测试即可。</p>
+<blockquote>顺带提醒：排查中看到模型列表里还有一个 <code>deepseek-official/deepseek-flash</code>，因为 <code>cordis.patch.yml</code> 把它改指了同济 URL 但它发的是 <code>/messages</code> 协议（同济不支持），会报 <code>404</code>——日常用上面那个 <code>同济 agi.tongji.edu.cn</code> 提供方即可。</blockquote>
+<h3>边界追问（防复发）</h3>
+<ul>
+<li>从日志看 <code>billion-context</code> 开启了自动更新（曾自动从 <code>0.1.211 -&gt; 0.1.212 -&gt; 0.1.213</code> 升级），下次它自动更新时会覆盖 <code>billion-context/dist/index.js</code>。你在 GUI 验证通过后，是否需要我再补一层<strong>抗更新覆盖的持久化机制</strong>（如在系统 <code>hosts</code> 写入 <code>10.67.0.251 agi.tongji.edu.cn</code>——代价是离校时打开同济网页控制台需注释掉该行；或者给 <code>dsh-better-sidebar</code> 加一段启动自检、发现 <code>billion-context</code> 被更新覆盖就自动重打补丁）？</li>
+</ul>
 </div></article>
 
     </section>
