@@ -245,7 +245,7 @@
     }
   </style>
 </head>
-<body data-conv-id="6a890e8e-7d88-4ac0-8276-e1d6adfd70ef" data-base-prefix="./c/" data-turn-count="11" data-update-time="2026-11-20 18:54" data-is-index="1">
+<body data-conv-id="6a890e8e-7d88-4ac0-8276-e1d6adfd70ef" data-base-prefix="./c/" data-turn-count="13" data-update-time="2026-11-20 19:12" data-is-index="1">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="./index.html">Antigravity 对话分享</a></h2>
@@ -259,7 +259,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1>帮我检查一下我的sakuracat是不是最新版的，你去官网查看一...</h1>
-        <div class="sub-meta">会话 ID: 6a890e8e-7d88-4ac0-8276-e1d6adfd70ef | 轮次: 11 | 更新于: 2026-11-20 18:54</div>
+        <div class="sub-meta">会话 ID: 6a890e8e-7d88-4ac0-8276-e1d6adfd70ef | 轮次: 13 | 更新于: 2026-11-20 19:12</div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./c/6a890e8e-7d88-4ac0-8276-e1d6adfd70ef.md" download="帮我检查一下我的sakuracat是不是最新版的-6a890e8e.md" onclick="return downloadMarkdown(event, './c/6a890e8e-7d88-4ac0-8276-e1d6adfd70ef.md', '帮我检查一下我的sakuracat是不是最新版的-6a890e8e.md')">⬇️ 下载 Markdown (.md)</a>
@@ -373,6 +373,71 @@
 <blockquote><strong>补充说明</strong>：</blockquote>
 <blockquote>- 该调试端口仅监听本机；如日后想撤销快捷方式参数，可在 <code>C:\Users\Administrator\agy-capsule</code> 下运行 <code>powershell -ExecutionPolicy Bypass -File scripts\enable-cdp.ps1 -Undo</code>。</blockquote>
 <blockquote>- 若重启后侧栏打不开或空白，可查看日志 <code>%USERPROFILE%\.gemini\antigravity\sidecar_data\agy-capsule\agy_capsule\logs\sidecar.log</code>；若 Antigravity 后续自动更新覆盖了快捷方式导致底栏胶囊消失，重新运行一次 <code>enable-cdp.ps1</code> 即可。</blockquote>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>底栏胶囊未启用，无法在输入框下方显示胶囊。不过它有说明可以在下载agy-capsule的文件夹里运行owershell -ExecutionPolicy Bypass -File scripts\enable-cdp.ps1，就可同意了。你来试一下，如果还是不行的话你来分析一下这个插件的用处，然后找到为什么不能实现这个功能，然后讲清楚原理就开始修复</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p><strong>核心结论</strong>：<code>enable-cdp.ps1</code> 其实早已把桌面和开始菜单快捷方式改好了；底栏胶囊没出来，是因为你当前运行的 Antigravity 不是从快捷方式打开的，而是由 <strong>Cockpit Tools 切号时直接拉起的</strong>，绕过了快捷方式且缺少 <code>--remote-debugging-port=0</code>。我已把 Cockpit Tools 的默认启动参数一并修好，你再完全重启一次 Antigravity 即可生效。</p>
+<hr>
+<h3>一、重跑 <code>enable-cdp.ps1</code> 的结果</h3>
+<p>已按说明在 <code>C:\Users\Administrator\agy-capsule</code> 运行 <code>scripts\enable-cdp.ps1</code>，两条快捷方式均显示<strong>已设置</strong>（退出码 <code>0</code>）：</p>
+<ul>
+<li><code>Antigravity.lnk（桌面）</code>：<code>Arguments = --remote-debugging-port=0</code></li>
+<li><code>Antigravity.lnk（开始菜单）</code>：<code>Arguments = --remote-debugging-port=0</code></li>
+</ul>
+<hr>
+<h3>二、<code>agy-capsule</code> 的用处与底栏胶囊实现原理</h3>
+<p>根据 <code>README.md</code> 与源码，这个插件由两套机制组成：</p>
+<ul>
+<li><strong>主要用途</strong></li>
+<li>在输入框底栏模型按钮旁提供紧凑悬浮胶囊，实时查看 <strong>上下文占用/明细/缓存过期提醒</strong>、<strong>生成速度与首字等待提醒</strong>、<strong>多模型 5h/周剩余额度与重置倒计时</strong>、<strong>请求报错原因诊断</strong>，以及可选的<strong>优化模型与思考强度选择器</strong>（你当前在 <code>settings.json</code> 里也已开启 <code>modelEffortPicker: true</code>）。</li>
+<li><strong>为什么侧栏能用、底栏胶囊却必须依赖 CDP 参数</strong></li>
+<li><strong>侧栏（Sidecar）</strong>：走 Antigravity 官方插件协议（当前运行在 <code>127.0.0.1:50061</code>），通过本地 Language Server 读取会话和配额数据，不依赖调试端口。</li>
+<li><strong>底栏胶囊（CDP 注入，见 <code>deck_injector.mjs</code>）</strong>：Antigravity 2.0 官方插件接口只开放了右侧 Aux Pane 侧栏，不提供输入框底栏（<code>.agy-composer-footer</code>）的原生 UI 挂载点。因此底栏胶囊必须走一条 4 步链路：</li>
+<li>启动 <code>Antigravity.exe</code> 时带上 Electron 参数 <code>--remote-debugging-port=0</code> → Chromium 在 <code>127.0.0.1</code> 随机绑定本地调试端口，并把端口号写入 <code>%APPDATA%\Antigravity\DevToolsActivePort</code>；</li>
+<li>插件 sidecar 读取 <code>DevToolsActivePort</code>，向 <code>http://127.0.0.1:&lt;port&gt;/json/list</code> 查询页面列表；</li>
+<li>对照 <code>daemon/hub_*.json</code> 核验当前会话的 composer 页面源（已确认本机 <code>hub_50031.json</code> 正常，且插件明确适配当前安装的 <code>Antigravity 2.33.0</code>）；</li>
+<li>通过本机 CDP WebSocket 调用 <code>Runtime.evaluate</code>，在 <code>.agy-composer-footer &gt; div:first-child</code> 注入隔离的 Shadow DOM 胶囊条（<code>#agy-capsule-host</code>）。</li>
+</ul>
+<hr>
+<h3>三、为什么刚才一直「底栏胶囊未启用」（实证根因）</h3>
+<p>核查进程树与日志后，锁定完整因果链：</p>
+<ul>
+<li><code>sidecar.log</code> 明确报错：<code>[deck] DevToolsActivePort not found</code>，且 <code>%APPDATA%\Antigravity\</code> 下确实不存在 <code>DevToolsActivePort</code> 文件。</li>
+<li>检查当前运行的 Antigravity 主进程（<code>PID 17304</code>，启动时间 <code>18:55:12</code>）：</li>
+<li>实际命令行：<code>&quot;C:\Users\Administrator\AppData\Local\Programs\antigravity\Antigravity.exe&quot; --reuse-window</code>（<strong>不含 <code>--remote-debugging-port=0</code></strong>）；</li>
+<li>父进程：<code>PID 2960</code> = <strong><code>cockpit-tools.exe</code>（Cockpit Tools <code>1.4.2</code>）</strong>。</li>
+<li>核对 <code>app.log.2026-11-20</code>：<code>18:55:07–18:55:12</code> Cockpit Tools 执行了 <code>[Antigravity] 开始桌面切号</code>，关闭了旧 Antigravity 并直接拉起 <code>Antigravity.exe</code>，<strong>完全绕过了桌面/开始菜单快捷方式</strong>。</li>
+<li>对照 Cockpit Tools 上游源码（<code>commands/account.rs</code> 与 <code>process_close_lifecycle.rs</code>）与本机数据库 <code>instance_registry.sqlite</code>：</li>
+<li>它启动默认桌面实例时执行 <code>cmd.arg(&quot;--reuse-window&quot;).args(extra_args)</code>，其中 <code>extra_args</code> 直接从 SQLite 表 <code>instance_registry</code> 中 <code>registry = &#39;antigravity_legacy_instances.json&#39;</code> 的 <code>defaults.extraArgs</code> 读取（每次现读，无内存陈旧缓存）；</li>
+<li>你本机该字段原本为空字符串 <code>&quot;&quot;</code>，所以每次切号/重启都会把 CDP 参数丢掉。</li>
+</ul>
+<hr>
+<h3>四、已完成的修复与验证步骤</h3>
+<ul>
+<li><strong>快捷方式启动链路</strong>：桌面与开始菜单两个 <code>.lnk</code> 均已验证带 <code>--remote-debugging-port=0</code>。</li>
+<li><strong>Cockpit Tools 切号/重启链路（已原地修复）</strong>：</li>
+<li>以 SQLite 原子事务更新 <code>instance_registry.sqlite</code> 中 <code>antigravity_legacy_instances.json</code> 的 <code>defaults.extraArgs</code> 为 <strong><code>--remote-debugging-port=0</code></strong>，并按其乐观锁规则将 <code>revision</code> 从 <code>62</code> 递增至 <code>63</code>（防止旧界面覆盖）；</li>
+<li>已回读校验且 <code>PRAGMA integrity_check = ok</code>。</li>
+<li>*注*：全程未修改 <code>agy-capsule</code> 插件源码、未修改 Antigravity 安装目录与设置，也未强杀正在运行的 Antigravity。</li>
+</ul>
+<h4>最后一步（需你手动重启一次）</h4>
+<p>由于 <code>--remote-debugging-port=0</code> 是 Electron 启动期参数、无法热注入到已运行的 <code>PID 17304</code>，请你<strong>任选以下一种方式重启 Antigravity</strong>：</p>
+<ul>
+<li><strong>方式 A</strong>：完全退出 Antigravity，再从<strong>桌面或开始菜单快捷方式</strong>重新打开；</li>
+<li><strong>方式 B</strong>：直接在 <strong>Cockpit Tools</strong> 里触发一次重启/切号（现在同样会自动附带 <code>--remote-debugging-port=0</code>）。</li>
+</ul>
+<h4>成功判据（外部可验证）</h4>
+<p>重启后打开任意对话，应同时看到：</p>
+<ul>
+<li>输入框左下角模型按钮旁出现底栏胶囊，侧栏顶部「底栏胶囊未启用」提示消失；</li>
+<li>磁盘上生成 <code>C:\Users\Administrator\AppData\Roaming\Antigravity\DevToolsActivePort</code> 文件。</li>
+</ul>
+<hr>
+<h3>两个边界提醒</h3>
+<ul>
+<li>你目前在 Cockpit Tools 里只有默认实例（<code>instance_profiles</code> 为空）；如果日后新建 <strong>Antigravity 多开实例</strong>，需要在该多开实例的「额外启动参数」里也填上 <code>--remote-debugging-port=0</code>，否则多开窗口不会显示底栏胶囊。</li>
+<li>如果你按上面步骤完全重启后胶囊仍未显示，直接回复我一声，我马上帮你检查新进程命令行和 <code>sidecar.log</code>，排查是否存在后续 CDP 握手或 DOM 挂载问题。</li>
+</ul>
 </div></article>
 
     </section>
