@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>请先完整阅读当前工作目录下的 `CONTEXT_dream_sk... - Antigravity Share</title>
+  <style>
+    :root {
+      --bg-main: #131314;
+      --bg-sidebar: #1e1f20;
+      --bg-active: #2b2c2f;
+      --bg-bubble-user: #2b2c2f;
+      --bg-bubble-ai: #1e1f20;
+      --text-main: #e3e3e3;
+      --text-sub: #c4c7c5;
+      --accent: #a8c7fa;
+      --border: #3c4043;
+      --code-bg: #0d0e11;
+      --badge-green: #34d399;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100vh;
+    }
+    #sidebar {
+      width: 310px;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+    .sidebar-header {
+      padding: 18px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-header h2 {
+      font-size: 16px;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sidebar-header a.home-link {
+      text-decoration: none;
+      color: inherit;
+    }
+    .sync-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--badge-green);
+      background: rgba(52, 211, 153, 0.1);
+      padding: 3px 8px;
+      border-radius: 12px;
+      margin-top: 8px;
+    }
+    .conv-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .conv-item {
+      display: block;
+      text-decoration: none;
+      padding: 11px 13px;
+      border-radius: 10px;
+      transition: background 0.15s;
+      border: 1px solid transparent;
+      color: inherit;
+    }
+    .conv-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .conv-item.active {
+      background: var(--bg-active);
+      border-color: var(--border);
+    }
+    .conv-title {
+      font-size: 14px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #fff;
+    }
+    .conv-meta {
+      font-size: 11px;
+      color: var(--text-sub);
+      margin-top: 4px;
+      display: flex;
+      justify-content: space-between;
+    }
+    #main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .main-header {
+      padding: 16px 28px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-sidebar);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .main-header h1 {
+      font-size: 17px;
+      color: #fff;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .sub-meta {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-top: 3px;
+    }
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .btn {
+      background: var(--bg-active);
+      color: var(--accent);
+      border: 1px solid var(--border);
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .btn:hover { background: #3c4043; }
+    .chat-canvas {
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 28px 24px 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .turn {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .turn.user { align-items: flex-end; }
+    .turn.assistant { align-items: flex-start; }
+    .role-tag {
+      font-size: 12px;
+      color: var(--text-sub);
+      font-weight: 600;
+      padding: 0 4px;
+    }
+    .bubble {
+      max-width: 88%;
+      padding: 16px 20px;
+      border-radius: 18px;
+      line-height: 1.7;
+      font-size: 15px;
+      word-break: break-word;
+    }
+    .turn.user .bubble {
+      background: var(--bg-bubble-user);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .turn.assistant .bubble {
+      background: var(--bg-bubble-ai);
+      color: var(--text-main);
+      border-bottom-left-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .bubble p { margin: 0 0 10px 0; }
+    .bubble p:last-child { margin-bottom: 0; }
+    .bubble h1, .bubble h2, .bubble h3, .bubble h4 {
+      margin: 14px 0 8px;
+      color: var(--accent);
+      line-height: 1.4;
+    }
+    .bubble h1 { font-size: 19px; }
+    .bubble h2 { font-size: 17px; }
+    .bubble h3 { font-size: 15.5px; }
+    .bubble ul, .bubble ol { margin: 8px 0 10px 22px; }
+    .bubble li { margin: 4px 0; }
+    .bubble blockquote {
+      border-left: 3px solid var(--accent);
+      padding-left: 12px;
+      margin: 8px 0;
+      color: var(--text-sub);
+    }
+    .bubble code {
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 5px;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 13.5px;
+    }
+    .bubble pre {
+      background: var(--code-bg);
+      padding: 14px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 10px 0;
+      border: 1px solid #2b2d31;
+    }
+    .bubble pre code {
+      background: transparent;
+      padding: 0;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .bubble a { color: var(--accent); }
+    .bubble hr {
+      border: 0;
+      border-top: 1px solid var(--border);
+      margin: 14px 0;
+    }
+    @media (max-width: 820px) {
+      body { flex-direction: column; }
+      #sidebar { width: 100%; height: auto; position: static; max-height: 280px; }
+      .main-header { flex-wrap: wrap; padding: 14px 16px; }
+      .header-actions { flex-wrap: wrap; }
+      .bubble { max-width: 96%; }
+    }
+  </style>
+</head>
+<body data-conv-id="012b6894-2e81-44de-a00d-a54e062faf7b" data-base-prefix="./" data-turn-count="2" data-update-time="2026-11-20 12:39" data-is-index="0">
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
+      <div class="sync-badge" id="syncBadge">自动同步加载中...</div>
+    </div>
+    <nav class="conv-list" id="convList" aria-label="Conversations">
+      <noscript><div style="padding:12px;color:#c4c7c5;font-size:12px;">请启用 JavaScript 查看全部历史对话列表，或直接访问对应对话链接。</div></noscript>
+    </nav>
+  </aside>
+  <main id="main">
+    <header class="main-header">
+      <div style="min-width:0;">
+        <h1>请先完整阅读当前工作目录下的 `CONTEXT_dream_sk...</h1>
+        <div class="sub-meta">会话 ID: 012b6894-2e81-44de-a00d-a54e062faf7b | 轮次: 2 | 更新于: 2026-11-20 12:39</div>
+      </div>
+      <div class="header-actions">
+        <a class="btn" id="downloadMdBtn" href="./012b6894-2e81-44de-a00d-a54e062faf7b.md" download="请先完整阅读当前工作目录下的_CONTEXT_d-012b6894.md" onclick="return downloadMarkdown(event, './012b6894-2e81-44de-a00d-a54e062faf7b.md', '请先完整阅读当前工作目录下的_CONTEXT_d-012b6894.md')">⬇️ 下载 Markdown (.md)</a>
+        <button class="btn" id="copyBtn" type="button" onclick="copyCanonicalUrl('./012b6894-2e81-44de-a00d-a54e062faf7b.html', 'copyBtn', '已复制直链')">复制对话直链</button>
+      </div>
+    </header>
+    <section class="chat-canvas" aria-label="Conversation Content">
+      <article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>@[c:\Users\Administrator\Desktop\memory\CONTEXT_dream_skill.md] 请先完整阅读当前工作目录下的 <code>CONTEXT_dream_skill.md</code>。你可以借鉴之前做 antigravity-share 的本地代码路径（万一底层缓存被加密，它可以直接参考你当时的导出逻辑作为兜底）。这套记忆系统目前只打算管 Antigravity 内部会话。</p>
+<p>我希望你作为这个项目的架构师和实施者，帮我从零设计并落地这套类 Claude Dream 的本地记忆治理系统。注意：文档里第 1 节是底线铁律，但第 2 节的“开放空间”我特意没有替你定死，我希望你先摸清本机实际情况，自己独立思考、质疑并选出最优雅、最贴合 Antigravity 原生机制的方案，然后直接做出一个可验证的沙盒 MVP 给我验收。</p>
+<p>请按以下节奏自主推进（常规只读探查、方案设计、沙盒内编码与测试请连续执行，不要每一步都停下来问我；仅当你发现本机缓存完全加密无法直读、或需要动到我现有真实全局配置时，才暂停向我确认）：</p>
+<ul>
+<li><strong>实机只读探查（Phase 0）</strong>：</li>
+<li>先在本机只读探查两件事：（a）Antigravity 自身的全局规则 / Skill 加载目录与机制；（b）Antigravity 本地会话缓存的真实落盘路径、文件格式、角色字段及时间戳结构（严格遵守“先拷贝再只读打开”的防锁铁律，绝不写入原生缓存目录）。</li>
+<li>如果需要编写探查脚本，请先运行拿到真实输出，不要靠猜。</li>
+<li><strong>架构评审与自主定型</strong>：</li>
+<li>基于实测结果，逐一裁决 <code>CONTEXT_dream_skill.md</code> 第 2 节列出的 5 个开放问题。</li>
+<li>如果你发现原构想中有冗余、过度设计，或者有更贴合 Antigravity 原生能力的做法，直接指出原因并优化，把最终架构决策和放弃的替代方案更新进 <code>CONTEXT_dream_skill.md</code> 第 2 节。</li>
+<li><strong>沙盒 MVP 构建与实测验收（Phase 1 &amp; 2）</strong>：</li>
+<li>在当前工作区的独立沙盒目录内落地完整可运行的版本（保持单次写入精简分块，避开长工具调用超时）。</li>
+<li>自己构造一套包含“事实冲突更新、跨会话重复纠错、伪造 API Key 凭据、模拟自污染 <code>/dream</code> 对话、以及人工 Revert 负反馈”的合成测试集，真实跑通全流程（含真实缓存只读抽取 dry-run），不要只停留在静态代码检查。</li>
+<li><strong>交付给我验收的最终报告</strong>：</li>
+<li>更新 <code>CONTEXT_dream_skill.md</code> 第 3 节，并用简体中文给我一份清晰的验收报告，必须包含：</li>
+<li>你探查到的本机缓存与规则机制事实（含具体路径与格式证据）；</li>
+<li>你的核心架构选型与权衡（为什么这么选，否决了什么）；</li>
+<li>所有自动化测试与真实缓存 dry-run 的实际执行输出；</li>
+<li>我作为用户下一步如何亲自试跑、审查效果，以及确认无误后如何从沙盒切换到正式启用。</li>
+</ul>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>Phase 0 实机只读探查、架构自主定型、Phase 1 沙盒 MVP 构建与 Phase 2 自动化验收均已完成，状态已同步更新至 <code>CONTEXT_dream_skill.md</code>（第 1 节铁律未动，第 2、3 节已更新）。全程未改动 <code>~/.gemini/config/</code> 与 Antigravity 原生缓存。</p>
+<hr>
+<h2>1. 本机缓存、规则与运行时实测事实</h2>
+<p>| 探测项 | 实测路径与格式证据 | 关键结论 |</p>
+<p>| :--- | :--- | :--- |</p>
+<p>| <strong>主会话正文（未加密）</strong> | <code>C:\Users\Administrator\.gemini\antigravity\brain\&lt;cid&gt;\.system_generated\logs\transcript.jsonl</code> 与 <code>transcript_full.jsonl</code> | 本机 <code>18/18</code> 个 brain 目录均存在明文 UTF-8 JSONL 双文件，实测行号与 <code>step_index</code> <strong>0 错位</strong>；单行含 <code>step_index</code>、<code>source</code>（<code>USER_EXPLICIT</code>/<code>MODEL</code>/<code>SYSTEM</code>）、<code>type</code>（<code>USER_INPUT</code>/<code>PLANNER_RESPONSE</code>/<code>GENERIC</code>/<code>SYSTEM_MESSAGE</code>）、<code>created_at</code>（ISO 8601 UTC）、<code>content</code>、<code>truncated_fields</code>（3,704 行中 85 轮用户发言、120 轮助手回复）。 |</p>
+<p>| <strong>辅助元数据</strong> | <code>C:\Users\Administrator\.gemini\antigravity\conversation_summaries.db</code>（WAL 模式）与 <code>annotations\&lt;cid&gt;.pbtxt</code> | 隔离拷贝 <code>.db</code>/<code>.db-wal</code>/<code>.db-shm</code> 后只读解析，可获取 <code>title</code>、<code>workspace_uris</code>、<code>nesting_depth</code>、<code>parent_conversation_id</code>、<code>agent_name</code>（成功识别 <code>da7dc122</code> 为 <code>nesting_depth=1, agent=browser</code> 的子代理轨迹）及 <code>.pbtxt</code> 中的 <code>archived</code> 状态。<code>conversations\&lt;cid&gt;.db</code> 为二进制 Protobuf BLOB，无需逆向。 |</p>
+<p>| <strong>原生规则与插件机制</strong> | <code>C:\Users\Administrator\.gemini\config\</code>（现有 <code>rules/core-reasoning-protocol.md</code>、<code>rules/deepseek-subagent.md</code> 及 3 个插件） | 全局规则单文件硬上限 <code>24,000</code> 字节，总预算 <code>20,000</code> tokens（超限自动降级为路径指针）；原生 Plugin（<code>plugins/&lt;name&gt;/</code>）启用时自动合并其 <code>rules/AGENTS.md</code>，其 <code>skills/dream/SKILL.md</code> 默认渐进披露并暴露为 <code>/dream</code> 斜杠命令；<code>hooks.json</code> 为同步阻塞，其中 <code>SessionStart</code> 支持 <code>metadata.user_markdown</code> + 空 <code>systemMessage</code> 做零模型 token 提示。 |</p>
+<p>| <strong>本机脚本运行时</strong> | <code>python</code>/<code>py</code>/<code>node</code>/<code>npm</code>/<code>sqlite3</code> 均不在 <code>PATH</code>；实测可用 <code>C:\Users\Administrator\.local\bin\python3.12.exe</code>（在 <code>PATH</code> 中，CPython 3.12.15 + SQLite 3.53.1）与 <code>uv.exe</code> | Antigravity 内置 Electron Node v24.22.0 实测在 PowerShell 下存在 GUI 子系统吞 stdout 风险，最终选定<strong>纯 Python 3.12 stdlib（零 pip 依赖）+ PowerShell 路径自发现启动器</strong>。 |</p>
+<hr>
+<h2>2. 核心架构选型、权衡与红队加固</h2>
+<p>本次核心矛盾在于：<strong>既要让强模型自由做跨会话语义归并、冲突覆写与边界判断，又要防止大输出触发约 60 秒网关断连、防止记忆膨胀撑爆常驻上下文、防止错误规则静默生效或反复回流。</strong></p>
+<ul>
+<li><strong>增量读取与水位线（<code>extractor.py</code>、<code>redact.py</code>）</strong></li>
+<li><strong>选型</strong>：隔离临时目录拷贝 SQLite（含 <code>-wal</code>/<code>-shm</code>）+ <code>PRAGMA quick_check</code> 重试后只读打开；按 <code>conversation_id</code> 独立维护 <code>{last_step_index, anchor_step_hash, compact_sig, full_sig}</code> 水位线；老对话续写自动附带前 1 轮 <code>[CONTEXT_ONLY]</code> 上下文，若文件截断或锚点行 SHA-256 漂移则自动全量重放。4 层防自污染（过滤 <code>nesting_depth&gt;0</code> 子代理、哨兵标记与 <code>/dream</code> 识别、<code>--exclude-cid</code>、turn 级切片过滤）+ 13 类正则凭据脱敏 + 剥离 <code>GENERIC</code> 大输出 + 超长会话按轮次切分保证每批 ≤ 18,000 字符。</li>
+<li><strong>否决</strong>：单一全局时间戳水位线（无法正确处理老对话续写）；直接只读打开 live SQLite（存在 Windows 锁冲突风险）；逆向 Protobuf（高脆弱且多余）。</li>
+<li><strong>原生形态与三层 SSOT（<code>store.py</code>、<code>plugin.json</code>、<code>SKILL.md</code>）</strong></li>
+<li><strong>选型</strong>：Antigravity 原生 Plugin 结构（一键启停、与原生全局规则物理隔离）。Tier 0（用户 <code>config/rules/*.md</code> 与 <code>CONTEXT_*.md</code>）代码级路径硬锁禁止触碰（<code>config_io.py</code>）；Tier 1（<code>promoted_rules.md</code>）与 Tier 3（<code>topics/&lt;slug&gt;.md</code>，单文件 ≤ 150 行）为单一事实源（SSOT）；Tier 2 索引（<code>INDEX.md</code>）和常驻规则产物 <code>AGENTS.md</code> 100% 由脚本确定性编译，同时受 <strong>≤ 140 行且 ≤ 12,000 UTF-8 字节</strong>约束（按行边界字节安全截断，杜绝截断中文多字节字符，溢出项自动降级为 <code>topics/</code> 目录指针）。</li>
+<li><strong>否决</strong>：自定义 MCP Server（常驻开销与全会话 schema token 税）；手写维护双份索引/规则文件（必然漂移）。</li>
+<li><strong>分析编排与防超时（<code>SKILL.md</code>）</strong></li>
+<li><strong>选型</strong>：脚本承担全部确定性 I/O、清洗、校验、Diff、快照与原子写盘；模型只输出紧凑结构化 <code>proposal.json</code>（避免整文件重写触发 60 秒断连）。自适应路由：<code>batches &lt;= 2</code> 主模型直出，<code>batches &gt; 2</code> 按每 2 批派发原生只读 <code>research</code> subagent（<code>Model=&quot;inherit&quot;</code>）抽取后再由主模型统一去重和冲突裁决，<strong>零外部 API/MCP</strong>。</li>
+<li><strong>否决</strong>：每次强制拉起 Swarm/多代理（小增量浪费配额）；模型直接手写全量 Markdown/HTML。</li>
+<li><strong>人工审阅、原子写盘与负反馈闭环（<code>governance.py</code>、<code>review_ui.py</code>）</strong></li>
+<li><strong>选型</strong>：三通道统一 <code>decisions.json</code> 契约——<code>review-serve</code> 加固本地服务（仅绑 <code>127.0.0.1:0</code>、校验 <code>Host</code>/<code>Origin</code> 防 DNS rebinding、256-bit CSRF nonce 一键应用）+ 离线双击 <code>review.html</code> 导出 JSON + 聊天内直接批复。写盘前必检 <code>base_hash</code> 漂移、加 PID 进程锁、生成只读（<code>0o444</code>）时间戳全量快照，同目录临时文件 <code>flush+fsync+os.replace</code> 重试，异常自动回滚。</li>
+<li><strong>精准 Revert 与防改写绕过</strong>：<code>revert</code> 按条目 ID（<code>MEM-XXXX</code>/<code>RULE-XXXX</code>）精准撤回，保留人工后续手工注释且不盲目回退水位线；驳回/撤回同时沉淀到 <code>feedback_ledger.jsonl</code>，在后续提示词层<strong>和</strong> <code>stage</code> 校验层（指纹 + 中英文 bigram 词袋重合度）双重阻断同义改写绕过。</li>
+<li><strong>否决</strong>：纯 Git Diff 手工改（难结构化沉淀驳回理由）；无校验裸开 localhost 服务。</li>
+<li><strong>触发策略</strong></li>
+<li><strong>选型</strong>：默认手动 <code>/dream</code>；内置纯只读 <code>check-due</code> 子命令，生产启用后按需可选挂接轻量 <code>SessionStart</code> 提醒或 Antigravity 原生 <code>builtin: schedule</code> 定时预处理，永不静默改写 Tier 1。</li>
+<li><strong>否决</strong>：<code>Stop</code> Hook 每轮同步阻塞触发。</li>
+</ul>
+<hr>
+<h2>3. 自动化测试与真实缓存 Dry-Run 实测输出</h2>
+<h3>3.1 自动化 E2E 测试（<code>test_dream_e2e.py</code> + <code>synthetic_fixture.py</code>）</h3>
+<pre><code>test_01_extract_redaction_and_self_pollution_filters ... ok   # 假 sk-/ghp_/AKIA/PEM/API_KEY 100% 脱敏；/dream、子代理、对话中段 /dream 切片与 GENERIC 噪声全剔除
+test_02_conflict_update_human_gate_and_secret_proposal_block ... ok  # 事实冲突原地覆写+旧结论溯源；Tier 1 审批前不生效、驳回项不写入；含密钥提案在 stage 被硬拒；只读快照落盘
+test_03_surgical_revert_preserves_manual_edits_and_blocks_paraphrase ... ok  # 精准 Revert 保留人工后续备注与水位线；同义改写复提被负反馈双重阻断；整批 rollback 还原通过
+test_04_watermark_incremental_context_and_anchor_drift_replay ... ok  # 无变更跳过、老会话续写带 [CONTEXT_ONLY]、截断/锚点漂移自动全量重放
+test_05_utf8_budgets_and_protected_path_isolation ... ok       # 45 个中文主题字节安全降级≤上限；CONTEXT_*.md / 受保护规则目录 / 沙盒外路径均触发 ProtectedPathError
+test_06_hardened_http_review_server_security_and_live_apply ... ok    # 无 token / 伪造 Host / 非法 Origin 均 403；合法请求 200 并原子落盘
+test_07_base_hash_drift_and_oversized_session_split ... ok     # 并发编辑触发 Base hash drift 拒绝覆盖；超长单会话按轮次切分均 ≤ batch_max_chars
+----------------------------------------------------------------------
+Ran 7 tests in 2.741s -&gt; OK (Exit Code: 0)</code></pre>
+<h3>3.2 本机真实缓存只读 Dry-Run 实测</h3>
+<p>执行命令：<code>.\sandbox\dream.ps1 extract --dry-run --exclude-cid 012b6894-2e81-44de-a00d-a54e062faf7b</code></p>
+<pre><code>RunId=20261120_043819 | Extracted=16 | Skipped=2 | NewTurns=200 | Redactions=0 | Mode=subagent_sharded | Batches=14
+MaxBatchChars=17875 (budget=18000)
+  batch_01..batch_14: 最大 17,875 字符（34 轮长会话 f4ffdcb7 自动按轮次拆为 batch_08=16,000 + batch_09=8,432）
+Skipped:
+  012b6894-2e81-44de-a00d-a54e062faf7b: explicit_exclude_cid
+  da7dc122-9a62-456a-8fa7-d160f9691968: subagent_depth=1_agent=browser
+隔离校验：
+  sandbox/memory_store/state/watermark.json exists = False（未写入状态）
+  C:\Users\Administrator\.gemini\config\rules 与 plugins 均未发生任何变更</code></pre>
+<hr>
+<h2>4. 下一步：亲自试跑与切换生产启用指南</h2>
+<h3>A. 沙盒内立即亲自试跑与复核（零风险）</h3>
+<ul>
+<li><strong>一键复跑全部自动化测试与只读体检</strong>：</li>
+</ul>
+<p>   ```powershell</p>
+<p>   python3.12 -X utf8 &quot;c:\Users\Administrator\Desktop\memory\sandbox\tests\test_dream_e2e.py&quot;</p>
+<p>   powershell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;c:\Users\Administrator\Desktop\memory\sandbox\dream.ps1&quot; check-due</p>
+<p>   powershell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;c:\Users\Administrator\Desktop\memory\sandbox\dream.ps1&quot; extract --dry-run --limit 3</p>
+<p>   ```</p>
+<ul>
+<li><strong>用最近 3 条真实会话在沙盒内完整走一遍 <code>/dream</code> 闭环</strong>：</li>
+<li>运行 <code>.\sandbox\dream.ps1 extract --limit 3 --exclude-cid &lt;当前会话ID&gt;</code>，查看生成在 <code>sandbox\memory_store\state\runs\&lt;run_id&gt;\batch_01.md</code> 的清洗效果。</li>
+<li>在聊天中让我按 <code>SKILL.md</code> 读取该批次并生成 <code>proposal.json</code> -&gt; 自动 <code>stage</code>。</li>
+<li>运行 <code>.\sandbox\dream.ps1 review-serve --run-id &lt;run_id&gt;</code> 打开浏览器审阅 Diff、测试勾选同意/驳回与一键应用，再试一次 <code>.\sandbox\dream.ps1 revert --run-id &lt;run_id&gt; --item &lt;OP-ID&gt; --reason &quot;测试撤回&quot;</code> 观察 <code>AGENTS.md</code> 与 <code>feedback_ledger.jsonl</code> 的变化。</li>
+</ul>
+<h3>B. 确认无误后切换到正式启用（需你明确授权后执行）</h3>
+<ul>
+<li>将 <code>sandbox/plugin</code> 与 <code>sandbox/scripts</code>、<code>dream.ps1</code> 安装至 <code>C:\Users\Administrator\.gemini\config\plugins\antigravity-dream-memory\</code>。</li>
+<li>生成生产版 <code>dream_config.json</code>：<code>sandbox_mode: false</code>，<code>memory_store_dir</code> 指向 <code>C:\Users\Administrator\.gemini\antigravity\plugin_data\antigravity-dream-memory\</code>，<code>compiled_rule_path</code> 指向插件内 <code>rules/AGENTS.md</code>（原生 <code>config/rules/</code> 仍保留在 <code>protected_dirs</code> 中只读保护）。</li>
+<li>在 Antigravity 插件管理中启用 <code>antigravity-dream-memory</code> 后，任意对话即可直接输入 <code>/dream</code> 触发巩固；历史 16 个存量会话首次整理将自动按 <code>subagent_sharded</code> 模式分片完成冷启动基线。</li>
+</ul>
+<hr>
+<h2>两个需要你拍板的边界追问</h2>
+<ul>
+<li><strong>非工程/个人隐私对话的过滤边界</strong>：实机 dry-run 中看到了如 <code>政治规划</code>、<code>Navigating Graduate School Anxiety And Study Methods</code>、<code>已过期1</code>（已归档）这类个人规划/非技术会话。正式启用前，是否需要给 <code>dream_config.json</code> 增加<strong>默认跳过已归档对话</strong>或<strong>标题/工作区黑名单</strong>（例如排除非工作区闲聊，避免把阶段性个人情绪或隐私状态提炼进记忆库）？</li>
+<li><strong>冷启动方式偏好</strong>：当前存量 16 个历史会话（14 个 batch，共 200 轮）——你更希望在沙盒验收时先<strong>挑最近 3 个技术会话小范围试跑</strong>看提炼口味，还是等转生产后一次性全量冷启动回填（或者直接跳过早期存量，只从今天起增量巩固）？</li>
+</ul>
+</div></article>
+
+    </section>
+  </main>
+  <script>
+    (function() {
+      var src = '../sidebar.js';
+      if (window.location.protocol !== 'file:') {
+        src += (src.indexOf('?') >= 0 ? '&' : '?') + '_t=' + Date.now();
+      }
+      var s = document.createElement('script');
+      s.src = src;
+      document.body.appendChild(s);
+    })();
+  </script>
+  <script>
+    function triggerBlobDownload(blob, filename) {
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function() { URL.revokeObjectURL(url); }, 1500);
+    }
+    function downloadMarkdown(e, relPath, filename) {
+      if (window.location.protocol === 'file:' || !window.fetch || !window.Blob) {
+        return true;
+      }
+      if (e) e.preventDefault();
+      var btn = document.getElementById('downloadMdBtn');
+      var orig = btn ? (btn.getAttribute('data-orig') || btn.innerText) : '';
+      if (btn) {
+        btn.setAttribute('data-orig', orig);
+        btn.innerText = '正在下载...';
+      }
+      var targetUrl = relPath;
+      try { targetUrl = new URL(relPath, window.location.href).href; } catch (err) {}
+      fetch(targetUrl, { cache: 'no-cache' })
+        .then(function(resp) {
+          if (!resp.ok) throw new Error('HTTP ' + resp.status);
+          return resp.text();
+        })
+        .then(function(text) {
+          var blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
+          triggerBlobDownload(blob, filename);
+          if (btn) {
+            btn.innerText = '已下载 .md';
+            setTimeout(function() { btn.innerText = orig; }, 2000);
+          }
+        })
+        .catch(function() {
+          if (btn) btn.innerText = orig;
+          var a = document.createElement('a');
+          a.href = targetUrl;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        });
+      return false;
+    }
+    function fallbackCopy(text, onDone) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try {
+        if (document.execCommand('copy')) { onDone(); }
+      } catch (e) {}
+      document.body.removeChild(ta);
+    }
+    function copyCanonicalUrl(relPath, btnId, doneLabel) {
+      var btn = document.getElementById(btnId);
+      if (!btn) return;
+      var orig = btn.getAttribute('data-orig') || btn.innerText;
+      btn.setAttribute('data-orig', orig);
+      var targetUrl = window.location.href;
+      try {
+        targetUrl = new URL(relPath, window.location.href).href;
+      } catch (e) {}
+      var onDone = function() {
+        btn.innerText = doneLabel;
+        setTimeout(function() { btn.innerText = orig; }, 2000);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(targetUrl).then(onDone, function() { fallbackCopy(targetUrl, onDone); });
+      } else {
+        fallbackCopy(targetUrl, onDone);
+      }
+    }
+  </script>
+</body>
+</html>
