@@ -245,7 +245,7 @@
     }
   </style>
 </head>
-<body data-conv-id="012b6894-2e81-44de-a00d-a54e062faf7b" data-base-prefix="./c/" data-turn-count="9" data-update-time="2026-11-20 13:53" data-is-index="1">
+<body data-conv-id="012b6894-2e81-44de-a00d-a54e062faf7b" data-base-prefix="./c/" data-turn-count="11" data-update-time="2026-11-20 14:35" data-is-index="1">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="./index.html">Antigravity 对话分享</a></h2>
@@ -259,7 +259,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1>请先完整阅读当前工作目录下的 `CONTEXT_dream_sk...</h1>
-        <div class="sub-meta">会话 ID: 012b6894-2e81-44de-a00d-a54e062faf7b | 轮次: 9 | 更新于: 2026-11-20 13:53</div>
+        <div class="sub-meta">会话 ID: 012b6894-2e81-44de-a00d-a54e062faf7b | 轮次: 11 | 更新于: 2026-11-20 14:35</div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./c/012b6894-2e81-44de-a00d-a54e062faf7b.md" download="请先完整阅读当前工作目录下的_CONTEXT_d-012b6894.md" onclick="return downloadMarkdown(event, './c/012b6894-2e81-44de-a00d-a54e062faf7b.md', '请先完整阅读当前工作目录下的_CONTEXT_d-012b6894.md')">⬇️ 下载 Markdown (.md)</a>
@@ -612,6 +612,161 @@ Skipped:
 如果某维度经检查确实没有实质性问题，请直接写“未发现实质缺陷”，不要硬凑毛病。</code></pre>
 <hr>
 <p>审完后你可以直接把 GPT 6.2 Astra Ultra 的审计意见粘贴给我——我会按第一性原理逐条核查实证，真漏洞立刻落地修补，存疑点和你对齐后再动。</p>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>@[c:\Users\Administrator\Documents\Codex\2026-11-20\antigravity-windows-electron-claude-dream-audit\outputs\dream-architecture-audit.md] 请直接整改本机 Antigravity Dream 插件。以附件审计报告定位问题，以当前源码和可重复测试判断修复是否成立。本轮工程范围仅含三项：批复错版、revert 误删、回滚不完整。按以下顺序在 sandbox 实现并验证。三项全部通过后再部署生产。RULE-001、RULE-002 另行提审。</p>
+<h2>一、先隔离测试环境</h2>
+<p>工作目录为 <code>C:\Users\Administrator\Desktop\memory\sandbox</code>。先核对 sandbox 与生产插件相关文件的版本和哈希，记录已有差异。测试配置显式把 <code>antigravity_data_dir</code>、<code>memory_store_dir</code>、<code>compiled_rule_path</code> 全部指向独立临时目录，使用合成对话和实际 Markdown 读写器。现有 sandbox 配置仍引用真实对话目录，不能直接用它运行抽取测试。</p>
+<p>为每项新增能暴露旧行为的回归测试。记录修复前的实际失败、修复后的结果和执行命令。比较状态时同时检查文件是否存在及其内容哈希。</p>
+<h2>二、修复批复错版</h2>
+<p><strong>修改目标</strong>　重点检查 <code>governance.py</code>、<code>review_ui.py</code> 和 CLI。每份批复绑定 <code>run_id</code> 和用户实际看到的不可变提案版本，例如 <code>plan_hash</code>；计划同时绑定对应的抽取 manifest。在线审阅页、离线导出的 <code>decisions.json</code>、对话内批复使用同一校验。缺少版本信息的旧批复要求重新审阅。缺项保持待审，只有明确驳回才写负反馈。</p>
+<p><strong>回归用例</strong></p>
+<ul>
+<li>同一 run 的 V1 为“双栏”，V2 改成“单栏”，两版均含 <code>OP-001</code>。分别经三个审阅入口提交 V1 批复。三者均应拒绝；主题、晋升规则、编译视图、账本、水位均保持提交前状态。</li>
+<li>V2 正确批复成功一次。重复提交同一批复应返回原收据，业务状态只变更一次。另测错误 run、重复或未知 <code>op_id</code>、漏批，均不得被静默接受。</li>
+<li>将同一会话拆成两个批次。只审完一个批次时不能推进该会话水位。两个批次均已处理且明确零候选，允许推进水位。已有候选但批复缺项时，不能将其记成用户驳回。</li>
+</ul>
+<p><strong>验收条件</strong>　只有用户审过的版本能落盘；失败没有业务副作用；重复提交幂等；水位能区分“已审完且无候选”和“尚未审完”。保留原有 <code>base_hash</code> 漂移检查。</p>
+<h2>三、修复 revert 误删</h2>
+<p><strong>修改目标</strong>　重点检查 <code>governance.py</code> 的收据生成和 <code>revert_item</code>。一次操作涉及的所有条目都记录前后状态，包括被 <code>supersedes</code> 改写的旧条目。撤回时在锁内先核对所有受影响条目的当前状态，再整体还原。历史收据缺少必要证据时，明确列出冲突并安全退出。</p>
+<p><strong>回归用例</strong></p>
+<ul>
+<li>A 为 active，批准 B 替代 A，随后撤回该次新增 B。应恢复 A 原内容及 active 状态，撤掉 B；无关条目、手写备注和水位保持原值。</li>
+<li>重建上述场景，随后批准一次对 B 的更新，再用旧收据撤回 B 的首次新增。应报告 B 冲突，保留新版 B，A 也不变。再做一组仅 A 被后续修改的用例，同样应整组退出。两组均不得新增撤回反馈。</li>
+<li>对一次成功撤回再执行一次，只产生一条撤回反馈。用缺少连带条目前像的旧收据测试，不能凭猜测恢复 A 或删除 B。</li>
+</ul>
+<p><strong>验收条件</strong>　无冲突时完整逆转原操作；任一受影响条目发生后续变更时整组零改动；重复撤回无副作用。必须断言 A、B 的内容和状态，不能只断言命令成功或 B 已消失。</p>
+<h2>四、修复回滚不完整</h2>
+<p><strong>修改目标</strong>　重点检查 <code>governance.py</code>、<code>config_io.py</code>。快照记录每个受管目标原先是否存在及原始字节摘要。恢复前一次性验证清单、所有必需源文件、目标路径和摘要，再开始改盘。跨文件提交留下可在下一次启动时识别的事务记录，覆盖进程直接退出的情况。</p>
+<p><strong>回归用例</strong></p>
+<ul>
+<li>正常初始化后确认水位文件不存在，执行首次 apply。回滚时显式重置水位，应恢复为“文件不存在”。另测已有水位时的默认 rollback，应保留回滚前的当前水位。同步核对主题、晋升规则、索引、编译入口及负反馈账本的预期存在性和内容。</li>
+<li>分别制造“快照缺一个必需文件”和“一个文件摘要错误”。两次均应在首次业务写入前失败；所有受管文件与回滚前逐字节一致。</li>
+<li>在独立子进程中，分别于“主题已写、编译视图未写”和“水位已写、收据未提交”两个边界强制结束进程。用正常入口重新启动，验证未完成事务恢复到提交前的一致状态；再次启动也不得重复恢复或产生新反馈。仅抛出能被当前 <code>except</code> 捕获的异常不足以覆盖此用例。</li>
+</ul>
+<p><strong>验收条件</strong>　恢复后逐项比对受管文件集合及 SHA-256；快照、收据和事务记录按各自预期另验。任何恢复失败都不能返回成功或留下部分恢复的业务状态。</p>
+<h2>五、放行生产</h2>
+<p>三项新增回归及 sandbox 原有全套测试全部通过后，提交测试命令、通过数和关键断言结果，再部署生产。部署前复核当前生产文件哈希，保留将被替换文件的可恢复副本；若出现尚未合并的生产改动，先处理差异。只部署本次修复所需文件，保留现有配置和记忆数据。</p>
+<p>部署后，用<strong>已部署的程序文件配独立临时配置</strong>完成一次 <code>stage → apply → revert → rollback</code> 冒烟测试。交付实际部署文件清单、测试结果、备份位置和恢复旧程序的方法。任何放行条件失败，留在 sandbox 修正。</p>
+<h2>六、RULE-001 和 RULE-002 单独提审</h2>
+<p>工程修复之外，分别提交两条可独立批准或驳回的候选改写。每条展示原文、拟改文字及降到 Tier 3 的内容。本轮只生成审阅材料，等我明确批准对应条目后，才更新 <code>promoted_rules.md</code> 并重新编译 <code>AGENTS.md</code>。</p>
+<ul>
+<li><strong>RULE-001 候选</strong>　在本机任务确实需要 Python、FFmpeg 或 Node 时，优先采用项目指定的运行环境。项目未指定时，先验证当前终端能否运行所需程序，无法定位再查本机环境档案。具体版本和路径留在 <code>local-windows-env.md</code>。</li>
+<li><strong>RULE-002 候选</strong>　仅在辅导或需要判断知识起点时参考相应主题的学习记录，区分已有基础、在学和待攻克；未记录的能力保持未知。身份、光学平台直觉、公式衔接与练习节奏留在 <code>optics-research-profile.md</code>，按本轮学习目标读取。</li>
+</ul>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>三项 P0 工程整改（批复错版、revert 误删、回滚不完整）已在沙盒完成 TDD 验证（修复前全量暴露旧缺陷 → 修复后 16/16 全绿），并通过放行复核与隔离冒烟测试部署至生产；<code>RULE-001</code> 与 <code>RULE-002</code> 已单独生成审阅包，当前生产规则与记忆数据保持未改动。</p>
+<hr>
+<h2>一、环境基线与隔离核对</h2>
+<h3>1. 整改前 Sandbox 与生产文件哈希核对</h3>
+<p>核对结果：全部 11 份程序文件（<code>dream.ps1</code>、<code>plugin.json</code>、<code>SKILL.md</code> 及 <code>scripts/*.py</code>）在 sandbox 与生产目录<strong>字节完全一致</strong>，不存在未合并的生产代码改动；仅环境配置与编译产物存在预期差异：</p>
+<p>| 文件 | Sandbox SHA-256[:16] | 生产 SHA-256[:16] | 状态 |</p>
+<p>| :--- | :--- | :--- | :--- |</p>
+<p>| <code>scripts/config_io.py</code> | <code>8f955bd69034a44b</code> | <code>8f955bd69034a44b</code> | SAME |</p>
+<p>| <code>scripts/governance.py</code> | <code>d12d869ab4ddd206</code> | <code>d12d869ab4ddd206</code> | SAME |</p>
+<p>| <code>scripts/review_ui.py</code> | <code>b85b8d25e6d00eba</code> | <code>b85b8d25e6d00eba</code> | SAME |</p>
+<p>| <code>scripts/dream_cli.py</code> | <code>c1b91b5ae282b315</code> | <code>c1b91b5ae282b315</code> | SAME |</p>
+<p>| <code>SKILL.md</code> | <code>4a244d772ce2721c</code> | <code>4a244d772ce2721c</code> | SAME |</p>
+<p>| <code>dream.ps1</code> / <code>plugin.json</code> / 其余 4 份脚本 | 全部一致 | 全部一致 | SAME |</p>
+<p>| <code>dream_config.json</code> | <code>2b4f2836d8df2f0c</code> | <code>ea3f03f8c2a39df4</code> | DIFF（预期：路径配置） |</p>
+<p>| <code>rules/AGENTS.md</code> | <code>1e16af95a4a94d60</code> | <code>723952068c42ee43</code> | DIFF（预期：生产编译结果） |</p>
+<h3>2. 测试隔离</h3>
+<p>新增回归套件 <code>test_audit_remediation.py</code>（与原 <code>test_dream_e2e.py</code> 一致）每条用例均在独立 <code>TemporaryDirectory</code> 中显式配置 <code>antigravity_data_dir</code>、<code>memory_store_dir</code>、<code>compiled_rule_path</code>，使用合成对话与真实 Markdown 读写器 <code>store.py</code>，状态比较全部同时校验<strong>存在性 + SHA-256 摘要</strong>（<code>snapshot_managed_state</code>）。</p>
+<hr>
+<h2>二、三项工程修复要点与测试对照</h2>
+<h3>核心改动摘要</h3>
+<ul>
+<li><strong>批复错版（<code>governance.py</code>、<code>review_ui.py</code>、<code>dream_cli.py</code>）</strong>：</li>
+<li><code>stage_proposal</code> 拒绝重复 <code>op_id</code>，绑定 <code>manifest_hash</code> 与 <code>processed_batches</code>，计算不可变 <code>plan_hash</code>，冻结每版产物至 <code>runs/&lt;run_id&gt;/plans/&lt;plan_hash[:16]&gt;/</code>，并将 <code>plan_hash</code> / <code>manifest_hash</code> 嵌入 <code>staged_plan.json</code>、<code>review_summary.md</code> 与 <code>review.html</code>（在线提交与离线导出一致）。</li>
+<li>三审阅通道共用 <code>_validate_decisions_payload</code>：强校验 <code>run_id</code>、必填 <code>plan_hash</code>（缺版本号的旧批复直接拒收要求重审）、<code>manifest_hash</code>、唯一/已知/完整 <code>op_id</code> 集合与合法决议值；<strong>缺项保持待审拒绝落盘，不记为驳回、不写负反馈</strong>；在线 HTTP 在校验通过前不覆盖 <code>decisions.json</code>，陈旧版本返回 HTTP <code>409</code>。</li>
+<li>幂等性：按 <code>runs/&lt;run_id&gt;/receipts/&lt;plan_hash[:16]&gt;.json</code> + <code>decisions_hash</code> 识别重复提交，直接返回原收据且零副作用；保留原有 <code>base_hash</code> 漂移检查。</li>
+<li>批次水位：通过 <code>state/batch_progress.json</code> 跟踪每个 <code>run_id</code> 已完成批次，仅当某会话在 <code>manifest.json</code> 内的全部分片均已处理（含显式零候选）时才推进该会话水位。</li>
+<li><strong>revert 误删（<code>governance.py</code>）</strong>：</li>
+<li><code>_apply_op_to_doc</code> 规范化并记录操作触及的全部条目（含被 <code>supersedes</code> 改写的旧条目）前后像至 v2 收据的 <code>affected_entries</code>。</li>
+<li><code>revert_item</code> 在锁内先逐条比对所有 <code>affected_entries</code> 的当前磁盘状态与收据 <code>after_entry</code>，任一条目（B 或 A）发生后续变更即整组中止并列出冲突字段，零写盘、零新增反馈；无冲突才整组还原并在收据标记 <code>reverted: true</code>（二次撤回幂等，仅产生 1 条撤回反馈）；缺少连带条目前像的旧收据明确拒收。</li>
+<li><strong>回滚不完整（<code>config_io.py</code>、<code>governance.py</code>）</strong>：</li>
+<li>快照 v2 完整登记全部固定受管目标（<code>promoted_rules.md</code>、<code>INDEX.md</code>、<code>state/watermark.json</code>、<code>state/batch_progress.json</code>、<code>state/feedback_ledger.jsonl</code>、<code>compiled/AGENTS.md</code>）及 <code>topics/*.md</code> 的 <code>exists</code> 标志与原字节 SHA-256；恢复前由 <code>_verify_snapshot</code> 一次性校验清单、所有必需文件、规范受管路径与字节摘要，通过后才使用 <code>atomic_write_bytes</code> 还原存在文件并删除原先不存在的受管目标（如首次 apply 前不存在的 <code>watermark.json</code>）。</li>
+<li><code>ProcessLock</code> 升级为 Windows OS 内核非阻塞文件锁（<code>msvcrt.locking</code>，进程硬杀后由内核即时释放，避免死锁残留）；跨文件写入前落盘 <code>state/pending_tx.json</code>（记录快照 ID、水位恢复策略与收据前像），收据提交后清除；任意正常入口启动时自动触发 <code>recover_pending_tx</code> 恢复未完成事务且不重复恢复、不产生新反馈。</li>
+</ul>
+<h3>修复前 vs 修复后实测对比</h3>
+<p><strong>执行命令</strong>：</p>
+<pre><code>&amp; &#39;C:\Users\Administrator\.local\bin\python3.12.exe&#39; -X utf8 &quot;c:\Users\Administrator\Desktop\memory\sandbox\tests\test_dream_e2e.py&quot;
+&amp; &#39;C:\Users\Administrator\.local\bin\python3.12.exe&#39; -X utf8 &quot;c:\Users\Administrator\Desktop\memory\sandbox\tests\test_audit_remediation.py&quot;</code></pre>
+<p>| 回归用例 | 修复前实际失败（Exit Code 1，9 FAIL / 1 ERROR） | 修复后实测结果（Exit Code 0） |</p>
+<p>| :--- | :--- | :--- |</p>
+<p>| <code>test_p1_01</code>（V1 双栏 → V2 单栏，三入口提 V1 + 缺 <code>plan_hash</code>） | <code>AssertionError: &#39;&#39; is not true</code>（无 <code>plan_hash</code>，旧批复可落盘新版） | <strong>ok</strong>（在线 <code>409</code>、离线 CLI、对话入口及缺版本号均拒绝，全部受管文件存在性与 SHA-256 零变动） |</p>
+<p>| <code>test_p1_02</code>（重复 <code>op_id</code>、错 run、未知/重复/缺项、V2 幂等） | <code>AssertionError: ValueError not raised</code>（重复 <code>op_id</code> 通过 stage） | <strong>ok</strong>（非法决议全拒且 0 负反馈；V2 重复提交返回原 <code>snapshot_id</code>/<code>applied_at</code>，快照与文件零增量） |</p>
+<p>| <code>test_p1_03</code>（单会话拆两批、单批不推水位、缺项不写反馈、两批零候选推水位） | <code>KeyError: &#39;plan_hash&#39;</code>（且无批次级水位门控） | <strong>ok</strong>（单批不推水位；缺项拒绝且 0 负反馈；两批零候选完成后水位推进） |</p>
+<p>| <code>test_p2_01</code>（B 替代 A 后撤回 B） | <code>AssertionError: &#39;superseded&#39; != &#39;active&#39;</code>（A 遗留 <code>superseded</code>） | <strong>ok</strong>（A 恢复原内容及 <code>active</code>，B 移除，无关条目/手写备注/水位原值保留） |</p>
+<p>| <code>test_p2_02</code>（B 被更新或仅 A 被修改后撤回初版 B） | <code>AssertionError: (RuntimeError, ValueError) not raised</code>（新版 B 被误删） | <strong>ok</strong>（两组均冲突报错，整组文件 SHA-256 零变动，0 新增反馈，A/B 内容与状态均保留） |</p>
+<p>| <code>test_p2_03</code>（重复撤回 + 缺连带前像旧收据） | <code>AssertionError</code>（二次撤回改写账本与状态哈希） | <strong>ok</strong>（二次撤回幂等仅 1 条反馈；旧收据拒收且 A 仍 <code>superseded</code>、B 仍在） |</p>
+<p>| <code>test_p3_01</code>（首次 apply 后 <code>--reset-watermark</code> + 默认保留水位） | <code>AssertionError: True is not false</code>（<code>watermark.json</code> 残留未删） | <strong>ok</strong>（<code>--reset-watermark</code> 还原为文件不存在；默认 rollback 保留当前水位，其余受管文件逐字节还原） |</p>
+<p>| <code>test_p3_02</code>（快照缺必需文件 / 摘要损坏） | <code>AssertionError: (FileNotFoundError, ValueError) not raised</code>（静默跳过） | <strong>ok</strong>（首次业务写入前失败，全部受管文件存在性与 SHA-256 逐字节一致） |</p>
+<p>| <code>test_p3_03</code>（子进程于 <code>after_topics</code> 与 <code>after_watermark</code> <code>proc.kill()</code> 硬杀） | 双边界均 <code>FAIL</code>（无事务恢复机制） | <strong>ok</strong>（双边界确认脏状态后硬杀，首次正常 <code>status</code> 自动还原至提交前全量 SHA-256、0 反馈、无残余收据；二次 <code>status</code> <code>recovered_tx=null</code> 不重复恢复） |</p>
+<p>| 原有 <code>test_dream_e2e.py</code>（7 项） | — | <strong>7/7 ok</strong>（3.410s，保留 <code>base_hash</code> 漂移等全部既有断言） |</p>
+<hr>
+<h2>三、生产部署清单、备份与隔离冒烟验收</h2>
+<h3>1. 实际部署文件清单（仅替换本次修复所需的 5 个程序文件）</h3>
+<p>目标根目录：<code>C:\Users\Administrator\.gemini\config\plugins\antigravity-dream-memory\</code></p>
+<p>| 部署文件 | 部署前 SHA-256[:16] | 部署后 SHA-256[:16] |</p>
+<p>| :--- | :--- | :--- |</p>
+<p>| <code>scripts/config_io.py</code> | <code>8f955bd69034a44b</code> | <code>ee1037c567bfd6bf</code> |</p>
+<p>| <code>scripts/governance.py</code> | <code>d12d869ab4ddd206</code> | <code>5f618ce5b8a8c2e6</code> |</p>
+<p>| <code>scripts/review_ui.py</code> | <code>b85b8d25e6d00eba</code> | <code>edb9a9abbe7fa818</code> |</p>
+<p>| <code>scripts/dream_cli.py</code> | <code>c1b91b5ae282b315</code> | <code>76ed57b900982760</code> |</p>
+<p>| <code>skills/dream/SKILL.md</code> | <code>4a244d772ce2721c</code> | <code>04d5ac7febb01fde</code> |</p>
+<ul>
+<li><strong>未改动核验</strong>：生产 <code>dream_config.json</code>、<code>rules/AGENTS.md</code>、<code>promoted_rules.md</code>、<code>INDEX.md</code>、<code>state/watermark.json</code>、<code>state/feedback_ledger.jsonl</code> 及全部 6 份 <code>topics/*.md</code> 共 <strong>12 份文件部署前后 SHA-256 100% 字节一致</strong>。</li>
+</ul>
+<h3>2. 旧程序备份位置与恢复方法</h3>
+<ul>
+<li><strong>备份目录</strong>（位于插件扫描目录之外，不会触发重名插件扫描）：<code>C:\Users\Administrator\.gemini\antigravity\plugin_data\antigravity-dream-memory\program_backups\20261120_063317_pre_audit_fix\</code>（含 <code>backup_manifest.json</code>）</li>
+<li><strong>一键恢复旧程序命令（PowerShell）</strong>：</li>
+</ul>
+<p>  ```powershell</p>
+<p>  $bk = &#39;C:\Users\Administrator\.gemini\antigravity\plugin_data\antigravity-dream-memory\program_backups\20261120_063317_pre_audit_fix&#39;</p>
+<p>  $pr = &#39;C:\Users\Administrator\.gemini\config\plugins\antigravity-dream-memory&#39;</p>
+<p>  foreach ($rel in @(&#39;scripts\config_io.py&#39;,&#39;scripts\governance.py&#39;,&#39;scripts\review_ui.py&#39;,&#39;scripts\dream_cli.py&#39;,&#39;skills\dream\SKILL.md&#39;)) {</p>
+<p>      Copy-Item -LiteralPath (Join-Path $bk $rel) -Destination (Join-Path $pr $rel) -Force</p>
+<p>  }</p>
+<p>  ```</p>
+<h3>3. 部署后隔离冒烟测试结果</h3>
+<p>使用<strong>已部署的生产 <code>dream.ps1</code> 与脚本</strong> + <strong>独立临时 <code>temp_dream_config.json</code></strong>（合成对话 + 临时存储与编译目录）完整执行：</p>
+<p><code>init（确认无 watermark）→ extract → stage(A) → apply(A) → stage(B V1/V2 替代 A，实测 V1 陈旧批复被拒) → apply(B V2) → revert(B 恢复 A 为 active + 二次撤回幂等) → rollback(--reset-watermark 确认 watermark.json 回到不存在且 AGENTS.md 哈希还原)</code> -&gt; <strong>全部通过</strong>，且复核生产 <code>AGENTS.md</code>、<code>promoted_rules.md</code>、<code>watermark.json</code> 哈希零变化。</p>
+<hr>
+<h2>四、RULE-001 和 RULE-002 单独提审（仅审阅材料，尚未修改生产规则）</h2>
+<p>已使用部署后的 <code>dream.ps1 stage</code> 生成独立审阅包 <code>run_id: rule_refine_20261120</code>（<code>plan_hash: 6794daa67142b6a4309723819a12c73c6454781795fc7d0c9a9e5b4e0dbea7fa</code>），可独立批准或驳回任一条目；核验当前生产 <code>promoted_rules.md</code>（<code>B0D6142A644DE475</code>）与 <code>AGENTS.md</code>（<code>723952068C42EE43</code>）均<strong>未改动</strong>。</p>
+<ul>
+<li>审阅页面：<code>review.html</code></li>
+<li>审阅摘要：<code>review_summary.md</code></li>
+</ul>
+<h3>候选 1：<code>OP-001</code> — <code>RULE-001</code>（可独立批准 / 驳回）</h3>
+<ul>
+<li><strong>现行原文</strong>：</li>
+</ul>
+<p>  &gt; <strong>[RULE-001] 本机未注册全局 python/ffmpeg/node PATH</strong>：执行 Python、FFmpeg 或脚本前禁止假设系统 PATH 存在 python/ffmpeg/node，应按需读取 topics/local-windows-env.md 并显式调用已验证绝对路径。</p>
+<ul>
+<li><strong>拟改文字</strong>：</li>
+</ul>
+<p>  &gt; <strong>[RULE-001] 本机 Python/FFmpeg/Node 运行环境选择</strong>：在本机任务确实需要 Python、FFmpeg 或 Node 时，优先采用项目指定的运行环境。项目未指定时，先验证当前终端能否运行所需程序，无法定位再查本机环境档案。具体版本和路径留在 local-windows-env.md。</p>
+<ul>
+<li><strong>留在 / 降到 Tier 3 的内容</strong>（<code>local-windows-env.md</code> <code>MEM-ENV-001</code> 已完整保留）：</li>
+<li>本机实测的两套 Python 绝对路径与版本（<code>.workbuddy/.../python.exe</code> Python 3.13.14 科学计算全栈、<code>~/.local/bin/python3.12.exe</code> 轻量 CLI）及内置 <code>ffmpeg-win-x86_64-v7.1.exe</code> 信息；从常驻规则移除了“无需这三个程序的脚本也触发”和“越过项目自带虚拟环境”的过宽约束。</li>
+</ul>
+<h3>候选 2：<code>OP-002</code> — <code>RULE-002</code>（可独立批准 / 驳回）</h3>
+<ul>
+<li><strong>现行原文</strong>：</li>
+</ul>
+<p>  &gt; <strong>[RULE-002] 学习主旋律与三态知识边界护栏</strong>：用户为同济大学光学研一硕士，学习与科研是高频主旋律；讲解物理/工程概念时先锚定实操物理直觉，再给不跳步的完整公式衔接与适度轻量检验（反未教先测与全包代劳）。参考个人背景档案时必须区分【已有基础 / 刚入门在学 / 明确待攻克】，严禁预设已精通，亦勿将光学背景串味带入无关软件工程任务。</p>
+<ul>
+<li><strong>拟改文字</strong>：</li>
+</ul>
+<p>  &gt; <strong>[RULE-002] 辅导与起点判断时的三态学习记录边界</strong>：仅在辅导或需要判断知识起点时参考相应主题的学习记录，区分已有基础、在学和待攻克；未记录的能力保持未知。身份、光学平台直觉、公式衔接与练习节奏留在 optics-research-profile.md，按本轮学习目标读取。</p>
+<ul>
+<li><strong>留在 / 降到 Tier 3 的内容</strong>（<code>optics-research-profile.md</code> <code>MEM-OPT-001</code>～<code>003</code> 已完整保留）：</li>
+<li>同济大学光学研一硕士身份、课题组实验方向（<code>MEM-OPT-001</code>）、光学平台实操直觉优先 / 不跳步完整公式衔接 / 反未教先测与轻量手算节奏（<code>MEM-OPT-002</code>）、以及三态知识分界明细（<code>MEM-OPT-003</code>）；从常驻入口移除了每轮无条件注入的身份标签与会误命中纯软件排错的“工程概念”触发词。</li>
+</ul>
+<hr>
+<p>你只需直接回复对 <code>OP-001</code>（<code>RULE-001</code>）与 <code>OP-002</code>（<code>RULE-002</code>）的逐条批复（例如“两条都批准”或“批准 OP-001，驳回 OP-002 原因：……”），我再按绑定 <code>plan_hash</code> 的标准流程执行 <code>apply</code> 更新 <code>promoted_rules.md</code> 并重新编译 <code>AGENTS.md</code>。</p>
 </div></article>
 
     </section>
