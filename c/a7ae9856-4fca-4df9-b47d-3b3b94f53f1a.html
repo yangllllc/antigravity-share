@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>先读 @ mcp.md，勿复述历史。 1. 单次只读核验断点磁盘... - Antigravity Share</title>
+  <style>
+    :root {
+      --bg-main: #131314;
+      --bg-sidebar: #1e1f20;
+      --bg-active: #2b2c2f;
+      --bg-bubble-user: #2b2c2f;
+      --bg-bubble-ai: #1e1f20;
+      --text-main: #e3e3e3;
+      --text-sub: #c4c7c5;
+      --accent: #a8c7fa;
+      --border: #3c4043;
+      --code-bg: #0d0e11;
+      --badge-green: #34d399;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100vh;
+    }
+    #sidebar {
+      width: 310px;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+    .sidebar-header {
+      padding: 18px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-header h2 {
+      font-size: 16px;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sidebar-header a.home-link {
+      text-decoration: none;
+      color: inherit;
+    }
+    .sync-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--badge-green);
+      background: rgba(52, 211, 153, 0.1);
+      padding: 3px 8px;
+      border-radius: 12px;
+      margin-top: 8px;
+    }
+    .conv-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .conv-item {
+      display: block;
+      text-decoration: none;
+      padding: 11px 13px;
+      border-radius: 10px;
+      transition: background 0.15s;
+      border: 1px solid transparent;
+      color: inherit;
+    }
+    .conv-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .conv-item.active {
+      background: var(--bg-active);
+      border-color: var(--border);
+    }
+    .conv-title {
+      font-size: 14px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #fff;
+    }
+    .conv-meta {
+      font-size: 11px;
+      color: var(--text-sub);
+      margin-top: 4px;
+      display: flex;
+      justify-content: space-between;
+    }
+    #main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .main-header {
+      padding: 16px 28px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-sidebar);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .main-header h1 {
+      font-size: 17px;
+      color: #fff;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .sub-meta {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-top: 3px;
+    }
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .btn {
+      background: var(--bg-active);
+      color: var(--accent);
+      border: 1px solid var(--border);
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .btn:hover { background: #3c4043; }
+    .chat-canvas {
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 28px 24px 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .turn {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .turn.user { align-items: flex-end; }
+    .turn.assistant { align-items: flex-start; }
+    .role-tag {
+      font-size: 12px;
+      color: var(--text-sub);
+      font-weight: 600;
+      padding: 0 4px;
+    }
+    .bubble {
+      max-width: 88%;
+      padding: 16px 20px;
+      border-radius: 18px;
+      line-height: 1.7;
+      font-size: 15px;
+      word-break: break-word;
+    }
+    .turn.user .bubble {
+      background: var(--bg-bubble-user);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .turn.assistant .bubble {
+      background: var(--bg-bubble-ai);
+      color: var(--text-main);
+      border-bottom-left-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .bubble p { margin: 0 0 10px 0; }
+    .bubble p:last-child { margin-bottom: 0; }
+    .bubble h1, .bubble h2, .bubble h3, .bubble h4 {
+      margin: 14px 0 8px;
+      color: var(--accent);
+      line-height: 1.4;
+    }
+    .bubble h1 { font-size: 19px; }
+    .bubble h2 { font-size: 17px; }
+    .bubble h3 { font-size: 15.5px; }
+    .bubble ul, .bubble ol { margin: 8px 0 10px 22px; }
+    .bubble li { margin: 4px 0; }
+    .bubble blockquote {
+      border-left: 3px solid var(--accent);
+      padding-left: 12px;
+      margin: 8px 0;
+      color: var(--text-sub);
+    }
+    .bubble code {
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 5px;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 13.5px;
+    }
+    .bubble pre {
+      background: var(--code-bg);
+      padding: 14px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 10px 0;
+      border: 1px solid #2b2d31;
+    }
+    .bubble pre code {
+      background: transparent;
+      padding: 0;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .bubble a { color: var(--accent); }
+    .bubble hr {
+      border: 0;
+      border-top: 1px solid var(--border);
+      margin: 14px 0;
+    }
+    @media (max-width: 820px) {
+      body { flex-direction: column; }
+      #sidebar { width: 100%; height: auto; position: static; max-height: 280px; }
+      .main-header { flex-wrap: wrap; padding: 14px 16px; }
+      .header-actions { flex-wrap: wrap; }
+      .bubble { max-width: 96%; }
+    }
+  </style>
+</head>
+<body data-conv-id="a7ae9856-4fca-4df9-b47d-3b3b94f53f1a" data-base-prefix="./" data-turn-count="3" data-update-time="2026-11-20 19:29" data-is-index="0">
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
+      <div class="sync-badge" id="syncBadge">自动同步加载中...</div>
+    </div>
+    <nav class="conv-list" id="convList" aria-label="Conversations">
+      <noscript><div style="padding:12px;color:#c4c7c5;font-size:12px;">请启用 JavaScript 查看全部历史对话列表，或直接访问对应对话链接。</div></noscript>
+    </nav>
+  </aside>
+  <main id="main">
+    <header class="main-header">
+      <div style="min-width:0;">
+        <h1>先读 @ mcp.md，勿复述历史。 1. 单次只读核验断点磁盘...</h1>
+        <div class="sub-meta">会话 ID: a7ae9856-4fca-4df9-b47d-3b3b94f53f1a | 轮次: 3 | 更新于: 2026-11-20 19:29</div>
+      </div>
+      <div class="header-actions">
+        <a class="btn" id="downloadMdBtn" href="./a7ae9856-4fca-4df9-b47d-3b3b94f53f1a.md" download="先读_@_mcp.md，勿复述历史。_1._单次-a7ae9856.md" onclick="return downloadMarkdown(event, './a7ae9856-4fca-4df9-b47d-3b3b94f53f1a.md', '先读_@_mcp.md，勿复述历史。_1._单次-a7ae9856.md')">⬇️ 下载 Markdown (.md)</a>
+        <button class="btn" id="copyBtn" type="button" onclick="copyCanonicalUrl('./a7ae9856-4fca-4df9-b47d-3b3b94f53f1a.html', 'copyBtn', '已复制直链')">复制对话直链</button>
+      </div>
+    </header>
+    <section class="chat-canvas" aria-label="Conversation Content">
+      <article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>@[c:\Users\Administrator\Desktop\mcp\mcp.md] 先读 @ mcp.md，勿复述历史。</p>
+<ul>
+<li>单次只读核验断点磁盘状态，勿中途请示。</li>
+<li>不符则停手报差异，一致则执行【唯一单点下一步】。</li>
+<li>禁碰【排雷墓碑】，删改前确认，完后按【外部验证判据】实测汇报。</li>
+</ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>@[c:\Users\Administrator\Desktop\mcp\mcp.md] 先读 @ mcp.md，勿复述历史。</p>
+<ul>
+<li>单次只读核验断点磁盘状态，勿中途请示。</li>
+<li>不符则停手报差异，一致则执行【唯一单点下一步】。</li>
+<li>禁碰【排雷墓碑】，删改前确认，完后按【外部验证判据】实测汇报。</li>
+</ul>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成只读核验，<strong>发现核心运行态与断点记录不符，按要求已停手、未修改任何文件。</strong></p>
+<hr>
+<h3>一、核验结果对照</h3>
+<h4>1. 不符项（停手原因）</h4>
+<p>| 项目 | <code>mcp.md</code> 记录 | 磁盘与实时实测状态 |</p>
+<p>| :--- | :--- | :--- |</p>
+<p>| <strong>SakuraCat 代理模式</strong> | <code>global</code> 模式（走系统代理撞 403） | <strong><code>shared_preferences.json</code></strong>（写于 <code>2026-11-20 19:00:07</code>）记录 <code>flutter.clash_mode = &quot;Rule&quot;</code> |</p>
+<p>| <strong>系统代理实测出口</strong> | 预期代理走境外节点触发 403 | 经 <code>http://127.0.0.1:12450</code> 访问 <code>http://myip.ipip.net</code> 返回 <code>111.187.38.116</code>（上海教育网直出，非日本节点）；访问 <code>agi.tongji.edu.cn/v1/models</code>（42 ms，返回 Nginx 正常缺密钥体 <code>{&quot;error&quot;:{&quot;code&quot;:403,&quot;message&quot;:&quot;API密钥不能为空&quot;}}</code>，与 WLAN 直连 <code>10.67.0.251</code> 一致）、<code>platform.deepseek.com</code>（429）、<code>api.deepseek.com</code>（401）均<strong>未撞 WAF/CloudFront 403</strong> |</p>
+<blockquote>核心矛盾：【唯一单点下一步】中是否需要补 DSH 代理豁免/<code>NO_PROXY</code>，强依赖你当前究竟要长期停留在 <code>Rule</code> 模式，还是会切回 <code>Global</code> 模式（且当前 <code>DeepSeek Harness.exe</code> 未启动，尚无 GUI 对话实测）。</blockquote>
+<h4>2. 一致项（已核验通过）</h4>
+<ul>
+<li><strong>MCP 主/备脚本</strong>：<code>tongji_deepseek_mcp.ps1</code> 与 <code>D:\tongji_plugin\tongji_deepseek_mcp.ps1</code> 均存在，版本 <code>5.2.1</code>，<code>UTF-8 BOM = True</code>，双端 <code>SHA-256</code> 一致（<code>F0159313F54A3B868FDA4196EA49533C0D66816C5B0712E0FCB8B2337A46900C</code>）。<code>L265-L282</code> 确尚未加入 <code>tun\d*</code> / <code>172.19.*</code> 黑名单。</li>
+<li><strong>规则与 Schema</strong>：<code>deepseek-subagent.md</code> 及 Schema 目录（<code>consult_tongji_brain.json</code>、<code>delegate_to_deepseek.json</code>、<code>instructions.md</code>）均齐备。</li>
+<li><strong>DSH 补丁</strong>：<code>index.js</code> 头部 <code>v2.0</code> 直连补丁完好；<code>L29-L43</code> 确尚未加入 <code>tun\d*</code> / <code>172.19.</code> 黑名单。</li>
+<li><strong>代理与网卡环境</strong>：SakuraCat <code>2.4.6</code>（<code>com.sakuracat.app</code> + <code>sing-box</code>）运行中；<code>tun0</code>（<code>172.19.0.1/30</code>，Up，默认路由 + 首选 DNS <code>172.19.0.2</code>）、<code>WLAN</code>（<code>100.73.220.134/15</code>，Up）；<code>ProxyEnable = 1</code>、<code>ProxyServer = http://127.0.0.1:12450</code>，<code>ProxyOverride</code> 无同济/DeepSeek 域名，用户/系统 <code>NO_PROXY</code> 均为空。</li>
+</ul>
+<hr>
+<h3>二、待确认收敛方向（请择一后我再动手改码/实测）</h3>
+<ul>
+<li><strong>方案 A（保持 <code>Rule</code> 模式 + 仅补防御性黑名单后封版）</strong></li>
+<li>修改点：给主/备 <code>tongji_deepseek_mcp.ps1</code> 与 <code>index.js</code> 补齐 <code>tun\d*</code> 与 <code>172.19.</code> 黑名单，同步双端 <code>SHA-256</code>，修正 <code>mcp.md</code> 中代理模式记录；不设全局 <code>NO_PROXY</code>。</li>
+<li>代价：若日后切回 <code>Global</code> 模式，DSH Electron 侧请求仍可能走 <code>127.0.0.1:12450</code> 撞 403；同时需确认 <code>Rule</code> 模式下你常用海外站点（如 <code>chatgpt.com</code>）未受 DoH 污染影响。</li>
+<li><strong>方案 B（按 <code>Global</code> 模式加固：补 <code>tun\d*</code>/<code>172.19.</code> 黑名单 + DSH 代理豁免/<code>NO_PROXY</code>）</strong></li>
+<li>修改点：先请你把 SakuraCat 切回 <code>Global</code>（或按 <code>Global</code> 兼容标准实施），补上述两处黑名单，并补 DSH 侧直连豁免 / <code>NO_PROXY</code>（需在改前进一步核对 Electron 主进程对 <code>NO_PROXY</code> 与 Windows <code>ProxyOverride</code> 的实际优先级，避免 SakuraCat 重载系统代理时覆盖 <code>ProxyOverride</code>）。</li>
+<li>代价：改动面略大（涉及环境变量或 DSH 启动参数/补丁），且须在 <code>Global</code> 模式下实测 DSH GUI 对话。</li>
+<li><strong>方案 C（直接封版，不改脚本）</strong></li>
+<li>前提：当前 <code>WLAN</code> 已被白名单命中未误选 <code>tun0</code>，且你确认不再切回 <code>Global</code>、只更新 <code>mcp.md</code> 现状并跑一次 <code>fast_dual</code> + DSH GUI 对话验证即可。</li>
+</ul>
+<h3>三、边界追问</h3>
+<ul>
+<li>SakuraCat 在今天 <code>19:00</code> 切到 <code>Rule</code> 模式是你主动切换并打算长期维持，还是误切/临时测试后准备切回 <code>Global</code>？</li>
+<li>若走方案 B，你需要 DSH GUI 在 <code>Global</code> 模式下只豁免校内 <code>agi.tongji.edu.cn</code>，还是同时豁免 <code>platform.deepseek.com</code> / <code>api.deepseek.com</code>（涉及 DeepSeek 官方登录与网关）？</li>
+</ul>
+</div></article>
+
+    </section>
+  </main>
+  <script>
+    (function() {
+      var src = '../sidebar.js';
+      if (window.location.protocol !== 'file:') {
+        src += (src.indexOf('?') >= 0 ? '&' : '?') + '_t=' + Date.now();
+      }
+      var s = document.createElement('script');
+      s.src = src;
+      document.body.appendChild(s);
+    })();
+  </script>
+  <script>
+    function triggerBlobDownload(blob, filename) {
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function() { URL.revokeObjectURL(url); }, 1500);
+    }
+    function downloadMarkdown(e, relPath, filename) {
+      if (window.location.protocol === 'file:' || !window.fetch || !window.Blob) {
+        return true;
+      }
+      if (e) e.preventDefault();
+      var btn = document.getElementById('downloadMdBtn');
+      var orig = btn ? (btn.getAttribute('data-orig') || btn.innerText) : '';
+      if (btn) {
+        btn.setAttribute('data-orig', orig);
+        btn.innerText = '正在下载...';
+      }
+      var targetUrl = relPath;
+      try { targetUrl = new URL(relPath, window.location.href).href; } catch (err) {}
+      fetch(targetUrl, { cache: 'no-cache' })
+        .then(function(resp) {
+          if (!resp.ok) throw new Error('HTTP ' + resp.status);
+          return resp.text();
+        })
+        .then(function(text) {
+          var blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
+          triggerBlobDownload(blob, filename);
+          if (btn) {
+            btn.innerText = '已下载 .md';
+            setTimeout(function() { btn.innerText = orig; }, 2000);
+          }
+        })
+        .catch(function() {
+          if (btn) btn.innerText = orig;
+          var a = document.createElement('a');
+          a.href = targetUrl;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        });
+      return false;
+    }
+    function fallbackCopy(text, onDone) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try {
+        if (document.execCommand('copy')) { onDone(); }
+      } catch (e) {}
+      document.body.removeChild(ta);
+    }
+    function copyCanonicalUrl(relPath, btnId, doneLabel) {
+      var btn = document.getElementById(btnId);
+      if (!btn) return;
+      var orig = btn.getAttribute('data-orig') || btn.innerText;
+      btn.setAttribute('data-orig', orig);
+      var targetUrl = window.location.href;
+      try {
+        targetUrl = new URL(relPath, window.location.href).href;
+      } catch (e) {}
+      var onDone = function() {
+        btn.innerText = doneLabel;
+        setTimeout(function() { btn.innerText = orig; }, 2000);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(targetUrl).then(onDone, function() { fallbackCopy(targetUrl, onDone); });
+      } else {
+        fallbackCopy(targetUrl, onDone);
+      }
+    }
+  </script>
+</body>
+</html>
