@@ -245,7 +245,7 @@
     }
   </style>
 </head>
-<body data-conv-id="012b6894-2e81-44de-a00d-a54e062faf7b" data-base-prefix="./c/" data-turn-count="11" data-update-time="2026-11-20 14:35" data-is-index="1">
+<body data-conv-id="012b6894-2e81-44de-a00d-a54e062faf7b" data-base-prefix="./c/" data-turn-count="13" data-update-time="2026-11-20 14:47" data-is-index="1">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="./index.html">Antigravity 对话分享</a></h2>
@@ -259,7 +259,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1>请先完整阅读当前工作目录下的 `CONTEXT_dream_sk...</h1>
-        <div class="sub-meta">会话 ID: 012b6894-2e81-44de-a00d-a54e062faf7b | 轮次: 11 | 更新于: 2026-11-20 14:35</div>
+        <div class="sub-meta">会话 ID: 012b6894-2e81-44de-a00d-a54e062faf7b | 轮次: 13 | 更新于: 2026-11-20 14:47</div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./c/012b6894-2e81-44de-a00d-a54e062faf7b.md" download="请先完整阅读当前工作目录下的_CONTEXT_d-012b6894.md" onclick="return downloadMarkdown(event, './c/012b6894-2e81-44de-a00d-a54e062faf7b.md', '请先完整阅读当前工作目录下的_CONTEXT_d-012b6894.md')">⬇️ 下载 Markdown (.md)</a>
@@ -767,6 +767,75 @@ Skipped:
 </ul>
 <hr>
 <p>你只需直接回复对 <code>OP-001</code>（<code>RULE-001</code>）与 <code>OP-002</code>（<code>RULE-002</code>）的逐条批复（例如“两条都批准”或“批准 OP-001，驳回 OP-002 原因：……”），我再按绑定 <code>plan_hash</code> 的标准流程执行 <code>apply</code> 更新 <code>promoted_rules.md</code> 并重新编译 <code>AGENTS.md</code>。</p>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>我都全同意，我想知道这次经历了gpt的修改后到底修改了什么，为什么要这样修改，他的原理是什么。然后这样修改后有什么好处，和上一版相比究竟是少思考了什么，修改后还有不足或者缺点嘛？</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已按你的批复完成 <code>rule_refine_20261120</code> 原子 <code>apply</code>（只读快照 <code>20261120_064613_121_pre_apply_rule_refine_20261120</code>），<code>promoted_rules.md</code> 与常驻入口 <code>AGENTS.md</code>（<code>20 行 / 2,297 字节</code>）均已实时生效，<code>CONTEXT_dream_skill.md</code> 已同步更新。</p>
+<p>下面用大白话逐项回答你的五个问题——<strong>不护短、直说底层的坑与反思</strong>。</p>
+<hr>
+<h2>一、这次到底修改了什么？为什么要改？原理是什么？</h2>
+<p>本轮一共动了 <strong>3 个底层工程安全机制</strong> + <strong>2 条常驻规则措辞</strong>：</p>
+<h3>1. 工程修复一：批复绑死不可变版本（修“批复错版”与“水位误推”）</h3>
+<ul>
+<li><strong>旧版问题</strong>：同一轮整理如果先生成了 V1（比如 <code>OP-001</code> 写着“双栏”），后来改稿重新 <code>stage</code> 成 V2（<code>OP-001</code> 变成“单栏”），你手里拿着旧审阅页点了“同意 OP-001”，旧程序只认编号 <code>OP-001</code>，结果把你根本没看过的“单栏”落盘了。另外，如果批复漏写了一项，旧程序会直接当成“你驳回了”写进负反馈；一个长对话拆成两批时，只审完第一批就提前把整个对话标记为“已读完”。</li>
+<li><strong>修改原理（内容寻址 + 显式完备校验 + 批次门控）</strong>：</li>
+<li>就像签合同要盖<strong>骑缝章</strong>：每次 <code>stage</code> 把你实际看到的全部提案内容 + 对应抽取清单算一个唯一 SHA-256 指纹 <code>plan_hash</code>，冻结存进 <code>plans/&lt;hash&gt;/</code>；在线网页、离线导出的 <code>decisions.json</code> 和聊天批复<strong>全部必须带上这枚 <code>plan_hash</code></strong>，核对不一致直接拒收。</li>
+<li>批复列表必须与提案 <code>op_id</code> 严丝合缝（缺项保持待审、不记驳回；重复提交同一份批复直接返回原收据，幂等不重做）。</li>
+<li>新增 <code>batch_progress.json</code>，只有某个对话的<strong>所有分片</strong>都审完（哪怕明确零候选）才推进它的水位。</li>
+</ul>
+<h3>2. 工程修复二：精准撤回补齐连带状态与冲突锁（修“revert 误删”）</h3>
+<ul>
+<li><strong>旧版问题</strong>：如果“规则 A”被你批准的“规则 B”替代了（A 自动变成 <code>superseded</code>），后来你又批准修改了 B 的内容，再拿第一次的收据去撤回“新增 B”——旧程序<strong>只看条目 ID 不看现状</strong>，直接把新版 B 删掉，而且忘了把 A 恢复成 <code>active</code>，导致新旧两条全没了。</li>
+<li><strong>修改原理（乐观并发控制 / CAS + 全组原子逆转）</strong>：</li>
+<li>每次 <code>apply</code> 写收据时，不只记主条目 B，而是把<strong>连带改动的 A</strong> 的“改前/改后完整快照”一起记入 <code>affected_entries</code>。</li>
+<li>撤回前在锁内做一次“验货”：把磁盘上 A 和 B 的<strong>当前状态</strong>与收据里的“改后状态”逐字段比对。只要其中任何一条被人动过，就<strong>整组报错退出、零改动、零负反馈</strong>；全部吻合才把 B 删掉并把 A 原样恢复成 <code>active</code>，同时给收据打上 <code>reverted: true</code> 防止重复撤回。</li>
+</ul>
+<h3>3. 工程修复三：快照存在性清单 + 崩溃恢复日志（修“回滚不完整”）</h3>
+<ul>
+<li><strong>旧版问题</strong>：</li>
+<li>首次运行前还没有 <code>watermark.json</code>，旧快照清单里压根没登记它，所以回滚并要求重置水位时，新生成的 <code>watermark.json</code> 删不掉；</li>
+<li>恢复快照时如果某个备份文件丢了或损坏了，旧代码静默跳过，导致“一半恢复一半没恢复”；</li>
+<li>旧代码只靠 Python 的 <code>try/except</code> 回滚——万一写到一半进程被系统强杀或断电，<code>except</code> 根本来不及执行，下次启动也不会清理烂摊子，而且旧文件锁会卡死 10 分钟。</li>
+<li><strong>修改原理（预检 + 预写事务日志 WAL 思想 + OS 内核锁）</strong>：</li>
+<li>快照 v2 像“房屋交接清单”：不论文件原本在不在，全部受管目标都登记 <code>exists: true/false</code> 和 SHA-256；回滚前先<strong>一次性全检</strong>所有备份文件和哈希，哪怕错 1 个字节都在动盘前报错，确保不会改坏一半；原本不存在的文件按清单直接删除还原。</li>
+<li>改盘前先落盘一张 <code>pending_tx.json</code>（记下快照 ID 和收据前像），等所有文件及收据都安全落盘才撕掉这张纸条。一旦中途被强杀，下次运行任何正常命令（如 <code>status</code>）看到纸条还在，就会自动按快照把系统拉回提交前的一致状态。同时把进程锁换成 Windows 内核级文件锁（<code>msvcrt.locking</code>），进程一死操作系统秒释放锁，不留僵尸锁。</li>
+</ul>
+<h3>4. 规则微调：收窄 <code>RULE-001</code> 与 <code>RULE-002</code> 的触发面</h3>
+<ul>
+<li><strong>为什么改</strong>：旧版 <code>RULE-001</code> 写“执行……或脚本前”，会误伤不需要 Python/FFmpeg/Node 的普通脚本，也会在项目自带虚拟环境时强行跳去用机器级路径；旧版 <code>RULE-002</code> 把你的“研一身份”和宽泛的“工程概念”常驻进每一轮对话，哪怕你只是修一个软件 Bug，模型也容易忍不住进入“教学辅导 + 出练习题”模式。</li>
+<li><strong>怎么改</strong>：Tier 1 只保留<strong>极窄、精准的触发闸门</strong>（真缺运行环境才查环境档；真在辅导或需要判断知识起点时才读学习记录并严分三态），把具体路径、身份、光学平台直觉和练习节奏全部留在 Tier 3 按需读取——信息一字未丢，但干扰降到最低。</li>
+</ul>
+<hr>
+<h2>二、这样修改后有什么好处？</h2>
+<ul>
+<li><strong>授权可信</strong>：你看到的 Diff 就是落盘的精确内容，再也不会出现“审 A 落 B”或漏审被误当驳回。</li>
+<li><strong>反悔真正安全</strong>：撤回“替代关系”不会留下僵尸条目，也不会误杀你后来辛苦改好的新版本；真遇到崩溃/强杀，重启即自愈。</li>
+<li><strong>日常对话更清爽</strong>：纯工程/排错任务不再被光学学习规则分心或强塞练习题，同时辅导学习时依然保留全部三态边界保护。</li>
+</ul>
+<hr>
+<h2>三、坦诚复盘：上一版我究竟“少思考了什么”？</h2>
+<p>回头对照审计报告，我第一版主要有 <strong>3 个典型的工程师思维盲区</strong>：</p>
+<ul>
+<li><strong>用“单次正常流程”代替了“多版本/多跳状态机”思考</strong>：我最初测试的是“生成一版 → 批准 → 撤回刚加的孤立项”这条最顺的路径，没有把自己放在<strong>对抗视角</strong>去问：“如果同一轮重做了第二版呢？如果 A→B 之后又改了 B 再去撤回第一笔呢？”——这就是为什么原测试全绿，却漏掉了真实的多跳因果链。</li>
+<li><strong>混淆了“单文件原子写”和“跨文件事务一致性”</strong>：我花心思做了 <code>flush + fsync + os.replace</code> 和 <code>try/except</code>，下意识觉得“已经够原子了”，却忽略了两件系统编程里的硬事实——① 多个文件依次 <code>os.replace</code> 之间依然存在“半提交窗口”，进程被硬杀时 <code>except</code> 根本不跑；② “文件原本不存在”本身也是一种需要被快照记录的状态。</li>
+<li><strong>把“好意图”直接写成了宽口径常驻规则</strong>：为了解决你前面担心的“找不到 Python”和“学习跳步”，我把背景和偏好直接铺在了每次必读的 Tier 1 里，少了“反面压力测试”（问一句：这条规则在完全无关的纯代码任务里会被误触发吗？）。</li>
+</ul>
+<hr>
+<h2>四、修改后还有哪些不足或缺点？（实话实说）</h2>
+<p>本轮严格按你的要求只修了最要命的 3 个 P0 工程漏洞和 2 条常驻规则，对照审计报告，系统<strong>目前还留有 4 类真实但暂不致命的不足</strong>（现阶段正常使用没触发，但长期跑久了值得留意）：</p>
+<ul>
+<li><strong>自动编号复用导致的负反馈误杀（审计 #9 — 最可能最先碰到）</strong>：</li>
+<li>如果你在某个主题驳回过一条自动分配编号（比如 <code>MEM-OPT-005</code>）的新提案，因为那条没写进文件，下次在同主题提一条<strong>完全无关</strong>的新记忆时，脚本还会把空号 <code>MEM-OPT-005</code> 分给它，从而命中旧账本的 <code>blocked_entry_id</code> 被误拦。另外，中文二元词袋匹配在面对“相同术语、意思相反”的新主张时也存在误报风险。</li>
+<li><strong>多行 <code>claim</code> 读写截断隐患（审计 #12）</strong>：</li>
+<li>目前你的 17 条记忆都是单行，完全正常；但如果以后某次提案的 <code>claim</code> 写了换行分两段，首次落盘能写进去，下次 <code>store.py</code> 再解析时只会读到第一行、丢掉第二行的限定条件。</li>
+<li><strong>抽取器深层边界与 SQLite 一致性（审计 #7、#8、#11）</strong>：</li>
+<li>目前增量水位只核验末轮前 512 字摘要，如果某条老对话改了较早轮次或末轮后半段正文可能漏判；活跃 SQLite 的 <code>.db/.wal/.shm</code> 逐个复制在极端高并发写入瞬间仍有极小概率不是同一毫秒切片（更稳的做法是只读连接走 SQLite Online Backup API）；另外对话标题和工作区路径目前未过脱敏扫描。</li>
+<li><strong>半年后的容量增长与少量规则细化（审计 #4、#6、长期退化）</strong>：</li>
+<li>高频主题（比如 <code>optics-research-profile.md</code>）积累到约 16–17 条时会撞上 <code>150</code> 行上限，目前还缺“自动把已过时条目移出正文归档”的瘦身机制；</li>
+<li><code>optics-research-profile.md</code> 里还留着少量偏粗粒度描述（如英语分数、“前四章”整块范围），以及 <code>deepseek-subagent.md</code> 尚未显式注明“<code>/dream</code> 整理流程只走本地、不外调 MCP”的例外条款。</li>
+</ul>
+<hr>
+<p><strong>建议节奏</strong>：现在这套系统最核心的“授权、撤回、防崩”三道底线已经扎牢，你可以先正常日常用一段时间（跑几次真实 <code>/dream</code> 感受一下）。如果后续想再做一轮收尾加固，最优先推荐一次性修掉上面的 <strong>第 1 项（防自动 ID 复用误拦）+ 第 2 项（禁多行或支持续行）+ <code>deepseek-subagent.md</code> 加一句 <code>/dream</code> 本地例外</strong>——改动很小但能把半年内最容易撞上的坑提前清零。</p>
 </div></article>
 
     </section>
