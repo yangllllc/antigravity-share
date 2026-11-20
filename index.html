@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex">
-  <title>请先完整阅读当前工作目录下的 `CONTEXT_dream_sk... - Antigravity Share</title>
+  <title>帮我检查一下我的sakuracat是不是最新版的，你去官网查看一... - Antigravity Share</title>
   <style>
     :root {
       --bg-main: #131314;
@@ -245,7 +245,7 @@
     }
   </style>
 </head>
-<body data-conv-id="012b6894-2e81-44de-a00d-a54e062faf7b" data-base-prefix="./c/" data-turn-count="13" data-update-time="2026-11-20 14:47" data-is-index="1">
+<body data-conv-id="6a890e8e-7d88-4ac0-8276-e1d6adfd70ef" data-base-prefix="./c/" data-turn-count="11" data-update-time="2026-11-20 18:54" data-is-index="1">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="./index.html">Antigravity 对话分享</a></h2>
@@ -258,584 +258,121 @@
   <main id="main">
     <header class="main-header">
       <div style="min-width:0;">
-        <h1>请先完整阅读当前工作目录下的 `CONTEXT_dream_sk...</h1>
-        <div class="sub-meta">会话 ID: 012b6894-2e81-44de-a00d-a54e062faf7b | 轮次: 13 | 更新于: 2026-11-20 14:47</div>
+        <h1>帮我检查一下我的sakuracat是不是最新版的，你去官网查看一...</h1>
+        <div class="sub-meta">会话 ID: 6a890e8e-7d88-4ac0-8276-e1d6adfd70ef | 轮次: 11 | 更新于: 2026-11-20 18:54</div>
       </div>
       <div class="header-actions">
-        <a class="btn" id="downloadMdBtn" href="./c/012b6894-2e81-44de-a00d-a54e062faf7b.md" download="请先完整阅读当前工作目录下的_CONTEXT_d-012b6894.md" onclick="return downloadMarkdown(event, './c/012b6894-2e81-44de-a00d-a54e062faf7b.md', '请先完整阅读当前工作目录下的_CONTEXT_d-012b6894.md')">⬇️ 下载 Markdown (.md)</a>
-        <button class="btn" id="copyBtn" type="button" onclick="copyCanonicalUrl('./c/012b6894-2e81-44de-a00d-a54e062faf7b.html', 'copyBtn', '已复制直链')">复制对话直链</button>
+        <a class="btn" id="downloadMdBtn" href="./c/6a890e8e-7d88-4ac0-8276-e1d6adfd70ef.md" download="帮我检查一下我的sakuracat是不是最新版的-6a890e8e.md" onclick="return downloadMarkdown(event, './c/6a890e8e-7d88-4ac0-8276-e1d6adfd70ef.md', '帮我检查一下我的sakuracat是不是最新版的-6a890e8e.md')">⬇️ 下载 Markdown (.md)</a>
+        <button class="btn" id="copyBtn" type="button" onclick="copyCanonicalUrl('./c/6a890e8e-7d88-4ac0-8276-e1d6adfd70ef.html', 'copyBtn', '已复制直链')">复制对话直链</button>
       </div>
     </header>
     <section class="chat-canvas" aria-label="Conversation Content">
-      <article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>@[c:\Users\Administrator\Desktop\memory\CONTEXT_dream_skill.md] 请先完整阅读当前工作目录下的 <code>CONTEXT_dream_skill.md</code>。你可以借鉴之前做 antigravity-share 的本地代码路径（万一底层缓存被加密，它可以直接参考你当时的导出逻辑作为兜底）。这套记忆系统目前只打算管 Antigravity 内部会话。</p>
-<p>我希望你作为这个项目的架构师和实施者，帮我从零设计并落地这套类 Claude Dream 的本地记忆治理系统。注意：文档里第 1 节是底线铁律，但第 2 节的“开放空间”我特意没有替你定死，我希望你先摸清本机实际情况，自己独立思考、质疑并选出最优雅、最贴合 Antigravity 原生机制的方案，然后直接做出一个可验证的沙盒 MVP 给我验收。</p>
-<p>请按以下节奏自主推进（常规只读探查、方案设计、沙盒内编码与测试请连续执行，不要每一步都停下来问我；仅当你发现本机缓存完全加密无法直读、或需要动到我现有真实全局配置时，才暂停向我确认）：</p>
-<ul>
-<li><strong>实机只读探查（Phase 0）</strong>：</li>
-<li>先在本机只读探查两件事：（a）Antigravity 自身的全局规则 / Skill 加载目录与机制；（b）Antigravity 本地会话缓存的真实落盘路径、文件格式、角色字段及时间戳结构（严格遵守“先拷贝再只读打开”的防锁铁律，绝不写入原生缓存目录）。</li>
-<li>如果需要编写探查脚本，请先运行拿到真实输出，不要靠猜。</li>
-<li><strong>架构评审与自主定型</strong>：</li>
-<li>基于实测结果，逐一裁决 <code>CONTEXT_dream_skill.md</code> 第 2 节列出的 5 个开放问题。</li>
-<li>如果你发现原构想中有冗余、过度设计，或者有更贴合 Antigravity 原生能力的做法，直接指出原因并优化，把最终架构决策和放弃的替代方案更新进 <code>CONTEXT_dream_skill.md</code> 第 2 节。</li>
-<li><strong>沙盒 MVP 构建与实测验收（Phase 1 &amp; 2）</strong>：</li>
-<li>在当前工作区的独立沙盒目录内落地完整可运行的版本（保持单次写入精简分块，避开长工具调用超时）。</li>
-<li>自己构造一套包含“事实冲突更新、跨会话重复纠错、伪造 API Key 凭据、模拟自污染 <code>/dream</code> 对话、以及人工 Revert 负反馈”的合成测试集，真实跑通全流程（含真实缓存只读抽取 dry-run），不要只停留在静态代码检查。</li>
-<li><strong>交付给我验收的最终报告</strong>：</li>
-<li>更新 <code>CONTEXT_dream_skill.md</code> 第 3 节，并用简体中文给我一份清晰的验收报告，必须包含：</li>
-<li>你探查到的本机缓存与规则机制事实（含具体路径与格式证据）；</li>
-<li>你的核心架构选型与权衡（为什么这么选，否决了什么）；</li>
-<li>所有自动化测试与真实缓存 dry-run 的实际执行输出；</li>
-<li>我作为用户下一步如何亲自试跑、审查效果，以及确认无误后如何从沙盒切换到正式启用。</li>
-</ul>
+      <article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>帮我检查一下我的sakuracat是不是最新版的，你去官网查看一下，官网是：114514-sakuracat.com或者sakuracat-cn1.com。不是的话就进行安装最新版本并覆盖旧版本，D:\sakuracat这个是路径</p>
 </div></article>
-<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>Phase 0 实机只读探查、架构自主定型、Phase 1 沙盒 MVP 构建与 Phase 2 自动化验收均已完成，状态已同步更新至 <code>CONTEXT_dream_skill.md</code>（第 1 节铁律未动，第 2、3 节已更新）。全程未改动 <code>~/.gemini/config/</code> 与 Antigravity 原生缓存。</p>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已检查本地安装目录 <code>D:\sakuracat</code>，当前已安装的 SakuraCat 版本为 <strong><code>1.6.2</code></strong>（NSIS 安装版，构建时间 <code>2025/11/30</code>）。</p>
+<p>正在通过浏览器访问官网（<code>114514-sakuracat.com</code> / <code>sakuracat-cn1.com</code>）核对最新 Windows 版本及下载信息，请稍候。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p><code>114514-sakuracat.com</code> 直接跳转到了账号登录页（未登录前不展示公开下载入口），正在顺便核对备用域名 <code>sakuracat-cn1.com</code>，请稍候。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><h3>当前检查进度</h3>
+<ul>
+<li><strong>本地版本（已确认）</strong></li>
+<li>目录：<code>D:\sakuracat</code></li>
+<li>可执行文件：<code>SakuraCat.exe</code></li>
+<li>当前版本：<strong><code>1.6.2</code></strong>（<code>ProductVersion: 1.6.2.0</code>，构建时间 <code>2025/11/30</code>，NSIS 安装版，目录内含 <code>Uninstall SakuraCat.exe</code>）</li>
+</ul>
+<ul>
+<li><strong>官网状态（需要登录）</strong></li>
+<li>已通过内置浏览器依次访问 <code>https://114514-sakuracat.com</code> 与 <code>https://sakuracat-cn1.com</code>，两个域名均可正常打开，但均会直接跳转到 <code>/login</code> 登录页，未登录前不公开展示客户端下载入口与版本号。</li>
+</ul>
 <hr>
-<h2>1. 本机缓存、规则与运行时实测事实</h2>
-<p>| 探测项 | 实测路径与格式证据 | 关键结论 |</p>
+<h3>下一步操作</h3>
+<p>内置浏览器当前已停留在 <code>https://sakuracat-cn1.com/login</code> 登录页面。请你<strong>直接在浏览器面板中登录你的 SakuraCat 账号</strong>，登录完成后回复我一声（例如“已登录”），我会在同一个标签页里继续核对最新 Windows 版本号，若高于 <code>1.6.2</code> 再下载安装包并覆盖安装到 <code>D:\sakuracat</code>。</p>
+<blockquote><strong>提前提醒一个关键边界条件</strong>：如果你当前正依赖本机的 SakuraCat 维持联网，后续覆盖安装到 <code>D:\sakuracat</code> 前需要先退出正在运行的 <code>SakuraCat.exe</code>，这可能会导致网络短暂断开（甚至中断当前会话与模型的连接）。登录后如果确认有新版本，我会先下载安装包并提醒你确认是否允许我直接关闭进程并静默/覆盖安装。</blockquote>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>已经登录好了，是的，正在适用sakuracat联网</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>收到，正在通过已登录的浏览器标签页查看 SakuraCat 官方 Windows 客户端的最新版本（若高于 <code>1.6.2</code> 且存在明确的官方 Windows 安装包，将先安全下载安装包，不会立即关闭当前正在运行的 SakuraCat）。请稍候。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已在官网（<code>https://sakuracat-cn1.com/knowledge?id=57</code>）核对到最新 Windows 官方客户端版本为 <strong><code>2.4.6</code></strong>（高于你当前的 <code>1.6.2</code>），直链为 <code>com.sakuracat.app-2.4.6-windows-setup.exe</code>。</p>
+<p>目前正在后台下载官方安装包到 <code>C:\Users\Administrator\Downloads\com.sakuracat.app-2.4.6-windows-setup.exe</code> 并校验其签名与安装器类型（下载期间不会关闭正在运行的 SakuraCat）。请稍候。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>安装包已下载并校验完成（<code>23.35 MB</code>，SHA256 已记录），发现 <code>1.6.2</code>（Electron / NSIS 安装器）与 <code>2.4.6</code>（Inno Setup 安装器，疑似架构重写）属于<strong>不同安装框架</strong>，且当前系统开启了 <code>127.0.0.1:7897</code> 系统代理与 <code>com.vortex.helper</code> 服务。</p>
+<p>正在快速查看官网教程页下方是否有关于旧版升级/卸载的注意事项，随后给出最稳妥的覆盖安装方案供你确认。请稍候。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><h3>检查结果：不是最新版（存在跨代大版本更新）</h3>
+<p>| 项目 | 本地已安装版本 | 官网最新版本（<code>sakuracat-cn1.com</code>） |</p>
 <p>| :--- | :--- | :--- |</p>
-<p>| <strong>主会话正文（未加密）</strong> | <code>C:\Users\Administrator\.gemini\antigravity\brain\&lt;cid&gt;\.system_generated\logs\transcript.jsonl</code> 与 <code>transcript_full.jsonl</code> | 本机 <code>18/18</code> 个 brain 目录均存在明文 UTF-8 JSONL 双文件，实测行号与 <code>step_index</code> <strong>0 错位</strong>；单行含 <code>step_index</code>、<code>source</code>（<code>USER_EXPLICIT</code>/<code>MODEL</code>/<code>SYSTEM</code>）、<code>type</code>（<code>USER_INPUT</code>/<code>PLANNER_RESPONSE</code>/<code>GENERIC</code>/<code>SYSTEM_MESSAGE</code>）、<code>created_at</code>（ISO 8601 UTC）、<code>content</code>、<code>truncated_fields</code>（3,704 行中 85 轮用户发言、120 轮助手回复）。 |</p>
-<p>| <strong>辅助元数据</strong> | <code>C:\Users\Administrator\.gemini\antigravity\conversation_summaries.db</code>（WAL 模式）与 <code>annotations\&lt;cid&gt;.pbtxt</code> | 隔离拷贝 <code>.db</code>/<code>.db-wal</code>/<code>.db-shm</code> 后只读解析，可获取 <code>title</code>、<code>workspace_uris</code>、<code>nesting_depth</code>、<code>parent_conversation_id</code>、<code>agent_name</code>（成功识别 <code>da7dc122</code> 为 <code>nesting_depth=1, agent=browser</code> 的子代理轨迹）及 <code>.pbtxt</code> 中的 <code>archived</code> 状态。<code>conversations\&lt;cid&gt;.db</code> 为二进制 Protobuf BLOB，无需逆向。 |</p>
-<p>| <strong>原生规则与插件机制</strong> | <code>C:\Users\Administrator\.gemini\config\</code>（现有 <code>rules/core-reasoning-protocol.md</code>、<code>rules/deepseek-subagent.md</code> 及 3 个插件） | 全局规则单文件硬上限 <code>24,000</code> 字节，总预算 <code>20,000</code> tokens（超限自动降级为路径指针）；原生 Plugin（<code>plugins/&lt;name&gt;/</code>）启用时自动合并其 <code>rules/AGENTS.md</code>，其 <code>skills/dream/SKILL.md</code> 默认渐进披露并暴露为 <code>/dream</code> 斜杠命令；<code>hooks.json</code> 为同步阻塞，其中 <code>SessionStart</code> 支持 <code>metadata.user_markdown</code> + 空 <code>systemMessage</code> 做零模型 token 提示。 |</p>
-<p>| <strong>本机脚本运行时</strong> | <code>python</code>/<code>py</code>/<code>node</code>/<code>npm</code>/<code>sqlite3</code> 均不在 <code>PATH</code>；实测可用 <code>C:\Users\Administrator\.local\bin\python3.12.exe</code>（在 <code>PATH</code> 中，CPython 3.12.15 + SQLite 3.53.1）与 <code>uv.exe</code> | Antigravity 内置 Electron Node v24.22.0 实测在 PowerShell 下存在 GUI 子系统吞 stdout 风险，最终选定<strong>纯 Python 3.12 stdlib（零 pip 依赖）+ PowerShell 路径自发现启动器</strong>。 |</p>
+<p>| 版本号 | <strong><code>1.6.2</code></strong>（<code>1.6.2.0</code>） | <strong><code>2.4.6</code></strong>（<code>2.4.6+20406</code>） |</p>
+<p>| 客户端/安装器框架 | Electron + <strong>NSIS</strong>（<code>Vortex Maintainers</code>，目录 <code>414.43 MB</code>） | 架构重写版 + <strong>Inno Setup</strong>（安装包 <code>23.35 MB</code>） |</p>
+<p>| 文件路径 | <code>SakuraCat.exe</code> | 已下载至 <code>com.sakuracat.app-2.4.6-windows-setup.exe</code> |</p>
+<p>| 校验信息 | 后台运行服务 <code>com.vortex.helper</code>；系统代理 <code>127.0.0.1:7897</code> 已开启 | SHA256: <code>2B4AB3C2...114E4E</code>；未代码签名（官网教程已明确提示首次运行可能触发 SmartScreen） |</p>
 <hr>
-<h2>2. 核心架构选型、权衡与红队加固</h2>
-<p>本次核心矛盾在于：<strong>既要让强模型自由做跨会话语义归并、冲突覆写与边界判断，又要防止大输出触发约 60 秒网关断连、防止记忆膨胀撑爆常驻上下文、防止错误规则静默生效或反复回流。</strong></p>
+<h3>核心矛盾与暂缓直接覆盖的原因</h3>
+<p><strong>核心矛盾</strong>：你当前正在靠 <code>1.6.2</code> 联网，但 <code>1.6.2</code>（Electron / NSIS）与 <code>2.4.6</code>（Inno Setup）属于<strong>跨代不同安装框架</strong>——直接覆盖会留下旧版垃圾与服务冲突，而卸载旧版会立刻中断外网（含当前会话与模型的连接）。</p>
+<p>动手前定位到 3 个必须规避的失效机制：</p>
 <ul>
-<li><strong>增量读取与水位线（<code>extractor.py</code>、<code>redact.py</code>）</strong></li>
-<li><strong>选型</strong>：隔离临时目录拷贝 SQLite（含 <code>-wal</code>/<code>-shm</code>）+ <code>PRAGMA quick_check</code> 重试后只读打开；按 <code>conversation_id</code> 独立维护 <code>{last_step_index, anchor_step_hash, compact_sig, full_sig}</code> 水位线；老对话续写自动附带前 1 轮 <code>[CONTEXT_ONLY]</code> 上下文，若文件截断或锚点行 SHA-256 漂移则自动全量重放。4 层防自污染（过滤 <code>nesting_depth&gt;0</code> 子代理、哨兵标记与 <code>/dream</code> 识别、<code>--exclude-cid</code>、turn 级切片过滤）+ 13 类正则凭据脱敏 + 剥离 <code>GENERIC</code> 大输出 + 超长会话按轮次切分保证每批 ≤ 18,000 字符。</li>
-<li><strong>否决</strong>：单一全局时间戳水位线（无法正确处理老对话续写）；直接只读打开 live SQLite（存在 Windows 锁冲突风险）；逆向 Protobuf（高脆弱且多余）。</li>
-<li><strong>原生形态与三层 SSOT（<code>store.py</code>、<code>plugin.json</code>、<code>SKILL.md</code>）</strong></li>
-<li><strong>选型</strong>：Antigravity 原生 Plugin 结构（一键启停、与原生全局规则物理隔离）。Tier 0（用户 <code>config/rules/*.md</code> 与 <code>CONTEXT_*.md</code>）代码级路径硬锁禁止触碰（<code>config_io.py</code>）；Tier 1（<code>promoted_rules.md</code>）与 Tier 3（<code>topics/&lt;slug&gt;.md</code>，单文件 ≤ 150 行）为单一事实源（SSOT）；Tier 2 索引（<code>INDEX.md</code>）和常驻规则产物 <code>AGENTS.md</code> 100% 由脚本确定性编译，同时受 <strong>≤ 140 行且 ≤ 12,000 UTF-8 字节</strong>约束（按行边界字节安全截断，杜绝截断中文多字节字符，溢出项自动降级为 <code>topics/</code> 目录指针）。</li>
-<li><strong>否决</strong>：自定义 MCP Server（常驻开销与全会话 schema token 税）；手写维护双份索引/规则文件（必然漂移）。</li>
-<li><strong>分析编排与防超时（<code>SKILL.md</code>）</strong></li>
-<li><strong>选型</strong>：脚本承担全部确定性 I/O、清洗、校验、Diff、快照与原子写盘；模型只输出紧凑结构化 <code>proposal.json</code>（避免整文件重写触发 60 秒断连）。自适应路由：<code>batches &lt;= 2</code> 主模型直出，<code>batches &gt; 2</code> 按每 2 批派发原生只读 <code>research</code> subagent（<code>Model=&quot;inherit&quot;</code>）抽取后再由主模型统一去重和冲突裁决，<strong>零外部 API/MCP</strong>。</li>
-<li><strong>否决</strong>：每次强制拉起 Swarm/多代理（小增量浪费配额）；模型直接手写全量 Markdown/HTML。</li>
-<li><strong>人工审阅、原子写盘与负反馈闭环（<code>governance.py</code>、<code>review_ui.py</code>）</strong></li>
-<li><strong>选型</strong>：三通道统一 <code>decisions.json</code> 契约——<code>review-serve</code> 加固本地服务（仅绑 <code>127.0.0.1:0</code>、校验 <code>Host</code>/<code>Origin</code> 防 DNS rebinding、256-bit CSRF nonce 一键应用）+ 离线双击 <code>review.html</code> 导出 JSON + 聊天内直接批复。写盘前必检 <code>base_hash</code> 漂移、加 PID 进程锁、生成只读（<code>0o444</code>）时间戳全量快照，同目录临时文件 <code>flush+fsync+os.replace</code> 重试，异常自动回滚。</li>
-<li><strong>精准 Revert 与防改写绕过</strong>：<code>revert</code> 按条目 ID（<code>MEM-XXXX</code>/<code>RULE-XXXX</code>）精准撤回，保留人工后续手工注释且不盲目回退水位线；驳回/撤回同时沉淀到 <code>feedback_ledger.jsonl</code>，在后续提示词层<strong>和</strong> <code>stage</code> 校验层（指纹 + 中英文 bigram 词袋重合度）双重阻断同义改写绕过。</li>
-<li><strong>否决</strong>：纯 Git Diff 手工改（难结构化沉淀驳回理由）；无校验裸开 localhost 服务。</li>
-<li><strong>触发策略</strong></li>
-<li><strong>选型</strong>：默认手动 <code>/dream</code>；内置纯只读 <code>check-due</code> 子命令，生产启用后按需可选挂接轻量 <code>SessionStart</code> 提醒或 Antigravity 原生 <code>builtin: schedule</code> 定时预处理，永不静默改写 Tier 1。</li>
-<li><strong>否决</strong>：<code>Stop</code> Hook 每轮同步阻塞触发。</li>
+<li><strong>不能直接硬覆盖</strong>：Inno Setup 安装器无法自动卸载旧版 NSIS（卸载 GUID 不同），直接覆写进 <code>D:\sakuracat</code> 会导致 414 MB 的旧版 Electron/Chromium 文件、<code>Uninstall SakuraCat.exe</code> 及后台服务 <code>com.vortex.helper</code> 全部残留，并产生两个卸载项与潜在代理/TUN 冲突。</li>
+<li><strong>不能直接强杀进程</strong>：当前系统代理 <code>HKCU\...\Internet Settings\ProxyEnable = 1</code>（<code>127.0.0.1:7897</code>）。若强杀 <code>SakuraCat.exe</code> 而不清除系统代理，连国内直连及新版 <code>2.4.6</code> 登录接口都会无法访问（官网教程也专门提醒了这一点）。</li>
+<li><strong>装完无法自动恢复联网</strong>：官网教程明确说明 <code>2.4.6</code> 安装后需用注册邮箱/密码重新登录，并手动开启主页的 <strong>系统代理</strong> 开关才会恢复联网（首次启动还会弹出 Windows 防火墙授权提示，需点“允许”）。</li>
 </ul>
 <hr>
-<h2>3. 自动化测试与真实缓存 Dry-Run 实测输出</h2>
-<h3>3.1 自动化 E2E 测试（<code>test_dream_e2e.py</code> + <code>synthetic_fixture.py</code>）</h3>
-<pre><code>test_01_extract_redaction_and_self_pollution_filters ... ok   # 假 sk-/ghp_/AKIA/PEM/API_KEY 100% 脱敏；/dream、子代理、对话中段 /dream 切片与 GENERIC 噪声全剔除
-test_02_conflict_update_human_gate_and_secret_proposal_block ... ok  # 事实冲突原地覆写+旧结论溯源；Tier 1 审批前不生效、驳回项不写入；含密钥提案在 stage 被硬拒；只读快照落盘
-test_03_surgical_revert_preserves_manual_edits_and_blocks_paraphrase ... ok  # 精准 Revert 保留人工后续备注与水位线；同义改写复提被负反馈双重阻断；整批 rollback 还原通过
-test_04_watermark_incremental_context_and_anchor_drift_replay ... ok  # 无变更跳过、老会话续写带 [CONTEXT_ONLY]、截断/锚点漂移自动全量重放
-test_05_utf8_budgets_and_protected_path_isolation ... ok       # 45 个中文主题字节安全降级≤上限；CONTEXT_*.md / 受保护规则目录 / 沙盒外路径均触发 ProtectedPathError
-test_06_hardened_http_review_server_security_and_live_apply ... ok    # 无 token / 伪造 Host / 非法 Origin 均 403；合法请求 200 并原子落盘
-test_07_base_hash_drift_and_oversized_session_split ... ok     # 并发编辑触发 Base hash drift 拒绝覆盖；超长单会话按轮次切分均 ≤ batch_max_chars
-----------------------------------------------------------------------
-Ran 7 tests in 2.741s -&gt; OK (Exit Code: 0)</code></pre>
-<h3>3.2 本机真实缓存只读 Dry-Run 实测</h3>
-<p>执行命令：<code>.\sandbox\dream.ps1 extract --dry-run --exclude-cid 012b6894-2e81-44de-a00d-a54e062faf7b</code></p>
-<pre><code>RunId=20261120_043819 | Extracted=16 | Skipped=2 | NewTurns=200 | Redactions=0 | Mode=subagent_sharded | Batches=14
-MaxBatchChars=17875 (budget=18000)
-  batch_01..batch_14: 最大 17,875 字符（34 轮长会话 f4ffdcb7 自动按轮次拆为 batch_08=16,000 + batch_09=8,432）
-Skipped:
-  012b6894-2e81-44de-a00d-a54e062faf7b: explicit_exclude_cid
-  da7dc122-9a62-456a-8fa7-d160f9691968: subagent_depth=1_agent=browser
-隔离校验：
-  sandbox/memory_store/state/watermark.json exists = False（未写入状态）
-  C:\Users\Administrator\.gemini\config\rules 与 plugins 均未发生任何变更</code></pre>
-<hr>
-<h2>4. 下一步：亲自试跑与切换生产启用指南</h2>
-<h3>A. 沙盒内立即亲自试跑与复核（零风险）</h3>
+<h3>请确认执行方式（选其一）</h3>
 <ul>
-<li><strong>一键复跑全部自动化测试与只读体检</strong>：</li>
+<li><strong>方案 A（推荐，全自动本地迁移，断网瞬间不影响本地安装脚本跑完）</strong>：</li>
 </ul>
-<p>   ```powershell</p>
-<p>   python3.12 -X utf8 &quot;c:\Users\Administrator\Desktop\memory\sandbox\tests\test_dream_e2e.py&quot;</p>
-<p>   powershell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;c:\Users\Administrator\Desktop\memory\sandbox\dream.ps1&quot; check-due</p>
-<p>   powershell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;c:\Users\Administrator\Desktop\memory\sandbox\dream.ps1&quot; extract --dry-run --limit 3</p>
-<p>   ```</p>
+<p>  确认后我直接通过一条本地 PowerShell 流程按序完成：</p>
 <ul>
-<li><strong>用最近 3 条真实会话在沙盒内完整走一遍 <code>/dream</code> 闭环</strong>：</li>
-<li>运行 <code>.\sandbox\dream.ps1 extract --limit 3 --exclude-cid &lt;当前会话ID&gt;</code>，查看生成在 <code>sandbox\memory_store\state\runs\&lt;run_id&gt;\batch_01.md</code> 的清洗效果。</li>
-<li>在聊天中让我按 <code>SKILL.md</code> 读取该批次并生成 <code>proposal.json</code> -&gt; 自动 <code>stage</code>。</li>
-<li>运行 <code>.\sandbox\dream.ps1 review-serve --run-id &lt;run_id&gt;</code> 打开浏览器审阅 Diff、测试勾选同意/驳回与一键应用，再试一次 <code>.\sandbox\dream.ps1 revert --run-id &lt;run_id&gt; --item &lt;OP-ID&gt; --reason &quot;测试撤回&quot;</code> 观察 <code>AGENTS.md</code> 与 <code>feedback_ledger.jsonl</code> 的变化。</li>
+<li>备份旧版用户目录 <code>C:\Users\Administrator\AppData\Roaming\sakuracat</code>；</li>
+<li>停止 <code>SakuraCat.exe</code> 并将 Windows <code>ProxyEnable</code> 重置为 <code>0</code>（防止断网锁死）；</li>
+<li>静默卸载旧版 <code>&quot;D:\sakuracat\Uninstall SakuraCat.exe&quot; /allusers /S</code>，清理 <code>D:\sakuracat</code> 残留文件并检查停止旧服务 <code>com.vortex.helper</code>；</li>
+<li>以 Inno Setup 参数 <code>/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /DIR=&quot;D:\sakuracat&quot;</code> 干净安装 <strong><code>2.4.6</code></strong> 到 <code>D:\sakuracat</code>；</li>
+<li>校验新版本并<strong>自动拉起 <code>SakuraCat 2.4.6</code> 窗口</strong>。</li>
 </ul>
-<h3>B. 确认无误后切换到正式启用（需你明确授权后执行）</h3>
+<p>  &gt; *注意*：执行第 2 步起本对话会暂时掉线，等你看到弹出的 <code>2.4.6</code> 窗口后登录并开启<strong>系统代理</strong>，网络和对话即会恢复。</p>
 <ul>
-<li>将 <code>sandbox/plugin</code> 与 <code>sandbox/scripts</code>、<code>dream.ps1</code> 安装至 <code>C:\Users\Administrator\.gemini\config\plugins\antigravity-dream-memory\</code>。</li>
-<li>生成生产版 <code>dream_config.json</code>：<code>sandbox_mode: false</code>，<code>memory_store_dir</code> 指向 <code>C:\Users\Administrator\.gemini\antigravity\plugin_data\antigravity-dream-memory\</code>，<code>compiled_rule_path</code> 指向插件内 <code>rules/AGENTS.md</code>（原生 <code>config/rules/</code> 仍保留在 <code>protected_dirs</code> 中只读保护）。</li>
-<li>在 Antigravity 插件管理中启用 <code>antigravity-dream-memory</code> 后，任意对话即可直接输入 <code>/dream</code> 触发巩固；历史 16 个存量会话首次整理将自动按 <code>subagent_sharded</code> 模式分片完成冷启动基线。</li>
+<li><strong>方案 B（完全手动可控，零对话中途卡死风险）</strong>：</li>
+<li>你先右键右下角托盘图标点击<strong>“退出”</strong>关闭 <code>1.6.2</code>（自动解除系统代理），再运行 <code>Uninstall SakuraCat.exe</code> 卸载旧版；</li>
+<li>双击我已下好的 <code>com.sakuracat.app-2.4.6-windows-setup.exe</code>（若弹 SmartScreen 点“更多信息 → 仍要运行”），安装路径选 <code>D:\sakuracat</code>；</li>
+<li>登录并开启<strong>系统代理</strong>恢复联网后告诉我，我再帮你复查 <code>D:\sakuracat</code> 版本号及 <code>com.vortex.helper</code> 是否有残留。</li>
 </ul>
 <hr>
-<h2>两个需要你拍板的边界追问</h2>
+<h3>确认前两个关键问题</h3>
 <ul>
-<li><strong>非工程/个人隐私对话的过滤边界</strong>：实机 dry-run 中看到了如 <code>政治规划</code>、<code>Navigating Graduate School Anxiety And Study Methods</code>、<code>已过期1</code>（已归档）这类个人规划/非技术会话。正式启用前，是否需要给 <code>dream_config.json</code> 增加<strong>默认跳过已归档对话</strong>或<strong>标题/工作区黑名单</strong>（例如排除非工作区闲聊，避免把阶段性个人情绪或隐私状态提炼进记忆库）？</li>
-<li><strong>冷启动方式偏好</strong>：当前存量 16 个历史会话（14 个 batch，共 200 轮）——你更希望在沙盒验收时先<strong>挑最近 3 个技术会话小范围试跑</strong>看提炼口味，还是等转生产后一次性全量冷启动回填（或者直接跳过早期存量，只从今天起增量巩固）？</li>
+<li>你更倾向我直接执行<strong>方案 A</strong>，还是你按<strong>方案 B</strong> 手动切换后再让我复检？</li>
+<li>旧版 <code>1.6.2</code> 里有没有手动写过的自定义分流规则或链式代理配置需要单独留档（若无，普通订阅在 <code>2.4.6</code> 登录后会自动同步）？</li>
 </ul>
 </div></article>
-<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>你直接启用把，但是我没有看懂你最后敲定的方案的原理是怎么样得，你和我说一下是怎么实现的，这样有什么好处，然后有没有什么缺点或者不足的地方。我觉得把归档了的对话要默认跳过，其他的对话都放进去会比较好，因为日常对话也能体现我的需求，当然我说的也不一定对。你可以先提炼最近的三个，然后和我讲一下有什么发生了改变，然后我在看情况是否将前面的全部提炼</p>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>请按 https://github.com/Lumidarin/agy-capsule/blob/main/docs/windows-install.md 帮我安装 agy-capsule。</p>
 </div></article>
-<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已正式启用生产版插件，并已对<strong>最近 3 个非归档真实对话</strong>完成了抽取、提炼与预检（<code>run_id: trial_recent_3</code>）。因为铁律要求<strong>高权重规则不得静默生效</strong>，目前我停在<strong>人工审阅闸门</strong>——你看完下面到底会发生什么变化、点头批复后，我再一键原子落盘。</p>
-<hr>
-<h2>一、用大白话讲透：这套记忆系统到底是怎么运转的？</h2>
-<p>你可以把它理解成<strong>“大脑白天的聊天记录 → 晚上按需整理成笔记本 → 贴一张精简目录在桌面上”</strong>的三层结构：</p>
-<pre><code>[你每天的 Antigravity 对话] (底层明文 transcript.jsonl + summaries.db)
-        │
-        ▼ ① Python 脚本（隔离拷贝、跳过已归档/子代理、脱敏密钥、砍掉超长工具日志）
-[干净的增量对话批次 batch_*.md]
-        │
-        ▼ ② Antigravity 强模型读批次 + 读旧索引 + 读你过去的驳回记录
-[精简变更提案 proposal.json]（只说“新增/覆写/废弃哪几条”，绝不乱改原文件）
-        │
-        ▼ ③ Python 脚本验预算、查泄露、撞负反馈账本、算 Diff、渲染审阅页
-[人工审阅闸门]（聊天直接批复 / 浏览器 review.html 一键确认）
-        │
-        ▼ ④ 自动建只读快照 → 原子写入 → 确定性重新编译桌面目录
-┌──────────────────────────────────────────────────────────┐
-│ Tier 0（绝不碰）：你手写的 core-reasoning-protocol.md / CONTEXT_*.md │
-│ Tier 1 + Tier 2（自动编译到插件 rules/AGENTS.md，每次对话常驻，硬顶≤12KB）│
-│   ├─ Tier 1：经你点头晋升的极少数“全局铁律”                          │
-│   └─ Tier 2：一张极短的“主题目录表”（只写每个主题管啥、存在哪）          │
-│ Tier 3（plugin_data/.../topics/*.md，平时不占上下文，聊到相关领域才读） │
-└──────────────────────────────────────────────────────────┘</code></pre>
-<h3>为什么这样设计？（核心好处）</h3>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已严格按照 <code>docs/windows-install.md</code> 完成 <strong>第 1～2 步</strong>（未修改插件源码、Antigravity 安装目录或设置，也未退出/重启 Antigravity）：</p>
+<h3>已完成步骤与校验输出</h3>
 <ul>
-<li><strong>贴合 Antigravity 原生机制，零常驻负担</strong>：因为它是原生插件 <code>antigravity-dream-memory</code>，Antigravity 会自动在每次新对话加载它的 <code>AGENTS.md</code>（只是一张很轻的目录 + 极少数晋升规则，占不到 1.5 KB），而详细的踩坑经验全藏在 <code>topics/*.md</code> 里，<strong>聊光路才读光路、做 PPT 才读 PPT</strong>，不会越用越臃肿。</li>
-<li><strong>能“改错”而不是“只增不减”</strong>：传统向量记忆库（RAG）只会越塞越多，新旧结论打架全靠碰运气；这套系统每次整理都对照旧条目，发现新结论推翻了旧结论时直接原地覆写并留一行“旧结论溯源”。</li>
-<li><strong>重体力活全交脚本，防 60 秒断连、防误删、防死循环</strong>：</li>
-<li>脚本按每个会话记录“读到第几步 + 锚点哈希”，下次只抽新增发言；</li>
-<li>写盘前一定先锁死一份只读时间戳快照，随时能单条 <code>revert</code> 或整批 <code>rollback</code>；</li>
-<li>你只要驳回或撤回某条记忆，原因就会写进 <code>feedback_ledger.jsonl</code>，以后哪怕模型换个说法重新提议，也会被指纹+中文词袋重合检测直接拦下来。</li>
-</ul>
-<h3>实话实说：这套方案有哪些缺点和不足？</h3>
-<ul>
-<li><strong>不是实时记忆，靠你主动 <code>/dream</code> 触发</strong>：刚聊完的新偏好在下次跑 <code>/dream</code> 前不会自动进全局记忆（优点是干净可控、不卡顿，代价是需要偶尔手动触发一次，如每周一次）。</li>
-<li><strong>Tier 3 的“按需读取”依赖模型自觉查目录</strong>：虽然目录表每次都会注入上下文，但如果用户在某次对话问法非常隐晦、没命中目录里的关键词，模型偶尔可能忘了主动去 <code>read_file</code> 对应的 <code>topics/*.md</code>（相比向量库自动召回，这里用“完全透明可审计”换取了少量“隐式召回率”）。</li>
-<li><strong>纯规则/词袋防复提的边界</strong>：<code>feedback_ledger.jsonl</code> 目前能拦住原话和较高字面重合的同义改写；但如果模型彻底换了一套完全不同字眼的说法，主要靠提示词层的语义遵守，脚本层无法 100% 硬拦。</li>
-<li><strong>本次实测刚抓出一个小瑕疵</strong>：在读你 <code>Optics Grilling Tutor Session</code>（<code>c9eb2bf0</code>）的真实记录时，我发现 Antigravity 在你编辑重发同一条消息时，会在 <code>transcript.jsonl</code> 里留下多条相同 <code>step_index</code> 的旧草稿（如 <code>step=11</code> 出现了 4 次）。目前不影响强模型读懂，但会多耗一点批次字数，后续在 <code>extractor.py</code> 加 5 行按 <code>step_index</code> 保留最后一条的去重即可消除。</li>
-<li><strong>对你“默认跳过已归档、纳入日常对话”想法的客观评估</strong>：你的直觉整体是对的——日常对话确实最能反映你的表达习惯和真实诉求。唯一风险是<strong>把阶段性情绪或一时决定误固化成永久规则</strong>；靠“反死板提炼（只留持久习惯）+ Tier 3/Tier 1 分级 + 你审阅兜底”可以把这个风险压到很低。另据实机核查，你目前 <code>annotations/</code> 中标记 <code>archived:true</code> 的会话数是 <strong>0 条</strong>（哪怕标题叫 <code>已过期1</code> 的也没点过归档），今后凡是在左侧栏或归档插件里归档过的对话都会自动跳过。</li>
+<li><strong>拉取最新代码</strong></li>
+<li>克隆仓库至 <code>C:\Users\Administrator\agy-capsule</code>（<code>main</code> 分支，提交 <code>3c4380b4a71d0d78cd343a0ac3f1c6a7309c8e6a</code>）。</li>
+<li><strong>安装插件</strong>（执行 <code>manage-plugin.ps1</code> <code>-Action install</code>）</li>
+<li>输出确认：<code>已安装/更新 agy-capsule 到 C:\Users\Administrator\.gemini\config\plugins\agy-capsule</code>（退出码 <code>0</code>）。</li>
+<li><strong>配置底栏胶囊调试参数 <code>--remote-debugging-port=0</code></strong>（执行 <code>enable-cdp.ps1</code>，非管理员权限）</li>
+<li>逐行结果（全部成功，无无法修改项）：</li>
+<li><strong>已更新</strong>：<code>Antigravity.lnk（桌面）</code>（<code>C:\Users\Administrator\Desktop\Antigravity.lnk</code>）</li>
+<li><strong>已更新</strong>：<code>Antigravity.lnk（开始菜单）</code>（<code>C:\Users\Administrator\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Antigravity.lnk</code>）</li>
+<li><strong>重要</strong>：以后请从以上两个快捷方式打开 Antigravity，以保证 <code>--remote-debugging-port=0</code> 生效（若任务栏曾手动固定了旧图标，请重新从桌面/开始菜单快捷方式固定，或确认任务栏图标属性目标末尾带该参数）。</li>
 </ul>
 <hr>
-<h2>二、正式启用状态（已落盘）</h2>
+<h3>接下来请你完成：第 3 步（启用插件）</h3>
 <ul>
-<li><strong>插件路径（已默认启用）</strong>：<code>C:\Users\Administrator\.gemini\config\plugins\antigravity-dream-memory\</code></li>
-<li>清单与技能：<code>plugin.json</code>、<code>SKILL.md</code>（新会话可直接输入 <code>/dream</code>）</li>
-<li>配置与引擎：<code>dream_config.json</code>（已开启 <code>skip_archived_by_default: true</code>）、<code>dream.ps1</code></li>
-<li>自动编译的常驻规则入口：<code>AGENTS.md</code></li>
-<li><strong>数据存储路径</strong>：<code>C:\Users\Administrator\.gemini\antigravity\plugin_data\antigravity-dream-memory\</code></li>
-<li><strong>隔离状态</strong>：你的 <code>core-reasoning-protocol.md</code>、<code>deepseek-subagent.md</code> 及所有课题 <code>CONTEXT_*.md</code> 全部在写保护名单内，零改动。</li>
+<li><strong>完全退出</strong> Antigravity，再从上面已更新的<strong>桌面或开始菜单快捷方式</strong>重新打开。</li>
+<li>在 Antigravity 的 <strong>Plugins</strong> 面板中启用 <strong><code>agy-capsule</code></strong>。</li>
+<li>在对话顶部点击 <strong><code>… → Extensions → agy-capsule</code></strong>，打开侧栏。</li>
 </ul>
-<hr>
-<h2>三、首批试跑：最近 3 个真实对话提炼了什么？批复后会发生什么改变？</h2>
-<h3>本次扫描的 3 个最近会话（35 轮对话，已排除当前会话）</h3>
+<h3>验证成功的标准</h3>
 <ul>
-<li><code>7489c4f3</code> — <strong>迈克尔逊干涉仪测光波长科普视频制作</strong>（<code>Desktop/ppt</code>）</li>
-<li><code>e1773243</code> — <strong>科普视频 PPT 制作 Skill 升级</strong>（<code>Desktop/ppt</code>）</li>
-<li><code>c9eb2bf0</code> — <strong>Optics Grilling Tutor Session</strong>（<code>Desktop/光路</code>）</li>
+<li>侧栏正常显示上下文与 token 统计；</li>
+<li>输入框下方出现底栏胶囊，且侧栏顶部没有「底栏胶囊未启用」提示。</li>
 </ul>
-<blockquote><strong>刻意没有提炼进记忆库的内容</strong>（防臃肿原则）：单期视频的 22 页页码/62 条字幕细节（属于该视频自己的 <code>CONTEXT_*.md</code>）、<code>course-ppt-lab</code> 里已经写全的规则编号（避免重复）、光路临时问答题目（属于 <code>02_探讨与理解记录.md</code>）。</blockquote>
-<h3>提炼出的 7 条变更提案（待你审阅）</h3>
-<p>| 编号 | 层级 | 目标文件 | 提炼内容与原因 |</p>
-<p>| :--- | :--- | :--- | :--- |</p>
-<p>| <strong><code>OP-001</code></strong> | <strong>Tier 1 常驻规则（人工必审）</strong> | <code>promoted_rules.md</code> → 编译进 <code>AGENTS.md</code> | <strong><code>[RULE-001]</code> 本机未注册全局 <code>python</code>/<code>ffmpeg</code>/<code>node</code> PATH</strong>：执行脚本前禁止盲猜 PATH，应按需查 <code>topics/local-windows-env.md</code> 用已验证绝对路径。（跨 <code>7489c4f3</code>、<code>e1773243</code> 两次实测确认） |</p>
-<p>| <strong><code>OP-002</code></strong> | Tier 3 按需主题 | <code>topics/local-windows-env.md</code> | <strong><code>[MEM-ENV-001]</code> 两套 Python/FFmpeg 绝对路径地图</strong>：记录 <code>.workbuddy/.../python.exe</code>（Python 3.13 + numpy/matplotlib/pptx/win32com/ffmpeg 7.1）与 <code>~/.local/bin/python3.12.exe</code>，以后不用每次重探环境。 |</p>
-<p>| <strong><code>OP-003</code></strong> | Tier 3 按需主题 | <code>topics/local-windows-env.md</code> | <strong><code>[MEM-ENV-002]</code> 四端 Skill 同步与备份避坑</strong>：记录 <code>.gemini</code>/<code>.dsh</code>/<code>.codex</code>/<code>.workbuddy</code> 四端副本同步约定，且旧备份不可残留在 <code>skills/</code> 同级目录防扫出重名 Skill。 |</p>
-<p>| <strong><code>OP-004</code></strong> | Tier 3 按需主题 | <code>topics/ppt-video-workflow.md</code> | <strong><code>[MEM-PPT-001]</code> 80/20 混合出片与同济模板隔离</strong>：80% 原生形状 + 20% Python 动画，确认静态样帧后再一次性出 MP4；同济汇报皮肤与科普暗场物理隔离。 |</p>
-<p>| <strong><code>OP-005</code></strong> | Tier 3 按需主题 | <code>topics/ppt-video-workflow.md</code> | <strong><code>[MEM-PPT-002]</code> Python 嵌入视频 3 个实测坑点</strong>：mod-16 分辨率+<code>h264/yuv420p/30fps</code> 防绿边黑屏；Matplotlib 隐藏 <code>bbox</code> 必须用 <code>set_visible(False)</code> 而不是 <code>set_alpha(0)</code>；压字幕需对齐实出视频换片轴防漂移。（这 3 条在 <code>7489c4f3</code> 末尾尚未归档进 skill） |</p>
-<p>| <strong><code>OP-006</code></strong> | Tier 3 按需主题 | <code>topics/optics-research-profile.md</code> | <strong><code>[MEM-OPT-001]</code> 科研方向与课题背景</strong>：同济光学研究生，实验物理课题组方向为 DBR 高 Q 微腔、激子极化激元、超快光谱、角分辨消色差光路、莫尔转角（导师已布置先入门），笔记在 <code>Desktop/光路/</code>。 |</p>
-<p>| <strong><code>OP-007</code></strong> | Tier 3 按需主题 | <code>topics/optics-research-profile.md</code> | <strong><code>[MEM-OPT-002]</code> 物理推导讲解偏好（来自你的直接纠偏）</strong>：解释公式禁止压缩跳步（必须写全相邻步骤的连接方程，如色散→磨镜者公式→高斯公式）；声明听不懂或不想答的点直接挂起，不强迫连续刷题。 |</p>
-<h3>你批复同意后，每次新对话实际多出来的内容（<code>AGENTS.md</code> 精确 Diff）</h3>
-<p>你会发现真正常驻到以后每次对话里的内容<strong>极其克制</strong>——整份 <code>AGENTS.md</code> 总计只有 <strong>16 行 / 1,404 字节</strong>（上限 140 行 / 12,000 字节）：</p>
-<pre><code> ## Tier 1：已人工批复的晋升规则
--- （暂无已晋升规则；跨会话验证且经人工审批后自动编译至此。）
-+- **[RULE-001] 本机未注册全局 python/ffmpeg/node PATH**：执行 Python、FFmpeg 或脚本前禁止假设系统 PATH 存在 python/ffmpeg/node，应按需读取 topics/local-windows-env.md 并显式调用已验证绝对路径。
- 
- ## Tier 2：按需读取的主题记忆索引
- | 主题 Slug | 适用范围 | 标签 | 条目 |
- | :--- | :--- | :--- | :---: |
-+| `topics/local-windows-env.md` | 本机可用 Python/FFmpeg 绝对路径及四端 Skill 同步约定 | windows, python, ffmpeg | 2 |
-+| `topics/optics-research-profile.md` | 微腔激子极化激元实验方向背景与讲解节奏/推导连续性偏好 | optics, physics, research | 2 |
-+| `topics/ppt-video-workflow.md` | 80/20 混合出片路线、Matplotlib/PPT 渲染实测坑点与同济模板隔离约定 | ppt, video, matplotlib | 2 |</code></pre>
-<ul>
-<li><strong>之后的新对话体感变化</strong>：</li>
-<li>以后你开新对话写 Python 脚本，AI 一眼看到 <code>RULE-001</code>，不再傻傻执行报错的 <code>python</code>，而是直奔 <code>local-windows-env.md</code> 调对应环境；</li>
-<li>以后你问莫尔转角或微腔光学问题，AI 看到索引去读 <code>optics-research-profile.md</code>，一上来就知道你的实验室背景，而且<strong>不会再跳步推导或强塞一堆考题</strong>；</li>
-<li>平时聊毫不相干的话题，这 3 个 <code>topics/*.md</code> 的正文完全不会被读进上下文。</li>
-</ul>
-<hr>
-<h2>四、接下来怎么走？（等你一句话批复）</h2>
-<p>你可以直接任选以下一种方式审阅 <code>trial_recent_3</code>：</p>
-<ul>
-<li><strong>直接在聊天里批复（最省事）</strong>：告诉我比如“<strong>7 条全部同意</strong>”，或者“<strong>同意 OP-002~007，驳回 OP-001 原因：……</strong>”（你也可以顺手挑一条试试驳回或降级），我立刻执行原子 <code>apply</code>（自动建只读快照 + 推进这 3 个会话的水位线）。</li>
-<li><strong>用网页审阅台看完整 Diff</strong>：直接双击打开 <code>review.html</code> 或看摘要 <code>review_summary.md</code>。</li>
-</ul>
-<p>批复完这 3 个会话后，如果你觉得这个提炼颗粒度合胃口，我再按同样流程分批提炼前面剩余的 <strong>13 个非归档历史会话</strong>（顺手把刚才发现的同 <code>step_index</code> 重试去重一起补上）。</p>
-<hr>
-<h3>两个顺手确认的小问题</h3>
-<ul>
-<li>你觉得上面这 7 条的“提炼口味”（特别是把 <code>OP-007</code> 这种学习/沟通偏好放到 Tier 3 而不是直接升成 Tier 1 全局规则，或者你想不想把 <code>OP-007</code> 也升成 Tier 1）是偏保守、偏激进，还是刚好？</li>
-<li>审阅完这 3 条后，剩余的 13 个历史会话中，有没有哪几个你打算先在侧边栏点一下“归档”跳过，还是全部按现在这套口味一并提炼给我审阅？</li>
-</ul>
-</div></article>
-<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>我觉得还可以，你将全部的对话都进行提炼把，我都同意的。我觉得是不是可能有点保守，我也不太确定我说一下我的理解。因为学习可以说是主旋律，我的大部分对话都可能关联到学习，在思考的总体系中还是占比较大的；然后是关于我的知识背景，这个可以对开启新对话有帮助，不会还要再说明一下。但是这样可能也有缺点，可能会串知识，或者将我还没懂的理解的知识强行认定为我已经了解了，导致了我想要设置的背景出错。然后是我有一点疑惑，就是我之前设定的全局记忆是为了固定ai模型思考的角度，从而让他不会假大空，不会绕圈圈说假话；是为了让他能够完整的展现出自己的智慧，这样修改之后会不会对这样的模板产生影响，或者说失效，还是说可以两者互补，进行可调的更新。我的想法可能是想在这种记忆下将之前的全局记忆也包括在内，这样会不会能达到更好的效果，直接集合起来。</p>
-</div></article>
-<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成两步并进入最后一步并行提炼：</p>
-<ul>
-<li><code>trial_recent_3</code>（7 条提案）已通过原子 <code>apply</code> 正式生效（快照 ID：<code>20261120_053706_003_pre_apply_trial_recent_3</code>，<code>AGENTS.md</code> 已实时编译生效）；</li>
-<li>已补齐同 <code>step_index</code> 重试草稿去重，增量抽取剩余全部 13 个历史对话（10 个分片，自动跳过已入库的 3 个会话与子代理轨迹），并按 <code>subagent_sharded</code> 架构派发了 <strong>5 个并行只读 <code>research</code> 子代理</strong> 分别提炼。</li>
-</ul>
-<p>正在等待 5 个分片回报，随后我汇总去重、<code>stage</code> 预检并连同你关于“知识背景边界”与“原有全局规则联动”的深度分析一并交付。</p>
-</div></article>
-<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>两件事同步推进完毕：</p>
-<ul>
-<li>你批复的 <strong><code>trial_recent_3</code>（7 条）已正式原子落盘生效</strong>（只读快照 <code>20261120_053706_003_pre_apply_trial_recent_3</code>），且本轮已实测确认 Antigravity <strong>自动热加载</strong>了新插件；</li>
-<li>剩余全部 <strong>13 个历史对话（151 轮，10 个分片）</strong> 已通过 5 路并行 <code>research</code> 子代理完成分片提炼、去重与新旧冲突合并，现停在 <strong><code>coldstart_remaining_13</code> 人工审阅闸门</strong>（14 条提案，编译后常驻规则仅 <code>20 行 / 2,335 字节</code>），等你扫一眼确认即落盘。</li>
-</ul>
-<p>先用第一性原理正面回答你的两个核心疑惑，再给你看全量提炼清单。</p>
-<hr>
-<h2>一、回答你的两个深层思考</h2>
-<h3>1. 关于“学习背景既省去自我介绍，又怕串知识 / 误判我已掌握”</h3>
-<p>你抓得极准——这恰恰是长期记忆最容易翻车的地方：如果记忆里只笼统写“用户做微腔极化激元、非厄米哈密顿量、Zemax”，下次新开对话 AI 就会把你当熟练老手，直接跳过基础推导；如果全塞进常驻提示词，写工具代码时又会硬扯光学。</p>
-<p>这次我用<strong>双层结构</strong>直接把这两个坑堵死：</p>
-<ul>
-<li><strong>防误判已掌握 → 三态知识分界（<code>MEM-OPT-003</code>）</strong>：不再笼统罗列名词，而是显式拆成 <strong>【已有基础】/【刚入门在学】/【明确待攻克/暂挂】</strong> 三档，并在 Tier 1（<code>RULE-002</code>）里加一条铁律——参考背景只用于省去自我介绍与锚定例子，<strong>严禁把“刚入门/待攻克”预设成已精通</strong>。</li>
-<li><strong>防串知识 → 主题物理隔离</strong>：常驻 <code>AGENTS.md</code> 只保留极短的“学习护栏 + 6 行主题目录表”，具体的光学笔记、Zemax 进度、PPT 坑点、同济代理补丁各自关在独立的 <code>topics/&lt;slug&gt;.md</code> 文件里——<strong>聊光路才读光路，写插件只读平台档案，互不串味</strong>。</li>
-</ul>
-<h3>2. 关于原有全局规则 <code>core-reasoning-protocol.md</code>：会不会失效？要不要合并进去？</h3>
-<ul>
-<li><strong>先给实测结论（非猜测）</strong>：就在你发这条消息时，Antigravity 已经把我们的插件规则 <code>AGENTS.md</code> 与你原来的 <code>core-reasoning-protocol.md</code>（2.6 KB）、<code>deepseek-subagent.md</code>（1.4 KB）<strong>平行同时注入</strong>了系统上下文，三者合计仅约 <strong>6.3 KB</strong>（远低于 <code>20,000</code> tokens 总预算），<strong>绝不会覆盖或让原规则失效</strong>。</li>
-<li><strong>真正的潜在风险不是覆盖，而是“注意力稀释”</strong>：如果 Dream 常驻区以后堆了二三十条琐碎规则，就会抢走模型对原协议“先审前提、不编造、思想交锋”的注意力。所以我们严格克制 Tier 1 数量（全量 16 个对话提炼完也只提议 <strong>2 条</strong> 常驻规则）。</li>
-<li><strong>关于“要不要把原全局规则合并进 Dream 里统一管”——我的明确建议是：两者互补联动，但物理分离（“宪法 + 判例”模式），不要合并成同一个自动写盘文件。</strong></li>
-<li><strong>为什么不合并（放弃合并方案的理由）</strong>：</li>
-<li><code>core-reasoning-protocol.md</code> 是你的<strong>“元认知宪法”</strong>——管的是 AI “怎么思考”（反顺从、暴露推理、可证伪），就像你在 <code>222deb6b</code> 里自己总结的，它应当是一个极简、极稳的高层护栏，绝不该因为某几次对话波动被自动化流程改软或改漂；</li>
-<li>物理隔离保证<strong>零耦合风险</strong>：哪天你临时关闭或卸载 Dream 插件，你的核心思考协议依然纹丝不动。</li>
-<li><strong>怎么做到你想要的“互补 + 可调更新”？</strong></li>
-<li>Dream 写盘代码硬锁 <code>config/rules/</code> 只读，但每次 <code>/dream</code> 提炼都会<strong>参照原协议</strong>：不重复已写条文；跨会话沉淀出的学习/协作护栏（如本次 <code>RULE-002</code>）补在 Dream 的 Tier 1 与原协议形成合力；若未来发现原协议某条本身有摩擦，Dream 只在审阅报告中向你提出修订建议，由你亲手拍板改宪法。</li>
-</ul>
-<hr>
-<h2>二、本次全量提炼（<code>coldstart_remaining_13</code>）发生了什么？</h2>
-<ul>
-<li><strong>增量水位线与去重实测</strong>：已补齐同 <code>step_index</code> 重试分支剪枝；本次 <code>extract</code> 自动跳过已入库的 3 个会话（<code>unchanged_watermark</code>）、当前会话与 <code>da7dc122</code>（browser 子代理），干净抽取剩余 <strong>13 个会话 / 151 轮 / 10 个分片</strong>（每片 ≤ 17,875 字）。</li>
-<li><strong>刻意剔除与冲突覆写</strong>：</li>
-<li>主动过滤了 <code>eb9e76bb</code> 中阶段性私人/备考冲刺细节（不把短期状态固化进长期档案）；</li>
-<li>跨会话冲突自动裁决：用 11-19 实测的 <strong>SakuraCat 2.4.6（sing-box 增强模式、加密配置）</strong> 自动取代了 11-11 旧会话的 1.6.2 明文配置描述；</li>
-<li><strong>现学现卖的意外红利</strong>：从 <code>bb1e7994</code> 挖出的“Agent 命令子进程在回复结束即被 Windows Job Object 回收”教训，我已顺手反哺写进了 Dream 自己的 <code>SKILL.md</code>（明确 <code>review-serve</code> 由用户在独立终端拉起，离线 <code>review.html</code> 与聊天批复随时可用）。</li>
-</ul>
-<h3>14 条待审阅提案一览（已通过 <code>stage</code> 校验，0 密钥泄露 / 0 负反馈冲突）</h3>
-<p>| 编号 | 动作 / 层级 | 目标位置 | 提炼要点 |</p>
-<p>| :--- | :--- | :--- | :--- |</p>
-<p>| <strong><code>OP-001</code></strong> | <strong>晋升 Tier 1（常驻，人工必审）</strong> | <code>promoted_rules.md</code> → <code>AGENTS.md</code> | <strong><code>[RULE-002]</code> 学习主旋律与三态知识边界护栏</strong>：明确你为同济光学研一硕士；物理/工程讲解须实操直觉优先 + 不跳步完整公式衔接 + 适度轻量检验（反未教先测与全包代劳）；读背景必分三态、绝不预设已精通，也不把光学串味带入无关软件任务。 |</p>
-<p>| <strong><code>OP-002</code></strong> | 原地升级 Tier 3 | <code>optics-research-profile.md</code> | <strong>更新 <code>MEM-OPT-001</code></strong>：补全研一唯一硕士、导师偏放养的独立科研起步定位，防止高估基线。 |</p>
-<p>| <strong><code>OP-003</code></strong> | 原地升级 Tier 3 | <code>optics-research-profile.md</code> | <strong>更新 <code>MEM-OPT-002</code></strong>：补全实操光路与《工程光学》为主轴（勿上来堆玻恩/季家镕纯理论）、空间光路卡点偏好轻量交互模拟（HTML 滑块/三联图/ABCD 脚本）、保留适度认知摩擦闭环。 |</p>
-<p>| <strong><code>OP-004</code></strong> | 新增 Tier 3 | <code>optics-research-profile.md</code> | <strong><code>[MEM-OPT-003]</code> 三态知识边界档案</strong>：明确拆列【已有基础】（本科实验/几何直观/部分推导笔记/英语基线）、【刚入门在学】（两镜准直/工程光学前四章/Zemax 零基础/莫尔转角）、【明确待攻克/暂挂】（高斯成像易混点/像差衍射底层/COMSOL 白盒化/组会暂挂清单）。 |</p>
-<p>| <strong><code>OP-005</code></strong> | 新增 Tier 3 | <code>optics-research-profile.md</code> | <strong><code>[MEM-OPT-004]</code> Zemax 跨机协作流程</strong>：旧本机内存紧，Zemax 在另一台电脑练手（给菜单前先确认 Zemax 13 / OpticStudio 版本）；回传纯文本 <code>.zmx</code> + txt Prescription Data + 截图复核，首个目标锚定 <code>Desktop\Zemax\CONTEXT_Zemax.md</code>。 |</p>
-<p>| <strong><code>OP-006</code></strong> | 新增 Tier 3 | <code>local-windows-env.md</code> | <strong><code>[MEM-ENV-003]</code> 跨端 Skill 边界与同济云端 ZIP 红线</strong>：区分可迁移 Skill 与 DSH 专有绑定技能；升级 <code>ppt-master</code> 同步刷新 <code>upstream-lock.json</code>；同济云端 <code>.zip</code> 须在独立副本去 PNG/元数据、三段 semver、≤2 万字。 |</p>
-<p>| <strong><code>OP-007</code></strong> | 新增 Tier 3 | <code>local-windows-env.md</code> | <strong><code>[MEM-ENV-004]</code> 多端分工、校内算力与免 <code>.bak</code> 习惯</strong>：多端同步习惯、同济每周 ~1000 积分精兵双旗舰偏好、云端纯文本 vs 本地渲染/仿真分工、手工改普通配置免留 <code>.bak</code>（Dream 自身仍保留只读快照铁律）。 |</p>
-<p>| <strong><code>OP-008</code></strong> | 新增 Tier 3 | <code>antigravity-platform.md</code> | <strong><code>[MEM-AGY-001]</code> Antigravity 2.0 桌面版架构边界与 Job Object 回收</strong>：非 VS Code 版、禁解包 <code>app.asar</code>、禁删 Settings 里可见的 <code>sidecar</code> 载体项目、勿由 Agent 起临时 <code>localhost</code> 给会后访问。 |</p>
-<p>| <strong><code>OP-009</code></strong> | 新增 Tier 3 | <code>antigravity-platform.md</code> | <strong><code>[MEM-AGY-002]</code> 规则护栏定位、触发率与懒加载 MCP 经验</strong>：高层护栏反微操 SOP；<code>model_decision</code> 易 0 触发，高频协同需 <code>always_on</code> + 客观信号 + 内联 Schema 目录。 |</p>
-<p>| <strong><code>OP-010</code></strong> | 新增 Tier 3 | <code>antigravity-platform.md</code> | <strong><code>[MEM-AGY-003]</code> Claude Vertex 中文安全误杀与归档插件运维</strong>：确认报错为云端流式误杀（非本地配置或 Cockpit Tools 所致），中文长推导切 Gemini；空项目/归档用 <code>antigravity-archive-manager</code>。 |</p>
-<p>| <strong><code>OP-011</code></strong> | 新增 Tier 3 | <code>antigravity-share-workflow.md</code> | <strong><code>[MEM-SHR-001]</code> 零污染分享架构与个人主页保护</strong>：内部用 <code>@</code>/Deep Link，对外用 <code>antigravity-share-hub</code>，严禁触碰 <code>Documents\GitHub\yangllllc.github.io</code>。 |</p>
-<p>| <strong><code>OP-012</code></strong> | 新增 Tier 3 | <code>antigravity-share-workflow.md</code> | <strong><code>[MEM-SHR-002]</code> Gemini 抓取限制与 GitHub Pages 强缓存</strong>：HTML 约 4000 字截断、<code>.md</code> 触发 <code>MISC_ERROR</code> 须走下载附件、<code>max-age=600</code> 须 <code>curl -sI</code> 验源站并提示 <code>Ctrl+F5</code>。 |</p>
-<p>| <strong><code>OP-013</code></strong> | 新增 Tier 3 | <code>tongji-mcp-and-network.md</code> | <strong><code>[MEM-NET-001]</code> SakuraCat 2.4.6 现状与断网死锁避坑</strong>：sing-box 增强模式 <code>tun0</code>、加密配置、保持全局模式、<code>ProxyEnable=1</code> 时严禁直接强杀进程。 |</p>
-<p>| <strong><code>OP-014</code></strong> | 新增 Tier 3 | <code>tongji-mcp-and-network.md</code> | <strong><code>[MEM-NET-002]</code> 同济/DSH 403 穿透补丁与 MCP 维护红线</strong>：<code>dsh-better-sidebar</code> 物理网卡直连补丁排查入口；同济 vLLM 关思考须双传 <code>enable_thinking=false</code> 与 <code>thinking=false</code>；PS 5.1 脚本 BOM、stdin 防漏密、并发 &lt;180s、Codex <code>config.toml</code> 格式。 |</p>
-<h3>批复后 <code>AGENTS.md</code> 的最终形态（精确 Diff，仅 20 行 / 2,335 字节）</h3>
-<pre><code> ## Tier 1：已人工批复的晋升规则
- - **[RULE-001] 本机未注册全局 python/ffmpeg/node PATH**：执行 Python、FFmpeg 或脚本前禁止假设系统 PATH 存在 python/ffmpeg/node，应按需读取 topics/local-windows-env.md 并显式调用已验证绝对路径。
-+- **[RULE-002] 学习主旋律与三态知识边界护栏**：用户为同济大学光学研一硕士，学习与科研是高频主旋律；讲解物理/工程概念时先锚定实操物理直觉，再给不跳步的完整公式衔接与适度轻量检验（反未教先测与全包代劳）。参考个人背景档案时必须区分【已有基础 / 刚入门在学 / 明确待攻克】，严禁预设已精通，亦勿将光学背景串味带入无关软件工程任务。
- 
- ## Tier 2：按需读取的主题记忆索引
- | 主题 Slug | 适用范围 | 标签 | 条目 |
- | :--- | :--- | :--- | :---: |
--| `topics/local-windows-env.md` | 本机可用 Python/FFmpeg 绝对路径及四端 Skill 同步约定 | windows, python, ffmpeg | 2 |
--| `topics/optics-research-profile.md` | 微腔激子极化激元实验方向背景与讲解节奏/推导连续性偏好 | optics, physics, research | 2 |
-+| `topics/local-windows-env.md` | 本机可用 Python/FFmpeg 绝对路径及四端 Skill 同步约定 | windows, python, ffmpeg | 4 |
-+| `topics/optics-research-profile.md` | 微腔激子极化激元实验方向背景与讲解节奏/推导连续性偏好 | optics, physics, research | 4 |
-+| `topics/antigravity-platform.md` | 桌面版架构边界、Windows Job Object 进程回收、规则触发率与安全误杀排查 | antigravity, plugins, rules | 3 |
- | `topics/ppt-video-workflow.md` | 80/20 混合出片路线、Matplotlib/PPT 渲染实测坑点与同济模板隔离约定 | ppt, video, matplotlib | 2 |
-+| `topics/tongji-mcp-and-network.md` | SakuraCat 2.4.6 增强模式、同济/DSH 403 物理网卡直连与 MCP 维护红线 | tongji, mcp, vpn | 2 |
-+| `topics/antigravity-share-workflow.md` | antigravity-share-hub 同步、Gemini 抓取与缓存坑点 | share, github-pages, gemini | 2 |</code></pre>
-<p>完整 Diff 也可双击打开 <code>review.html</code> 或查看 <code>review_summary.md</code>。</p>
-<hr>
-<h2>三、请你最终拍板（两句即可收口）</h2>
-<ul>
-<li><strong>批复这 14 条提案</strong>：可以直接回“<strong>14 条全部同意</strong>”，或点名删改某一条（重点帮我核一眼 <strong><code>OP-004</code> 的三态知识边界</strong>——里面有没有哪项其实你已经吃透、或者哪项描述有偏差？），我收到后立刻原子 <code>apply</code> 完成全部 16 个历史会话的冷启动基线。</li>
-<li><strong>关于你原全局规则的边界确认</strong>：是否认同上述“<strong>保持 <code>core-reasoning-protocol.md</code> 为只读宪法 + Dream 作为互补活体记忆库（必要时仅给手工修订建议）</strong>”的双层配合方案？</li>
-</ul>
-</div></article>
-<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>全部同意，我认同你的边界。我觉得你的想法很好，不过为了谨慎起见，你觉得我有必要将你做的这份东西交给gpt6.2Astra ultra来检查一边嘛？如果有必要的话我又该怎么做，将什么交给他，说什么提示词来告诉他</p>
-</div></article>
-<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><h2>一、全量冷启动基线已原子生效</h2>
-<p><code>coldstart_remaining_13</code> 的 14 条提案已全部完成原子 <code>apply</code>（自动备份只读快照 <code>20261120_055140_030_pre_apply_coldstart_remaining_13</code>），<code>CONTEXT_dream_skill.md</code> 第 3 节已同步收口：</p>
-<ul>
-<li><strong>常驻入口 <code>AGENTS.md</code></strong>：仅 <strong><code>20 行 / 2,335 字节</code></strong>（不足 12,000 B 上限的 20%），含 <code>2</code> 条 Tier 1 规则（<code>RULE-001</code> 路径、<code>RULE-002</code> 学习主旋律与三态边界）+ <code>6</code> 个主题索引行。</li>
-<li><strong>按需主题库（<code>6</code> 文件 / <code>17</code> 条目，单文件最大 29 行 ≪ 150 行上限）</strong>：<code>local-windows-env.md</code>、<code>optics-research-profile.md</code>、<code>antigravity-platform.md</code>、<code>ppt-video-workflow.md</code>、<code>tongji-mcp-and-network.md</code>、<code>antigravity-share-workflow.md</code>。</li>
-<li><strong>水位线与顺手修复</strong>：全部 <code>16</code> 个非归档历史会话已入水位线；刚才验收 <code>check-due</code> 时顺手抓到一个小缺陷（刚派发的 5 个 <code>research</code> 子代理脑目录被误算进未归档会话数），已通过 <code>annotations/*.pbtxt</code> 过滤子代理修复并复测通过（<code>changed_conversations: 1, due: false</code>，E2E <code>7/7 OK</code>）。</li>
-</ul>
-<hr>
-<h2>二、有没有必要交给 GPT 6.2 Astra Ultra 复审？</h2>
-<p><strong>有明确必要，属于低成本高回报的交叉验证</strong>——但前提是做<strong>“定向红队审计”</strong>，而不是泛泛问“写得好不好”。</p>
-<ul>
-<li><strong>值得查的 2 个真实原因</strong>：</li>
-<li><strong>打破同源盲点</strong>：架构、代码、测试与提炼结果均由我主导完成，测试天然容易只验证“我自己想到的坑”；换不同模型家族审查，最容易抓出隐蔽边界漏洞。</li>
-<li><strong>专查“提示词叠加效应”</strong>：<code>core-reasoning-protocol.md</code> + <code>deepseek-subagent.md</code> + <code>AGENTS.md</code> 三份常驻规则叠加后，有没有潜在指令打架、措辞互相抵消，或 <code>optics-research-profile.md</code> 里某些表述是否仍容易诱导 AI 误判你的掌握程度——这是独立第二双眼睛最有价值的地方。</li>
-<li><strong>不该怎么查</strong>：不要把原始聊天记录（<code>transcript.jsonl</code> / <code>batch_*.md</code>）传上去（既含隐私又浪费上下文），也不要让他挑 HTML/CLI 格式化这类枝节代码风格。</li>
-</ul>
-<hr>
-<h2>三、怎么交、交什么？（已为你打包成 1 个纯净文件）</h2>
-<p>为了省去你在隐藏目录 <code>.gemini</code> 里翻找十几个文件的麻烦，我已把最核心的 <strong>15 个纯文本文件</strong> 合并生成了单一审查包（已过正则复扫，<strong>0 密钥泄露、0 原始聊天记录</strong>）：</p>
-<ul>
-<li><strong>直接上传这一份文件即可</strong>：<code>audit_bundle_for_gpt.md</code>（约 97 KB，审完可直接删除）</li>
-<li><strong>Part 1</strong>：你原有的两份全局规则（<code>core-reasoning-protocol.md</code>、<code>deepseek-subagent.md</code>）</li>
-<li><strong>Part 2</strong>：Dream 插件编译后的 <code>AGENTS.md</code>、<code>SKILL.md</code> 与 <code>dream_config.json</code></li>
-<li><strong>Part 3</strong>：已落盘的 <code>promoted_rules.md</code> 与全部 6 个 <code>topics/*.md</code> 档案</li>
-<li><strong>Part 4</strong>：最容易藏安全/状态漏洞的 3 个核心脚本（<code>config_io.py</code>、<code>extractor.py</code>、<code>governance.py</code>）</li>
-</ul>
-<hr>
-<h2>四、直接复制发给 GPT 6.2 Astra Ultra 的提示词</h2>
-<p>把 <code>audit_bundle_for_gpt.md</code> 作为附件上传，直接粘贴下面这段提示词即可：</p>
-<pre><code>我刚在本地 Antigravity（Windows，独立桌面 Electron 版）里上线了一套类 Claude Dream 的分层本地记忆治理系统。附件 `audit_bundle_for_gpt.md` 包含我原有的全局规则、新上线的 Dream 常驻规则与 SKILL、已冷启动落盘的全部 6 份主题记忆，以及 3 个最关键的 Python 治理脚本。
-
-请你扮演严格、冷静的独立架构红队审计员，不要客套，不要给“重构为向量库/重造轮子”这类脱离约束的泛泛建议，也不要挑代码风格细节。请重点审查以下 4 个维度，按【致命隐患 / 值得修正的中等缺陷 / 可选微调】三级输出结论，每条必须给出“具体文件名 + 触发条件 + 失效机制 + 最小化修改方案”：
-
-1. **三份常驻规则的叠加与冲突审计**（重点）：
-   - 对照 `core-reasoning-protocol.md`、`deepseek-subagent.md` 与 Dream 生成的 `AGENTS.md`，检查它们同时注入系统提示词时，是否存在指令矛盾、语气冲突、注意力稀释（导致原核心推理协议变钝）或冗余重复？
-   - `RULE-001` 与 `RULE-002` 的措辞是否足够锋利且无副作用？有没有哪句应该改写、缩减或降级到 Tier 3？
-
-2. **记忆内容质量与“串知识/误判掌握度”风险审计**：
-   - 审阅 6 份 `topics/*.md`（尤其是 `optics-research-profile.md`）：里面的三态知识分界（已有基础 / 刚入门在学 / 明确待攻克）是否足够清晰？是否存在某些词条仍可能诱导未来模型误以为我已精通，或在无关编程任务里触发跨领域串味？
-   - 有没有过度琐碎、过快过期、或跨主题重复的内容应当删减合并？
-
-3. **核心脚本的状态机与安全边界漏洞审计**（`config_io.py`、`extractor.py`、`governance.py`）：
-   - 重点排查：① 增量水位线 + `step_index` 重试分支剪枝是否存在漏读、错删合法轮次或死循环风险；② 负反馈账本（指纹 + 词袋重合）是否存在严重误杀正常新记忆或轻易绕过问题；③ Windows 下的只读快照、原子写盘、`base_hash` 校验、精准 `revert` 与受保护路径硬锁有没有真实边界漏洞？
-
-4. **长期演化（半年后）退化风险**：
-   - 当这套系统运行 20–50 次 `/dream` 后，最可能先在哪个环节出现熵增、规则膨胀或失灵？给出 1–2 个最低成本的预防机制。
-
-如果某维度经检查确实没有实质性问题，请直接写“未发现实质缺陷”，不要硬凑毛病。</code></pre>
-<hr>
-<p>审完后你可以直接把 GPT 6.2 Astra Ultra 的审计意见粘贴给我——我会按第一性原理逐条核查实证，真漏洞立刻落地修补，存疑点和你对齐后再动。</p>
-</div></article>
-<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>@[c:\Users\Administrator\Documents\Codex\2026-11-20\antigravity-windows-electron-claude-dream-audit\outputs\dream-architecture-audit.md] 请直接整改本机 Antigravity Dream 插件。以附件审计报告定位问题，以当前源码和可重复测试判断修复是否成立。本轮工程范围仅含三项：批复错版、revert 误删、回滚不完整。按以下顺序在 sandbox 实现并验证。三项全部通过后再部署生产。RULE-001、RULE-002 另行提审。</p>
-<h2>一、先隔离测试环境</h2>
-<p>工作目录为 <code>C:\Users\Administrator\Desktop\memory\sandbox</code>。先核对 sandbox 与生产插件相关文件的版本和哈希，记录已有差异。测试配置显式把 <code>antigravity_data_dir</code>、<code>memory_store_dir</code>、<code>compiled_rule_path</code> 全部指向独立临时目录，使用合成对话和实际 Markdown 读写器。现有 sandbox 配置仍引用真实对话目录，不能直接用它运行抽取测试。</p>
-<p>为每项新增能暴露旧行为的回归测试。记录修复前的实际失败、修复后的结果和执行命令。比较状态时同时检查文件是否存在及其内容哈希。</p>
-<h2>二、修复批复错版</h2>
-<p><strong>修改目标</strong>　重点检查 <code>governance.py</code>、<code>review_ui.py</code> 和 CLI。每份批复绑定 <code>run_id</code> 和用户实际看到的不可变提案版本，例如 <code>plan_hash</code>；计划同时绑定对应的抽取 manifest。在线审阅页、离线导出的 <code>decisions.json</code>、对话内批复使用同一校验。缺少版本信息的旧批复要求重新审阅。缺项保持待审，只有明确驳回才写负反馈。</p>
-<p><strong>回归用例</strong></p>
-<ul>
-<li>同一 run 的 V1 为“双栏”，V2 改成“单栏”，两版均含 <code>OP-001</code>。分别经三个审阅入口提交 V1 批复。三者均应拒绝；主题、晋升规则、编译视图、账本、水位均保持提交前状态。</li>
-<li>V2 正确批复成功一次。重复提交同一批复应返回原收据，业务状态只变更一次。另测错误 run、重复或未知 <code>op_id</code>、漏批，均不得被静默接受。</li>
-<li>将同一会话拆成两个批次。只审完一个批次时不能推进该会话水位。两个批次均已处理且明确零候选，允许推进水位。已有候选但批复缺项时，不能将其记成用户驳回。</li>
-</ul>
-<p><strong>验收条件</strong>　只有用户审过的版本能落盘；失败没有业务副作用；重复提交幂等；水位能区分“已审完且无候选”和“尚未审完”。保留原有 <code>base_hash</code> 漂移检查。</p>
-<h2>三、修复 revert 误删</h2>
-<p><strong>修改目标</strong>　重点检查 <code>governance.py</code> 的收据生成和 <code>revert_item</code>。一次操作涉及的所有条目都记录前后状态，包括被 <code>supersedes</code> 改写的旧条目。撤回时在锁内先核对所有受影响条目的当前状态，再整体还原。历史收据缺少必要证据时，明确列出冲突并安全退出。</p>
-<p><strong>回归用例</strong></p>
-<ul>
-<li>A 为 active，批准 B 替代 A，随后撤回该次新增 B。应恢复 A 原内容及 active 状态，撤掉 B；无关条目、手写备注和水位保持原值。</li>
-<li>重建上述场景，随后批准一次对 B 的更新，再用旧收据撤回 B 的首次新增。应报告 B 冲突，保留新版 B，A 也不变。再做一组仅 A 被后续修改的用例，同样应整组退出。两组均不得新增撤回反馈。</li>
-<li>对一次成功撤回再执行一次，只产生一条撤回反馈。用缺少连带条目前像的旧收据测试，不能凭猜测恢复 A 或删除 B。</li>
-</ul>
-<p><strong>验收条件</strong>　无冲突时完整逆转原操作；任一受影响条目发生后续变更时整组零改动；重复撤回无副作用。必须断言 A、B 的内容和状态，不能只断言命令成功或 B 已消失。</p>
-<h2>四、修复回滚不完整</h2>
-<p><strong>修改目标</strong>　重点检查 <code>governance.py</code>、<code>config_io.py</code>。快照记录每个受管目标原先是否存在及原始字节摘要。恢复前一次性验证清单、所有必需源文件、目标路径和摘要，再开始改盘。跨文件提交留下可在下一次启动时识别的事务记录，覆盖进程直接退出的情况。</p>
-<p><strong>回归用例</strong></p>
-<ul>
-<li>正常初始化后确认水位文件不存在，执行首次 apply。回滚时显式重置水位，应恢复为“文件不存在”。另测已有水位时的默认 rollback，应保留回滚前的当前水位。同步核对主题、晋升规则、索引、编译入口及负反馈账本的预期存在性和内容。</li>
-<li>分别制造“快照缺一个必需文件”和“一个文件摘要错误”。两次均应在首次业务写入前失败；所有受管文件与回滚前逐字节一致。</li>
-<li>在独立子进程中，分别于“主题已写、编译视图未写”和“水位已写、收据未提交”两个边界强制结束进程。用正常入口重新启动，验证未完成事务恢复到提交前的一致状态；再次启动也不得重复恢复或产生新反馈。仅抛出能被当前 <code>except</code> 捕获的异常不足以覆盖此用例。</li>
-</ul>
-<p><strong>验收条件</strong>　恢复后逐项比对受管文件集合及 SHA-256；快照、收据和事务记录按各自预期另验。任何恢复失败都不能返回成功或留下部分恢复的业务状态。</p>
-<h2>五、放行生产</h2>
-<p>三项新增回归及 sandbox 原有全套测试全部通过后，提交测试命令、通过数和关键断言结果，再部署生产。部署前复核当前生产文件哈希，保留将被替换文件的可恢复副本；若出现尚未合并的生产改动，先处理差异。只部署本次修复所需文件，保留现有配置和记忆数据。</p>
-<p>部署后，用<strong>已部署的程序文件配独立临时配置</strong>完成一次 <code>stage → apply → revert → rollback</code> 冒烟测试。交付实际部署文件清单、测试结果、备份位置和恢复旧程序的方法。任何放行条件失败，留在 sandbox 修正。</p>
-<h2>六、RULE-001 和 RULE-002 单独提审</h2>
-<p>工程修复之外，分别提交两条可独立批准或驳回的候选改写。每条展示原文、拟改文字及降到 Tier 3 的内容。本轮只生成审阅材料，等我明确批准对应条目后，才更新 <code>promoted_rules.md</code> 并重新编译 <code>AGENTS.md</code>。</p>
-<ul>
-<li><strong>RULE-001 候选</strong>　在本机任务确实需要 Python、FFmpeg 或 Node 时，优先采用项目指定的运行环境。项目未指定时，先验证当前终端能否运行所需程序，无法定位再查本机环境档案。具体版本和路径留在 <code>local-windows-env.md</code>。</li>
-<li><strong>RULE-002 候选</strong>　仅在辅导或需要判断知识起点时参考相应主题的学习记录，区分已有基础、在学和待攻克；未记录的能力保持未知。身份、光学平台直觉、公式衔接与练习节奏留在 <code>optics-research-profile.md</code>，按本轮学习目标读取。</li>
-</ul>
-</div></article>
-<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>三项 P0 工程整改（批复错版、revert 误删、回滚不完整）已在沙盒完成 TDD 验证（修复前全量暴露旧缺陷 → 修复后 16/16 全绿），并通过放行复核与隔离冒烟测试部署至生产；<code>RULE-001</code> 与 <code>RULE-002</code> 已单独生成审阅包，当前生产规则与记忆数据保持未改动。</p>
-<hr>
-<h2>一、环境基线与隔离核对</h2>
-<h3>1. 整改前 Sandbox 与生产文件哈希核对</h3>
-<p>核对结果：全部 11 份程序文件（<code>dream.ps1</code>、<code>plugin.json</code>、<code>SKILL.md</code> 及 <code>scripts/*.py</code>）在 sandbox 与生产目录<strong>字节完全一致</strong>，不存在未合并的生产代码改动；仅环境配置与编译产物存在预期差异：</p>
-<p>| 文件 | Sandbox SHA-256[:16] | 生产 SHA-256[:16] | 状态 |</p>
-<p>| :--- | :--- | :--- | :--- |</p>
-<p>| <code>scripts/config_io.py</code> | <code>8f955bd69034a44b</code> | <code>8f955bd69034a44b</code> | SAME |</p>
-<p>| <code>scripts/governance.py</code> | <code>d12d869ab4ddd206</code> | <code>d12d869ab4ddd206</code> | SAME |</p>
-<p>| <code>scripts/review_ui.py</code> | <code>b85b8d25e6d00eba</code> | <code>b85b8d25e6d00eba</code> | SAME |</p>
-<p>| <code>scripts/dream_cli.py</code> | <code>c1b91b5ae282b315</code> | <code>c1b91b5ae282b315</code> | SAME |</p>
-<p>| <code>SKILL.md</code> | <code>4a244d772ce2721c</code> | <code>4a244d772ce2721c</code> | SAME |</p>
-<p>| <code>dream.ps1</code> / <code>plugin.json</code> / 其余 4 份脚本 | 全部一致 | 全部一致 | SAME |</p>
-<p>| <code>dream_config.json</code> | <code>2b4f2836d8df2f0c</code> | <code>ea3f03f8c2a39df4</code> | DIFF（预期：路径配置） |</p>
-<p>| <code>rules/AGENTS.md</code> | <code>1e16af95a4a94d60</code> | <code>723952068c42ee43</code> | DIFF（预期：生产编译结果） |</p>
-<h3>2. 测试隔离</h3>
-<p>新增回归套件 <code>test_audit_remediation.py</code>（与原 <code>test_dream_e2e.py</code> 一致）每条用例均在独立 <code>TemporaryDirectory</code> 中显式配置 <code>antigravity_data_dir</code>、<code>memory_store_dir</code>、<code>compiled_rule_path</code>，使用合成对话与真实 Markdown 读写器 <code>store.py</code>，状态比较全部同时校验<strong>存在性 + SHA-256 摘要</strong>（<code>snapshot_managed_state</code>）。</p>
-<hr>
-<h2>二、三项工程修复要点与测试对照</h2>
-<h3>核心改动摘要</h3>
-<ul>
-<li><strong>批复错版（<code>governance.py</code>、<code>review_ui.py</code>、<code>dream_cli.py</code>）</strong>：</li>
-<li><code>stage_proposal</code> 拒绝重复 <code>op_id</code>，绑定 <code>manifest_hash</code> 与 <code>processed_batches</code>，计算不可变 <code>plan_hash</code>，冻结每版产物至 <code>runs/&lt;run_id&gt;/plans/&lt;plan_hash[:16]&gt;/</code>，并将 <code>plan_hash</code> / <code>manifest_hash</code> 嵌入 <code>staged_plan.json</code>、<code>review_summary.md</code> 与 <code>review.html</code>（在线提交与离线导出一致）。</li>
-<li>三审阅通道共用 <code>_validate_decisions_payload</code>：强校验 <code>run_id</code>、必填 <code>plan_hash</code>（缺版本号的旧批复直接拒收要求重审）、<code>manifest_hash</code>、唯一/已知/完整 <code>op_id</code> 集合与合法决议值；<strong>缺项保持待审拒绝落盘，不记为驳回、不写负反馈</strong>；在线 HTTP 在校验通过前不覆盖 <code>decisions.json</code>，陈旧版本返回 HTTP <code>409</code>。</li>
-<li>幂等性：按 <code>runs/&lt;run_id&gt;/receipts/&lt;plan_hash[:16]&gt;.json</code> + <code>decisions_hash</code> 识别重复提交，直接返回原收据且零副作用；保留原有 <code>base_hash</code> 漂移检查。</li>
-<li>批次水位：通过 <code>state/batch_progress.json</code> 跟踪每个 <code>run_id</code> 已完成批次，仅当某会话在 <code>manifest.json</code> 内的全部分片均已处理（含显式零候选）时才推进该会话水位。</li>
-<li><strong>revert 误删（<code>governance.py</code>）</strong>：</li>
-<li><code>_apply_op_to_doc</code> 规范化并记录操作触及的全部条目（含被 <code>supersedes</code> 改写的旧条目）前后像至 v2 收据的 <code>affected_entries</code>。</li>
-<li><code>revert_item</code> 在锁内先逐条比对所有 <code>affected_entries</code> 的当前磁盘状态与收据 <code>after_entry</code>，任一条目（B 或 A）发生后续变更即整组中止并列出冲突字段，零写盘、零新增反馈；无冲突才整组还原并在收据标记 <code>reverted: true</code>（二次撤回幂等，仅产生 1 条撤回反馈）；缺少连带条目前像的旧收据明确拒收。</li>
-<li><strong>回滚不完整（<code>config_io.py</code>、<code>governance.py</code>）</strong>：</li>
-<li>快照 v2 完整登记全部固定受管目标（<code>promoted_rules.md</code>、<code>INDEX.md</code>、<code>state/watermark.json</code>、<code>state/batch_progress.json</code>、<code>state/feedback_ledger.jsonl</code>、<code>compiled/AGENTS.md</code>）及 <code>topics/*.md</code> 的 <code>exists</code> 标志与原字节 SHA-256；恢复前由 <code>_verify_snapshot</code> 一次性校验清单、所有必需文件、规范受管路径与字节摘要，通过后才使用 <code>atomic_write_bytes</code> 还原存在文件并删除原先不存在的受管目标（如首次 apply 前不存在的 <code>watermark.json</code>）。</li>
-<li><code>ProcessLock</code> 升级为 Windows OS 内核非阻塞文件锁（<code>msvcrt.locking</code>，进程硬杀后由内核即时释放，避免死锁残留）；跨文件写入前落盘 <code>state/pending_tx.json</code>（记录快照 ID、水位恢复策略与收据前像），收据提交后清除；任意正常入口启动时自动触发 <code>recover_pending_tx</code> 恢复未完成事务且不重复恢复、不产生新反馈。</li>
-</ul>
-<h3>修复前 vs 修复后实测对比</h3>
-<p><strong>执行命令</strong>：</p>
-<pre><code>&amp; &#39;C:\Users\Administrator\.local\bin\python3.12.exe&#39; -X utf8 &quot;c:\Users\Administrator\Desktop\memory\sandbox\tests\test_dream_e2e.py&quot;
-&amp; &#39;C:\Users\Administrator\.local\bin\python3.12.exe&#39; -X utf8 &quot;c:\Users\Administrator\Desktop\memory\sandbox\tests\test_audit_remediation.py&quot;</code></pre>
-<p>| 回归用例 | 修复前实际失败（Exit Code 1，9 FAIL / 1 ERROR） | 修复后实测结果（Exit Code 0） |</p>
-<p>| :--- | :--- | :--- |</p>
-<p>| <code>test_p1_01</code>（V1 双栏 → V2 单栏，三入口提 V1 + 缺 <code>plan_hash</code>） | <code>AssertionError: &#39;&#39; is not true</code>（无 <code>plan_hash</code>，旧批复可落盘新版） | <strong>ok</strong>（在线 <code>409</code>、离线 CLI、对话入口及缺版本号均拒绝，全部受管文件存在性与 SHA-256 零变动） |</p>
-<p>| <code>test_p1_02</code>（重复 <code>op_id</code>、错 run、未知/重复/缺项、V2 幂等） | <code>AssertionError: ValueError not raised</code>（重复 <code>op_id</code> 通过 stage） | <strong>ok</strong>（非法决议全拒且 0 负反馈；V2 重复提交返回原 <code>snapshot_id</code>/<code>applied_at</code>，快照与文件零增量） |</p>
-<p>| <code>test_p1_03</code>（单会话拆两批、单批不推水位、缺项不写反馈、两批零候选推水位） | <code>KeyError: &#39;plan_hash&#39;</code>（且无批次级水位门控） | <strong>ok</strong>（单批不推水位；缺项拒绝且 0 负反馈；两批零候选完成后水位推进） |</p>
-<p>| <code>test_p2_01</code>（B 替代 A 后撤回 B） | <code>AssertionError: &#39;superseded&#39; != &#39;active&#39;</code>（A 遗留 <code>superseded</code>） | <strong>ok</strong>（A 恢复原内容及 <code>active</code>，B 移除，无关条目/手写备注/水位原值保留） |</p>
-<p>| <code>test_p2_02</code>（B 被更新或仅 A 被修改后撤回初版 B） | <code>AssertionError: (RuntimeError, ValueError) not raised</code>（新版 B 被误删） | <strong>ok</strong>（两组均冲突报错，整组文件 SHA-256 零变动，0 新增反馈，A/B 内容与状态均保留） |</p>
-<p>| <code>test_p2_03</code>（重复撤回 + 缺连带前像旧收据） | <code>AssertionError</code>（二次撤回改写账本与状态哈希） | <strong>ok</strong>（二次撤回幂等仅 1 条反馈；旧收据拒收且 A 仍 <code>superseded</code>、B 仍在） |</p>
-<p>| <code>test_p3_01</code>（首次 apply 后 <code>--reset-watermark</code> + 默认保留水位） | <code>AssertionError: True is not false</code>（<code>watermark.json</code> 残留未删） | <strong>ok</strong>（<code>--reset-watermark</code> 还原为文件不存在；默认 rollback 保留当前水位，其余受管文件逐字节还原） |</p>
-<p>| <code>test_p3_02</code>（快照缺必需文件 / 摘要损坏） | <code>AssertionError: (FileNotFoundError, ValueError) not raised</code>（静默跳过） | <strong>ok</strong>（首次业务写入前失败，全部受管文件存在性与 SHA-256 逐字节一致） |</p>
-<p>| <code>test_p3_03</code>（子进程于 <code>after_topics</code> 与 <code>after_watermark</code> <code>proc.kill()</code> 硬杀） | 双边界均 <code>FAIL</code>（无事务恢复机制） | <strong>ok</strong>（双边界确认脏状态后硬杀，首次正常 <code>status</code> 自动还原至提交前全量 SHA-256、0 反馈、无残余收据；二次 <code>status</code> <code>recovered_tx=null</code> 不重复恢复） |</p>
-<p>| 原有 <code>test_dream_e2e.py</code>（7 项） | — | <strong>7/7 ok</strong>（3.410s，保留 <code>base_hash</code> 漂移等全部既有断言） |</p>
-<hr>
-<h2>三、生产部署清单、备份与隔离冒烟验收</h2>
-<h3>1. 实际部署文件清单（仅替换本次修复所需的 5 个程序文件）</h3>
-<p>目标根目录：<code>C:\Users\Administrator\.gemini\config\plugins\antigravity-dream-memory\</code></p>
-<p>| 部署文件 | 部署前 SHA-256[:16] | 部署后 SHA-256[:16] |</p>
-<p>| :--- | :--- | :--- |</p>
-<p>| <code>scripts/config_io.py</code> | <code>8f955bd69034a44b</code> | <code>ee1037c567bfd6bf</code> |</p>
-<p>| <code>scripts/governance.py</code> | <code>d12d869ab4ddd206</code> | <code>5f618ce5b8a8c2e6</code> |</p>
-<p>| <code>scripts/review_ui.py</code> | <code>b85b8d25e6d00eba</code> | <code>edb9a9abbe7fa818</code> |</p>
-<p>| <code>scripts/dream_cli.py</code> | <code>c1b91b5ae282b315</code> | <code>76ed57b900982760</code> |</p>
-<p>| <code>skills/dream/SKILL.md</code> | <code>4a244d772ce2721c</code> | <code>04d5ac7febb01fde</code> |</p>
-<ul>
-<li><strong>未改动核验</strong>：生产 <code>dream_config.json</code>、<code>rules/AGENTS.md</code>、<code>promoted_rules.md</code>、<code>INDEX.md</code>、<code>state/watermark.json</code>、<code>state/feedback_ledger.jsonl</code> 及全部 6 份 <code>topics/*.md</code> 共 <strong>12 份文件部署前后 SHA-256 100% 字节一致</strong>。</li>
-</ul>
-<h3>2. 旧程序备份位置与恢复方法</h3>
-<ul>
-<li><strong>备份目录</strong>（位于插件扫描目录之外，不会触发重名插件扫描）：<code>C:\Users\Administrator\.gemini\antigravity\plugin_data\antigravity-dream-memory\program_backups\20261120_063317_pre_audit_fix\</code>（含 <code>backup_manifest.json</code>）</li>
-<li><strong>一键恢复旧程序命令（PowerShell）</strong>：</li>
-</ul>
-<p>  ```powershell</p>
-<p>  $bk = &#39;C:\Users\Administrator\.gemini\antigravity\plugin_data\antigravity-dream-memory\program_backups\20261120_063317_pre_audit_fix&#39;</p>
-<p>  $pr = &#39;C:\Users\Administrator\.gemini\config\plugins\antigravity-dream-memory&#39;</p>
-<p>  foreach ($rel in @(&#39;scripts\config_io.py&#39;,&#39;scripts\governance.py&#39;,&#39;scripts\review_ui.py&#39;,&#39;scripts\dream_cli.py&#39;,&#39;skills\dream\SKILL.md&#39;)) {</p>
-<p>      Copy-Item -LiteralPath (Join-Path $bk $rel) -Destination (Join-Path $pr $rel) -Force</p>
-<p>  }</p>
-<p>  ```</p>
-<h3>3. 部署后隔离冒烟测试结果</h3>
-<p>使用<strong>已部署的生产 <code>dream.ps1</code> 与脚本</strong> + <strong>独立临时 <code>temp_dream_config.json</code></strong>（合成对话 + 临时存储与编译目录）完整执行：</p>
-<p><code>init（确认无 watermark）→ extract → stage(A) → apply(A) → stage(B V1/V2 替代 A，实测 V1 陈旧批复被拒) → apply(B V2) → revert(B 恢复 A 为 active + 二次撤回幂等) → rollback(--reset-watermark 确认 watermark.json 回到不存在且 AGENTS.md 哈希还原)</code> -&gt; <strong>全部通过</strong>，且复核生产 <code>AGENTS.md</code>、<code>promoted_rules.md</code>、<code>watermark.json</code> 哈希零变化。</p>
-<hr>
-<h2>四、RULE-001 和 RULE-002 单独提审（仅审阅材料，尚未修改生产规则）</h2>
-<p>已使用部署后的 <code>dream.ps1 stage</code> 生成独立审阅包 <code>run_id: rule_refine_20261120</code>（<code>plan_hash: 6794daa67142b6a4309723819a12c73c6454781795fc7d0c9a9e5b4e0dbea7fa</code>），可独立批准或驳回任一条目；核验当前生产 <code>promoted_rules.md</code>（<code>B0D6142A644DE475</code>）与 <code>AGENTS.md</code>（<code>723952068C42EE43</code>）均<strong>未改动</strong>。</p>
-<ul>
-<li>审阅页面：<code>review.html</code></li>
-<li>审阅摘要：<code>review_summary.md</code></li>
-</ul>
-<h3>候选 1：<code>OP-001</code> — <code>RULE-001</code>（可独立批准 / 驳回）</h3>
-<ul>
-<li><strong>现行原文</strong>：</li>
-</ul>
-<p>  &gt; <strong>[RULE-001] 本机未注册全局 python/ffmpeg/node PATH</strong>：执行 Python、FFmpeg 或脚本前禁止假设系统 PATH 存在 python/ffmpeg/node，应按需读取 topics/local-windows-env.md 并显式调用已验证绝对路径。</p>
-<ul>
-<li><strong>拟改文字</strong>：</li>
-</ul>
-<p>  &gt; <strong>[RULE-001] 本机 Python/FFmpeg/Node 运行环境选择</strong>：在本机任务确实需要 Python、FFmpeg 或 Node 时，优先采用项目指定的运行环境。项目未指定时，先验证当前终端能否运行所需程序，无法定位再查本机环境档案。具体版本和路径留在 local-windows-env.md。</p>
-<ul>
-<li><strong>留在 / 降到 Tier 3 的内容</strong>（<code>local-windows-env.md</code> <code>MEM-ENV-001</code> 已完整保留）：</li>
-<li>本机实测的两套 Python 绝对路径与版本（<code>.workbuddy/.../python.exe</code> Python 3.13.14 科学计算全栈、<code>~/.local/bin/python3.12.exe</code> 轻量 CLI）及内置 <code>ffmpeg-win-x86_64-v7.1.exe</code> 信息；从常驻规则移除了“无需这三个程序的脚本也触发”和“越过项目自带虚拟环境”的过宽约束。</li>
-</ul>
-<h3>候选 2：<code>OP-002</code> — <code>RULE-002</code>（可独立批准 / 驳回）</h3>
-<ul>
-<li><strong>现行原文</strong>：</li>
-</ul>
-<p>  &gt; <strong>[RULE-002] 学习主旋律与三态知识边界护栏</strong>：用户为同济大学光学研一硕士，学习与科研是高频主旋律；讲解物理/工程概念时先锚定实操物理直觉，再给不跳步的完整公式衔接与适度轻量检验（反未教先测与全包代劳）。参考个人背景档案时必须区分【已有基础 / 刚入门在学 / 明确待攻克】，严禁预设已精通，亦勿将光学背景串味带入无关软件工程任务。</p>
-<ul>
-<li><strong>拟改文字</strong>：</li>
-</ul>
-<p>  &gt; <strong>[RULE-002] 辅导与起点判断时的三态学习记录边界</strong>：仅在辅导或需要判断知识起点时参考相应主题的学习记录，区分已有基础、在学和待攻克；未记录的能力保持未知。身份、光学平台直觉、公式衔接与练习节奏留在 optics-research-profile.md，按本轮学习目标读取。</p>
-<ul>
-<li><strong>留在 / 降到 Tier 3 的内容</strong>（<code>optics-research-profile.md</code> <code>MEM-OPT-001</code>～<code>003</code> 已完整保留）：</li>
-<li>同济大学光学研一硕士身份、课题组实验方向（<code>MEM-OPT-001</code>）、光学平台实操直觉优先 / 不跳步完整公式衔接 / 反未教先测与轻量手算节奏（<code>MEM-OPT-002</code>）、以及三态知识分界明细（<code>MEM-OPT-003</code>）；从常驻入口移除了每轮无条件注入的身份标签与会误命中纯软件排错的“工程概念”触发词。</li>
-</ul>
-<hr>
-<p>你只需直接回复对 <code>OP-001</code>（<code>RULE-001</code>）与 <code>OP-002</code>（<code>RULE-002</code>）的逐条批复（例如“两条都批准”或“批准 OP-001，驳回 OP-002 原因：……”），我再按绑定 <code>plan_hash</code> 的标准流程执行 <code>apply</code> 更新 <code>promoted_rules.md</code> 并重新编译 <code>AGENTS.md</code>。</p>
-</div></article>
-<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>我都全同意，我想知道这次经历了gpt的修改后到底修改了什么，为什么要这样修改，他的原理是什么。然后这样修改后有什么好处，和上一版相比究竟是少思考了什么，修改后还有不足或者缺点嘛？</p>
-</div></article>
-<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已按你的批复完成 <code>rule_refine_20261120</code> 原子 <code>apply</code>（只读快照 <code>20261120_064613_121_pre_apply_rule_refine_20261120</code>），<code>promoted_rules.md</code> 与常驻入口 <code>AGENTS.md</code>（<code>20 行 / 2,297 字节</code>）均已实时生效，<code>CONTEXT_dream_skill.md</code> 已同步更新。</p>
-<p>下面用大白话逐项回答你的五个问题——<strong>不护短、直说底层的坑与反思</strong>。</p>
-<hr>
-<h2>一、这次到底修改了什么？为什么要改？原理是什么？</h2>
-<p>本轮一共动了 <strong>3 个底层工程安全机制</strong> + <strong>2 条常驻规则措辞</strong>：</p>
-<h3>1. 工程修复一：批复绑死不可变版本（修“批复错版”与“水位误推”）</h3>
-<ul>
-<li><strong>旧版问题</strong>：同一轮整理如果先生成了 V1（比如 <code>OP-001</code> 写着“双栏”），后来改稿重新 <code>stage</code> 成 V2（<code>OP-001</code> 变成“单栏”），你手里拿着旧审阅页点了“同意 OP-001”，旧程序只认编号 <code>OP-001</code>，结果把你根本没看过的“单栏”落盘了。另外，如果批复漏写了一项，旧程序会直接当成“你驳回了”写进负反馈；一个长对话拆成两批时，只审完第一批就提前把整个对话标记为“已读完”。</li>
-<li><strong>修改原理（内容寻址 + 显式完备校验 + 批次门控）</strong>：</li>
-<li>就像签合同要盖<strong>骑缝章</strong>：每次 <code>stage</code> 把你实际看到的全部提案内容 + 对应抽取清单算一个唯一 SHA-256 指纹 <code>plan_hash</code>，冻结存进 <code>plans/&lt;hash&gt;/</code>；在线网页、离线导出的 <code>decisions.json</code> 和聊天批复<strong>全部必须带上这枚 <code>plan_hash</code></strong>，核对不一致直接拒收。</li>
-<li>批复列表必须与提案 <code>op_id</code> 严丝合缝（缺项保持待审、不记驳回；重复提交同一份批复直接返回原收据，幂等不重做）。</li>
-<li>新增 <code>batch_progress.json</code>，只有某个对话的<strong>所有分片</strong>都审完（哪怕明确零候选）才推进它的水位。</li>
-</ul>
-<h3>2. 工程修复二：精准撤回补齐连带状态与冲突锁（修“revert 误删”）</h3>
-<ul>
-<li><strong>旧版问题</strong>：如果“规则 A”被你批准的“规则 B”替代了（A 自动变成 <code>superseded</code>），后来你又批准修改了 B 的内容，再拿第一次的收据去撤回“新增 B”——旧程序<strong>只看条目 ID 不看现状</strong>，直接把新版 B 删掉，而且忘了把 A 恢复成 <code>active</code>，导致新旧两条全没了。</li>
-<li><strong>修改原理（乐观并发控制 / CAS + 全组原子逆转）</strong>：</li>
-<li>每次 <code>apply</code> 写收据时，不只记主条目 B，而是把<strong>连带改动的 A</strong> 的“改前/改后完整快照”一起记入 <code>affected_entries</code>。</li>
-<li>撤回前在锁内做一次“验货”：把磁盘上 A 和 B 的<strong>当前状态</strong>与收据里的“改后状态”逐字段比对。只要其中任何一条被人动过，就<strong>整组报错退出、零改动、零负反馈</strong>；全部吻合才把 B 删掉并把 A 原样恢复成 <code>active</code>，同时给收据打上 <code>reverted: true</code> 防止重复撤回。</li>
-</ul>
-<h3>3. 工程修复三：快照存在性清单 + 崩溃恢复日志（修“回滚不完整”）</h3>
-<ul>
-<li><strong>旧版问题</strong>：</li>
-<li>首次运行前还没有 <code>watermark.json</code>，旧快照清单里压根没登记它，所以回滚并要求重置水位时，新生成的 <code>watermark.json</code> 删不掉；</li>
-<li>恢复快照时如果某个备份文件丢了或损坏了，旧代码静默跳过，导致“一半恢复一半没恢复”；</li>
-<li>旧代码只靠 Python 的 <code>try/except</code> 回滚——万一写到一半进程被系统强杀或断电，<code>except</code> 根本来不及执行，下次启动也不会清理烂摊子，而且旧文件锁会卡死 10 分钟。</li>
-<li><strong>修改原理（预检 + 预写事务日志 WAL 思想 + OS 内核锁）</strong>：</li>
-<li>快照 v2 像“房屋交接清单”：不论文件原本在不在，全部受管目标都登记 <code>exists: true/false</code> 和 SHA-256；回滚前先<strong>一次性全检</strong>所有备份文件和哈希，哪怕错 1 个字节都在动盘前报错，确保不会改坏一半；原本不存在的文件按清单直接删除还原。</li>
-<li>改盘前先落盘一张 <code>pending_tx.json</code>（记下快照 ID 和收据前像），等所有文件及收据都安全落盘才撕掉这张纸条。一旦中途被强杀，下次运行任何正常命令（如 <code>status</code>）看到纸条还在，就会自动按快照把系统拉回提交前的一致状态。同时把进程锁换成 Windows 内核级文件锁（<code>msvcrt.locking</code>），进程一死操作系统秒释放锁，不留僵尸锁。</li>
-</ul>
-<h3>4. 规则微调：收窄 <code>RULE-001</code> 与 <code>RULE-002</code> 的触发面</h3>
-<ul>
-<li><strong>为什么改</strong>：旧版 <code>RULE-001</code> 写“执行……或脚本前”，会误伤不需要 Python/FFmpeg/Node 的普通脚本，也会在项目自带虚拟环境时强行跳去用机器级路径；旧版 <code>RULE-002</code> 把你的“研一身份”和宽泛的“工程概念”常驻进每一轮对话，哪怕你只是修一个软件 Bug，模型也容易忍不住进入“教学辅导 + 出练习题”模式。</li>
-<li><strong>怎么改</strong>：Tier 1 只保留<strong>极窄、精准的触发闸门</strong>（真缺运行环境才查环境档；真在辅导或需要判断知识起点时才读学习记录并严分三态），把具体路径、身份、光学平台直觉和练习节奏全部留在 Tier 3 按需读取——信息一字未丢，但干扰降到最低。</li>
-</ul>
-<hr>
-<h2>二、这样修改后有什么好处？</h2>
-<ul>
-<li><strong>授权可信</strong>：你看到的 Diff 就是落盘的精确内容，再也不会出现“审 A 落 B”或漏审被误当驳回。</li>
-<li><strong>反悔真正安全</strong>：撤回“替代关系”不会留下僵尸条目，也不会误杀你后来辛苦改好的新版本；真遇到崩溃/强杀，重启即自愈。</li>
-<li><strong>日常对话更清爽</strong>：纯工程/排错任务不再被光学学习规则分心或强塞练习题，同时辅导学习时依然保留全部三态边界保护。</li>
-</ul>
-<hr>
-<h2>三、坦诚复盘：上一版我究竟“少思考了什么”？</h2>
-<p>回头对照审计报告，我第一版主要有 <strong>3 个典型的工程师思维盲区</strong>：</p>
-<ul>
-<li><strong>用“单次正常流程”代替了“多版本/多跳状态机”思考</strong>：我最初测试的是“生成一版 → 批准 → 撤回刚加的孤立项”这条最顺的路径，没有把自己放在<strong>对抗视角</strong>去问：“如果同一轮重做了第二版呢？如果 A→B 之后又改了 B 再去撤回第一笔呢？”——这就是为什么原测试全绿，却漏掉了真实的多跳因果链。</li>
-<li><strong>混淆了“单文件原子写”和“跨文件事务一致性”</strong>：我花心思做了 <code>flush + fsync + os.replace</code> 和 <code>try/except</code>，下意识觉得“已经够原子了”，却忽略了两件系统编程里的硬事实——① 多个文件依次 <code>os.replace</code> 之间依然存在“半提交窗口”，进程被硬杀时 <code>except</code> 根本不跑；② “文件原本不存在”本身也是一种需要被快照记录的状态。</li>
-<li><strong>把“好意图”直接写成了宽口径常驻规则</strong>：为了解决你前面担心的“找不到 Python”和“学习跳步”，我把背景和偏好直接铺在了每次必读的 Tier 1 里，少了“反面压力测试”（问一句：这条规则在完全无关的纯代码任务里会被误触发吗？）。</li>
-</ul>
-<hr>
-<h2>四、修改后还有哪些不足或缺点？（实话实说）</h2>
-<p>本轮严格按你的要求只修了最要命的 3 个 P0 工程漏洞和 2 条常驻规则，对照审计报告，系统<strong>目前还留有 4 类真实但暂不致命的不足</strong>（现阶段正常使用没触发，但长期跑久了值得留意）：</p>
-<ul>
-<li><strong>自动编号复用导致的负反馈误杀（审计 #9 — 最可能最先碰到）</strong>：</li>
-<li>如果你在某个主题驳回过一条自动分配编号（比如 <code>MEM-OPT-005</code>）的新提案，因为那条没写进文件，下次在同主题提一条<strong>完全无关</strong>的新记忆时，脚本还会把空号 <code>MEM-OPT-005</code> 分给它，从而命中旧账本的 <code>blocked_entry_id</code> 被误拦。另外，中文二元词袋匹配在面对“相同术语、意思相反”的新主张时也存在误报风险。</li>
-<li><strong>多行 <code>claim</code> 读写截断隐患（审计 #12）</strong>：</li>
-<li>目前你的 17 条记忆都是单行，完全正常；但如果以后某次提案的 <code>claim</code> 写了换行分两段，首次落盘能写进去，下次 <code>store.py</code> 再解析时只会读到第一行、丢掉第二行的限定条件。</li>
-<li><strong>抽取器深层边界与 SQLite 一致性（审计 #7、#8、#11）</strong>：</li>
-<li>目前增量水位只核验末轮前 512 字摘要，如果某条老对话改了较早轮次或末轮后半段正文可能漏判；活跃 SQLite 的 <code>.db/.wal/.shm</code> 逐个复制在极端高并发写入瞬间仍有极小概率不是同一毫秒切片（更稳的做法是只读连接走 SQLite Online Backup API）；另外对话标题和工作区路径目前未过脱敏扫描。</li>
-<li><strong>半年后的容量增长与少量规则细化（审计 #4、#6、长期退化）</strong>：</li>
-<li>高频主题（比如 <code>optics-research-profile.md</code>）积累到约 16–17 条时会撞上 <code>150</code> 行上限，目前还缺“自动把已过时条目移出正文归档”的瘦身机制；</li>
-<li><code>optics-research-profile.md</code> 里还留着少量偏粗粒度描述（如英语分数、“前四章”整块范围），以及 <code>deepseek-subagent.md</code> 尚未显式注明“<code>/dream</code> 整理流程只走本地、不外调 MCP”的例外条款。</li>
-</ul>
-<hr>
-<p><strong>建议节奏</strong>：现在这套系统最核心的“授权、撤回、防崩”三道底线已经扎牢，你可以先正常日常用一段时间（跑几次真实 <code>/dream</code> 感受一下）。如果后续想再做一轮收尾加固，最优先推荐一次性修掉上面的 <strong>第 1 项（防自动 ID 复用误拦）+ 第 2 项（禁多行或支持续行）+ <code>deepseek-subagent.md</code> 加一句 <code>/dream</code> 本地例外</strong>——改动很小但能把半年内最容易撞上的坑提前清零。</p>
+<blockquote><strong>补充说明</strong>：</blockquote>
+<blockquote>- 该调试端口仅监听本机；如日后想撤销快捷方式参数，可在 <code>C:\Users\Administrator\agy-capsule</code> 下运行 <code>powershell -ExecutionPolicy Bypass -File scripts\enable-cdp.ps1 -Undo</code>。</blockquote>
+<blockquote>- 若重启后侧栏打不开或空白，可查看日志 <code>%USERPROFILE%\.gemini\antigravity\sidecar_data\agy-capsule\agy_capsule\logs\sidecar.log</code>；若 Antigravity 后续自动更新覆盖了快捷方式导致底栏胶囊消失，重新运行一次 <code>enable-cdp.ps1</code> 即可。</blockquote>
 </div></article>
 
     </section>
