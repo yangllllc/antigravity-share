@@ -245,7 +245,7 @@
     }
   </style>
 </head>
-<body data-conv-id="012b6894-2e81-44de-a00d-a54e062faf7b" data-base-prefix="./" data-turn-count="6" data-update-time="2026-11-20 13:41" data-is-index="0">
+<body data-conv-id="012b6894-2e81-44de-a00d-a54e062faf7b" data-base-prefix="./" data-turn-count="7" data-update-time="2026-11-20 13:45" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -259,7 +259,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1>请先完整阅读当前工作目录下的 `CONTEXT_dream_sk...</h1>
-        <div class="sub-meta">会话 ID: 012b6894-2e81-44de-a00d-a54e062faf7b | 轮次: 6 | 更新于: 2026-11-20 13:41</div>
+        <div class="sub-meta">会话 ID: 012b6894-2e81-44de-a00d-a54e062faf7b | 轮次: 7 | 更新于: 2026-11-20 13:45</div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./012b6894-2e81-44de-a00d-a54e062faf7b.md" download="请先完整阅读当前工作目录下的_CONTEXT_d-012b6894.md" onclick="return downloadMarkdown(event, './012b6894-2e81-44de-a00d-a54e062faf7b.md', '请先完整阅读当前工作目录下的_CONTEXT_d-012b6894.md')">⬇️ 下载 Markdown (.md)</a>
@@ -483,6 +483,82 @@ Skipped:
 <li>已补齐同 <code>step_index</code> 重试草稿去重，增量抽取剩余全部 13 个历史对话（10 个分片，自动跳过已入库的 3 个会话与子代理轨迹），并按 <code>subagent_sharded</code> 架构派发了 <strong>5 个并行只读 <code>research</code> 子代理</strong> 分别提炼。</li>
 </ul>
 <p>正在等待 5 个分片回报，随后我汇总去重、<code>stage</code> 预检并连同你关于“知识背景边界”与“原有全局规则联动”的深度分析一并交付。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>两件事同步推进完毕：</p>
+<ul>
+<li>你批复的 <strong><code>trial_recent_3</code>（7 条）已正式原子落盘生效</strong>（只读快照 <code>20261120_053706_003_pre_apply_trial_recent_3</code>），且本轮已实测确认 Antigravity <strong>自动热加载</strong>了新插件；</li>
+<li>剩余全部 <strong>13 个历史对话（151 轮，10 个分片）</strong> 已通过 5 路并行 <code>research</code> 子代理完成分片提炼、去重与新旧冲突合并，现停在 <strong><code>coldstart_remaining_13</code> 人工审阅闸门</strong>（14 条提案，编译后常驻规则仅 <code>20 行 / 2,335 字节</code>），等你扫一眼确认即落盘。</li>
+</ul>
+<p>先用第一性原理正面回答你的两个核心疑惑，再给你看全量提炼清单。</p>
+<hr>
+<h2>一、回答你的两个深层思考</h2>
+<h3>1. 关于“学习背景既省去自我介绍，又怕串知识 / 误判我已掌握”</h3>
+<p>你抓得极准——这恰恰是长期记忆最容易翻车的地方：如果记忆里只笼统写“用户做微腔极化激元、非厄米哈密顿量、Zemax”，下次新开对话 AI 就会把你当熟练老手，直接跳过基础推导；如果全塞进常驻提示词，写工具代码时又会硬扯光学。</p>
+<p>这次我用<strong>双层结构</strong>直接把这两个坑堵死：</p>
+<ul>
+<li><strong>防误判已掌握 → 三态知识分界（<code>MEM-OPT-003</code>）</strong>：不再笼统罗列名词，而是显式拆成 <strong>【已有基础】/【刚入门在学】/【明确待攻克/暂挂】</strong> 三档，并在 Tier 1（<code>RULE-002</code>）里加一条铁律——参考背景只用于省去自我介绍与锚定例子，<strong>严禁把“刚入门/待攻克”预设成已精通</strong>。</li>
+<li><strong>防串知识 → 主题物理隔离</strong>：常驻 <code>AGENTS.md</code> 只保留极短的“学习护栏 + 6 行主题目录表”，具体的光学笔记、Zemax 进度、PPT 坑点、同济代理补丁各自关在独立的 <code>topics/&lt;slug&gt;.md</code> 文件里——<strong>聊光路才读光路，写插件只读平台档案，互不串味</strong>。</li>
+</ul>
+<h3>2. 关于原有全局规则 <code>core-reasoning-protocol.md</code>：会不会失效？要不要合并进去？</h3>
+<ul>
+<li><strong>先给实测结论（非猜测）</strong>：就在你发这条消息时，Antigravity 已经把我们的插件规则 <code>AGENTS.md</code> 与你原来的 <code>core-reasoning-protocol.md</code>（2.6 KB）、<code>deepseek-subagent.md</code>（1.4 KB）<strong>平行同时注入</strong>了系统上下文，三者合计仅约 <strong>6.3 KB</strong>（远低于 <code>20,000</code> tokens 总预算），<strong>绝不会覆盖或让原规则失效</strong>。</li>
+<li><strong>真正的潜在风险不是覆盖，而是“注意力稀释”</strong>：如果 Dream 常驻区以后堆了二三十条琐碎规则，就会抢走模型对原协议“先审前提、不编造、思想交锋”的注意力。所以我们严格克制 Tier 1 数量（全量 16 个对话提炼完也只提议 <strong>2 条</strong> 常驻规则）。</li>
+<li><strong>关于“要不要把原全局规则合并进 Dream 里统一管”——我的明确建议是：两者互补联动，但物理分离（“宪法 + 判例”模式），不要合并成同一个自动写盘文件。</strong></li>
+<li><strong>为什么不合并（放弃合并方案的理由）</strong>：</li>
+<li><code>core-reasoning-protocol.md</code> 是你的<strong>“元认知宪法”</strong>——管的是 AI “怎么思考”（反顺从、暴露推理、可证伪），就像你在 <code>222deb6b</code> 里自己总结的，它应当是一个极简、极稳的高层护栏，绝不该因为某几次对话波动被自动化流程改软或改漂；</li>
+<li>物理隔离保证<strong>零耦合风险</strong>：哪天你临时关闭或卸载 Dream 插件，你的核心思考协议依然纹丝不动。</li>
+<li><strong>怎么做到你想要的“互补 + 可调更新”？</strong></li>
+<li>Dream 写盘代码硬锁 <code>config/rules/</code> 只读，但每次 <code>/dream</code> 提炼都会<strong>参照原协议</strong>：不重复已写条文；跨会话沉淀出的学习/协作护栏（如本次 <code>RULE-002</code>）补在 Dream 的 Tier 1 与原协议形成合力；若未来发现原协议某条本身有摩擦，Dream 只在审阅报告中向你提出修订建议，由你亲手拍板改宪法。</li>
+</ul>
+<hr>
+<h2>二、本次全量提炼（<code>coldstart_remaining_13</code>）发生了什么？</h2>
+<ul>
+<li><strong>增量水位线与去重实测</strong>：已补齐同 <code>step_index</code> 重试分支剪枝；本次 <code>extract</code> 自动跳过已入库的 3 个会话（<code>unchanged_watermark</code>）、当前会话与 <code>da7dc122</code>（browser 子代理），干净抽取剩余 <strong>13 个会话 / 151 轮 / 10 个分片</strong>（每片 ≤ 17,875 字）。</li>
+<li><strong>刻意剔除与冲突覆写</strong>：</li>
+<li>主动过滤了 <code>eb9e76bb</code> 中阶段性私人/备考冲刺细节（不把短期状态固化进长期档案）；</li>
+<li>跨会话冲突自动裁决：用 11-19 实测的 <strong>SakuraCat 2.4.6（sing-box 增强模式、加密配置）</strong> 自动取代了 11-11 旧会话的 1.6.2 明文配置描述；</li>
+<li><strong>现学现卖的意外红利</strong>：从 <code>bb1e7994</code> 挖出的“Agent 命令子进程在回复结束即被 Windows Job Object 回收”教训，我已顺手反哺写进了 Dream 自己的 <code>SKILL.md</code>（明确 <code>review-serve</code> 由用户在独立终端拉起，离线 <code>review.html</code> 与聊天批复随时可用）。</li>
+</ul>
+<h3>14 条待审阅提案一览（已通过 <code>stage</code> 校验，0 密钥泄露 / 0 负反馈冲突）</h3>
+<p>| 编号 | 动作 / 层级 | 目标位置 | 提炼要点 |</p>
+<p>| :--- | :--- | :--- | :--- |</p>
+<p>| <strong><code>OP-001</code></strong> | <strong>晋升 Tier 1（常驻，人工必审）</strong> | <code>promoted_rules.md</code> → <code>AGENTS.md</code> | <strong><code>[RULE-002]</code> 学习主旋律与三态知识边界护栏</strong>：明确你为同济光学研一硕士；物理/工程讲解须实操直觉优先 + 不跳步完整公式衔接 + 适度轻量检验（反未教先测与全包代劳）；读背景必分三态、绝不预设已精通，也不把光学串味带入无关软件任务。 |</p>
+<p>| <strong><code>OP-002</code></strong> | 原地升级 Tier 3 | <code>optics-research-profile.md</code> | <strong>更新 <code>MEM-OPT-001</code></strong>：补全研一唯一硕士、导师偏放养的独立科研起步定位，防止高估基线。 |</p>
+<p>| <strong><code>OP-003</code></strong> | 原地升级 Tier 3 | <code>optics-research-profile.md</code> | <strong>更新 <code>MEM-OPT-002</code></strong>：补全实操光路与《工程光学》为主轴（勿上来堆玻恩/季家镕纯理论）、空间光路卡点偏好轻量交互模拟（HTML 滑块/三联图/ABCD 脚本）、保留适度认知摩擦闭环。 |</p>
+<p>| <strong><code>OP-004</code></strong> | 新增 Tier 3 | <code>optics-research-profile.md</code> | <strong><code>[MEM-OPT-003]</code> 三态知识边界档案</strong>：明确拆列【已有基础】（本科实验/几何直观/部分推导笔记/英语基线）、【刚入门在学】（两镜准直/工程光学前四章/Zemax 零基础/莫尔转角）、【明确待攻克/暂挂】（高斯成像易混点/像差衍射底层/COMSOL 白盒化/组会暂挂清单）。 |</p>
+<p>| <strong><code>OP-005</code></strong> | 新增 Tier 3 | <code>optics-research-profile.md</code> | <strong><code>[MEM-OPT-004]</code> Zemax 跨机协作流程</strong>：旧本机内存紧，Zemax 在另一台电脑练手（给菜单前先确认 Zemax 13 / OpticStudio 版本）；回传纯文本 <code>.zmx</code> + txt Prescription Data + 截图复核，首个目标锚定 <code>Desktop\Zemax\CONTEXT_Zemax.md</code>。 |</p>
+<p>| <strong><code>OP-006</code></strong> | 新增 Tier 3 | <code>local-windows-env.md</code> | <strong><code>[MEM-ENV-003]</code> 跨端 Skill 边界与同济云端 ZIP 红线</strong>：区分可迁移 Skill 与 DSH 专有绑定技能；升级 <code>ppt-master</code> 同步刷新 <code>upstream-lock.json</code>；同济云端 <code>.zip</code> 须在独立副本去 PNG/元数据、三段 semver、≤2 万字。 |</p>
+<p>| <strong><code>OP-007</code></strong> | 新增 Tier 3 | <code>local-windows-env.md</code> | <strong><code>[MEM-ENV-004]</code> 多端分工、校内算力与免 <code>.bak</code> 习惯</strong>：多端同步习惯、同济每周 ~1000 积分精兵双旗舰偏好、云端纯文本 vs 本地渲染/仿真分工、手工改普通配置免留 <code>.bak</code>（Dream 自身仍保留只读快照铁律）。 |</p>
+<p>| <strong><code>OP-008</code></strong> | 新增 Tier 3 | <code>antigravity-platform.md</code> | <strong><code>[MEM-AGY-001]</code> Antigravity 2.0 桌面版架构边界与 Job Object 回收</strong>：非 VS Code 版、禁解包 <code>app.asar</code>、禁删 Settings 里可见的 <code>sidecar</code> 载体项目、勿由 Agent 起临时 <code>localhost</code> 给会后访问。 |</p>
+<p>| <strong><code>OP-009</code></strong> | 新增 Tier 3 | <code>antigravity-platform.md</code> | <strong><code>[MEM-AGY-002]</code> 规则护栏定位、触发率与懒加载 MCP 经验</strong>：高层护栏反微操 SOP；<code>model_decision</code> 易 0 触发，高频协同需 <code>always_on</code> + 客观信号 + 内联 Schema 目录。 |</p>
+<p>| <strong><code>OP-010</code></strong> | 新增 Tier 3 | <code>antigravity-platform.md</code> | <strong><code>[MEM-AGY-003]</code> Claude Vertex 中文安全误杀与归档插件运维</strong>：确认报错为云端流式误杀（非本地配置或 Cockpit Tools 所致），中文长推导切 Gemini；空项目/归档用 <code>antigravity-archive-manager</code>。 |</p>
+<p>| <strong><code>OP-011</code></strong> | 新增 Tier 3 | <code>antigravity-share-workflow.md</code> | <strong><code>[MEM-SHR-001]</code> 零污染分享架构与个人主页保护</strong>：内部用 <code>@</code>/Deep Link，对外用 <code>antigravity-share-hub</code>，严禁触碰 <code>Documents\GitHub\yangllllc.github.io</code>。 |</p>
+<p>| <strong><code>OP-012</code></strong> | 新增 Tier 3 | <code>antigravity-share-workflow.md</code> | <strong><code>[MEM-SHR-002]</code> Gemini 抓取限制与 GitHub Pages 强缓存</strong>：HTML 约 4000 字截断、<code>.md</code> 触发 <code>MISC_ERROR</code> 须走下载附件、<code>max-age=600</code> 须 <code>curl -sI</code> 验源站并提示 <code>Ctrl+F5</code>。 |</p>
+<p>| <strong><code>OP-013</code></strong> | 新增 Tier 3 | <code>tongji-mcp-and-network.md</code> | <strong><code>[MEM-NET-001]</code> SakuraCat 2.4.6 现状与断网死锁避坑</strong>：sing-box 增强模式 <code>tun0</code>、加密配置、保持全局模式、<code>ProxyEnable=1</code> 时严禁直接强杀进程。 |</p>
+<p>| <strong><code>OP-014</code></strong> | 新增 Tier 3 | <code>tongji-mcp-and-network.md</code> | <strong><code>[MEM-NET-002]</code> 同济/DSH 403 穿透补丁与 MCP 维护红线</strong>：<code>dsh-better-sidebar</code> 物理网卡直连补丁排查入口；同济 vLLM 关思考须双传 <code>enable_thinking=false</code> 与 <code>thinking=false</code>；PS 5.1 脚本 BOM、stdin 防漏密、并发 &lt;180s、Codex <code>config.toml</code> 格式。 |</p>
+<h3>批复后 <code>AGENTS.md</code> 的最终形态（精确 Diff，仅 20 行 / 2,335 字节）</h3>
+<pre><code> ## Tier 1：已人工批复的晋升规则
+ - **[RULE-001] 本机未注册全局 python/ffmpeg/node PATH**：执行 Python、FFmpeg 或脚本前禁止假设系统 PATH 存在 python/ffmpeg/node，应按需读取 topics/local-windows-env.md 并显式调用已验证绝对路径。
++- **[RULE-002] 学习主旋律与三态知识边界护栏**：用户为同济大学光学研一硕士，学习与科研是高频主旋律；讲解物理/工程概念时先锚定实操物理直觉，再给不跳步的完整公式衔接与适度轻量检验（反未教先测与全包代劳）。参考个人背景档案时必须区分【已有基础 / 刚入门在学 / 明确待攻克】，严禁预设已精通，亦勿将光学背景串味带入无关软件工程任务。
+ 
+ ## Tier 2：按需读取的主题记忆索引
+ | 主题 Slug | 适用范围 | 标签 | 条目 |
+ | :--- | :--- | :--- | :---: |
+-| `topics/local-windows-env.md` | 本机可用 Python/FFmpeg 绝对路径及四端 Skill 同步约定 | windows, python, ffmpeg | 2 |
+-| `topics/optics-research-profile.md` | 微腔激子极化激元实验方向背景与讲解节奏/推导连续性偏好 | optics, physics, research | 2 |
++| `topics/local-windows-env.md` | 本机可用 Python/FFmpeg 绝对路径及四端 Skill 同步约定 | windows, python, ffmpeg | 4 |
++| `topics/optics-research-profile.md` | 微腔激子极化激元实验方向背景与讲解节奏/推导连续性偏好 | optics, physics, research | 4 |
++| `topics/antigravity-platform.md` | 桌面版架构边界、Windows Job Object 进程回收、规则触发率与安全误杀排查 | antigravity, plugins, rules | 3 |
+ | `topics/ppt-video-workflow.md` | 80/20 混合出片路线、Matplotlib/PPT 渲染实测坑点与同济模板隔离约定 | ppt, video, matplotlib | 2 |
++| `topics/tongji-mcp-and-network.md` | SakuraCat 2.4.6 增强模式、同济/DSH 403 物理网卡直连与 MCP 维护红线 | tongji, mcp, vpn | 2 |
++| `topics/antigravity-share-workflow.md` | antigravity-share-hub 同步、Gemini 抓取与缓存坑点 | share, github-pages, gemini | 2 |</code></pre>
+<p>完整 Diff 也可双击打开 <code>review.html</code> 或查看 <code>review_summary.md</code>。</p>
+<hr>
+<h2>三、请你最终拍板（两句即可收口）</h2>
+<ul>
+<li><strong>批复这 14 条提案</strong>：可以直接回“<strong>14 条全部同意</strong>”，或点名删改某一条（重点帮我核一眼 <strong><code>OP-004</code> 的三态知识边界</strong>——里面有没有哪项其实你已经吃透、或者哪项描述有偏差？），我收到后立刻原子 <code>apply</code> 完成全部 16 个历史会话的冷启动基线。</li>
+<li><strong>关于你原全局规则的边界确认</strong>：是否认同上述“<strong>保持 <code>core-reasoning-protocol.md</code> 为只读宪法 + Dream 作为互补活体记忆库（必要时仅给手工修订建议）</strong>”的双层配合方案？</li>
+</ul>
 </div></article>
 
     </section>
