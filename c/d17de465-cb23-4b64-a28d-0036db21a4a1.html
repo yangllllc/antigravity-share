@@ -245,7 +245,7 @@
     }
   </style>
 </head>
-<body data-conv-id="d17de465-cb23-4b64-a28d-0036db21a4a1" data-base-prefix="./" data-turn-count="2" data-update-time="2026-11-21 12:47" data-is-index="0">
+<body data-conv-id="d17de465-cb23-4b64-a28d-0036db21a4a1" data-base-prefix="./" data-turn-count="3" data-update-time="2026-11-21 12:59" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -259,7 +259,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1>先读 获取约束与断点，勿复述历史。我学校赠送一周1000积分，按...</h1>
-        <div class="sub-meta">会话 ID: d17de465-cb23-4b64-a28d-0036db21a4a1 | 轮次: 2 | 更新于: 2026-11-21 12:47</div>
+        <div class="sub-meta">会话 ID: d17de465-cb23-4b64-a28d-0036db21a4a1 | 轮次: 3 | 更新于: 2026-11-21 12:59</div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./d17de465-cb23-4b64-a28d-0036db21a4a1.md" download="先读_获取约束与断点，勿复述历史。我学校赠送一周-d17de465.md" onclick="return downloadMarkdown(event, './d17de465-cb23-4b64-a28d-0036db21a4a1.md', '先读_获取约束与断点，勿复述历史。我学校赠送一周-d17de465.md')">⬇️ 下载 Markdown (.md)</a>
@@ -274,6 +274,74 @@
 </ul>
 </div></article>
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成断点磁盘只读核验（与 <code>mcp2.md</code> 一致，另发现 Codex 实际生效规则文件 <code>AGENTS.override.md</code> 优先级高于 <code>AGENTS.md</code>）。模块 3 <code>Kimi-K3.1-Pro</code> 开思考压测（共 11 组，含单路各模式与双核并发含 Wave 2）已在后台运行，待实测完成后汇报数据并推进下一步。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><h3>1. 断点磁盘核验结论（与 <code>mcp2.md</code> 一致）</h3>
+<ul>
+<li><strong>双端脚本一致且未改码</strong>：<code>tongji_deepseek_mcp.ps1</code> 与 <code>D:/tongji_plugin/tongji_deepseek_mcp.ps1</code> 均为 <code>43126 B</code>、UTF-8 BOM、<code>SHA-256 = 6842ACE2888FDC75C0EB6B03D39BD172441862A459E2AFDAE2B56A8569FA16FB</code>、含 <code>mihomo</code> 黑名单、无 <code>test_forge</code>/<code>draft_struct</code>、Kimi 全模式 <code>Thinking=$false</code>。</li>
+<li><strong>DSH 与代理基线一致</strong>：两处 DSH 补丁均含 <code>10.67.0.251</code> 与 <code>mihomo</code>；<code>SDKDNS\adv.json</code> 含 <code>deepseek.com</code>/<code>qianwenaiapi.com</code>/<code>agi.tongji.edu.cn</code>；SakuraCat 配置为 <code>Rule</code> 且当前仅运行 SDKDNS（无双 TUN 冲突）。（顺注：<code>tongji-mcp-and-network.md</code> 的 <code>MEM-NET-001</code> 实已更新为 <code>Rule</code> 模式。）</li>
+<li><strong>发现 1 处高危隐藏项（影响模块 1）</strong>：Codex 目录下同时存在 <code>AGENTS.override.md</code>（v5.2.1，2026-11-18）与 <code>AGENTS.md</code>（v5.2.0）。Codex 中 <code>AGENTS.override.md</code> 优先级高于 <code>AGENTS.md</code>，且其正文把门槛定在“可直接验证的常规任务由主模型处理 / 存在具体疑点才按需调用”，若只改 <code>AGENTS.md</code> 将完全不生效。</li>
+</ul>
+<hr>
+<h3>2. 模块 3 只读实测：<code>Kimi-K3.1-Pro</code> 开思考压测（10 次开思考 + 1 次关思考对照）</h3>
+<p>走生产同源路径（<code>WLAN 100.73.220.134 -&gt; 10.67.0.251/252</code>，<code>curl.exe --disable --config -</code>），原始记录见 <code>bench_results.json</code>：</p>
+<p>| 用例 | 模式风格 / <code>max_tokens</code> | 思考参数 | 耗时 | 状态 / <code>finish</code> | 正文字数 | 思考 Tokens / 总输出 Tokens |</p>
+<p>| :--- | :--- | :--- | ---: | :--- | ---: | ---: |</p>
+<p>| <code>C0</code> | 基线对照 / 900 | <code>false</code> | <strong>13.52 s</strong> | <code>ok</code> / <code>stop</code> | 539 | 0 / 346（25.6 tok/s） |</p>
+<p>| <code>T1</code> | <code>deep_panel</code> / 2048 | 默认开 | 44.97 s | <code>ok</code> / <code>stop</code> | 374 | 1244 / 1516（33.7 tok/s） |</p>
+<p>| <code>T2</code> | <code>delegate</code> / 3072 | 默认开 | 74.71 s | <code>ok</code> / <code>stop</code> | 364 | 2595 / 2854（38.2 tok/s） |</p>
+<p>| <code>T3</code> | <code>delegate</code> / 4096 | 默认开 | 80.40 s | <code>ok</code> / <code>stop</code> | 578 | 2182 / 2558（31.8 tok/s） |</p>
+<p>| <code>T4</code> | <code>code_audit</code> / 2048 | 默认开 | 39.09 s | <code>ok</code> / <code>stop</code> | 536 | 1198 / 1469（37.6 tok/s） |</p>
+<p>| <code>T5</code> | <code>math_check</code> / 3072 | 默认开 | 75.15 s | <code>ok</code> / <code>stop</code> | 507 | 2647 / 2942（39.1 tok/s） |</p>
+<p>| <code>T6</code> | <code>test_forge</code> / 3072 | <code>true</code> | <strong>88.44 s</strong> | <strong><code>thinking_limit</code></strong> / <code>length</code> | <strong>0</strong> | <strong>3072 / 3072（空包）</strong> |</p>
+<p>| <code>T7</code> | <code>draft_struct</code> / 3072 | <code>true</code> | <strong>80.89 s</strong> | <strong><code>content_limit</code></strong> / <code>length</code> | 2307 | <strong>2070 / 3072（截断）</strong> |</p>
+<p>| <code>T8</code> | <code>delegate</code> / 4800 | 默认开 | 79.15 s | <code>ok</code> / <code>stop</code> | 585 | 1817 / 2204（27.8 tok/s） |</p>
+<p>| <code>T9</code> | 双核 <code>delegate</code> / 3500 (68s限) | 默认开 | <strong>68.05 s</strong> | <strong><code>curl timeout (28)</code></strong> | <strong>0</strong> | Kimi 超时；DS <code>ok</code>；Wave 2 仅 <strong>2.72 s</strong>，总 <strong>70.78 s</strong> |</p>
+<p>| <code>T10</code> | 双核 <code>delegate</code> / 4096 (68s限) | 默认开 | 36.32 s | <code>ok</code> / <code>stop</code> | 392 | 732 / 1007；DS <code>ok</code>；Wave 2 仅 <strong>1.21 s</strong>，总 <strong>37.54 s</strong> |</p>
+<p><strong>关键机理与失效边界（决定架构取舍）</strong>：</p>
+<ul>
+<li><strong>核心矛盾</strong>：<code>Kimi-K3.1-Pro</code> 开思考实测吞吐仅 <strong>27.8–39.1 tok/s</strong>，且 <code>reasoning_tokens</code> 占总输出的 <strong>73%–91%</strong>；10 次总体无异常率仅 <strong>7/10（70%）</strong>，耗时 p50 = <strong>74.93 s</strong>，观测 p95 = <strong>85.04 s</strong>（含 T9 在 68s 被截断）。</li>
+<li><strong>明确排除开思考的场景</strong>：</li>
+<li><strong><code>test_forge</code> / <code>draft_struct</code> 禁开思考</strong>：需输出 1100–1800 字（约 1500–2200 content tokens），叠加热思考后总输出逼近 4500–5500 tokens，按 30 tok/s 必撞 110–170s 超时或如 <code>T6</code>/<code>T7</code> 空包截断。</li>
+<li><strong>日常 4 模式（<code>fast_dual</code>/<code>code_audit</code>/<code>math_check</code>/<code>deep_panel</code>）禁开思考</strong>：现行 Wave 1 预算 28–52s，开思考后 <code>T4</code>(39s)/<code>T5</code>(75s) 全超现行预算，且破坏高频轻量体验（关思考仅 13.5s）。</li>
+<li><strong>唯一可灰度位点</strong>：<strong>仅 <code>delegate_to_deepseek</code></strong>（要求 ≤380 字短输出，~300 content tokens）。由于 Wave 2（关思考 DeepSeek 整理）实测仅 <strong>1.21–2.72 s</strong>，若将 <code>delegate_to_deepseek</code> 的 Wave 1 从 72s 放宽至 <strong>105s</strong>（Kimi <code>max_tokens=4800, max_time=100s</code>，DeepSeek <code>max_tokens=4800, max_time=95s</code>），Wave 2 留 28s，则 <code>T2/T3/T8/T10</code> 端到端仅 <strong>38–83 s</strong>（留 &gt;60s 安全裕量，仍受 145s 总预算与单路退化闸门托底）。</li>
+</ul>
+<hr>
+<h3>3. 删改前确认清单（待您拍板后一次性落盘 + 实测）</h3>
+<p>拟修改以下 <strong>5 个已有文件</strong>（不碰任何排雷墓碑，不删原有核心准则与 4 个既有模式）：</p>
+<ul>
+<li><strong>模块 1：双端规则升级 + 前置检查点</strong></li>
+<li><code>deepseek-subagent.md</code>（Antigravity）</li>
+<li><code>AGENTS.override.md</code> 与 <code>AGENTS.md</code>（Codex 双文件同步，<strong>完整保留</strong>原有“一、独立判断与工程验证”和“三、重度任务三阶段协议”）</li>
+<li><strong>改动要点</strong>：</li>
+<li>加入<strong>显式前置检查点</strong>（动手写非平凡代码/方案/推导/测试前先判一次：是否可卸载至 <code>test_forge</code> / <code>draft_struct</code> / <code>code_audit</code> / <code>math_check</code> / <code>deep_panel</code> / <code>delegate_to_deepseek</code>），去掉 Codex 中“可直接验证的常规任务免调”“仅存在具体疑点才按需调”这两条扼杀触发率的被动表述；</li>
+<li>补充 <code>test_forge</code> 与 <code>draft_struct</code>（专职重度窄卸载，默认 1600 字、上限 1800 字）的清晰触发条件；</li>
+<li>保持 <code>/dream</code>、纯闲聊、简单单行修改直出红线不变。</li>
+</ul>
+<ul>
+<li><strong>模块 2：MCP 脚本升级 <code>v5.2.1 -&gt; v5.3.0</code>（双端同步）</strong></li>
+<li>目标文件：<code>tongji_deepseek_mcp.ps1</code> 与 <code>D:/tongji_plugin/tongji_deepseek_mcp.ps1</code>（保持 UTF-8 BOM + 双端 SHA-256 一致）</li>
+<li>新增两个窄卸载模式到 <code>consult_tongji_brain.mode</code>（均为 2 路并发、零状态自包含、两路均 <code>Thinking=$false</code>）：</li>
+<li><strong><code>test_forge</code></strong>（默认 <code>output_limit=1600</code>，上限 <code>1800</code>，Wave 1 <code>48s</code>）：<code>DeepSeek 用例</code>（等价类/极端输入/数值边界/断言矩阵，<code>max_tokens=2000</code>） + <code>Kimi 对抗</code>（隐含契约破坏/竞态/编码与回归陷阱，<code>max_tokens=1200</code>）。</li>
+<li><strong><code>draft_struct</code></strong>（默认 <code>output_limit=1600</code>，上限 <code>1800</code>，Wave 1 <code>48s</code>）：<code>Kimi 骨架</code>（模块边界/接口契约/分步实施骨架，<code>max_tokens=1900</code>） + <code>DeepSeek 校验</code>（遗漏约束/失效路径/验收判据/最小回滚，<code>max_tokens=1200</code>）。</li>
+<li><strong>防截断硬约束同步修改</strong>：</li>
+<li>日常 4 模式严格硬钳制 <code>output_limit &lt;= 900</code>（默认 900）；仅 <code>test_forge</code>/<code>draft_struct</code> 允许 <code>300..1800</code>（默认 1600）。</li>
+<li>Wave 2 死守 <code>enable_thinking=$false</code> + <code>thinking=$false</code>；动态计算 Wave 2 <code>MaxTokens</code>（日常 <code>1600</code>，重度模式升至 <code>2800</code>）及 evidence 截断上限（<code>1400 -&gt; 1800</code>），且 <code>Complete-RpcWorkers</code> 单包上限由 <code>12000</code> 放宽至 <code>16000</code> 防 1800 字误判；<code>test_forge</code>/<code>draft_struct</code> 仅在两路合计超 <code>limit</code> 或任一路触顶时才触发 Wave 2。</li>
+<li><strong>模块 3 灰度选项（二选一，推荐 3A）</strong>：</li>
+<li><strong>方案 3A（推荐）</strong>：仅对 <code>delegate_to_deepseek</code> 的 <code>Kimi-K3.1-Pro</code> 灰度开启思考（<code>max_tokens=4800, max_time=100s</code>，Wave 1=<code>105s</code>，Wave 2=<code>28s</code>，总预算仍守 <code>145s</code>，超时/触顶自动退化 DeepSeek 单路 + Wave 2 兜底）；其余全部 6 个 <code>consult</code> 模式 Kimi 保持 <code>Thinking=$false</code>。</li>
+<li><strong>方案 3B（保守）</strong>：全模式维持 Kimi <code>Thinking=$false</code>，本次仅落地模块 1 + 模块 2。</li>
+</ul>
+<ul>
+<li><strong>确认落盘后的外部验证判据（自动执行并实测汇报）</strong>：</li>
+<li>PS 5.1 AST 语法解析 0 错；</li>
+<li>双端 <code>tongji_deepseek_mcp.ps1</code> 均含 UTF-8 BOM 且 SHA-256 完全一致；</li>
+<li>启动独立 MCP stdio 子进程 E2E 实测：<code>initialize</code>、<code>tools/list</code>、<code>fast_dual</code>（验 ≤900 字硬钳制）、<code>test_forge</code>（验 1600–1800 字无截断）、<code>draft_struct</code>（验 1600–1800 字无截断）、以及 <code>delegate_to_deepseek</code>（验双路并发 + Wave 2 端到端耗时 &lt; 145s 无截断），外加非法 <code>mode</code>/超限 <code>output_limit</code> 参数边界断言。</li>
+</ul>
+<hr>
+<h3>请确认（2 个边界拍板点）</h3>
+<ul>
+<li><strong>是否确认按上述清单修改这 5 个文件，且模块 3 选 <code>3A</code>（仅 <code>delegate_to_deepseek</code> 灰度开 Kimi 思考）还是 <code>3B</code>（全关）？</strong></li>
+<li><strong>关于状态卡与旧缓存</strong>：确认后是否同时将本次里程碑覆写同步到 <code>mcp.md</code>（<code>mcp2.md</code> 第 2 行标注了该覆写路径）？另请注意，改完脚本后 Antigravity 需重载 MCP 连接（刷新 <code>consult_tongji_brain.json</code> 的懒加载 schema）才会对新会话暴露 <code>test_forge</code>/<code>draft_struct</code>。</li>
+</ul>
 </div></article>
 
     </section>
