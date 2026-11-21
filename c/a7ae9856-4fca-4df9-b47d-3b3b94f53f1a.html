@@ -245,7 +245,7 @@
     }
   </style>
 </head>
-<body data-conv-id="a7ae9856-4fca-4df9-b47d-3b3b94f53f1a" data-base-prefix="./" data-turn-count="10" data-update-time="2026-11-20 20:19" data-is-index="0">
+<body data-conv-id="a7ae9856-4fca-4df9-b47d-3b3b94f53f1a" data-base-prefix="./" data-turn-count="12" data-update-time="2026-11-21 12:07" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -259,7 +259,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1>先读 @ mcp.md，勿复述历史。 1. 单次只读核验断点磁盘...</h1>
-        <div class="sub-meta">会话 ID: a7ae9856-4fca-4df9-b47d-3b3b94f53f1a | 轮次: 10 | 更新于: 2026-11-20 20:19</div>
+        <div class="sub-meta">会话 ID: a7ae9856-4fca-4df9-b47d-3b3b94f53f1a | 轮次: 12 | 更新于: 2026-11-21 12:07</div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./a7ae9856-4fca-4df9-b47d-3b3b94f53f1a.md" download="先读_@_mcp.md，勿复述历史。_1._单次-a7ae9856.md" onclick="return downloadMarkdown(event, './a7ae9856-4fca-4df9-b47d-3b3b94f53f1a.md', '先读_@_mcp.md，勿复述历史。_1._单次-a7ae9856.md')">⬇️ 下载 Markdown (.md)</a>
@@ -434,6 +434,66 @@
 <ul>
 <li>从日志看 <code>billion-context</code> 开启了自动更新（曾自动从 <code>0.1.211 -&gt; 0.1.212 -&gt; 0.1.213</code> 升级），下次它自动更新时会覆盖 <code>billion-context/dist/index.js</code>。你在 GUI 验证通过后，是否需要我再补一层<strong>抗更新覆盖的持久化机制</strong>（如在系统 <code>hosts</code> 写入 <code>10.67.0.251 agi.tongji.edu.cn</code>——代价是离校时打开同济网页控制台需注释掉该行；或者给 <code>dsh-better-sidebar</code> 加一段启动自检、发现 <code>billion-context</code> 被更新覆盖就自动重打补丁）？</li>
 </ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>我检查过了deepseek harness 确实已经能用了，然后我发现我刚刚使用sakuracat vpn的时候报错了，但是我关掉重启后又生效了，你帮我检查一下看看是什么问题，然后帮我把SDKDNS的规则也应用上，因为这个是我的备用vpn。然后我刚刚检查了一下我学校赠送的积分，发现才使用了30多，说明我们这个mcp使用的额度还是太少了呀，额度是很充裕的，我在想该怎么使用，才能既让主模型发挥效果，又能让mcp的副模型尽情使用，达到效果最大化，因为我自认为这周的用量其实还是蛮多的。我猜想可能是调度的太少了，分配到子智能体上去了。所以我想升级一下效果，你想想应该怎么做，然后告诉我原理，先整理出方案出来，我们讨论决定一下。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>太好了，DSH GUI 验证通过！你的三个问题我都用日志、源码和近 10 天调用遥测查清楚了，分三块向你汇报：</p>
+<hr>
+<h3>一、SakuraCat 刚刚为什么报错（已定位根因，非本地改动导致）</h3>
+<p>查了 <code>core.stderr.log</code> 与 <code>service.log</code>（<code>2026-11-21 11:24–11:34</code>）：</p>
+<ul>
+<li><strong>根因</strong>：<code>11:34</code> 时 SakuraCat 的香港/日本/台湾/新加坡优选节点全指向同一台中转入口 <code>114.37.234.224</code>（端口 <code>12243/12004/54453/26222</code>），全线报 <strong><code>dial tcp 114.37.234.224:xxxx: i/o timeout</code></strong>。这是<strong>上游中转服务器瞬时拥塞/断连</strong>，与昨天的 MCP/DSH 补丁无关。</li>
+<li><strong>为什么重启后生效</strong>：重启 <code>core</code> 后重新触发了 <code>urltest</code> 探活选路与 TCP 重建，中转入口刚好恢复或切到了可用入口。</li>
+<li><strong>小提醒</strong>：目前 <code>com.sakuracat.app-core-service</code>（PID <code>5912</code>）和 <code>SDKDNS.Native</code>（PID <code>4524</code>）两个系统服务都在后台常驻自动启动，平时两款 VPN 切换时确保<strong>不要同时开启两者的 TUN/增强模式</strong>，避免互抢默认路由。</li>
+</ul>
+<hr>
+<h3>二、备用 VPN（SDKDNS）规则已应用并实测通过</h3>
+<p>先核查了 SDKDNS 源码与运行态（<code>mihomo</code> 内核，TUN 网卡名 <strong><code>mihomo</code></strong> / IP <code>198.18.0.1/30</code>）：</p>
+<ul>
+<li><strong>关键机制发现</strong>：SDKDNS 的 <code>adv.json</code> 虽然开了 <code>globalMode: true</code>，但其源码底层<strong>始终跑 <code>mode: rule</code></strong>（只是省去 <code>GEOSITE,CN,DIRECT</code>），因此 <code>adv.json</code> 里的自定义规则在全局模式下<strong>依然优先生效</strong>；且其序列化器只认 <code>DOMAIN</code> 与 <code>DOMAIN-SUFFIX</code>（不支持 <code>IP-CIDR</code>）。</li>
+<li><strong>改前实测漏洞</strong>：在当前运行中的 SDKDNS 下，<code>platform.deepseek.com</code> 因不在 <code>adv.json</code> 中，走了海外节点直接撞 CloudFront <strong><code>HTTP 403</code></strong>。</li>
+</ul>
+<p><strong>已完成的两层落地与验证</strong>：</p>
+<ul>
+<li><strong>SDKDNS 自定义直连规则</strong>：在 <code>adv.json</code> 保留原有 3 条同济/教育网规则基础上，补齐 <code>DOMAIN-SUFFIX: deepseek.com -&gt; DIRECT</code> 与 <code>DOMAIN-SUFFIX: qianwenaiapi.com -&gt; DIRECT</code>（共 5 条，已校验 JSON 合法）。</li>
+<li><strong>生效提示</strong>：<code>SDKDNS.exe</code> 启动时把 <code>adv.json</code> 缓存进内存（<code>advCache</code>）；为防断掉当前对话我未强杀它，你方便时<strong>完全退出并重启一次 SDKDNS</strong> 即可加载新规则（重启前别在 SDKDNS 进阶设置页点保存，避免旧内存覆盖磁盘）。</li>
+<li><strong>三处网卡黑名单追加 <code>|mihomo</code></strong>：</li>
+<li><code>tongji_deepseek_mcp.ps1</code> 已更新并同步至 <code>D:\tongji_plugin\tongji_deepseek_mcp.ps1</code>（<code>UTF-8 BOM = True</code>，双端 <code>SHA-256</code> 一致：<code>6842ACE2888FDC75C0EB6B03D39BD172441862A459E2AFDAE2B56A8569FA16FB</code>，PS 语法错误 <code>0</code>）；</li>
+<li><code>dsh-better-sidebar/lib/index.js</code> 与 <code>billion-context/dist/index.js</code> 已同步追加 <code>|mihomo</code>（<code>node --check</code> 均为 <code>0</code>）。</li>
+<li><strong>当前 SDKDNS 运行态实测</strong>：<code>WLAN</code> 放行、<code>mihomo</code> 拦截；<code>10.67.0.251 + WLAN</code> 返回 <code>HTTP 200</code>；新脚本独立进程 E2E <code>fast_dual</code>（<code>5</code>）与刚跑的一次 <code>delegate_to_deepseek</code> 均实测通过。</li>
+</ul>
+<hr>
+<h3>三、为什么同济积分只用了 30 多？根因拆解 + 升级方案（待你讨论定案，暂未改 MCP 逻辑）</h3>
+<h4>1. 近 10 天真实遥测（先纠正一个直觉）</h4>
+<ul>
+<li><strong>并不是流量被分流到原生子智能体了</strong>：</li>
+<li><strong>Antigravity（近 10 天，23 个对话 / 93 轮用户输入）</strong>：<code>invoke_subagent</code> 仅 <strong>2 次</strong>，<code>swarm</code> <strong>0 次</strong>；同济 MCP 仅 <strong>12 次</strong>（<code>consult_tongji_brain</code> <strong>3 次</strong> + <code>delegate_to_deepseek</code> <strong>9 次</strong>），触发率只有 <strong>12.9%</strong>（14 个对话 0 调用）。</li>
+<li><strong>Codex（近 10 天，33 个会话）</strong>：同济 MCP 实际调用 = <strong>0 次</strong>！查了 <code>~/.codex/AGENTS.md</code>，它还停留在旧版 <code>v5.2.0</code> 的主观门槛描述（“中等复杂度”“每题一次为限”），实证对强模型几乎 0 触发。</li>
+<li><strong>单次消耗本身也被压得太瘦</strong>：</li>
+<li>看 <code>tongji_deepseek_mcp.ps1</code>：<strong><code>Kimi-K3.1-Pro</code> 在全部 5 种模式下全被锁死 <code>Thinking = $false</code></strong>（从未让 Kimi 深度思考）；<code>fast_dual</code> / <code>code_audit</code> / <code>deep_panel</code> 两路全关思考，单路 <code>max_tokens</code> 仅 <code>850~950</code>（实际回包两三百字 ≈ 400 tok）。10 天 12 次总计才两三万 token，自然只扣 30 多积分。</li>
+</ul>
+<h4>2. 核心设计原理：如何做到“主模型更强 + 同济双核充分吃活”，而不沦为“硬烧积分”？</h4>
+<p>刚才已用 <code>delegate_to_deepseek</code> 让同济双核自己红队审校了方案骨架，核心原则很清晰：</p>
+<ul>
+<li><strong>反模式（必须避开）</strong>：为了消耗积分而每轮硬塞 3 路固定并发、把回包拉到几千字、或拉回弱模型——这会直接触发【排雷墓碑】（稀释主模型上下文、引入自相矛盾噪音、叠加排队撞死 180s 硬超时）。</li>
+<li><strong>真正高 ROI 的互补分工</strong>：</li>
+<li><strong>主模型（Gemini / Codex）只干不可替代的事</strong>：读写代码库、跑命令实测、看图/多模态、掌握完整对话状态、做最终工程裁决；</li>
+<li><strong>同济双旗舰（Kimi-K3.1-Pro &#215; DeepSeek-V4.1-Flash）专干“高算力、低上下文、结果可被主模型外部证伪”的活</strong>：把原本仅在“写完才挑刺”的后置红队，升级为<strong>前置预研 + 专项苦力卸载 + 异构对抗终审</strong>。</li>
+</ul>
+<h4>3. 候选升级方案（三个模块化积木，供你拍板组合）</h4>
+<p>| 模块 | 具体改法 | 预期提升 | 边界与代价（吸收刚跑的红队意见） |</p>
+<p>| :--- | :--- | :--- | :--- |</p>
+<p>| <strong>模块 1：打通 Codex + 触发点前置（零风险、最高 ROI）</strong> | 1）把 <code>~/.codex/AGENTS.md</code> 升级同步为客观信号清单（救活 Codex 0/33）；&lt;br&gt;2）把 <code>deepseek-subagent.md</code> 从“事后终审”扩展到<strong>动手前/动手后固定检查点</strong>：写复杂代码/推导前先叫双核扫边界与隐含假设，写完非平凡补丁必做一次 <code>code_audit</code> | 无延迟风险，立刻把两个宿主的有效调度率拉升 3~4 倍 | 仅改规则，不碰 MCP 脚本 |</p>
+<p>| <strong>模块 2：新增“高可验证窄卸载”模式（从挑刺员升级为外置引擎）</strong> | 在 <code>consult_tongji_brain</code> 新增 2 个专职 <code>mode</code>（日常模式仍守 900 字，仅专职重度模式允许主模型按需传 <code>output_limit</code> 最高到 <strong>1600~1800 字符</strong>）：&lt;br&gt;• <strong><code>test_forge</code>（边界测试与反例生成）</strong>：给函数签名/物理公式/协议边界，双核独立输出极端测试用例、断言与反例清单；&lt;br&gt;• <strong><code>draft_struct</code>（推导/实验设计/文档骨架预研）</strong>：Kimi 搭机理逻辑与对照维度，DeepSeek 填定量公式/代码骨架，主模型拿来直接实测精修 | 让同济双核承担大量原本吃主模型输出额度和注意力的重体力活，且产出件全部可被主模型跑脚本/公式证伪 | 必须区分字符与 token；同时<strong>禁止固定三路盲目扇出</strong>，仅在问题可正交拆解（如 <code>code_audit</code> + <code>test_forge</code>）时由主模型按需并发 2 路 |</p>
+<p>| <strong>模块 3：定向解锁 Kimi-K3.1-Pro 思考（先压测再灰度）</strong> | 仅在 <strong><code>delegate_to_deepseek</code></strong> 与 <strong><code>math_check</code> / <code>deep_panel</code></strong> 对 <code>Kimi-K3.1-Pro</code> 灰度尝试开启 <code>Thinking = $true</code>（双核共用单次墙钟 deadline；Wave 2 死守 <code>enable_thinking=$false</code> + <code>thinking=$false</code> 不碰墓碑） | 真正发挥 Kimi 旗舰推理深度，不再只给浅层泛论 | <strong>红队强提醒</strong>：必须先做一轮 5~10 次实测压测，拿到 Kimi 开思考后的 p95 延迟与 <code>finish_reason==&#39;length&#39;</code> 截断率，确认端到端稳在 145s 内才正式启用，并保留超时即退化单路/回退 <code>Thinking=$false</code> 的闸门 |</p>
+<blockquote><strong>明确排除的方案</strong>：① 放弃“每轮默认固定 3 路扇出”（易制造噪音且总墙钟失控）；② 放弃“让 MCP 直接读本地大文件/大仓库”（破坏零状态自包含与隐私边界）；③ 绝不加回 <code>GLM</code>/<code>MiMo</code>/<code>Qwen</code>（【排雷墓碑】）。</blockquote>
+<hr>
+<h3>四、待你一起拍板的 2 个问题</h3>
+<ul>
+<li><strong>配额与主攻场景</strong>：你学校赠送的积分大概总量是多少、有有效期吗？你平时最想优先让同济双核帮你分担哪 1~2 类重活（例如：① 光学/微腔极化激元推导与论文精读拆解；② 编程时的代码审阅 + 边界测试生成；③ PPT/学术报告/方案的骨架起草与反方挑刺）？</li>
+<li><strong>落地节奏</strong>：你是倾向 <strong>稳妥组合（模块 1 + 模块 2 + 先给模块 3 跑一次 Kimi 开思考延时压测看数据再决定是否开）</strong>，还是先只改 <strong>模块 1（Antigravity + Codex 规则同步升级）</strong> 试跑几天？</li>
+</ul>
+<p>*(另外顺手提醒：SDKDNS 方便时重启一次，让刚写进 <code>adv.json</code> 的 <code>deepseek.com</code> 直连规则生效。)*</p>
 </div></article>
 
     </section>
