@@ -245,7 +245,7 @@
     }
   </style>
 </head>
-<body data-conv-id="61796df0-a9c9-4a39-a790-1db7f3cafbbe" data-base-prefix="./c/" data-turn-count="6" data-update-time="2026-11-20 20:34" data-is-index="1">
+<body data-conv-id="61796df0-a9c9-4a39-a790-1db7f3cafbbe" data-base-prefix="./c/" data-turn-count="8" data-update-time="2026-11-21 09:17" data-is-index="1">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="./index.html">Antigravity 对话分享</a></h2>
@@ -259,7 +259,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1>读取 接管约束与断点，勿复述。 1. 单次只读核验断点磁盘状态，...</h1>
-        <div class="sub-meta">会话 ID: 61796df0-a9c9-4a39-a790-1db7f3cafbbe | 轮次: 6 | 更新于: 2026-11-20 20:34</div>
+        <div class="sub-meta">会话 ID: 61796df0-a9c9-4a39-a790-1db7f3cafbbe | 轮次: 8 | 更新于: 2026-11-21 09:17</div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./c/61796df0-a9c9-4a39-a790-1db7f3cafbbe.md" download="读取_接管约束与断点，勿复述。_1._单次只读核-61796df0.md" onclick="return downloadMarkdown(event, './c/61796df0-a9c9-4a39-a790-1db7f3cafbbe.md', '读取_接管约束与断点，勿复述。_1._单次只读核-61796df0.md')">⬇️ 下载 Markdown (.md)</a>
@@ -439,6 +439,61 @@
 <li><strong>工程收口</strong>：审计 #10（<code>stage</code> 同批字节解析算基线、目录副作用与 <code>run_id</code>/<code>snapshot_id</code> 合法名校验）+ 半年容量预防（审阅页显示主题余量、晋升双来源校验与编译规则完整可见预检）。</li>
 <li><strong>现网实操</strong>：直接运行一次真实 <code>/dream</code> 增量验收，并顺手按 #6 与“六主题删减归并”微调主题正文粒度。</li>
 </ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>都继续把，一直到更新完毕</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>审计报告的<strong>全部工程改造项已 100% 落地验证完毕</strong>；现网记忆微调（审计 #6 + 六份主题精简归并）及 3 个增量会话的真实 <code>/dream</code> 抽取已完成 <code>stage</code>，按人工审阅铁律停在最终批复闸门，等你拍板后即执行原子 <code>apply</code> 彻底收官。</p>
+<hr>
+<h3>一、工程侧全部清零（#10 + #4 入口模板句 + 半年双预防）</h3>
+<ul>
+<li><strong>落地改动（全部纯 Python 3.12 stdlib）</strong>：</li>
+<li><strong><code>config_io.py</code></strong>（<code>48061049f4de4b44</code>）：新增 <code>validate_safe_id</code>（强校验单目录合法 <code>run_id</code>/<code>snapshot_id</code>，拒绝 <code>../</code>、路径分隔符与非法字符）、<code>ensure_dir_writable</code>（目录副作用统一过受保护路径检查）、<code>read_bytes_and_sha256</code>（单次读字节同步算哈希），并阻断 symlink 写入。</li>
+<li><strong><code>store.py</code></strong>（<code>d80c403de901b139</code>）：修复 <code>_fit_lines_within_budget</code> 在预算紧张时误弹出 Tier 1 规则且错报主题省略数的缺陷（<code>protected_prefix_len</code> + 精确 <code>agents_missing_rule_ids</code> / <code>agents_header_overflow</code> 预检）；更新 <code>AGENTS.md</code> 冲突裁决句明确“对应课题 <code>CONTEXT_*.md</code> 优先、主题只放跨项目经验或指针”；<code>compile_and_write_views</code> 与 <code>initialize_store</code> 统一接入 <code>ProcessLock</code>。</li>
+<li><strong><code>governance.py</code></strong>（<code>30fa2037a2b0028f</code>）：<code>stage_proposal</code> 接入 <code>ProcessLock</code> 并从同批字节解析文档与 <code>base_hashes</code>；新增 Tier 1 晋升证据硬门槛（普通晋升须 <code>≥2</code> 个不同会话来源，用户直定全局规则须显式 <code>user_direct_rule: true</code> + <code>rationale</code>）；支持 <code>action: &quot;archive_retired&quot;</code>（将退役条目归档至 <code>archive/topics/&lt;slug&gt;.md</code> 并纳入快照 v2 与可逆 <code>revert</code>）；改为按主题最终态验收 <code>topic_max_lines</code>；<code>force_rebase</code> 在收据留存 <code>drifted_files</code>。</li>
+<li><strong><code>extractor.py</code></strong>（<code>adedd1dd9baaa4f7</code>）、<strong><code>review_ui.py</code></strong>（<code>5f15a059a13645d7</code>）、<strong><code>SKILL.md</code></strong>（<code>b20df628ec37b43b</code>）：补全入口 <code>run_id</code> 校验，审阅页与摘要顶部展示各主题行数与剩余容量预警（余量 ≤25 行高亮）。</li>
+</ul>
+<ul>
+<li><strong>外部验证结果（全部通过）</strong>：</li>
+<li><strong>TDD 红→绿</strong>：新增 5 项测试（<code>TestFix10PathIsolationSameBytesAndSafeIds</code>、<code>TestFixCapacityAndPromotionPreventions</code>）改前 5/5 精准复现失败（含再现 6 主题误报省略 22 项）；改后双测试集 <strong>33/33 全绿（Exit 0）</strong>（<code>test_dream_e2e.py</code> 7/7 + <code>test_audit_remediation.py</code> 26/26）。</li>
+<li><strong>备份与对齐</strong>：旧生产代码备份于 <code>backup_manifest.json</code>；沙盒与生产 <strong>11/11 核心文件 SHA-256 精确一致</strong>，插件目录零残留。</li>
+<li><strong>生产隔离冒烟</strong>：独立 <code>TemporaryDirectory</code> 跑通生产 CLI <code>status</code> / <code>compile</code>（新版 <code>AGENTS.md</code> 20 行 / 2,390 B，<code>agents_missing_rule_ids: []</code>）与非法 <code>run_id</code> 拦截；真实生产 12 个受管文件 <strong>SHA-256 零漂移</strong>。</li>
+</ul>
+<hr>
+<h3>二、现网内容终收口：待审阅提案 <code>refine_and_sync_20261121</code>（14 条操作）</h3>
+<p>已按正规流程运行生产只读 <code>extract</code>（排除当前会话 <code>61796df0</code>，只读 SQLite 在线备份零报错，精准剔除 6 个子代理与 15 个未变老会话，捕获 3 个新/增量会话共 21 轮、2 个批次；实机还捕获到 <code>a7ae9856</code> 的同索引双事件并按 #8 安全保留为 <code>ORDER_UNCERTAIN</code>），并结合<strong>审计 #6 与六份主题删减归并</strong>生成冻结审阅包：</p>
+<ul>
+<li><strong><code>plan_hash</code></strong>：<code>a8dcac7246984f0c7ff3978504142a841314c17db0bd541585da746dd8b86120</code></li>
+<li><strong><code>manifest_hash</code></strong>：<code>3ac04fc2f39ddfc19ad8f0a6deac1ebbfc4080ef52a669b9e813bc7548732f26</code>（覆盖批次 <code>[1, 2]</code>）</li>
+<li><strong>预算与容量预检</strong>：<code>AGENTS.md</code> <strong><code>20/140 行，2,382/12,000 B</code></strong>（0 溢出，活跃规则 <code>RULE-001</code>/<code>RULE-002</code> 完整可见，同时将新版 <code>CONTEXT_*.md</code> 冲突裁决句编入生效）；6 个主题最终态均为 <code>23–40 / 150 行</code>（余量 <code>110–127 行</code>）；<code>blocked_by_feedback: []</code>。</li>
+<li><strong>审阅文件</strong>：<code>review_summary.md</code> | <code>review.html</code></li>
+</ul>
+<p>| <code>op_id</code> | 主题 / 条目 | 动作 | 核心变更要点（依据来源） |</p>
+<p>| :--- | :--- | :---: | :--- |</p>
+<p>| <code>OP-001</code> | <code>optics-research-profile</code> / <code>MEM-OPT-001</code> | <code>update</code> | 明确课题组方向仅为语境参考、绝不据此推断个人已掌握（审计 #6） |</p>
+<p>| <code>OP-002</code> | <code>optics-research-profile</code> / <code>MEM-OPT-003</code> | <code>update</code> | 移除英语分数噪声；笔记改为资料指针；前四章标为阅读范围；收紧可观察动作粒度（审计 #6） |</p>
+<p>| <code>OP-003</code> | <code>optics-research-profile</code> / <code>MEM-OPT-004</code> | <code>update</code> | 移除具体镜头参数里程碑，统一指向 <code>Desktop\Zemax\CONTEXT_Zemax.md</code>（审计 #4/#6） |</p>
+<p>| <code>OP-004</code> | <code>local-windows-env</code> / <code>MEM-ENV-002</code> | <code>update</code> | 合并跨端 Skill 同步边界、<code>upstream-lock.json</code> 与备份目录避坑（六主题归并） |</p>
+<p>| <code>OP-005</code> | <code>local-windows-env</code> / <code>MEM-ENV-003</code> | <code>update</code> | 精简为带日期（<code>2026-11-20</code>）的同济云端 ZIP 合规核查入口（六主题归并） |</p>
+<p>| <code>OP-006</code> | <code>local-windows-env</code> / <code>MEM-ENV-004</code> | <code>update</code> | 保留本地/云端分工与免 <code>.bak</code> 习惯，易变积分/模型名改为带日期核查口径（六主题归并） |</p>
+<p>| <code>OP-007</code> | <code>antigravity-platform</code> / <code>MEM-AGY-003</code> | <code>update</code> | 强调先核查底层结束原因，<code>19 拦 18</code> 标为带日期/模型的历史样本（六主题微调） |</p>
+<p>| <code>OP-008</code> | <code>antigravity-platform</code> / <code>MEM-ANTI-001</code> | <code>add</code> | 拆出归档运维插件，并沉淀 <code>6a890e8e</code> 实测 <code>agy-capsule</code> 底栏胶囊依赖 <code>--remote-debugging-port=0</code> 与 Cockpit Tools 切号绕过快捷方式坑点 |</p>
+<p>| <code>OP-009</code> | <code>antigravity-share-workflow</code> / <code>MEM-SHR-001</code> | <code>update</code> | 删除静态“已有未提交改动”断言，改为操作前现场 <code>git status</code> 核查（六主题微调） |</p>
+<p>| <code>OP-010</code> | <code>antigravity-share-workflow</code> / <code>MEM-SHR-002</code> | <code>update</code> | 为 4000 字截断、<code>text/markdown</code> 报错与 <code>max-age=600</code> 标明观察日期与 <code>curl.exe -sI</code> 核验（六主题微调） |</p>
+<p>| <code>OP-011</code> | <code>ppt-video-workflow</code> / <code>MEM-PPT-001</code> | <code>update</code> | 将 80/20 混合偏好限定回科普短视频/定量联动动画场景（六主题微调） |</p>
+<p>| <code>OP-012</code> | <code>ppt-video-workflow</code> / <code>MEM-PPT-002</code> | <code>update</code> | 将 <code>mod-16</code>/30fps 标为当时编码器组合的兼容预设并保留实机抽帧验收（六主题微调） |</p>
+<p>| <code>OP-013</code> | <code>tongji-mcp-and-network</code> / <code>MEM-NET-001</code> | <code>update</code> | <strong>重要纠偏</strong>：按 <code>a7ae9856</code> 你的明确确认，将旧 <code>Global</code> 约束更正为长期维持 <code>Rule</code> 模式与现场核查诊断顺序，保留 <code>ProxyEnable=1</code> 防断网死锁红线 |</p>
+<p>| <code>OP-014</code> | <code>tongji-mcp-and-network</code> / <code>MEM-NET-002</code> | <code>update</code> | <strong>重要补充</strong>：吸纳 <code>a7ae9856</code> 查清的 DSH <code>billion-context</code> 自动更新劫持公网 VIP 致 403/“密钥无效”根因，易变版本与超时指向脚本及 <code>deepseek-subagent.md</code> |</p>
+<hr>
+<h3>三、最后一步：请批复 <code>refine_and_sync_20261121</code></h3>
+<p><code>memory.md</code> 已同步更新至此断点。你可以任选以下一种方式批复（批复落盘后即彻底收官）：</p>
+<ul>
+<li><strong>对话直接批复（最快）</strong>：直接回复“<strong>14 条全部同意</strong>”，或点名调整/驳回某几条（例如 <code>OP-008</code> 自动编号为 <code>MEM-ANTI-001</code>，若你更希望它延续旧命名 <code>MEM-AGY-004</code> 可直接说一声我改号重 <code>stage</code>）。</li>
+<li><strong>离线 HTML 审阅</strong>：双击打开 <code>review.html</code> 逐条看 Diff 导出 <code>decisions.json</code>。</li>
+<li><strong>本地审阅台一键应用</strong>：在你的独立 PowerShell 终端运行：</li>
+</ul>
+<p>   ```powershell</p>
+<p>   powershell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;C:\Users\Administrator\.gemini\config\plugins\antigravity-dream-memory\dream.ps1&quot; review-serve --run-id refine_and_sync_20261121</p>
+<p>   ```</p>
 </div></article>
 
     </section>
