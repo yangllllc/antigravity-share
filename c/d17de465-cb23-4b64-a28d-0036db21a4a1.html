@@ -245,7 +245,7 @@
     }
   </style>
 </head>
-<body data-conv-id="d17de465-cb23-4b64-a28d-0036db21a4a1" data-base-prefix="./" data-turn-count="6" data-update-time="2026-11-21 13:25" data-is-index="0">
+<body data-conv-id="d17de465-cb23-4b64-a28d-0036db21a4a1" data-base-prefix="./" data-turn-count="7" data-update-time="2026-11-21 13:28" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -259,7 +259,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1>先读 获取约束与断点，勿复述历史。我学校赠送一周1000积分，按...</h1>
-        <div class="sub-meta">会话 ID: d17de465-cb23-4b64-a28d-0036db21a4a1 | 轮次: 6 | 更新于: 2026-11-21 13:25</div>
+        <div class="sub-meta">会话 ID: d17de465-cb23-4b64-a28d-0036db21a4a1 | 轮次: 7 | 更新于: 2026-11-21 13:28</div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./d17de465-cb23-4b64-a28d-0036db21a4a1.md" download="先读_获取约束与断点，勿复述历史。我学校赠送一周-d17de465.md" onclick="return downloadMarkdown(event, './d17de465-cb23-4b64-a28d-0036db21a4a1.md', '先读_获取约束与断点，勿复述历史。我学校赠送一周-d17de465.md')">⬇️ 下载 Markdown (.md)</a>
@@ -349,6 +349,50 @@
 <p>5 个目标文件已完成落盘并双端同步（UTF-8 BOM、双端 SHA-256 一致、PS 5.1 AST 0 错、<code>initialize</code>/<code>tools/list</code>/3 项参数负例 <code>-32602</code> 已通过）。现正在后台执行 4 组独立 MCP stdio 真实 E2E（<code>fast_dual</code> 硬钳制、<code>test_forge</code>、<code>draft_struct</code>、<code>delegate_to_deepseek</code> 灰度 3A），实测完成后立即覆写 <code>mcp.md</code> 并统一汇报。</p>
 </div></article>
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>首轮 E2E 中 <code>fast_dual</code>（12.78s，硬钳 754 字，无截断）与 <code>delegate_to_deepseek</code> 灰度 3A（59.77s，553 字，无截断）均一次通过；但 <code>test_forge</code>/<code>draft_struct</code> 因 Markdown 表格与代码块拉高字符膨胀比（原 Wave 2 目标比 <code>0.85</code> 偏高）触发了尾部 <code>…（已截断）</code>。已收紧两模式为紧凑编号格式并将重度模式整理目标比下调至 <code>0.68</code>、完成双端同步（<code>SHA256 = 3097E15C…7EDC92</code>，BOM/AST 均过），现正在后台重跑全量 E2E 复测，完成后汇报并同步覆写 <code>mcp.md</code>。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><h3>1. 关于您取消的 Task 与 <code>mcp.md</code> 覆写说明</h3>
+<ul>
+<li><strong>取消的 <code>task-29</code> 无任何影响</strong>：经核查，您停止的是前期排错时因双层 PowerShell <code>$s</code> 变量展开写错而空挂的只读诊断命令（零写操作，与已完成的 <code>task-37</code> 压测及本轮 E2E 无关），当前无残留后台任务，无需弥补。</li>
+<li><strong>覆写 <code>mcp.md</code> 不影响实际运行</strong>：它只是跨对话延续工程进度的纯文档状态卡（不参与 MCP/DSH/Codex 运行）。已将本次 <code>v5.3.0</code> 完整落盘结果、新 SHA-256 与后续观察项同步覆写至 <code>mcp.md</code>，未删除 <code>mcp2.md</code>。</li>
+</ul>
+<hr>
+<h3>2. 已落盘资产清单（<code>v5.3.0</code> 稳妥组合 + 模块 3A）</h3>
+<ul>
+<li><strong>双端 MCP 脚本（模块 2 + 模块 3A）</strong>：</li>
+<li><code>tongji_deepseek_mcp.ps1</code> 与 <code>D:/tongji_plugin/tongji_deepseek_mcp.ps1</code></li>
+<li>新增 <code>test_forge</code>（边界测试矩阵与对抗断言）与 <code>draft_struct</code>（结构化技术方案骨架与回滚校验），默认 <code>output_limit=1600</code>、上限 <code>1800</code>，两路均 <code>Thinking=$false</code>；日常 4 模式仍严格硬钳制 <code>≤900</code>；Wave 2 死守 <code>enable_thinking=$false</code> + <code>thinking=$false</code> 并按模式定制整合提示词与动态 <code>MaxTokens</code>（重度模式至 <code>2880</code>），单包上限放宽至 <code>16000</code>。</li>
+<li><strong>模块 3A 灰度</strong>：仅对 <code>delegate_to_deepseek</code> 的 <code>Kimi-K3.1-Pro</code> 开启思考（<code>max_tokens=4800, max_time=100s</code>，Wave 1=<code>105s</code>，Wave 2=<code>28s</code>，总预算守 <code>145s</code>，保留超时/触顶单路退化与 Wave 2 交叉复核闸门）。</li>
+<li><strong>三处规则同步（模块 1）</strong>：</li>
+<li>Antigravity：<code>deepseek-subagent.md</code></li>
+<li>Codex 双文件同步：<code>AGENTS.override.md</code> 与 <code>AGENTS.md</code>（完整保留反迎合铁律与三阶段协议，移除原 <code>AGENTS.override.md</code> 中扼杀触发率的被动表述，补齐动手前前置检查点与 6 模式路由）。</li>
+</ul>
+<hr>
+<h3>3. 【外部验证判据】实测汇报</h3>
+<h4>A. 静态、编码与红线核验</h4>
+<p>| 验证项 | 实测结果 | 判据状态 |</p>
+<p>| :--- | :--- | :---: |</p>
+<p>| 双端 BOM 与 SHA-256 | 主/备均 <code>47885 B</code>、<code>UTF-8 BOM = True</code>、<code>SHA-256 = 3097E15CBFFEF4E4BE39F9EFAFAF11AEFDEB13BB30E1E2064D77A181897EDC92</code> | 通过 |</p>
+<p>| PowerShell 5.1 语法 | 主/备 AST <code>ParseErrors = 0</code>（DSH 两处 JS 本轮未触碰） | 通过 |</p>
+<p>| 排雷墓碑红线 | 无 <code>GLM</code>/<code>MiMo</code>/<code>Qwen</code>；保留 <code>sing-tun</code>/<code>mihomo</code>/<code>172.19.*</code>；Wave 2 硬编码 <code>$false</code> | 通过 |</p>
+<p>| Codex 双规则一致性 | <code>AGENTS.override.md</code> 与 <code>AGENTS.md</code> <code>SHA-256 = C3E4E4ED803C461E0DB0F950ABE376826C33A031763D369BCE48B9B48C18C64A</code> 完全一致 | 通过 |</p>
+<h4>B. 独立 MCP stdio 子进程 E2E 实测（原始记录：<code>e2e_results.json</code>）</h4>
+<ul>
+<li><strong>协议与边界断言</strong>：<code>initialize</code> 返回 <code>version = 5.3.0</code>（561 ms）；<code>tools/list</code> 暴露全部 6 模式且 <code>output_limit.maximum = 1800</code>；非法 <code>mode</code>、<code>output_limit = 250</code>、<code>output_limit = 1801</code> 均毫秒级返回 <code>-32602</code>；服务端退出码 <code>0</code>、<code>stderr = 0 B</code>。</li>
+<li><strong>首轮调优说明</strong>：首轮 E2E 中 <code>test_forge</code>/<code>draft_struct</code> 因 Markdown 表格与缩进代码块导致总字符膨胀（原重度目标比 <code>0.85</code> 偏高）触发 <code>…（已截断）</code>。随后将两模式输出约束改为紧凑编号条目、重度整理目标比下调至 <code>0.68</code>，同步双端后复测全部收敛：</li>
+</ul>
+<p>| E2E 用例 | 入参特征 | 实测耗时 | 回包长度 | 截断 / 报错 | 验收结论 |</p>
+<p>| :--- | :--- | ---: | ---: | :---: | :--- |</p>
+<p>| <code>fast_dual</code> | 故意传 <code>output_limit=1600</code> | <code>12.78–13.08 s</code> | <code>754–884 字</code>（<code>≤900</code>） | <code>isError=False</code> | 日常模式 900 字硬钳制生效（第二轮 884 字处安全句末兜底） |</p>
+<p>| <code>test_forge</code> | 默认 <code>output_limit=1600</code> | <strong><code>7.53 s</code></strong> | <code>686 字</code>（<code>≤1600</code>） | 无截断 / 无错 | 覆盖等价类、代理对边界、CRLF/ZWJ 对抗点，两路互补直出 |</p>
+<p>| <code>draft_struct</code> | 显式 <code>output_limit=1750</code> | <strong><code>16.68 s</code></strong> | <code>1115 字</code>（<code>≤1750</code>） | 无截断 / 无错 | 完整覆盖模块边界、契约、NaN 防线、量化验收与回滚策略 |</p>
+<p>| <code>delegate_to_deepseek</code> (3A) | 双旗舰思考 + Wave 2 关思考 | <strong><code>59.77 s</code> / <code>74.93 s</code></strong> | <code>553 字</code> / <code>740 字</code>（<code>≤1100</code>） | 无截断 / 无错 | 两轮均 <code>&lt;&lt; 145 s</code>，Kimi 思考精准拆穿初稿 3 处物理误判，退化复核闸门实测生效 |</p>
+<hr>
+<h3>4. 下一步与 2 个边界追问</h3>
+<ul>
+<li><strong>即时生效动作</strong>：请<strong>重载 Antigravity 的 MCP 服务（或重启一次 Antigravity）</strong>，以刷新懒加载缓存 <code>consult_tongji_brain.json</code> 与 <code>instructions.md</code>（刷新后新会话才可看到 <code>test_forge</code>/<code>draft_struct</code> 枚举；Codex 下次新对话将自动读取新 <code>AGENTS.override.md</code>）。</li>
+<li><strong>边界追问 1（DeepSeek 思考 token 裕量）</strong>：两轮 <code>delegate_to_deepseek</code> 3A 实测中，Kimi 思考均稳健完成，反倒是 <code>DeepSeek-V4.1-Flash</code> 在复杂光学推导上两次触碰了默认 <code>4800</code> 的 <code>thinking limit</code>（好在 Wave 2 关思考交叉复核无缝兜底且总耗时仅 60–75s）。后续试跑 1 周后，若您常见物理推导触发“探针触顶”，是否考虑把 <code>delegate_to_deepseek</code> 的默认 <code>max_tokens</code> 从 <code>4800</code> 上调至脚本允许上限 <code>5500</code>？</li>
+<li><strong>边界追问 2（旧状态卡留存）</strong>：<code>mcp2.md</code> 的内容现已完整并入 <code>mcp.md</code>，后续继续推进时统一以 <code>mcp.md</code> 为单一状态锚点即可；是否保留 <code>mcp2.md</code> 作备份还是由您自行清理？</li>
+</ul>
 </div></article>
 
     </section>
