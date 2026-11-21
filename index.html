@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex">
-  <title>我在刷视频的时候看到了这个skills 汇总，虽然他是根据dee... - Antigravity Share</title>
+  <title>先读取获取约束与断点，不要复述历史。 1. 单次只读核验断点磁盘... - Antigravity Share</title>
   <style>
     :root {
       --bg-main: #131314;
@@ -245,7 +245,7 @@
     }
   </style>
 </head>
-<body data-conv-id="a9fcad14-82a0-4ab9-9ac6-335129a7c9f7" data-base-prefix="./c/" data-turn-count="6" data-update-time="2026-11-21 20:29" data-is-index="1">
+<body data-conv-id="5293b992-cd65-4c04-b2cb-f01443b59db6" data-base-prefix="./c/" data-turn-count="2" data-update-time="2026-11-21 23:14" data-is-index="1">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="./index.html">Antigravity 对话分享</a></h2>
@@ -258,213 +258,23 @@
   <main id="main">
     <header class="main-header">
       <div style="min-width:0;">
-        <h1>我在刷视频的时候看到了这个skills 汇总，虽然他是根据dee...</h1>
-        <div class="sub-meta">会话 ID: a9fcad14-82a0-4ab9-9ac6-335129a7c9f7 | 轮次: 6 | 更新于: 2026-11-21 20:29</div>
+        <h1>先读取获取约束与断点，不要复述历史。 1. 单次只读核验断点磁盘...</h1>
+        <div class="sub-meta">会话 ID: 5293b992-cd65-4c04-b2cb-f01443b59db6 | 轮次: 2 | 更新于: 2026-11-21 23:14</div>
       </div>
       <div class="header-actions">
-        <a class="btn" id="downloadMdBtn" href="./c/a9fcad14-82a0-4ab9-9ac6-335129a7c9f7.md" download="我在刷视频的时候看到了这个skills_汇总，虽-a9fcad14.md" onclick="return downloadMarkdown(event, './c/a9fcad14-82a0-4ab9-9ac6-335129a7c9f7.md', '我在刷视频的时候看到了这个skills_汇总，虽-a9fcad14.md')">⬇️ 下载 Markdown (.md)</a>
-        <button class="btn" id="copyBtn" type="button" onclick="copyCanonicalUrl('./c/a9fcad14-82a0-4ab9-9ac6-335129a7c9f7.html', 'copyBtn', '已复制直链')">复制对话直链</button>
+        <a class="btn" id="downloadMdBtn" href="./c/5293b992-cd65-4c04-b2cb-f01443b59db6.md" download="先读取获取约束与断点，不要复述历史。_1._单次-5293b992.md" onclick="return downloadMarkdown(event, './c/5293b992-cd65-4c04-b2cb-f01443b59db6.md', '先读取获取约束与断点，不要复述历史。_1._单次-5293b992.md')">⬇️ 下载 Markdown (.md)</a>
+        <button class="btn" id="copyBtn" type="button" onclick="copyCanonicalUrl('./c/5293b992-cd65-4c04-b2cb-f01443b59db6.html', 'copyBtn', '已复制直链')">复制对话直链</button>
       </div>
     </header>
     <section class="chat-canvas" aria-label="Conversation Content">
-      <article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>https://github.com/aicodeking/deepseek-stack 我在刷视频的时候看到了这个skills 汇总，虽然他是根据deepseek来生成的，但是我觉得它为了防止deepseek跑偏的思路还是值得学习的，你先检查一遍他的思路，讲一讲每个技能都是什么原理，然后汇总一下，根据现有的情况讲一讲那些思路对我们以后的使用能产生帮助。然后是要不要根据他的思路自己制作一个skill，还有该怎么制作这个我们可以讨论一下。然后是我想了想skill的使用其实还有有他的限制，我们已经安装了一些skil，但是使用的时候可能并没有真正用到，即使他们可能是有用的，当然这一块我并不了解，我想你可以给我弥补一些知识让我清楚的明白skill的运行原理，然后对我的问题进行回答。我就在想要不要将一些skill合并或者说融入到全局记忆中，或者将全局记忆中的一些固定片段取出制作成skill用来出发特定场景的使用。相对来说，并不怎么缺额度，所以更好的使用效果和使用方法才是我真正追求的。这是我的一时兴起，不过我想知道这样子延续下去会怎么样</p>
-</div></article>
-<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p><strong>一句话点明核心矛盾</strong>：额度充裕只消除了“Token 账单和窗口截断”的顾虑，但<strong>消除不了模型注意力稀释与路由漏触发</strong>；决定 Agent 效果上限的不是“把多少经验塞进上下文”，而是<strong>触发确定性</strong>与<strong>注意力信噪比</strong>之间的平衡。</p>
-<p>我已将 <code>aicodeking/deepseek-stack</code> 仓库的全部 29 个技能逐一读完源码，连同防跑偏架构图和本机现有配置（规则、记忆、53 条加载中的 Skill）的实测对照表整理为完整报告：<code>deepseek-stack-analysis.md</code>。下面直接结合机制原理与你的架构设想展开拆解和讨论。</p>
-<hr>
-<h3>一、<code>deepseek-stack</code> 真正值得我们学的 5 个思路（精炼提炼）</h3>
-<p>这个仓库名义上是给 DeepSeek 当拐杖，但剥离掉 7 个团队 GitHub PR 流水线技能和已被我们覆盖的部分（如 <code>ds-jury</code> 已被同济双核 MCP 覆盖、<code>ds-unslop</code> 已有更强的中文 <code>lieflat-less-ai-tone</code>、<code>ds-swarm</code> 已有原生 <code>swarm</code>）后，它有 <strong>5 个元设计对强主力模型同样极具杀伤力</strong>：</p>
+      <article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>先读取@[c:\Users\Administrator\Desktop\memory\mem2.md] 获取约束与断点，不要复述历史。</p>
 <ul>
-<li><strong>双次失败即停的前提爆破（<code>ds-unstick</code>）</strong>：同一个报错修了两次还复现，<strong>禁止做第 3 次微调</strong>。必须停手写出前两次共享的隐含前提（比如“我改的这个文件真的在运行吗”“环境变量真的生效了吗”），用最便宜的探针做 Yes/No 实测证伪，必要时 <code>git checkout/stash</code> 清现场换机制。强模型在环境坑、缓存坑里一样会钻牛角尖，这是全库最值钱的机制。</li>
-<li><strong>外部真值 5 级举证阶梯（<code>ds-blast-radius</code> + <code>ds-mode</code>）</strong>：把“我觉得没问题”拆成 L1 口述 → L2 指明 <code>file:line</code> → L3 路径推演 → L4 写小脚本运行反证 → L5 实机复现，并要求结论显式区分 <code>measured / inferred / guessed</code>。</li>
-<li><strong>不缺额度时的终极增效器——盲评与局部嫁接（<code>ds-best-of-n</code>）</strong>：对高价值任务（关键算法、复杂重构、重要 UI），用隐藏评分细则跑 3–5 个隔离工作区（Antigravity 原生支持 <code>swarm(workspace:&quot;share&quot;, n:3)</code>），先运行淘汰不能跑的，选架构最好的作底座，<strong>只把其余方案里的单个亮点函数或边界测试局部嫁接进来</strong>，绝不整文件合并。你既然不缺额度，这是把算力直接兑换为质量上限的最稳方法。</li>
-<li><strong>把确定性轮询封装为黑盒脚本 + 退出码（<code>ds-watch-pr</code>）</strong>：全库唯一带脚本的技能，用 <code>watch_pr.py</code> 输出精简变化行与 <code>0/1/2</code> 退出码，不让 LLM 自己写循环、读大段原始 JSON 污染上下文。</li>
-<li><strong>反规则膨胀的五级硬固化（<code>ds-lessons</code>）</strong>：核心理念 *&quot;An instruction an agent can skip is a wish&quot;*——重复 ≥2 次的错误按 <strong>架构结构 &gt; 类型约束 &gt; Lint/CI/Hook &gt; 行为测试 &gt; 文字规则</strong> 固化，且<strong>一旦硬约束生效，删掉对应的自然语言规则</strong>。这恰恰和我们接下来要讨论的“规则/记忆膨胀”形成正面呼应。</li>
-</ul>
-<hr>
-<h3>二、先补齐底层知识：Skill 到底是怎么运行的？为什么装了经常没用到？</h3>
-<p>结合 Antigravity 官方文档（<code>skills.md</code>、<code>rules.md</code>、<code>hooks.md</code>、<code>customization-discovery.md</code>）与你本机的实测配置，Agent 定制系统实际上是<strong>四层完全不同的加载机制</strong>：</p>
-<p>| 机制 | 启动/每轮默认注入什么？ | 何时生效？ | 触发可靠性 |</p>
-<p>| :--- | :--- | :--- | :--- |</p>
-<p>| <strong>Rules (<code>always_on</code>)</strong> | <strong>全文直接注入系统提示词</strong>（单文件上限 24 KB，总预算 20,000 token，超额自动把最大文件降级成路径指针） | 每一轮都强制在场 | 最高（但在规则过多时会出现中段注意力稀释） |</p>
-<p>| <strong>Rules (<code>glob</code> / <code>model_decision</code> / <code>manual</code>)</strong> | <code>glob</code> 按文件后缀匹配注入；<code>model_decision</code> 只注入路径+一句话描述；<code>manual</code> 仅在用户 <code>@</code> 提及时注入 | 匹配路径 / 模型自己觉得该读 / 用户显式 <code>@</code> | <code>glob</code>、<code>manual</code> 高；<code>model_decision</code> 低 |</p>
-<p>| <strong>Skills (<code>SKILL.md</code>)</strong> | <strong>只注入 <code>name</code> + <code>description</code> + 文件路径</strong>（即渐进式披露 Progressive Disclosure），<strong>正文和脚本默认完全不加载</strong> | 两种入口：① 模型扫一眼 <code>&lt;skills&gt;</code> 列表自己决定调 <code>read_file</code>；② 用户手动输入 <code>/skill-name</code> | <strong>自动触发本质等同于 <code>model_decision</code>（偏低）</strong>；手动 <code>/skill-name</code> 为 100% |</p>
-<p>| <strong>Dream 分层记忆</strong> | Tier 1 索引表通过 <code>always_on</code> 规则常驻（≤140 行）；Tier 2 <code>topics/*.md</code> 按需 <code>read_file</code> | 遇索引命中领域时按需读取 | 中高（因为索引表极短、条目清晰） |</p>
-<p>| <strong>Hooks (<code>hooks.json</code>)</strong> | 不占系统提示词；由宿主在 <code>SessionStart</code> / <code>PreToolUse</code> / <code>PostToolUse</code> / <code>PreInvocation</code> / <code>PostInvocation</code> / <code>Stop</code> <strong>强制跑外部脚本</strong> | 宿主生命周期节点确定性拦截/注入/阻止提前停止 | <strong>100% 确定性（绕过模型自觉）</strong> |</p>
-<h4>为什么你装了一堆 Skill，干活时却常常根本没触发？</h4>
-<p>有 3 个结构性原因，而且在你本机已经拿到了直接实证：</p>
-<ul>
-<li><strong>强模型的“自信跳过效应”（本机已有实证）</strong>：</li>
-</ul>
-<p>   你本机 Dream 记忆 <code>antigravity-platform.md</code> 的 <code>[MEM-AGY-002]</code> 已经用历史会话日志验证过：<strong>面对 <code>model_decision</code> 或主观触发门槛，强主模型几乎 0 触发</strong>。原因很直观——强模型看到任务会觉得“这事我直接就能做”，懒得多花一轮 <code>read_file</code> 去查外部 SOP。而 Skill 的自动发现机制，底层跟 <code>model_decision</code> 完全一回事。</p>
-<ul>
-<li><strong>本机 <code>&lt;skills&gt;</code> 列表严重拥挤且信噪比失真（刚实测数据）</strong>：</li>
-</ul>
-<p>   此刻注入你这轮对话系统提示词 <code>&lt;skills&gt;</code> 里的条目已经多达 <strong>53 条</strong>（37 个全局自动发现 + 5 个插件自动发现 + 11 个内置）。而且存在两个真实的“配置债”：</p>
-<ul>
-<li><strong>描述严重膨胀</strong>：仅全局 39 个 Skill 的 YAML frontmatter 字符数合计就达到 <strong>29,398 字符</strong>（中位数 735 字符），尤其是 <code>wps-office-suite</code> 单条描述就塞了 <strong>2,093 字符</strong>的 v5.1–v5.4 更新日志，<code>experimental-design</code> / <code>statistical-power</code> / <code>citation-management</code> / <code>paper-lookup</code> 等都在 1,200 字符上下。模型每轮还没干活，先要在近 3 万字符的技能清单里“大海捞针”。</li>
-<li><strong>重复挂载</strong>：<code>domain-modeling</code>、<code>grilling</code>、<code>share-conversation</code> 三个 Skill 同时存在于 <code>~/.gemini/config/skills/</code> 和插件目录里，此刻在系统提示词里真实出现了<strong>两次</strong>（<code>grill-me</code> 和 <code>grill-with-docs</code> 也两处重复，只是带了 <code>disable-model-invocation: true</code> 未进自动清单）。</li>
-<li><strong>防跑偏类 Skill 存在“元认知悖论”（合理推断，待实测验证）</strong>：</li>
-</ul>
-<p>   工具类 Skill（如“帮我做一个 PPT”）语义信号非常显性，模型容易想起去读 <code>ppt-master</code>；但“防跑偏 / 排错卡死”类 Skill 往往在模型已经陷入错误假设、上下文变长时才需要，此时恰恰是模型最不容易主动跳出来查 <code>&lt;skills&gt;</code> 的时刻。</p>
-<hr>
-<h3>三、核心架构推演：“不缺额度时，Skill 并入全局记忆/规则 vs 规则抽成 Skill，延续下去会怎样？”</h3>
-<p>这是你提得最有洞察力的问题。我们先推演两条极端路线延续半年后的真实终局，就能看清为什么<strong>“不缺额度”也不能靠单纯的合并或拆分解题</strong>。</p>
-<h4>路线 A：不断把有用的 Skill 合并进全局规则或全局记忆（Always-on 膨胀）</h4>
-<ul>
-<li><strong>短期体感</strong>：爽。因为原本漏触发的流程变成每轮常驻，命中率立刻拉满。</li>
-<li><strong>延续下去的 3 个失效机制</strong>：</li>
-<li><strong>未触上限先中“注意力稀释”</strong>：大模型的有效指令遵循能力远小于它的最大上下文窗口。当你把 10 个不同领域的 SOP（写代码、做 PPT、跑统计、画图、发 PR）全塞进 <code>always_on</code>，中段规则会进入<strong>静默失效</strong>——模型不会报错，只是顺手把中间几条忘掉（你在外部双核交叉复审里也确认了这一核心约束）。</li>
-<li><strong>跨场景指令互相打架</strong>：写科研论文讨论时被软件工程的“最小 diff / 少写 prose”拽偏，或者简单问答时被迫走繁琐的规划验证仪式，迫使你不停往规则里打“例外补丁”，文本越滚越厚。</li>
-<li><strong>触发 Antigravity 硬降级反而退回原点</strong>：Antigravity 对 <code>always_on</code> 规则设有<strong>单文件 24 KB 截断</strong>和<strong>总计 20,000 token 硬预算</strong>；一旦超标，系统会自动把最大的规则文件从全文注入<strong>静默降级为路径指针</strong>（<code>- &lt;path&gt;: &lt;description&gt;</code>），兜了一大圈又退化回了“赌模型自觉去读”。</li>
-<li><strong>污染记忆的定位</strong>：全局记忆（Dream）存的是<strong>陈述性事实</strong>（你的物理实验背景、本机 Python/FFmpeg 路径、踩过的平台坑）；把<strong>程序性 SOP（怎么做某类任务）</strong>塞进记忆，会导致每次 <code>/dream</code> 巩固和跨项目检索时事实与流程混在一起，极难维护。</li>
-</ul>
-<h4>路线 B：把全局规则 / 记忆中的固定片段大量拆成 Skill（过度碎片化）</h4>
-<ul>
-<li><strong>短期体感</strong>：全局规则看起来极度优雅精简。</li>
-<li><strong>延续下去的失效机制</strong>：</li>
-<li><strong>高频底层护栏跌落到概率触发区</strong>：一旦把跨任务都需要生效的护栏（例如“先审前提”“双核前置检查点”“同错两次停手”）拆进自动发现 Skill，按照本机 <code>[MEM-AGY-002]</code> 的实测规律，绝大多数回合强模型会直接跳过它，变成“配置里写得头头是道，运行时几乎裸奔”。</li>
-<li><strong>你被迫记住几十个 <code>/skill-name</code> 口令</strong>：系统变成了手动驾驶，反而增加了你每次发消息前的认知负担。</li>
-</ul>
-<h4>真正能长期良性演化的结构：四层正交边界（不是二选一）</h4>
-<p>把“内容性质”和“触发要求”拆开看，答案就非常清楚了：</p>
-<ul>
-<li><strong>Layer 1：Always-on 全局规则（只留跨任务不变量 + 硬触发路由表）</strong></li>
-<li>你目前 3 份全局规则合计才 <strong>7,315 B（~7.1 KB）</strong>，其实<strong>非常精瘦健康</strong>！</li>
-<li><strong>适合放这里</strong>：所有任务都成立的高层护栏（<code>core-reasoning-protocol.md</code>）、带客观信号的强路由（<code>deepseek-subagent.md</code>）、以及极紧凑的索引（Dream <code>AGENTS.md</code>）。</li>
-<li><strong>不适合放这里</strong>：超过 5 行的特定领域 SOP、仅在少数任务出现的长步骤清单。</li>
-<li><strong>Layer 2：分层记忆（只存“事实与约束”，不存“操作流水线”）</strong></li>
-<li><strong>适合放这里</strong>：关于你本人、本机环境、课题上下文（<code>CONTEXT_&lt;课题&gt;.md</code>）、已证实的平台/工具坑点。</li>
-<li><strong>从全局记忆抽成 Skill 的唯一合理情形</strong>：如果你发现某条记忆里长出了一套<strong>反复执行的多步脚本/操作手册</strong>（比如“从实验数据到出图再到排版的一套固定命令”），那才应该把它从记忆里抽出去做成 Skill，而在记忆里只留一句指针和硬坑点。</li>
-<li><strong>Layer 3：按需 Skill —— 必须分成“自动瘦身池”和“手动 <code>/命令</code> 池”两档</strong></li>
-<li><strong>自动发现池（保持少而精，理想控制在高频 10–15 个以内，每条 description ≤200 字符只写“何时触发”，绝不写更新日志）</strong>：留给高频、触发词极明确的场景（如做 PPT、画科研图、去 AI 味、统计分析）。</li>
-<li><strong>手动召唤池（显式加 <code>disable-model-invocation: true</code> 或放到冷备目录）</strong>：重型、低频或高侵入工作流（类似你本机已有的 <code>grill-me</code>，或者 <code>ds-best-of-n</code> 这种多路并行重活），<strong>不占自动 <code>&lt;skills&gt;</code> 清单注意力</strong>，想用的时候敲 <code>/skill-name</code> 100% 精准拉起。</li>
-<li><strong>Layer 4：Lifecycle Hooks（<code>hooks.json</code>）—— 接管“最怕模型偷懒漏做”的硬红线</strong></li>
-<li>这是 <code>ds-lessons</code> 思路在 Antigravity 里的终极落地。凡是靠文字规则说了三遍模型还会忘的事（比如改动特定目录代码后没跑测试就想结束回合），用 <code>Stop</code> 或 <code>PreToolUse</code> Hook 做确定性检查，比把文字规则写长 10 倍有效得多。</li>
-</ul>
-<p>*(注：我曾考虑过另一种方案——做一个类似 <code>ds-help</code> 的“总路由 Skill”，把其他 50 个 Skill 全藏在它的 <code>references/</code> 下，只留 1 个总入口给模型。后来放弃了这个方案，因为这会强行增加一轮“先读总目录 → 再读子 Skill”的二次跳转延迟，在高频单步任务里反而更容易被强模型嫌麻烦直接跳过；不如直接瘦身顶层清单 + 区分自动/手动两档。)*</p>
-<hr>
-<h3>四、要不要根据 <code>deepseek-stack</code> 自制一个 Skill？以及下一步怎么走？</h3>
-<p>在动手新建之前，我不替你过早拍板，提供 <strong>3 条可以自由组合的推进路线</strong>（附各自代价）：</p>
-<ul>
-<li><strong>路线 1：先给现有技能库做一次“体检减脂”（最推荐作为第 0 步）</strong></li>
-<li><strong>做法</strong>：① 先跑一段只读统计脚本，查你过去历史对话的 <code>transcript.jsonl</code>，看这 53 个 Skill 里到底<strong>哪些被真实 <code>read_file</code> 触发过、哪些至今 0 次</strong>（外部可证伪验证，靠数据不靠猜）；② 清理 5 个与插件重复挂载的目录；③ 精简 <code>wps-office-suite</code> 等超长 frontmatter（把 2,000 字更新日志移出 <code>description</code>）；④ 把低频/重型 Skill 标为 <code>disable-model-invocation: true</code> 转为手动 <code>/命令</code>。</li>
-<li><strong>收益 / 代价</strong>：立刻提升你现有所有好 Skill 的真实自动命中率；代价仅需 10 分钟审核清理清单。</li>
-<li><strong>路线 2：微升级全局护栏 + 自制 1–2 个高杠杆专属 Skill（吸收 <code>deepseek-stack</code> 精华）</strong></li>
-<li><strong>微升级现有全局规则</strong>（不膨胀，总计仅增 ~6 行）：在 <code>core-reasoning-protocol.md</code> 里补两条跨任务通用铁律——① 同一故障连续 2 次修复失败即强制停手验共享前提（<code>ds-unstick</code> 核心）；② 关键结论显式区分 <code>实测 / 推断 / 待验</code>。</li>
-<li><strong>自制 1–2 个高价值手动/半自动 Skill</strong>（采用 <code>deepseek-stack</code> 的 <code>Steps + Hard Stop When + Rules</code> 紧凑风格，单文件控制在 2 KB 左右）：</li>
-<li>候选 A：<code>debug-unstick</code>（或合并成 <code>verify-and-unstick</code>）——专治卡壳排错与高危改动，融合 <code>ds-unstick</code>（前提探针 + 清场换路）+ <code>ds-blast-radius</code>（5 级举证阶梯）+ 联动你的同济双核 <code>code_audit</code> / <code>test_forge</code>。</li>
-<li>候选 B：<code>best-of-n</code>（手动 <code>/best-of-n</code> 触发，<code>disable-model-invocation: true</code>）——专为“不缺额度追求极致质量”定制，直接调用 Antigravity 原生 <code>swarm(workspace:&quot;share&quot;, n:3)</code> 跑盲评打分 + 局部嫁接。</li>
-<li><strong>代价</strong>：新增 1–2 个精准技能，几乎不增加自动清单负担。</li>
-<li><strong>路线 3：直接实验 1 个确定性 Hook（把 <code>ds-lessons</code> 真正跑起来）</strong></li>
-<li><strong>做法</strong>：挑 1 个你日常最烦的“模型口头说好了但没实测/漏了某一步”场景，在 <code>~/.gemini/config/hooks.json</code> 或具体项目 <code>.agents/hooks.json</code> 里写一个轻量 <code>PreToolUse</code> 或 <code>Stop</code> 校验脚本。</li>
-<li><strong>代价</strong>：需要定义明确的触发条件（避免误拦日常纯聊天回合）。</li>
-</ul>
-<hr>
-<h3>五、两个直指边界条件的追问（帮你收敛下一步）</h3>
-<ul>
-<li><strong>要不要先用实测数据说话？</strong> 如果你同意，我可以立刻写一段只读脚本扫描你本地 <code>C:\Users\Administrator\.gemini\antigravity\brain\*\*.jsonl</code> 的历史会话日志，拉出一份<strong>“已安装 53 个 Skill 的历史真实命中率排行榜”</strong>（精确看到哪些装了等于白装、哪些是被 <code>wps-office-suite</code> 这种长描述挤掉了注意力），我们拿着真实数据决定合并、瘦身还是转手动？</li>
-<li><strong>你在“追求更好效果”时，最常遇到且最让你恼火的模型跑偏场景是哪一类？</strong> 是① 写代码/配环境时反复小修小补越改越乱（优先落 <code>debug-unstick</code> + 全局微护栏），② 重要方案/算法/脚本单次生成质量不够惊艳（优先做利用充裕额度的 <code>/best-of-n</code> 并行盲评嫁接），还是③ 科研/文档写作时总忘记调用你精心安装的领域 Skill（优先做路线 1 的清单减脂与路由重组）？</li>
+<li>单次只读核验断点磁盘状态，常规只读一口气完成，勿中途请示。</li>
+<li>状态不符先汇报停手；一致则直接推进【唯一单点下一步】。</li>
+<li>严禁触碰【排雷墓碑】，覆写先确认，按【外部验证判据】自检汇报。</li>
 </ul>
 </div></article>
-<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>我觉得你考虑的很周到，确实应该这样。将一些没有意义的，安装了但是没有用处的skill进行淘汰，也不一定就是完全删除，可以自行的将这个skill中可以借鉴的部分补充到其他可以使用到的skill中去，也就是进行skill合并。不过既然有些skill不是自行设计的，我觉得你可以先去github上先对我的这些安装了的skill去查看是否有更新，然后按照更新了的在进行一遍功能的汇总，确保使用到的都是最强的功能。因为在我最新的使用中并没有主动使用过我安装到skill，除了ppt这类的，所以我会想着是不是这些的功能并没有使用到位。</p>
-</div></article>
-<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>我已完成<strong>全部 27 个历史对话的真实命中率扫描</strong>、<strong>39 个全局技能 + 5 个插件的 GitHub / SkillHub 逐项上游版本核查</strong>，以及<strong>按 8 大功能域汇总的隐藏脚本能力与重组蓝图</strong>。完整明细已整理为方案报告：<code>skill-audit-and-upgrade-plan.md</code>。</p>
-<p>下面只提炼最关键的 <strong>3 个实测真相</strong>、我们在设计“Skill 合并”时<strong>踩刹车修正的 1 个关键架构坑</strong>，以及待你拍板的执行步骤。</p>
-<hr>
-<h3>一、实测挖出的 3 个核心真相</h3>
-<ul>
-<li><strong>你的直觉 100% 准确——真实业务命中率仅 7 / 41</strong></li>
-<li>剔除 1 次纯安装/迁移运维会话（<code>c0f340d4</code>）后，近 17 天全部 27 个真实对话里，实际被用过的只有 <code>share-conversation</code>、<code>course-ppt-lab</code>、<code>ppt-master</code>、<code>dream</code>、<code>lieflat-less-ai-tone</code>、<code>grilling</code>（手动 <code>/grilling</code>）、<code>archive-manager</code> 这 7 个；<strong>其余 34 个全部是 <code>0 次</code> 触发</strong>。</li>
-<li><strong>GitHub / SkillHub 上游核查：真正需要升级的只有 2 个主力 + 1 个小脚本</strong></li>
-<li><strong><code>ppt-master</code>（强烈推荐升级）</strong>：本地是 <code>v6.9.0</code>，GitHub 上游已发 <strong><code>v6.10.0</code> + 20 个 commits</strong>，核心包含 <strong>PR #355 修复数学公式（<code>a14</code> 命名空间）编辑往返丢失</strong>（对物理公式 PPT 极关键）、<strong>个人模板库 Git 隔离</strong>（以后升级不撞同济模板）、以及 Windows 服务与图标修复。升级时按 <code>[MEM-ENV-002]</code> 须同步刷新 <code>course-ppt-lab/upstream-lock.json</code>。</li>
-<li><strong><code>wps-office-suite</code>（按需升级，但描述必改）</strong>：本地 <code>v5.4.0</code>，SkillHub 上游已到 <strong><code>v5.5.0</code></strong>（新增 Excel 原生 OOXML 透视表构建器与 50 题公式黄金集自检）。它单条 frontmatter 塞了 <strong>2,093 字符</strong>更新日志，无论升不升级都必须立刻瘦身。</li>
-<li><strong><code>codex-ppt</code></strong>：仅 <code>scripts/image_gen.py</code> 有 9 行更新（支持 GPT Image 2.6）。</li>
-<li><strong>其余全部实测已是上游最新</strong>：你装的 <strong>25 个 <code>K-Dense-AI/claude-scientific-skills</code> 科研技能</strong>、<code>lieflat-less-ai-tone</code>、<code>self-healing</code>/<code>self-improvement</code>、<code>mattpocock-skills</code> 插件经源码 diff 核对，功能均已是 100% 上游最新版（K-Dense 15 个差 36 字节仅是本地正常剥离了 Antigravity 不识别的 <code>allowed-tools</code> 字段）。</li>
-<li><strong>34 个“0 触发”里并非都是废物，而是“5 个科研宝藏被 29,398 字符噪音淹没了”</strong></li>
-<li>结合你光学研一实验物理的定位，<code>uncertainty-and-units</code>（7 个单位审计/GUM 误差传播/拟合不确定度脚本）、<code>paper-lookup</code>（5 个纯标准库脚本直连 arXiv/OpenAlex/Crossref 等 18 库）、<code>citation-management</code>（真实 DOI→BibTeX 防编造脚本）、<code>scientific-visualization</code>（7 个期刊出图与配色审计脚本）、<code>markitdown</code>（离线 PDF/Office 转 Markdown）肚子里全是硬核工具，只是被埋在 53 条清单里没机会出头。</li>
-</ul>
-<hr>
-<h3>二、关于你提出的“Skill 合并”：关键架构边界（放弃了什么方案）</h3>
-<p>我原本打算把功能相近的第三方技能直接物理合并（例如把 K-Dense 的 <code>paper-lookup</code> + <code>citation-management</code> 合成一个目录，把 <code>scientific-visualization</code> + <code>matplotlib</code> 合成一个目录），但在交叉审查后<strong>主动放弃了“物理合并第三方活跃 Skill”的方案</strong>：</p>
-<ul>
-<li><strong>放弃原因</strong>：一旦拆开第三方开源包把脚本和正文缝合成新目录，它就变成私有 fork，后续上游更新 API 端点或修 Bug 时无法干净更新，只会积累无穷冲突；同时把两个 16 KB+ 的技能硬缝成一个 35 KB 巨无霸，反而会拉高单次加载污染。</li>
-<li><strong>真正稳健的两种合并方式</strong>：</li>
-<li><strong>对自研/静态淘汰包 → 真正吸收合并</strong>：</li>
-<li>把 Dream 记忆 <code>[MEM-PPT-002]</code> 的实机视频避坑 + <code>scientific-slides</code> 的英文学术汇报速查，直接并入你自研的 <code>course-ppt-lab</code>；</li>
-<li>把 <code>self-healing</code> 的验证闭环 + <code>deepseek-stack</code> 的 <code>ds-unstick</code>（同错两次必停验前提）合并为一个全新、原生适配 Windows + Antigravity 的轻量技能 <code>debug-unstick</code>（同时把已被 <code>/dream</code> 取代的 <code>self-improvement</code> 归档，并<strong>不把只读的 <code>blast-radius</code> 硬塞进去</strong>，避免打破只读安全边界）。</li>
-<li><strong>对第三方活跃技能 → “上游原样保鲜 + 自动/手动双池 + 薄壳指针”</strong>：</li>
-<li>第三方目录原封不动；<strong>高频 7–9 个</strong>（<code>course-ppt-lab</code>、<code>ppt-master</code>、<code>uncertainty-and-units</code>、<code>paper-lookup</code>、<code>scientific-visualization</code>、<code>lieflat-less-ai-tone</code>、<code>wps-office-suite</code>、<code>markitdown</code> 等）留在自动发现池，并把每条 <code>description</code> 统一精简到 ≤200 字符纯触发信号；</li>
-<li><strong>低频高价值 ~15 个</strong>（如 <code>citation-management</code>、<code>matplotlib</code>、<code>scientific-writing</code>、<code>venue-templates</code>、<code>peer-review</code>、<code>liteparse</code>、<code>exploratory-data-analysis</code>、<code>statistical-analysis</code>、<code>scientific-slides</code> 等）在 frontmatter 加上 <code>disable-model-invocation: true</code> 退出自动清单，<strong>需要时打 <code>/skill-name</code> 依然 100% 可用</strong>（并在高频主技能里留一行交叉指针，类似你已验证成功的 <code>course-ppt-lab -&gt; ppt-master</code>）；</li>
-<li><strong>真实冗余与重复项</strong>（全局目录里与插件重复的 5 个副本、<code>docx-xlsx-extractor</code>、<code>prompt-engineering-expert</code>、<code>consciousness-council</code>、<code>what-if-oracle</code>、<code>self-improvement</code> 等）<strong>先移至扫描目录之外的冷备文件夹 <code>C:\Users\Administrator\.gemini\skills-archive\</code> 观察 4–8 周</strong>，确认无回溯再永久删，零误删风险。</li>
-</ul>
-<hr>
-<h3>三、待你拍板的 3 个可执行阶段（未动任何现有文件）</h3>
-<p>在报告 <code>skill-audit-and-upgrade-plan.md</code> 基础上，建议按以下顺序分步落地，你可以勾选你想做哪些：</p>
-<ul>
-<li><strong>阶段 1（零风险立刻见效）</strong>：升级 <code>ppt-master</code> 到 <code>v6.10.0</code>（同步刷新 <code>course-ppt-lab/upstream-lock.json</code> 并把 <code>[MEM-PPT-002]</code> 固化进 <code>course-ppt-lab</code>）+ 清理 Antigravity 全局目录里 5 个与插件重复的副本 + 瘦身 <code>wps-office-suite</code> 等超长 frontmatter（可选一并把 <code>wps-office-suite</code> 升到 <code>v5.5.0</code>）。</li>
-<li><strong>阶段 2（重构自动/手动双池 + 外部归档）</strong>：按报告里的 8 大域分档，把自动清单从 53 条（29,398 字符）收敛到 ~21–23 条（全局精锐 7–9 个，frontmatter 总字数砍掉 &gt;90%），低频项改 <code>disable-model-invocation: true</code> 转手动 <code>/命令</code>，冗余项移入外部冷备 <code>~/.gemini/skills-archive/</code>。</li>
-<li><strong>阶段 3（吸收 <code>deepseek-stack</code> 精华）</strong>：微升级 <code>core-reasoning-protocol.md</code>（+6 行硬纪律），并新建 <code>debug-unstick</code>（以及可选的手动 <code>/blast-radius</code>、<code>/best-of-n</code>）。</li>
-</ul>
-<hr>
-<h3>动手前需要你确认的 2 个边界问题</h3>
-<ul>
-<li><strong>四端同步策略怎么选？</strong> 我实测到你本机同时维护了 <code>.gemini/config/skills</code> (39)、<code>.dsh/skills</code> (36)、<code>.codex/skills</code> (37)、<code>.workbuddy/skills</code> (38)。本次升级 <code>ppt-master v6.10.0</code>、瘦身描述和双池重组，你是想<strong>① 先只在 Antigravity（<code>.gemini/config/skills</code>）试点跑顺，验证无坑后再同步其余三端</strong>，还是 <strong>② 升级后的主力技能同步推给四端（且注意保留其余三端没有插件机制的 <code>mattpocock</code> 副本）</strong>？</li>
-<li><strong>关于 <code>wps-office-suite</code> 升 <code>v5.5.0</code> 与阶段勾选</strong>：因为 <code>wps-office-suite</code> 上游在腾讯 SkillHub 而非 GitHub，你是否需要我先检查本机有没有 <code>skillhub</code> CLI / 能不能直接拉取 <code>v5.5.0</code>，还是先就地保留 <code>v5.4.0</code> 只做描述瘦身？另外上述 <strong>阶段 1 / 2 / 3</strong> 你希望一次性全做，还是先做阶段 1+2 看效果？</li>
-</ul>
-</div></article>
-<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>我想了想还是先就只在antigravity上运行把，毕竟这个才是主力，等到其余的有成效了我才会将这里的内容同步到另一边去。升级肯定要升级的，然后我觉得可以全部都实行按你说的来。但是我认为其实转手动不一定好，因为我对这些skill的功能并不熟悉，可能不会在需要的时候想起来，导致其实并没有什么用。然后我记得grilling这一系列其实对我来说只有grilling本身才有用吧，其余的好像都是冗余的。</p>
-</div></article>
-<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已全部在 <strong>Antigravity 端（<code>~/.gemini/config/</code>）</strong> 落地并完成自动化实测验收，其余三端（<code>.dsh</code> / <code>.codex</code> / <code>.workbuddy</code>）分毫未动。</p>
-<p>顺带采纳了你的两条关键修正：① <strong>不强迫你记 <code>/skill-name</code></strong>：15 个高价值技能全部留在自动发现池、用精准中文触发词由模型主动识别，另 5 个低频 K-Dense 原包通过<strong>高频主技能首行指针自动带出</strong>（零记忆负担，同时保持第三方源码干净可升级）；② <strong><code>mattpocock-skills</code> 插件只留 <code>grilling</code> 本身</strong>，其余 3 个冗余项与全局 5 个重复副本全部清理移出扫描目录。</p>
-<hr>
-<h3>一、实测落地结果与量化对比</h3>
-<p>| 指标 | 改动前（实测） | 改动后（实测） |</p>
-<p>| :--- | :---: | :---: |</p>
-<p>| 全局自动发现 Skills 数量 | 37 个 | <strong>15 个精锐</strong>（12 原有 + 3 自制，全部自动触发） |</p>
-<p>| 插件 Skills 数量 | 5 个（3 处与全局重复） | <strong>4 个零重复</strong>（<code>archive-manager</code> / <code>dream</code> / <code>share-conversation</code> / <code>grilling</code>） |</p>
-<p>| 全局自动池描述体量 | 原 frontmatter <strong>29,398 字符</strong>（单条最高 2,093 字） | 15 条 <code>description</code> 合计仅 <strong>1,311 字符</strong>（均值 87 字/条，降噪 &gt;90%） |</p>
-<p>| 后台主从联动原包 | 无 | <strong>5 个</strong>（主技能命中后按需自动拉起，不占顶层清单） |</p>
-<p>| 外部冷备（可随时还原） | 无 | 移至 <code>skills-archive</code>（5 重复 + 3 插件冗余 + 17 归档 + <code>ppt-master</code> 增量备份） |</p>
-<p>| 其余三端（<code>.dsh</code>/<code>.codex</code>/<code>.workbuddy</code>） | 36 / 37 / 38 个 | <strong>36 / 37 / 38 个（实测未动）</strong> |</p>
-<hr>
-<h3>二、四大核心变更清单（全部含路径与验收结果）</h3>
-<ul>
-<li><strong>上游引擎升级与精华吸收</strong></li>
-<li><strong><code>ppt-master</code> 升至 <code>v6.10.0</code></strong>（commit <code>63a03673</code>，增量同步 52 个变更文件）：包含 PR #355 <code>a14</code> 数学公式命名空间往返修复、个人模板库 Git 隔离、Windows 后台服务与图标/笔记分页修复。</li>
-<li><strong><code>course-ppt-lab</code> 升至 <code>0.4.1</code></strong>：同步刷新 <code>upstream-lock.json</code>（401 个文件 SHA-256）、<code>upstream.md</code> 与 <code>CHANGELOG.md</code>；将记忆 <code>[MEM-PPT-002]</code> 的 mod-16/30fps/<code>set_visible(False)</code>/实出时间轴避坑固化为 <code>science-video.md</code> <strong>S21</strong>，将 <code>scientific-slides</code> 的演讲节奏与定量结果图零 AI 重绘吸收为 <code>academic-presentations.md</code> <strong>A11</strong>。</li>
-<li><strong><code>lieflat-less-ai-tone</code></strong>：保留原有中文三层检测流，新增 <code>english-unslop.md</code>（吸收 <code>deepseek-stack/ds-unslop</code> 英文去 AI 味黑名单），升级为中英双语去味主力。</li>
-<li><strong><code>wps-office-suite</code>（说明未升 <code>v5.5.0</code> 的真实原因）</strong>：实测本机未安装腾讯 <code>skillhub</code> CLI，且 SkillHub 网页为 SPA 无免登录包直链；因此本轮保留 <code>v5.4.0</code> 本体，但已彻底砍掉 frontmatter 里 2,093 字符的版本日志（瘦身至 102 字）。后续如需 <code>v5.5.0</code> 透视表功能，可通过 SkillHub 客户端拉取 ZIP 覆盖后再保留精简描述。</li>
-</ul>
-<ul>
-<li><strong>全局规则微升级 + 3 个 <code>deepseek-stack</code> 精华自制 Skill</strong></li>
-<li><code>core-reasoning-protocol.md</code>（2,598 B → 2,987 B）：补充断言区分<code>实测 / 推断 / 未验证</code>、“同一报错 2 次修复失败即停手验共享前提”以及 <code>ds-lessons</code> 反复出错优先硬固化原则。</li>
-<li>新建 <code>debug-unstick/SKILL.md</code>：融合 <code>ds-unstick</code> + <code>ds-verify-loop</code> + <code>self-healing</code> 验证闭环（原生适配 Windows 与同济双核 <code>code_audit</code>，同错 2 次或满 5 轮强制熔断验前提）。</li>
-<li>新建 <code>blast-radius/SKILL.md</code>：严格只读的改动影响面评估（与 <code>debug-unstick</code> 隔离读写权限），按 L1–L5 证明阶梯用脚本反证安全性。</li>
-<li>新建 <code>best-of-n/SKILL.md</code>：专为充裕额度打造的极限质量模式，调度 Antigravity <code>swarm(workspace:&quot;share&quot;, n:3)</code> 隐藏评分细则盲评 + 局部亮点嫁接。</li>
-</ul>
-<ul>
-<li><strong>最终留在自动发现池的 15 个全局 Skill + 5 个主从自动联动原包</strong></li>
-<li><strong>自动发现 15 精锐</strong>：<code>course-ppt-lab</code>、<code>ppt-master</code>、<code>wps-office-suite</code>、<code>markitdown</code>、<code>paper-lookup</code>、<code>citation-management</code>、<code>uncertainty-and-units</code>、<code>scientific-visualization</code>、<code>exploratory-data-analysis</code>、<code>statistical-analysis</code>、<code>lieflat-less-ai-tone</code>、<code>scientific-writing</code>、<code>debug-unstick</code>、<code>blast-radius</code>、<code>best-of-n</code>。</li>
-<li><strong>5 个后台自动联动原包</strong>（无需你记忆名字）：<code>markitdown</code> → 扫描 PDF/OCR 时自动带出 <code>liteparse</code>；<code>scientific-visualization</code> → 底层精细模板时自动带出 <code>matplotlib</code>；<code>scientific-writing</code> / <code>paper-lookup</code> → 选刊模板/审稿回复/系统综述时自动带出 <code>venue-templates</code>、<code>peer-review</code>、<code>literature-review</code>。</li>
-</ul>
-<ul>
-<li><strong>实测验证结果（全部真实运行，非口头确认）</strong></li>
-<li><strong>PyYAML 严格校验 + 重复/指针校验</strong>：全部 15 个自动全局 Skill、5 个联动原包、4 个插件 Skill、2 份全局规则及全部跨技能路径指针 <strong>0 错误通过</strong>。</li>
-<li><strong><code>course-ppt-lab</code> 完整性验收</strong>：<code>check_upstream.py</code> 核验 401 个文件返回 <code>matches_validated_snapshot: true</code>（<code>exit=0</code>）；<code>tests/test_audit_pptx.py</code> 单元测试全部通过（<code>exit=0</code>）。</li>
-<li><strong><code>ppt-master v6.10.0</code> 新增核心回归测试</strong>：<code>test_roundtrip_new_math</code>（公式修复）、<code>test_total_md_split</code>、<code>test_embed_icons</code>、<code>test_local_template_library</code> <strong>34/34 全部 OK</strong>（另注：<code>test_html_latin1_label</code> 因本机 Python 环境未装可选包 <code>markitdown</code> 无法在测试内把临时 HTML 转 <code>.md</code> 而报错，不影响 PPT 核心生成与导出链路）。</li>
-</ul>
-<hr>
-<h3>下一步生效与验证建议</h3>
-<ul>
-<li><strong>何时生效</strong>：Antigravity 每轮发送消息前会自动重读规则和 Skills，<strong>从你的下一条消息或新开一个对话开始</strong>，模型看到的就会是这套极简的 15 + 4 精锐技能清单（无需重启）。</li>
-<li><strong>外部验证手段</strong>：接下来正常使用 1–2 周后，你可以让我重跑一次历史 <code>transcript.jsonl</code> 命中率统计，直接对比“瘦身前 7/41 命中”与“瘦身后真实自动触发率”，看 <code>uncertainty-and-units</code>、<code>paper-lookup</code>、<code>debug-unstick</code> 等宝藏技能是否真正被模型自然唤起；确认无坑后再决定是否一键同步给 <code>.dsh</code> / <code>.codex</code> / <code>.workbuddy</code>。</li>
-</ul>
-<p><strong>两个边界收口提醒</strong>：</p>
-<ul>
-<li>后续如果真的遇到一年一两次的<strong>学术会议海报</strong>任务，原 <code>latex-posters</code> 和 <code>pptx-posters</code> 完整保存在 <code>skills-archive/retired-2026-11-21</code>，说一句即可 1 秒迁回。</li>
-<li>刚才我们已经把 Dream 记忆 <code>[MEM-PPT-002]</code> 的避坑成功固化进了 <code>course-ppt-lab</code>（<code>S21</code>），下次运行 <code>/dream</code> 整理记忆时可以顺手更新该条目的“尚未固化”状态，或者现在要我直接顺手做一次模拟触发测试（比如提一个单位误差传播或论文检索的小需求）来现场检验新清单的触发手感吗？</li>
-</ul>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>断点磁盘状态核验一致，已启动增量抽取（<code>incremental_20261121</code>，5 个会话 / 3 个批次），正等待两个只读分析子代理返回批次候选结果后完成聚合、<code>stage</code> 校验及 Automation 方案汇报。</p>
 </div></article>
 
     </section>
