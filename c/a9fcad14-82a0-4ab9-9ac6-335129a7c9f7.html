@@ -245,7 +245,7 @@
     }
   </style>
 </head>
-<body data-conv-id="a9fcad14-82a0-4ab9-9ac6-335129a7c9f7" data-base-prefix="./" data-turn-count="4" data-update-time="2026-11-21 20:07" data-is-index="0">
+<body data-conv-id="a9fcad14-82a0-4ab9-9ac6-335129a7c9f7" data-base-prefix="./" data-turn-count="6" data-update-time="2026-11-21 20:29" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -259,7 +259,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1>我在刷视频的时候看到了这个skills 汇总，虽然他是根据dee...</h1>
-        <div class="sub-meta">会话 ID: a9fcad14-82a0-4ab9-9ac6-335129a7c9f7 | 轮次: 4 | 更新于: 2026-11-21 20:07</div>
+        <div class="sub-meta">会话 ID: a9fcad14-82a0-4ab9-9ac6-335129a7c9f7 | 轮次: 6 | 更新于: 2026-11-21 20:29</div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./a9fcad14-82a0-4ab9-9ac6-335129a7c9f7.md" download="我在刷视频的时候看到了这个skills_汇总，虽-a9fcad14.md" onclick="return downloadMarkdown(event, './a9fcad14-82a0-4ab9-9ac6-335129a7c9f7.md', '我在刷视频的时候看到了这个skills_汇总，虽-a9fcad14.md')">⬇️ 下载 Markdown (.md)</a>
@@ -411,6 +411,59 @@
 <ul>
 <li><strong>四端同步策略怎么选？</strong> 我实测到你本机同时维护了 <code>.gemini/config/skills</code> (39)、<code>.dsh/skills</code> (36)、<code>.codex/skills</code> (37)、<code>.workbuddy/skills</code> (38)。本次升级 <code>ppt-master v6.10.0</code>、瘦身描述和双池重组，你是想<strong>① 先只在 Antigravity（<code>.gemini/config/skills</code>）试点跑顺，验证无坑后再同步其余三端</strong>，还是 <strong>② 升级后的主力技能同步推给四端（且注意保留其余三端没有插件机制的 <code>mattpocock</code> 副本）</strong>？</li>
 <li><strong>关于 <code>wps-office-suite</code> 升 <code>v5.5.0</code> 与阶段勾选</strong>：因为 <code>wps-office-suite</code> 上游在腾讯 SkillHub 而非 GitHub，你是否需要我先检查本机有没有 <code>skillhub</code> CLI / 能不能直接拉取 <code>v5.5.0</code>，还是先就地保留 <code>v5.4.0</code> 只做描述瘦身？另外上述 <strong>阶段 1 / 2 / 3</strong> 你希望一次性全做，还是先做阶段 1+2 看效果？</li>
+</ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>我想了想还是先就只在antigravity上运行把，毕竟这个才是主力，等到其余的有成效了我才会将这里的内容同步到另一边去。升级肯定要升级的，然后我觉得可以全部都实行按你说的来。但是我认为其实转手动不一定好，因为我对这些skill的功能并不熟悉，可能不会在需要的时候想起来，导致其实并没有什么用。然后我记得grilling这一系列其实对我来说只有grilling本身才有用吧，其余的好像都是冗余的。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已全部在 <strong>Antigravity 端（<code>~/.gemini/config/</code>）</strong> 落地并完成自动化实测验收，其余三端（<code>.dsh</code> / <code>.codex</code> / <code>.workbuddy</code>）分毫未动。</p>
+<p>顺带采纳了你的两条关键修正：① <strong>不强迫你记 <code>/skill-name</code></strong>：15 个高价值技能全部留在自动发现池、用精准中文触发词由模型主动识别，另 5 个低频 K-Dense 原包通过<strong>高频主技能首行指针自动带出</strong>（零记忆负担，同时保持第三方源码干净可升级）；② <strong><code>mattpocock-skills</code> 插件只留 <code>grilling</code> 本身</strong>，其余 3 个冗余项与全局 5 个重复副本全部清理移出扫描目录。</p>
+<hr>
+<h3>一、实测落地结果与量化对比</h3>
+<p>| 指标 | 改动前（实测） | 改动后（实测） |</p>
+<p>| :--- | :---: | :---: |</p>
+<p>| 全局自动发现 Skills 数量 | 37 个 | <strong>15 个精锐</strong>（12 原有 + 3 自制，全部自动触发） |</p>
+<p>| 插件 Skills 数量 | 5 个（3 处与全局重复） | <strong>4 个零重复</strong>（<code>archive-manager</code> / <code>dream</code> / <code>share-conversation</code> / <code>grilling</code>） |</p>
+<p>| 全局自动池描述体量 | 原 frontmatter <strong>29,398 字符</strong>（单条最高 2,093 字） | 15 条 <code>description</code> 合计仅 <strong>1,311 字符</strong>（均值 87 字/条，降噪 &gt;90%） |</p>
+<p>| 后台主从联动原包 | 无 | <strong>5 个</strong>（主技能命中后按需自动拉起，不占顶层清单） |</p>
+<p>| 外部冷备（可随时还原） | 无 | 移至 <code>skills-archive</code>（5 重复 + 3 插件冗余 + 17 归档 + <code>ppt-master</code> 增量备份） |</p>
+<p>| 其余三端（<code>.dsh</code>/<code>.codex</code>/<code>.workbuddy</code>） | 36 / 37 / 38 个 | <strong>36 / 37 / 38 个（实测未动）</strong> |</p>
+<hr>
+<h3>二、四大核心变更清单（全部含路径与验收结果）</h3>
+<ul>
+<li><strong>上游引擎升级与精华吸收</strong></li>
+<li><strong><code>ppt-master</code> 升至 <code>v6.10.0</code></strong>（commit <code>63a03673</code>，增量同步 52 个变更文件）：包含 PR #355 <code>a14</code> 数学公式命名空间往返修复、个人模板库 Git 隔离、Windows 后台服务与图标/笔记分页修复。</li>
+<li><strong><code>course-ppt-lab</code> 升至 <code>0.4.1</code></strong>：同步刷新 <code>upstream-lock.json</code>（401 个文件 SHA-256）、<code>upstream.md</code> 与 <code>CHANGELOG.md</code>；将记忆 <code>[MEM-PPT-002]</code> 的 mod-16/30fps/<code>set_visible(False)</code>/实出时间轴避坑固化为 <code>science-video.md</code> <strong>S21</strong>，将 <code>scientific-slides</code> 的演讲节奏与定量结果图零 AI 重绘吸收为 <code>academic-presentations.md</code> <strong>A11</strong>。</li>
+<li><strong><code>lieflat-less-ai-tone</code></strong>：保留原有中文三层检测流，新增 <code>english-unslop.md</code>（吸收 <code>deepseek-stack/ds-unslop</code> 英文去 AI 味黑名单），升级为中英双语去味主力。</li>
+<li><strong><code>wps-office-suite</code>（说明未升 <code>v5.5.0</code> 的真实原因）</strong>：实测本机未安装腾讯 <code>skillhub</code> CLI，且 SkillHub 网页为 SPA 无免登录包直链；因此本轮保留 <code>v5.4.0</code> 本体，但已彻底砍掉 frontmatter 里 2,093 字符的版本日志（瘦身至 102 字）。后续如需 <code>v5.5.0</code> 透视表功能，可通过 SkillHub 客户端拉取 ZIP 覆盖后再保留精简描述。</li>
+</ul>
+<ul>
+<li><strong>全局规则微升级 + 3 个 <code>deepseek-stack</code> 精华自制 Skill</strong></li>
+<li><code>core-reasoning-protocol.md</code>（2,598 B → 2,987 B）：补充断言区分<code>实测 / 推断 / 未验证</code>、“同一报错 2 次修复失败即停手验共享前提”以及 <code>ds-lessons</code> 反复出错优先硬固化原则。</li>
+<li>新建 <code>debug-unstick/SKILL.md</code>：融合 <code>ds-unstick</code> + <code>ds-verify-loop</code> + <code>self-healing</code> 验证闭环（原生适配 Windows 与同济双核 <code>code_audit</code>，同错 2 次或满 5 轮强制熔断验前提）。</li>
+<li>新建 <code>blast-radius/SKILL.md</code>：严格只读的改动影响面评估（与 <code>debug-unstick</code> 隔离读写权限），按 L1–L5 证明阶梯用脚本反证安全性。</li>
+<li>新建 <code>best-of-n/SKILL.md</code>：专为充裕额度打造的极限质量模式，调度 Antigravity <code>swarm(workspace:&quot;share&quot;, n:3)</code> 隐藏评分细则盲评 + 局部亮点嫁接。</li>
+</ul>
+<ul>
+<li><strong>最终留在自动发现池的 15 个全局 Skill + 5 个主从自动联动原包</strong></li>
+<li><strong>自动发现 15 精锐</strong>：<code>course-ppt-lab</code>、<code>ppt-master</code>、<code>wps-office-suite</code>、<code>markitdown</code>、<code>paper-lookup</code>、<code>citation-management</code>、<code>uncertainty-and-units</code>、<code>scientific-visualization</code>、<code>exploratory-data-analysis</code>、<code>statistical-analysis</code>、<code>lieflat-less-ai-tone</code>、<code>scientific-writing</code>、<code>debug-unstick</code>、<code>blast-radius</code>、<code>best-of-n</code>。</li>
+<li><strong>5 个后台自动联动原包</strong>（无需你记忆名字）：<code>markitdown</code> → 扫描 PDF/OCR 时自动带出 <code>liteparse</code>；<code>scientific-visualization</code> → 底层精细模板时自动带出 <code>matplotlib</code>；<code>scientific-writing</code> / <code>paper-lookup</code> → 选刊模板/审稿回复/系统综述时自动带出 <code>venue-templates</code>、<code>peer-review</code>、<code>literature-review</code>。</li>
+</ul>
+<ul>
+<li><strong>实测验证结果（全部真实运行，非口头确认）</strong></li>
+<li><strong>PyYAML 严格校验 + 重复/指针校验</strong>：全部 15 个自动全局 Skill、5 个联动原包、4 个插件 Skill、2 份全局规则及全部跨技能路径指针 <strong>0 错误通过</strong>。</li>
+<li><strong><code>course-ppt-lab</code> 完整性验收</strong>：<code>check_upstream.py</code> 核验 401 个文件返回 <code>matches_validated_snapshot: true</code>（<code>exit=0</code>）；<code>tests/test_audit_pptx.py</code> 单元测试全部通过（<code>exit=0</code>）。</li>
+<li><strong><code>ppt-master v6.10.0</code> 新增核心回归测试</strong>：<code>test_roundtrip_new_math</code>（公式修复）、<code>test_total_md_split</code>、<code>test_embed_icons</code>、<code>test_local_template_library</code> <strong>34/34 全部 OK</strong>（另注：<code>test_html_latin1_label</code> 因本机 Python 环境未装可选包 <code>markitdown</code> 无法在测试内把临时 HTML 转 <code>.md</code> 而报错，不影响 PPT 核心生成与导出链路）。</li>
+</ul>
+<hr>
+<h3>下一步生效与验证建议</h3>
+<ul>
+<li><strong>何时生效</strong>：Antigravity 每轮发送消息前会自动重读规则和 Skills，<strong>从你的下一条消息或新开一个对话开始</strong>，模型看到的就会是这套极简的 15 + 4 精锐技能清单（无需重启）。</li>
+<li><strong>外部验证手段</strong>：接下来正常使用 1–2 周后，你可以让我重跑一次历史 <code>transcript.jsonl</code> 命中率统计，直接对比“瘦身前 7/41 命中”与“瘦身后真实自动触发率”，看 <code>uncertainty-and-units</code>、<code>paper-lookup</code>、<code>debug-unstick</code> 等宝藏技能是否真正被模型自然唤起；确认无坑后再决定是否一键同步给 <code>.dsh</code> / <code>.codex</code> / <code>.workbuddy</code>。</li>
+</ul>
+<p><strong>两个边界收口提醒</strong>：</p>
+<ul>
+<li>后续如果真的遇到一年一两次的<strong>学术会议海报</strong>任务，原 <code>latex-posters</code> 和 <code>pptx-posters</code> 完整保存在 <code>skills-archive/retired-2026-11-21</code>，说一句即可 1 秒迁回。</li>
+<li>刚才我们已经把 Dream 记忆 <code>[MEM-PPT-002]</code> 的避坑成功固化进了 <code>course-ppt-lab</code>（<code>S21</code>），下次运行 <code>/dream</code> 整理记忆时可以顺手更新该条目的“尚未固化”状态，或者现在要我直接顺手做一次模拟触发测试（比如提一个单位误差传播或论文检索的小需求）来现场检验新清单的触发手感吗？</li>
 </ul>
 </div></article>
 
