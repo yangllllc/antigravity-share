@@ -245,7 +245,7 @@
     }
   </style>
 </head>
-<body data-conv-id="e7333c14-d4d4-4f27-b281-662165d28543" data-base-prefix="./" data-turn-count="19" data-update-time="2026-11-26 13:22" data-is-index="0">
+<body data-conv-id="e7333c14-d4d4-4f27-b281-662165d28543" data-base-prefix="./" data-turn-count="21" data-update-time="2026-11-26 13:24" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -259,7 +259,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1>已经做了这么多了，我突然想到了是不是可以把antigravity...</h1>
-        <div class="sub-meta">会话 ID: e7333c14-d4d4-4f27-b281-662165d28543 | 轮次: 19 | 更新于: 2026-11-26 13:22</div>
+        <div class="sub-meta">会话 ID: e7333c14-d4d4-4f27-b281-662165d28543 | 轮次: 21 | 更新于: 2026-11-26 13:24</div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./e7333c14-d4d4-4f27-b281-662165d28543.md" download="已经做了这么多了，我突然想到了是不是可以把ant-e7333c14.md" onclick="return downloadMarkdown(event, './e7333c14-d4d4-4f27-b281-662165d28543.md', '已经做了这么多了，我突然想到了是不是可以把ant-e7333c14.md')">⬇️ 下载 Markdown (.md)</a>
@@ -425,6 +425,10 @@
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已定位到你打开 GPT/Codex 桌面端报“ChatGPT 遇到了问题”的真实根因：<strong>这并非本次修改技能目录或规则导致</strong>——我先后用对照回滚实测验证（删除测试会话、甚至把 33 个旧技能原样移回并移走新技能），桌面端仍在启动后触发同一前端 React ErrorBoundary 异常 <code>Error: Missing scope instance (name=AppRoutes)</code>，这是 OpenAI Windows 桌面客户端 <code>26.1120.6357.0</code> 版本的已知前端回归（同时 <code>codex</code> CLI 与底层接口完全健康）。我正在查证该版本是否有本地规避项或最新修复补丁，并已完成 Antigravity 端 4 个技能触发描述收窄（<code>sync_overlay.py --check</code> 零漂移），同步拉起二轮 3 项精确对照实测。</p>
 </div></article>
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已通过三轮实测彻底排除本地技能/会话/缓存原因，确认是 OpenAI Windows 客户端 <code>26.1120.6357.0</code> 自身的 <code>AppRoutes / Missing scope instance</code> 已知回归（CLI 与网页端完全正常）；当前正等待二轮 3 项对照实测（<code>C06</code>/<code>C07</code> 子代理与 <code>Case 08</code> GPT-6.2-Astra 裸跑基线）返回结果。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已收到二轮 Case 08（<code>GPT-6.2-Astra</code> 纯裸基线，<code>EXIT=0</code>，<code>--ephemeral</code> 零持久化），继续等待 Case 06（长稿去 AI 味）与 Case 07（科研脏数据 EDA）共 4 路子代理返回。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已归档 Case 06 裸模型组，继续等待最后 3 路子代理（<code>C06 Skill</code>、<code>C07 Bare</code>、<code>C07 Skill</code>）返回。</p>
 </div></article>
 
     </section>
