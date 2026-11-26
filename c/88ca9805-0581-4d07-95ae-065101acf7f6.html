@@ -245,7 +245,7 @@
     }
   </style>
 </head>
-<body data-conv-id="88ca9805-0581-4d07-95ae-065101acf7f6" data-base-prefix="./" data-turn-count="6" data-update-time="2026-11-26 12:36" data-is-index="0">
+<body data-conv-id="88ca9805-0581-4d07-95ae-065101acf7f6" data-base-prefix="./" data-turn-count="10" data-update-time="2026-11-26 12:48" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -259,7 +259,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1>我在看视频的时候又有一些稀奇想法，有个是supermemory，...</h1>
-        <div class="sub-meta">会话 ID: 88ca9805-0581-4d07-95ae-065101acf7f6 | 轮次: 6 | 更新于: 2026-11-26 12:36</div>
+        <div class="sub-meta">会话 ID: 88ca9805-0581-4d07-95ae-065101acf7f6 | 轮次: 10 | 更新于: 2026-11-26 12:48</div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./88ca9805-0581-4d07-95ae-065101acf7f6.md" download="我在看视频的时候又有一些稀奇想法，有个是supe-88ca9805.md" onclick="return downloadMarkdown(event, './88ca9805-0581-4d07-95ae-065101acf7f6.md', '我在看视频的时候又有一些稀奇想法，有个是supe-88ca9805.md')">⬇️ 下载 Markdown (.md)</a>
@@ -368,6 +368,87 @@
 <article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>我觉得B会好一点，不过需要你进行更加严格的审查之后就可以进行修改了。这个课我会单独开一个对话的，你只需要告诉我提示词，教我到时候新开对话怎么沟通就可以了</p>
 </div></article>
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成只读 <code>blast-radius</code> 影响面评估与契约设计，排查出三个关键兼容面：<strong>① 生产较沙盒多了 <code>fts_index.py</code> 等 5 处新改动</strong>（已先向沙盒对齐，避免部署回退）；<strong>② 后台 <code>dream-memory-reminder</code> Sidecar 强依赖 <code>check-due</code> 的 <code>due</code> 字段语义</strong>（须保持 <code>due</code> 语义不变、新增独立 <code>review_due*</code> 字段，防止 0 新对话时误弹 Toast）；<strong>③ 现网 6 份历史收据不含 <code>review_after</code> 键</strong>（<code>_entry_to_dict</code> 须在空值时省略该键，确保历史条目 CAS <code>revert</code> 零冲突）。正在等待沙盒基线回归测试跑完，随后在沙盒实施改造并派发跨模型严格代码审稿。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已在沙盒完成 7 个文件的 <code>review_after</code> 与推断标记改造，并补充 <code>test_review_after.py</code> 5 组边界/兼容/篡改回归单测，正在跑全部 38 项沙盒测试，跑完后即刻派发跨模型严格代码审稿。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>沙盒全部 38 项测试已通过，现已将完整变更 Diff 与协议契约派发给 Claude Opus 5.5 做只读严格代码审稿（如急用可回复“跳过”直接推进）。</p>
+<p>[Open the Swarm UI](sidecar://swarm/swarm_board/?auto_open=false)</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已采纳 Claude Opus 5.5 审稿指出的全部 4 处边界问题（防手改废弃条目卡死主题、<code>deprecate</code>/<code>archive_retired</code> 禁带 <code>review_after</code>、移除误导性默认置信度回显、补充重新激活旧条目指引）并补强回归断言，正在重跑全部 38 项沙盒测试，通过后即执行备份与生产部署。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>两件事均已完成：<strong>Dream Memory 的轻量改造已通过只读 <code>blast-radius</code> 核查 + Claude Opus 5.5 异构代码审稿 + 38/38 沙盒单测 + 生产隔离冒烟并正式部署</strong>；下方同步给出新开对话学习 <strong>Stanford CS329A</strong> 的完整提示词与沟通打法。</p>
+<hr>
+<h2>一、Dream Memory 改造审查与部署验收</h2>
+<h3>1. 严格审查拦截掉的真实隐患（改前 <code>blast-radius</code> + 改中 Opus 5.5 盲审）</h3>
+<ul>
+<li><strong>改前只读 <code>blast-radius</code> 查出 3 个高危兼容面 [实测 L4]</strong>：</li>
+<li><strong>沙盒落后生产 5 个文件</strong>：生产已新增 <code>fts_index.py</code> 等改动，已先反向同步生产基线至沙盒再开发，杜绝部署回退。</li>
+<li><strong>后台提醒 Sidecar 契约</strong>：<code>dream_reminder.py</code> 每 15 分钟调一次 <code>check-due</code>，并依据 <code>due</code> 和 <code>changed_conversations</code> 弹 Toast。本次<strong>保持 <code>due</code> 语义 100% 不变</strong>，新增独立 <code>review_due</code> / <code>review_due_count</code> / <code>review_due_entries</code>，防止 0 新对话时误弹提醒。</li>
+<li><strong>历史 6 份收据 CAS <code>revert</code> 兼容</strong>：现网收据 <code>after_entry</code> 均为 9 键（不含 <code>review_after</code>）。<code>_entry_to_dict()</code> 在 <code>review_after</code> 为空时<strong>省略该键</strong>，保证所有历史条目 <code>revert</code> 零冲突。</li>
+<li><strong>Claude Opus 5.5 异构审稿抓出 4 处边界缺陷（均已独立核实并修补）</strong>：</li>
+<li><strong>防手改废弃条目卡死主题</strong>：原本在 <code>assert_entry_roundtrip</code> 里强校 <code>review_after</code> 会导致主题内若有一条手改错日期的旧/废弃条目，后续对同主题其他条目的 <code>stage</code>/<code>apply</code>/<code>revert</code>/<code>archive_retired</code> 全被卡死。已改为<strong>仅在操作入口强校验</strong>，round-trip 只保无损等价，并在 <code>collect_review_due_entries</code> 对全部状态报告 <code>invalid_review_after</code>。</li>
+<li><strong>禁止无效动作携带 <code>review_after</code></strong>：<code>deprecate</code> / <code>archive_retired</code> 忽略 <code>review_after</code> 却会展示给人工审阅，已改为在 <code>stage</code> 阶段硬拒绝（仅允许 <code>add</code> / <code>promote</code> / <code>update</code> 携带）。</li>
+<li><strong>消除误导性默认置信度</strong>：<code>review_summary.md</code> 仅在操作显式传入 <code>confidence</code> 时打印，避免对省略该字段的 <code>update</code> 误显 <code>medium</code>。</li>
+<li><strong>补充旧条目重新激活指引</strong>：在 <code>SKILL.md</code> 注明通过 <code>update</code> 重新激活旧条目时须显式续期或清除其旧 <code>review_after</code>。</li>
+</ul>
+<h3>2. 落地内容与实测验证</h3>
+<ul>
+<li><strong>已部署改动（7 个文件，零第三方依赖、<code>AGENTS.md</code> 零膨胀）</strong>：</li>
+<li><code>store.py</code>：<code>validate_review_after()</code> 严格日历校验、<code>MemoryEntry.review_after</code>（空值字节不变）、只读并发安全的 <code>collect_review_due_entries()</code>（遇 <code>pending_tx.json</code> 安全跳过）。</li>
+<li><code>governance.py</code>：<code>update</code> 三态语义（省略=保留、空串/<code>null</code>=清除、<code>YYYY-MM-DD</code>=续期/设值）、绑定 <code>plan_hash</code>、不绕过负反馈指纹、CAS <code>revert</code> 双向保护。</li>
+<li><code>extractor.py</code>、<code>dream_cli.py</code>、<code>fts_index.py</code>、<code>review_ui.py</code>：在 <code>check-due</code>、<code>extract</code>（<code>manifest.json</code>）、<code>status</code>、<code>search</code>、<code>review_summary.md</code> 与 <code>review.html</code> 透出 <code>review_after</code> 与到期提醒。</li>
+<li><code>SKILL.md</code>：新增 <code>[推断待确认]</code>（<code>confidence: &quot;low&quot;</code>）与 <code>review_after</code> 使用准则。</li>
+<li>新增回归套件：<code>test_review_after.py</code>。</li>
+<li><strong>实测验收结果 [已实测]</strong>：</li>
+<li>沙盒全量单测：<strong>38/38 OK</strong>（原有 33 + 新增 5 组，含审稿补强用例）。</li>
+<li>沙盒与生产全部 12 份程序文件 SHA-256：<strong>12/12 完全一致</strong>，插件目录零临时/备份残留。</li>
+<li>生产程序独立 <code>TemporaryDirectory</code> 冒烟（<code>init</code> → <code>stage</code> → <code>apply</code> → <code>check-due</code> → <code>search</code> → <code>revert</code>）：<strong>通过</strong>。</li>
+<li>现网只读巡检（<code>dream.ps1 status</code> / <code>check-due</code>）及 Sidecar 实机兼容检查（<code>dream_reminder.py --dry-run</code>）：<strong>全部通过</strong>（<code>action: tick_recorded</code>，零报错）。</li>
+<li><strong>备份与外送 GPT 复核入口</strong>：</li>
+<li>部署前旧脚本备份及完整补丁保存在插件目录之外：<code>review_after_patch.diff</code>。如果你还想交给 Codex (GPT) 做一次独立复审，直接把这份 <code>.diff</code> 文件丢过去即可；如需一键退回旧版，从同目录拷回 7 个文件覆盖即可。</li>
+</ul>
+<hr>
+<h2>二、新开对话学习 Stanford CS329A 的提示词与沟通指南</h2>
+<h3>1. 新开对话第 1 句：直接复制这套“定调开场提示词”</h3>
+<pre><code>我要系统学习斯坦福研究生课程 **CS329A: Self-Improving AI Agents**（官网 https://cs329a.stanford.edu/ ），但我不准备从头刷 10+ 小时视频，也不自己训大模型权重或做机器人。我的目标是把课程里的**推理期自改进机制（Test-time Scaling / Verification / Tool Feedback &amp; Planning / Agent Memory / Eval）**，转化为我日常用 Antigravity 搭科研与代码 Agent 工作流的实操方法论。
+
+请严格按以下沟通契约陪我学这门课：
+1. **省额度 &amp; 一次一讲**：不要一次把 20 讲全展开。每次只深挖我指定的 **1 讲**（或其中 2–3 篇核心论文）。
+2. **只挑高 ROI 内容**：
+   - 优先精读：**Lec 3（Robust Verification）**、**Lec 14（Augmenting Agents with Memory）**、**Lec 2（Test-time Compute Scaling）**、**Lec 4 &amp; 5（Tool/Code Feedback &amp; Planning）**；
+   - 选看灵感：**Lec 7（AlphaEvolve / AI Scientist）**、**Lec 17（Agentic Evaluations）**；
+   - 跳过底层 RL 训权重与机器人章节（Lec 6 / 9 / 19），仅在必要时用 1 句话交代前置概念。
+3. **每讲固定输出 4 块（拒绝水大纲/空话）**：
+   - ① **核心矛盾**：这一讲到底在解决哪一个单靠“写更好 Prompt”解决不了的瓶颈？
+   - ② **机制拆解（不跳步）**：结合官网该讲的 2–3 篇代表论文，讲清关键机制、公式/判定逻辑和它们之间的取舍；
+   - ③ **失效边界**：什么任务适用、什么任务会失效（尤其是可验证域 vs 不可验证域、防 Reward Hacking / 过拟合）；
+   - ④ **落地映射**：对应到我本机现有 Agent 体系（全局规则、跨模型审稿、自动化脚本测试、Dream 本地记忆、科研仿真/推导），给出 **1–2 条可验证的具体启发或反例检查**（拿不出真落地的就直说“仅作概念了解”，别硬凑）。
+4. **严格区分实测/论文原结论与推断**：联网核查论文要点后再讲，不编造实验数字。
+
+我们今天先从 **Lec 3（Robust Verification）** 开始（如果我想先看 Lec 14 Memory，我会直接改口）。请先按上述 4 块结构给我 Lec 3 的精炼精读版，最后留 1–2 个边界追问帮我检验理解。</code></pre>
+<h3>2. 后续推进的三套短指令（直接按场景套用）</h3>
+<ul>
+<li><strong>场景 A：想看某讲原视频里教授的口头直觉（零主额度初筛）</strong></li>
+<li>先把 Stanford Online YouTube 上那 1 节链接扔进 <strong>NotebookLM</strong>，问它：“提取教授在课上讲的 3 个论文里没明说的直觉、反常识踩坑点和学生 Q&amp;A，并标出时间戳”。</li>
+<li>把 NotebookLM 提炼出的 <strong>1–2 段有意思的观点</strong>（几百字）贴进你的新对话，发：</li>
+</ul>
+<p>    &gt; 这是 Lec X 视频里提到的两个口头观点：[粘贴]。请帮我核验它们背后的核心前提，以及在我现有工作流里有没有反例或可复用点。</p>
+<ul>
+<li><strong>场景 B：某 1 节特别重要，想让 AI 直接读该节完整文字稿</strong></li>
+<li>只抓<strong>单节</strong>字幕并清洗掉时间戳/重复行（不要一次塞多节），把洗好的单节纯文本保存成本地 <code>.txt</code>，在新对话里发：</li>
+</ul>
+<p>    &gt; 我把 Lec X 洗净后的单节字幕放在 <code>&lt;文件路径&gt;</code>，请只读这一份文件，按咱们的 4 块契约提炼，重点挑出“和论文摘要不同、教授口头强调的工程权衡”，其余背景一笔带过。</p>
+<ul>
+<li><strong>场景 C：读完一讲切下一讲时（防长上下文膨胀烧额度）</strong></li>
+<li>每读完 1 讲，让 AI 把能落地的 1–3 条压缩成 5 行备忘录；如果对话变长，直接用 <code>/compact</code> 压缩上下文，再发：</li>
+</ul>
+<p>    &gt; Lec 3 收口完毕，请把今天真正可落地的 2 条结论压成 5 行备忘；接下来进入 <strong>Lec 14（Augmenting Agents with Memory）</strong>，同样按 4 块结构，重点拿 MemGPT / Cartridges / CacheBlend 和我本机 Dream Memory 做对照。</p>
+<hr>
+<h2>最后两个轻量收口提示</h2>
+<ul>
+<li>刚才巡检看到你现网已有 <strong>10 个新增/变更对话</strong>（<code>check-due</code> 返回 <code>due: true</code>），接下来任意新对话里跑 <code>/dream</code> 时，新版引擎就会自动启用 <code>[推断待确认]</code> 规范和可选 <code>review_after</code> 字段（比如给 <code>MEM-AGY-003</code> 这类带日期的通道历史样本挂上复核日期）。</li>
+<li>新开 CS329A 对话时，你更想第一讲先攻 <strong>Lec 3（验证器与跨模型审稿边界）</strong> 还是趁热打铁先看 <strong>Lec 14（Agent Memory）</strong>？开场提示词最后一行改个课次号就能直接用。</li>
+</ul>
 </div></article>
 
     </section>

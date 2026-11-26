@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>先读取 @C:\Users\&lt;USER&gt;\Desktop\ai-... - Antigravity Share</title>
+  <style>
+    :root {
+      --bg-main: #131314;
+      --bg-sidebar: #1e1f20;
+      --bg-active: #2b2c2f;
+      --bg-bubble-user: #2b2c2f;
+      --bg-bubble-ai: #1e1f20;
+      --text-main: #e3e3e3;
+      --text-sub: #c4c7c5;
+      --accent: #a8c7fa;
+      --border: #3c4043;
+      --code-bg: #0d0e11;
+      --badge-green: #34d399;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100vh;
+    }
+    #sidebar {
+      width: 310px;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+    .sidebar-header {
+      padding: 18px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-header h2 {
+      font-size: 16px;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sidebar-header a.home-link {
+      text-decoration: none;
+      color: inherit;
+    }
+    .sync-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--badge-green);
+      background: rgba(52, 211, 153, 0.1);
+      padding: 3px 8px;
+      border-radius: 12px;
+      margin-top: 8px;
+    }
+    .conv-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .conv-item {
+      display: block;
+      text-decoration: none;
+      padding: 11px 13px;
+      border-radius: 10px;
+      transition: background 0.15s;
+      border: 1px solid transparent;
+      color: inherit;
+    }
+    .conv-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .conv-item.active {
+      background: var(--bg-active);
+      border-color: var(--border);
+    }
+    .conv-title {
+      font-size: 14px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #fff;
+    }
+    .conv-meta {
+      font-size: 11px;
+      color: var(--text-sub);
+      margin-top: 4px;
+      display: flex;
+      justify-content: space-between;
+    }
+    #main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .main-header {
+      padding: 16px 28px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-sidebar);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .main-header h1 {
+      font-size: 17px;
+      color: #fff;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .sub-meta {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-top: 3px;
+    }
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .btn {
+      background: var(--bg-active);
+      color: var(--accent);
+      border: 1px solid var(--border);
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .btn:hover { background: #3c4043; }
+    .chat-canvas {
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 28px 24px 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .turn {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .turn.user { align-items: flex-end; }
+    .turn.assistant { align-items: flex-start; }
+    .role-tag {
+      font-size: 12px;
+      color: var(--text-sub);
+      font-weight: 600;
+      padding: 0 4px;
+    }
+    .bubble {
+      max-width: 88%;
+      padding: 16px 20px;
+      border-radius: 18px;
+      line-height: 1.7;
+      font-size: 15px;
+      word-break: break-word;
+    }
+    .turn.user .bubble {
+      background: var(--bg-bubble-user);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .turn.assistant .bubble {
+      background: var(--bg-bubble-ai);
+      color: var(--text-main);
+      border-bottom-left-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .bubble p { margin: 0 0 10px 0; }
+    .bubble p:last-child { margin-bottom: 0; }
+    .bubble h1, .bubble h2, .bubble h3, .bubble h4 {
+      margin: 14px 0 8px;
+      color: var(--accent);
+      line-height: 1.4;
+    }
+    .bubble h1 { font-size: 19px; }
+    .bubble h2 { font-size: 17px; }
+    .bubble h3 { font-size: 15.5px; }
+    .bubble ul, .bubble ol { margin: 8px 0 10px 22px; }
+    .bubble li { margin: 4px 0; }
+    .bubble blockquote {
+      border-left: 3px solid var(--accent);
+      padding-left: 12px;
+      margin: 8px 0;
+      color: var(--text-sub);
+    }
+    .bubble code {
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 5px;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 13.5px;
+    }
+    .bubble pre {
+      background: var(--code-bg);
+      padding: 14px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 10px 0;
+      border: 1px solid #2b2d31;
+    }
+    .bubble pre code {
+      background: transparent;
+      padding: 0;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .bubble a { color: var(--accent); }
+    .bubble hr {
+      border: 0;
+      border-top: 1px solid var(--border);
+      margin: 14px 0;
+    }
+    @media (max-width: 820px) {
+      body { flex-direction: column; }
+      #sidebar { width: 100%; height: auto; position: static; max-height: 280px; }
+      .main-header { flex-wrap: wrap; padding: 14px 16px; }
+      .header-actions { flex-wrap: wrap; }
+      .bubble { max-width: 96%; }
+    }
+  </style>
+</head>
+<body data-conv-id="fa66a2bf-30cd-4788-97c4-7a7e22db9f66" data-base-prefix="./" data-turn-count="4" data-update-time="2026-11-26 13:08" data-is-index="0">
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
+      <div class="sync-badge" id="syncBadge">自动同步加载中...</div>
+    </div>
+    <nav class="conv-list" id="convList" aria-label="Conversations">
+      <noscript><div style="padding:12px;color:#c4c7c5;font-size:12px;">请启用 JavaScript 查看全部历史对话列表，或直接访问对应对话链接。</div></noscript>
+    </nav>
+  </aside>
+  <main id="main">
+    <header class="main-header">
+      <div style="min-width:0;">
+        <h1>先读取 @C:\Users\&lt;USER&gt;\Desktop\ai-...</h1>
+        <div class="sub-meta">会话 ID: fa66a2bf-30cd-4788-97c4-7a7e22db9f66 | 轮次: 4 | 更新于: 2026-11-26 13:08</div>
+      </div>
+      <div class="header-actions">
+        <a class="btn" id="downloadMdBtn" href="./fa66a2bf-30cd-4788-97c4-7a7e22db9f66.md" download="先读取_@CUsersUSERDesktopai-fa66a2bf.md" onclick="return downloadMarkdown(event, './fa66a2bf-30cd-4788-97c4-7a7e22db9f66.md', '先读取_@CUsersUSERDesktopai-fa66a2bf.md')">⬇️ 下载 Markdown (.md)</a>
+        <button class="btn" id="copyBtn" type="button" onclick="copyCanonicalUrl('./fa66a2bf-30cd-4788-97c4-7a7e22db9f66.html', 'copyBtn', '已复制直链')">复制对话直链</button>
+      </div>
+    </header>
+    <section class="chat-canvas" aria-label="Conversation Content">
+      <article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>@[c:\Users\&lt;USER&gt;\Desktop\markdown\2026-10-18 - 副本 (3).md] 先读取 @C:\Users\&lt;USER&gt;\Desktop\ai-radar\CONTEXT_ai_radar.md 获取全部约束与断点，不要复述历史。</p>
+<ul>
+<li>单次只读核验“当前断点”磁盘现状，勿中途请示。</li>
+<li>与 [待验证] 不符则报差异停手；一致则按我新需求推进【唯一单点下一步】。</li>
+<li>禁碰【排雷墓碑】，删改先确认，按【外部验证判据】自检汇报。</li>
+</ul>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已读取 <code>CONTEXT_ai_radar.md</code> 与 <code>2026-10-18 - 副本 (3).md</code>.md)，并完成单次只读磁盘核验（未做任何写入或删改）。</p>
+<h3>1. 当前断点核验结果（实测）</h3>
+<p>与 <code>[待验证]</code> 核心状态<strong>一致</strong>：</p>
+<ul>
+<li><strong>发布产物在位</strong>：<code>AIRadar.exe</code> 实测 <code>86.13 MB</code>（<code>90,310,656 B</code>，<code>2026/11/25 12:51:54</code>），同级 <code>release/LICENSE</code> 与 <code>使用说明.txt</code> 完整。</li>
+<li><strong>迁移库在位且有今日活跃数据</strong>：<code>release/data/radar.db</code> 为 <code>2.07 MB</code>（<code>2026/11/26 12:46:48</code>），伴随未合并的 <code>radar.db-wal</code>（<code>4.09 MB</code>，<code>12:47:45</code>）和 <code>radar.db-shm</code>（<code>32 KB</code>），<strong>明显新于</strong>根目录开发库 <code>data/radar.db</code>（<code>2026/11/25 12:27:05</code>）。</li>
+<li><strong>旧整合包已移除</strong>：桌面匹配项仅剩 <code>ai-radar</code> 目录与 <code>AIRadar - 快捷方式.lnk</code>，<code>【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64</code> 已不存在。</li>
+<li><strong>源码与运行态</strong>：全部 17 处文档指针文件（含 <code>package.json</code>、<code>LICENSE</code>、<code>scripts/build-sea.mjs</code>、<code>tests/ai-radar.test.ts</code> 等）均在位；当前无 <code>AIRadar</code> 进程，<code>8788</code> 端口空闲。</li>
+</ul>
+<h3>2. 需提前留意的差异与未验证项</h3>
+<ul>
+<li><strong>默认终端无 <code>node</code>（实测）</strong>：本轮单次脚本内 <code>node:sqlite</code> 库内条数统计未能执行，库内记录数与 <code>npm run build &amp;&amp; npm test</code> 现状属于<strong>未验证</strong>；已查得本机内置 <code>Node.js v22.22.2</code> 路径为 <code>C:\Users\&lt;USER&gt;\.workbuddy\binaries\node\versions\22.22.2-6\node.exe</code>，后续开发与验收将直接注入该路径执行。</li>
+<li><strong>两份锚点第 1 节有两处未同步（未擅改）</strong>：<code>CONTEXT_ai_radar.md</code> 仍保留“保留原目录不动”与“6 大主题分类”原措辞，而 <code>2026-10-18 - 副本 (3).md</code>.md#L5-L12) 已将这两处标为“待确认修订”（旧整合包已清空移除、商业 <code>industry</code> 板块已关闭）。</li>
+</ul>
+<h3>3. 等待你的新需求与两点确认</h3>
+<p>断点核验已就绪，请直接发本次要推进的新需求（功能、信源、过滤规则或界面调整）；同时确认两个边界问题：</p>
+<ul>
+<li><strong>底层约束同步</strong>：是否顺手把上述第 1 节两处“待确认修订”正式写回 <code>CONTEXT_ai_radar.md</code>？</li>
+<li><strong>数据与发版口径</strong>：改动完成后，是否直接走完 <code>npm run build &amp;&amp; npm test</code> 并重打 <code>release/AIRadar.exe</code>（严格保留当前 <code>release/data/radar.db</code> 及 WAL 不被旧 <code>data/</code> 覆盖），还是先只验证开发版再决定是否打包？</li>
+</ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>我体验下来有一些不满意的点，比如收录的话需要我打开后点击手动收录，然后等待好几分钟才能够进到新的东西。再就是新的东西和以前的不好区分，因为我点开才能让ai翻译成中文，但是这样区分不开已读和未读。再就是我可能也需要手机安卓版的，你看看能不能实现。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>我直接查了源码和 <code>release/data/radar.db</code> 的真实运行日志，这三个痛点的根因都很明确。</p>
+<p><strong>一句话核心矛盾</strong>：前两个卡点都源于原项目为「Telegram 推送防误推」留下的<strong>同步串行等 AI</strong>与<strong>点开即标已读</strong>耦合；安卓端能否落地则取决于你更看重<strong>双端同步</strong>还是<strong>脱离电脑独立看</strong>。</p>
+<hr>
+<h3>痛点 1：打开要手点抓取，且等好几分钟才进新东西</h3>
+<h4>实测根因（来自 <code>collectors/index.ts</code> 与库内 <code>runs</code> 记录）</h4>
+<ul>
+<li><strong>最大元凶：采集过程被 AI 同步阻塞</strong>。单机版虽然不用推送，但默认仍走了 <code>pushTiming = &quot;wait_ai&quot;</code>（<code>collectors/index.ts</code>）——每抓完 1 个源，都要原地死等智谱 <code>glm-4-flash</code> 同步审完并跑完语义去重，才肯去抓下一个源。库内实测铁证：</li>
+<li><code>rss-qbitai</code> 无新增时仅 <code>0.2s</code>，<strong>新增 1 条耗时直接飙到 <code>22.1s</code></strong>；</li>
+<li><code>github-ai-trending</code>（+11 条）卡了 <code>43.3s</code>、<code>github-mcp-tools</code>（+10 条）卡 <code>36.2s</code>、<code>cctv-news</code>（+9 条）卡 <code>31.3s</code>。</li>
+<li><strong>30 个启用源全串行 + 90 秒纯空等 + 失败源双倍超时</strong>：</li>
+<li><code>runAll()</code> 逐个串行跑 30 源，且每源之间硬等 <code>sourceGapMs = 3000ms</code>（<code>collectors/index.ts</code>），光空等就白费 <strong>90 秒</strong>；</li>
+<li>库内 <code>settings</code> 尚未保存代理配置，<code>v2ex-share</code>、<code>hf-daily-papers</code>、<code>rss-bbc-zh</code>、<code>rss-deepmind-blog</code>、<code>rss-google-ai-blog</code>、<code>rss-hf-blog</code> 6 个海外源连续失败，而 <code>http.ts</code> 在 <code>curl</code> 超时 <code>7s</code> 后又自动回退 <code>fetch</code> 再等 <code>7s</code>（实测 <code>v2ex-share</code> 每次精准卡死 <code>14.0s</code>）；<code>github-deepseek-releases</code> 因无 Token 触发 GitHub 匿名限流 <code>HTTP 403</code>。</li>
+<li><strong>打开网页无自动快刷与进度反馈</strong>：</li>
+<li>启动时 <code>startIntervalScheduler()</code> 虽然会跑到期源，但很多源间隔是 2–6 小时（未到期不跑），一旦排在前面的慢源/失败源卡住，打开前几分钟完全看不到新内容；</li>
+<li>点「立即抓取」后前端只在 4 秒后盲刷一次列表（<code>App.tsx</code>），没有进度条也不会边抓边自动刷出新条目。</li>
+</ul>
+<h4>改造方案（目标：全量刷新压到 <strong>15–30 秒</strong>，打开即自动流式出新）</h4>
+<ul>
+<li><strong>采集与 AI 彻底解耦</strong>：采集管道只做「抓取 → 规则粗滤 → 立即落库可见」，AI 审核/翻译/去重全部改走后台异步队列，单源耗时回到 0.3–2 秒级。</li>
+<li><strong>双轨受控并发 + 去掉双倍超时</strong>：国内源与海外源分池并发（如总并发 5–6，同域名串行 + 短间隔，GitHub 单独限速防 403），取消 3 秒全局源间死等；修复 <code>http.ts</code> 超时失败后不再二次重复超时。</li>
+<li><strong>打开即静默增量刷新 + 实时进度条</strong>：启动时若距上次抓取超过阈值（如 15 分钟）自动触发一轮并发快刷；顶栏实时显示 <code>正在抓取 14/30 &#183; 新增 +9 条</code>，每完成几批就自动热更新列表，不再干等。</li>
+</ul>
+<hr>
+<h3>痛点 2：新旧内容分不开 + 点开看中文翻译就误标已读</h3>
+<h4>实测根因</h4>
+<ul>
+<li><strong>外文列表预翻译覆盖率极低</strong>：库内 <code>1145</code> 条有效条目里，仅 <code>52</code> 条有中文标题（<code>titleZh</code>）、<code>28</code> 条有中文正文（<code>summaryZh</code>），绝大多数外文只能靠点开详情触发单条翻译。</li>
+<li><strong>点开看译文与标已读强绑定</strong>：<code>App.tsx</code> 的 <code>openDetail()</code> 在打开详情抽屉的瞬间无条件写入 <code>read = true</code>，结果只是想看懂一条英文讲什么，就被标成已读。</li>
+<li><strong>精选排序让旧帖常驻顶部，缺乏「本次新收录」标记</strong>：默认「半小时精选」按 <code>ai_quality DESC, score DESC</code> 排（<code>routes.ts</code>），三天前高分老帖霸顶、刚收录的新条目混在中间，且列表只显示原帖发布时间，看不出哪批是刚抓进来的。</li>
+</ul>
+<h4>改造方案（把「新旧 / 中文翻译 / 已读状态」三件事拆干净）</h4>
+<ul>
+<li><strong>后台自动预翻译列表（免点开直接看中文）</strong>：</li>
+<li>只要配了智谱免费 Key，后台异步队列<strong>优先给首页精选池和最新未读外文</strong>批量补齐 <code>titleZh</code>（中文标题）+ <code>takeaway</code>（1–2 句中文大白话要点），写库缓存。</li>
+<li>列表直接展示中文标题与要点，扫一眼就知道值不值得点开，无需为了看懂而点进详情；点进详情再按需补全长文 <code>summaryZh</code>。</li>
+<li><strong>「看翻译」与「标已读」解耦（提供 2 个交互口径供你选）</strong>：</li>
+<li><strong>方案 2A（推荐）</strong>：列表直接出中文；点开详情抽屉<strong>不再秒标已读</strong>，改为「点击去原文链接 / 手动点底部『已读并下一条』 / 或停留超过 4 秒」才标已读，抽屉与列表行均支持一键切换已读/未读。</li>
+<li><strong>方案 2B</strong>：列表同样后台自动出中文，保留「点开详情即已读」，但把已读条目明显沉底/淡化，并在顶部给一个显眼的「只看未读」主切钮。</li>
+<li><strong>「新收录」水位线与视觉分层</strong>：</li>
+<li>记录你的<strong>上次访问水位线</strong>（<code>last_visit_at</code>）：比上次打开更新入库（<code>first_seen_at &gt; 水位线</code>）的条目挂醒目 <code>NEW</code> 徽标，支持顶部一键切「本次新增 / 未读」，并提供「将当前已看内容归档（推进水位线）」按钮；</li>
+<li>半小时精选默认<strong>未读优先、已读自动沉底</strong>，不再让看过的老高分帖一直占在最前面。</li>
+</ul>
+<hr>
+<h3>痛点 3：手机安卓版能不能实现？</h3>
+<p><strong>可以，而且现有前端已内置移动端响应式布局</strong>（<code>App.tsx</code>、<code>ItemView.tsx</code> 均已适配手机窄屏与抽屉）。真正决定方案的是<strong>「采集程序和数据库跑在哪」</strong>，有 3 条务实路线（先不替你定死）：</p>
+<p>| 路线 | 实现方式 | 体验与优势 | 代价 / 限制 |</p>
+<p>| :--- | :--- | :--- | :--- |</p>
+<p>| <strong>路线 A：电脑后端 + 手机 PWA 桌面图标（最快、零成本、双端实时同步）</strong> | 给 <code>AIRadar.exe</code> 加「手机局域网/远程访问」开关（监听 <code>0.0.0.0:8788</code> + 非本机访问强制 PIN 口令防校园网旁人误连 + 网页展示扫码二维码），前端补齐 PWA <code>manifest</code> 图标；安卓浏览器扫码打开 →「添加到主屏幕」，全屏无地址栏运行 | <strong>最快今天就能用</strong>；手机和电脑<strong>共用同一份 <code>radar.db</code></strong>（已读/收藏/翻译缓存实时同步）；手机零耗电、不用在手机折腾代理 | 依赖电脑开机运行 <code>AIRadar.exe</code>（可顺带做后台静默托盘/开机自启）；离开同一 Wi-Fi 在外访问需在电脑和手机装免费 Tailscale 组网（且 Tailscale 可自动给 HTTPS） |</p>
+<p>| <strong>路线 B：免费云端托管版（电脑关机手机也能随时看）</strong> | <strong>B1 纯免费静态版</strong>：GitHub Actions 每 1–2 小时自动抓取+调智谱翻译生成静态 PWA 部署到 GitHub Pages；&lt;br&gt;<strong>B2 云主机动态版</strong>：把现成 Node + SQLite 部署到一台常驻小 VPS / 免费云容器 | <strong>电脑关机也能随时刷</strong>，海外源天然直连不用代理，手机同样可添加到主屏幕当 App 用 | <strong>B1</strong> 零费用，但手机/电脑的已读与收藏各自存本地不互通、不能随时手点实时抓取；<strong>B2</strong> 体验最完整且双端同步，但需要一台常驻服务器（或学生免费云主机） |</p>
+<p>| <strong>路线 C：真正独立的 <code>.apk</code> 安卓安装包</strong> | <strong>C1 轻量套壳 APK（Capacitor）</strong>：把现有前端直接打成 <code>.apk</code>，后端仍连路线 A（电脑）或路线 B（云端）；&lt;br&gt;<strong>C2 纯手机离线独立 APK</strong>：在手机端重做抓取引擎 + 本地 SQLite + 直调智谱 | 真 <code>.apk</code> 可安装；<strong>C2</strong> 可完全脱离电脑和服务器独立运行 | <strong>C1</strong> 只是给 PWA 换了个 <code>.apk</code> 壳，体验几乎相同但要引入 Android SDK 构建链；<strong>C2</strong> 相当于重写一套安卓客户端，手机抓海外源仍需手机开代理，且<strong>电脑和手机数据完全不互通</strong>，后续改信源要维护两套代码 |</p>
+<blockquote><strong>安全提醒（针对路线 A）</strong>：如果你在校园网或公共 Wi-Fi 下开局域网访问，绝不能裸监听 <code>0.0.0.0:8788</code>（否则同网段别人能直接改你的配置或消耗 AI Key），必须加一道「仅限非本机 IP 校验的访问口令 / 扫码 Cookie 授权」。</blockquote>
+<hr>
+<h3>请你拍板这 3 件事，我直接按你选的开工</h3>
+<ul>
+<li><strong>痛点 1 + 2（桌面端体验大改）</strong>：</li>
+<li>是否立即按上面方案推进（并发解耦提速 + 启动自动快刷与进度条 + 后台自动预翻列表中文 + <code>NEW</code> 新旧水位线）？</li>
+<li>标已读交互你选 <strong>方案 2A（点开不秒标已读，点原文/停留 4 秒/手动才标已读）</strong> 还是 <strong>方案 2B（列表已有中文，点开即标已读 + 已读自动沉底）</strong>？</li>
+<li><strong>海外源代理顺手修不修</strong>：库内目前 <code>v2ex</code>、<code>hf-daily-papers</code>、<code>deepmind</code>、<code>google-ai</code>、<code>bbc</code>、<code>hf-blog</code> 6 个源因未在设置里填代理全超时失败，要不要顺手在代理设置里加一个<strong>「自动读取 Windows 系统代理」</strong>选项（开着梯子就能自动生效，不用手填端口）？</li>
+<li><strong>痛点 3（安卓手机版路线）</strong>：你平时是<strong>电脑常开想和手机同步（选 A）</strong>、<strong>希望电脑关机也能在外随时刷（选 B1 免费静态 / B2 云服务器）</strong>，还是<strong>必须独立 <code>.apk</code>（选 C1 / C2）</strong>？</li>
+</ul>
+<p>   *(另：上轮确认的 <code>CONTEXT_ai_radar.md</code> 第 1 节两处“待确认修订”是否也一并同步？)*</p>
+</div></article>
+
+    </section>
+  </main>
+  <script>
+    (function() {
+      var src = '../sidebar.js';
+      if (window.location.protocol !== 'file:') {
+        src += (src.indexOf('?') >= 0 ? '&' : '?') + '_t=' + Date.now();
+      }
+      var s = document.createElement('script');
+      s.src = src;
+      document.body.appendChild(s);
+    })();
+  </script>
+  <script>
+    function triggerBlobDownload(blob, filename) {
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function() { URL.revokeObjectURL(url); }, 1500);
+    }
+    function downloadMarkdown(e, relPath, filename) {
+      if (window.location.protocol === 'file:' || !window.fetch || !window.Blob) {
+        return true;
+      }
+      if (e) e.preventDefault();
+      var btn = document.getElementById('downloadMdBtn');
+      var orig = btn ? (btn.getAttribute('data-orig') || btn.innerText) : '';
+      if (btn) {
+        btn.setAttribute('data-orig', orig);
+        btn.innerText = '正在下载...';
+      }
+      var targetUrl = relPath;
+      try { targetUrl = new URL(relPath, window.location.href).href; } catch (err) {}
+      fetch(targetUrl, { cache: 'no-cache' })
+        .then(function(resp) {
+          if (!resp.ok) throw new Error('HTTP ' + resp.status);
+          return resp.text();
+        })
+        .then(function(text) {
+          var blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
+          triggerBlobDownload(blob, filename);
+          if (btn) {
+            btn.innerText = '已下载 .md';
+            setTimeout(function() { btn.innerText = orig; }, 2000);
+          }
+        })
+        .catch(function() {
+          if (btn) btn.innerText = orig;
+          var a = document.createElement('a');
+          a.href = targetUrl;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        });
+      return false;
+    }
+    function fallbackCopy(text, onDone) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try {
+        if (document.execCommand('copy')) { onDone(); }
+      } catch (e) {}
+      document.body.removeChild(ta);
+    }
+    function copyCanonicalUrl(relPath, btnId, doneLabel) {
+      var btn = document.getElementById(btnId);
+      if (!btn) return;
+      var orig = btn.getAttribute('data-orig') || btn.innerText;
+      btn.setAttribute('data-orig', orig);
+      var targetUrl = window.location.href;
+      try {
+        targetUrl = new URL(relPath, window.location.href).href;
+      } catch (e) {}
+      var onDone = function() {
+        btn.innerText = doneLabel;
+        setTimeout(function() { btn.innerText = orig; }, 2000);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(targetUrl).then(onDone, function() { fallbackCopy(targetUrl, onDone); });
+      } else {
+        fallbackCopy(targetUrl, onDone);
+      }
+    }
+  </script>
+</body>
+</html>
