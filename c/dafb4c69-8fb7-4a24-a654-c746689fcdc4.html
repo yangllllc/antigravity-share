@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="dafb4c69-8fb7-4a24-a654-c746689fcdc4" data-base-prefix="./" data-turn-count="11" data-update-time="2026-11-26 17:00" data-meta-ver="e41ecb8f" data-is-index="0">
+<body data-conv-id="dafb4c69-8fb7-4a24-a654-c746689fcdc4" data-base-prefix="./" data-turn-count="13" data-update-time="2026-11-26 17:09" data-meta-ver="e41ecb8f" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="Codex Recovery And Skill Optimization">Codex Recovery And Skill Optimization</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="skills">skills</span><span>会话 ID: dafb4c69-8fb7-4a24-a654-c746689fcdc4 | 轮次: 11 | 更新于: 2026-11-26 17:00</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="skills">skills</span><span>会话 ID: dafb4c69-8fb7-4a24-a654-c746689fcdc4 | 轮次: 13 | 更新于: 2026-11-26 17:09</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./dafb4c69-8fb7-4a24-a654-c746689fcdc4.md" download="Codex_Recovery_And_Skill_Opt-dafb4c69.md" onclick="return downloadMarkdown(event, './dafb4c69-8fb7-4a24-a654-c746689fcdc4.md', 'Codex_Recovery_And_Skill_Opt-dafb4c69.md')">⬇️ 下载 Markdown (.md)</a>
@@ -582,6 +582,43 @@
 <li><strong>是否落地 GPT-6.2-Astra Ultra 自检发现的改动</strong>？特别是 <strong>P0 的 <code>format_bibtex.py</code> 同 key 不同 DOI 防误删</strong>（注意：Antigravity 端的 <code>citation-management/scripts/format_bibtex.py</code> 属同源 K-Dense 脚本，如需修复要确认是先只在 Codex 端修，还是两处一起修并记入维护备注）以及 P1 的 <code>curl.exe</code> / <code>-B -X utf8</code> 入口与规则微调？</li>
 <li><strong>桌面端 <code>config.toml</code> 是否也要从 <code>gpt-6-astra / high</code> 改为 <code>gpt-6.2-astra / ultra</code></strong>？（实测代价：Ultra 即使 0 工具调用、纯短段直审也消耗 ~23k tokens；更省额度的折中是桌面默认 <code>gpt-6.2-astra / high</code> 或 <code>xhigh</code>，重度长文审查经 <code>invoke_codex_review.ps1</code> 或桌面手动切 <code>ultra</code>。）</li>
 </ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>落地把，两处一起修并记入维护备注。都改为gpt-6.2-astra / ultra，只要注意额度不要消耗完太多就可以了。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>全部修改已双端落地并通过本地零额度 L4/L5 回归实测（本次未追加消耗任何 Codex/OpenAI API 额度），状态已同步至 <code>CONTEXT_skill_ablation.md</code>。</p>
+<h3>一、落地改动清单</h3>
+<ul>
+<li><strong>双端 <code>format_bibtex.py</code> 同 key 误删修复（SHA-256 完全一致）</strong></li>
+<li>同步修补 <code>Codex 版 format_bibtex.py</code> 与 <code>Antigravity 版 format_bibtex.py</code>（<code>SHA-256 = E48D23F1115EF09E1E7A83EEF37F6DF3BAA7A7405ECD6770C7AF54A0F8B51F0E</code>）：</li>
+<li>分离“书目身份重复”与“引用键冲突”：仅当标准化 DOI 相同（兼容 <code>--no-fix</code> 下的 <code>https://doi.org/</code> 前缀）或同 key 且标题/年份/元数据一致时去重；</li>
+<li>同 key 但 DOI 或标题/年份不同时<strong>完整保留两条</strong>，并向 <code>stderr</code> 输出 <code>Citation key collision</code> 警告提示改 key 或传 <code>--rekey</code>。</li>
+<li>维护备注已记入 <code>local-overlay.json</code>（<code>citation-management.local_script_patches</code>）与 <code>CONTEXT_skill_ablation.md</code>，防止未来升级 K-Dense 上游包时误覆盖回退。</li>
+</ul>
+<ul>
+<li><strong>Codex 4 技能、双端规则（<code>v5.5.2</code>）与 <code>config.toml</code> 全切 <code>gpt-6.2-astra / ultra</code></strong></li>
+<li><code>config.toml</code>：<code>model = &quot;gpt-6.2-astra&quot;</code>、<code>model_reasoning_effort = &quot;ultra&quot;</code>（与 <code>invoke_codex_review.ps1</code> 对齐）。</li>
+<li><code>AGENTS.override.md</code> 与 <code>AGENTS.md</code> 同步至 <code>v5.5.2</code>（<code>SHA-256 = 2861C166FD624FBFA33412C0454D45D40C84837345848564D49FA83A385EDD8F</code>）：</li>
+<li>一节（含“推进一步”）与四节（<code>## 四、记忆维护</code>）原字保留，0 处 <code>swarm</code> 泄漏；</li>
+<li>二节明确 <code>[EXTERNAL-REVIEW]</code> 仅指调用方显式控制标记（非正文引用），并避免常规桌面任务因简单两步计算叠加触发二、三节重复外调；</li>
+<li>五节细化终审边界（覆盖多页长文与含跨段口径/复杂耦合对照的单页实验设计），分离外审身份与公网查证权限。</li>
+<li>Codex 4 技能更新（均保留上游正文主体不变）：</li>
+<li><code>paper-lookup/SKILL.md</code> &amp; <code>citation-management/SKILL.md</code>：补齐 Windows PowerShell 只读入口（显式 <code>curl.exe</code> + <code>&amp; &quot;...\python.exe&quot; -B -X utf8 &lt;绝对脚本路径&gt;</code>、禁非 ASCII 走 PowerShell 5.1 stdin 管道），后者收窄工作流（条件化 Phase 2.5、区分“格式通过 / DOI 解析 / 原文支持论断”并注明 <code>format_bibtex.py</code> 防误删补丁）；</li>
+<li><code>grilling/SKILL.md</code>：顶部补充 Codex 停止条件（本地事实就地查、每轮聚焦 1–3 个高影响决策、无头/禁委派时直接交付关键未知项）；</li>
+<li><code>scheme-redteam-review/SKILL.md</code>：正文不变（纯 ASCII 27 行），仅微调 description 纳入“含复杂耦合对照的实验/架构终审”。</li>
+</ul>
+<ul>
+<li><strong>Antigravity Overlay 同步更新</strong></li>
+<li>通过 <code>local-overlay.json</code> + <code>sync_overlay.py --apply</code> 同步为 Antigravity 的 <code>paper-lookup/SKILL.md</code> 与 <code>citation-management/SKILL.md</code> 注入同款 Windows <code>curl.exe</code> + <code>-B -X utf8</code> 运行契约。</li>
+</ul>
+<hr>
+<h3>二、本地 L4/L5 回归验收实测（0 API 消耗）</h3>
+<p>| 验证项 | 实测结果 |</p>
+<p>| :--- | :--- |</p>
+<p>| 双端 <code>format_bibtex.py --deduplicate</code> 7 组边界测试 | <strong>7/7 双端全过</strong>：同 key 不同 DOI（2 进 2 出 + 报冲突）、同 DOI 不同 key + <code>--no-fix</code>（2 进 1 出）、无 DOI 同 key 不同标题（2 进 2 出）、无 DOI 同 key 同标题同年（2 进 1 出）、同年/不同年区分、3 条混合（保 2 去 1）、自带 21 条模板回归全过 |</p>
+<p>| <code>paper-lookup</code> 脚本退出码与 UTF-8 校验 | <strong>通过</strong>：无 <code>&lt;body&gt;</code> JATS 返回退出码 <code>2</code>、arXiv <code>Error</code> 返回退出码 <code>3</code>、文件读取 <code>中文 β</code> 无损 |</p>
+<p>| <code>sync_overlay.py --check</code> | <strong>通过</strong>：18 项全过（<code>0 drifts</code>） |</p>
+<p>| <code>AGENTS</code> 哈希 / 条款 / <code>config.toml</code> / <code>state_5.sqlite</code> | <strong>通过</strong>：双端 <code>AGENTS</code> SHA-256 一致且含必需条款、<code>config.toml</code> <code>tomllib</code> 解析为 <code>gpt-6.2-astra / ultra</code>、4 技能 YAML 均合法、<code>state_5.sqlite</code> <code>exec=0</code> |</p>
+<blockquote><strong>日常控额提醒</strong>：桌面端现默认 <code>gpt-6.2-astra / ultra</code>，做简单文件整理或快查时可在 Codex 桌面输入框左下角手动临时切回 <code>high</code> 省额度；深度方案红队审查、架构拷打与无头 <code>invoke_codex_review.ps1</code> 则自动保持 <code>ultra</code> 最大化效果。</blockquote>
 </div></article>
 
     </section>
