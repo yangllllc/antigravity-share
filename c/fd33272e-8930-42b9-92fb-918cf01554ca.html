@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="fd33272e-8930-42b9-92fb-918cf01554ca" data-base-prefix="./" data-turn-count="3" data-update-time="2026-11-26 20:16" data-meta-ver="0a031d9e" data-is-index="0">
+<body data-conv-id="fd33272e-8930-42b9-92fb-918cf01554ca" data-base-prefix="./" data-turn-count="5" data-update-time="2026-11-26 20:31" data-meta-ver="0a031d9e" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="OpenGym And AI Prompts Analysis">OpenGym And AI Prompts Analysis</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="skills">skills</span><span>会话 ID: fd33272e-8930-42b9-92fb-918cf01554ca | 轮次: 3 | 更新于: 2026-11-26 20:16</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="skills">skills</span><span>会话 ID: fd33272e-8930-42b9-92fb-918cf01554ca | 轮次: 5 | 更新于: 2026-11-26 20:31</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./fd33272e-8930-42b9-92fb-918cf01554ca.md" download="OpenGym_And_AI_Prompts_Analy-fd33272e.md" onclick="return downloadMarkdown(event, './fd33272e-8930-42b9-92fb-918cf01554ca.md', 'OpenGym_And_AI_Prompts_Analy-fd33272e.md')">⬇️ 下载 Markdown (.md)</a>
@@ -575,6 +575,72 @@
 <ul>
 <li><strong>关于 <code>octopus</code></strong>：你原本想查的是不是昨天看过的 <code>TencentCloud/Octop</code>，还是 <code>nyldn/claude-octopus</code>，或是另一个粘贴漏掉的仓库网址？如果是第三个仓库，直接把原链接发我，我单核它。</li>
 <li><strong>关于 <code>agy-swarm-forge</code> 的 3 个思路</strong>：目前我们不需要动你的全局规则文件（遵守防膨胀原则）；你近期有没有计划启动中大型 <strong>TypeScript / 前端多文件项目</strong>，或者要不要把“6 字段 <code>NEVER</code> 派单 + 两级有界验证”先沉淀到你已有的 <code>best-of-n</code> / <code>subagent-pipeline</code> 技能里备用？（若不动现有文件，这轮就可以直接收口零改动。）</li>
+</ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>我想查的是(https://github.com/nyldn/claude-octopus) 这个。近期没有计划启动，其他的你进行再一次严格的审查，如果真的需要那就加进去直接进行修改</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>我把 <code>nyldn/claude-octopus</code>（v11.30.0，4.5k★，<strong>1,684 个文件</strong>）用 <code>--filter=blob:none</code> 浅拉下来，直接读了它的架构、Council、Refinement、Research、Model Routing、Tangle 超时与核心 Hook 源码；同时逐行核对了你本机所有的规则与自研技能（<code>grilling</code>、<code>best-of-n</code>、<code>subagent-pipeline</code>、<code>debug-unstick</code>、<code>blast-radius</code> 与 <code>local-overlay.json</code>）。</p>
+<p><strong>一句话总裁决</strong>：</p>
+<ul>
+<li><strong><code>nyldn/claude-octopus</code> 绝不要整包安装</strong>（原生 Windows 下 Hook 直接跳过失效，且 1,684 文件的 Bash 编排层与你现有 Antigravity 原生体系高度重叠）；</li>
+<li>把 <code>claude-octopus</code> 和 <code>agy-swarm-forge</code> 里所有“看着很酷”的点逐项挤干水分后，<strong>全部 3 份全局 <code>always_on</code> 规则 + <code>grilling</code> + <code>subagent-pipeline</code> 均无需改动（0 预算膨胀、0 上游漂移）</strong>；只有 <strong>2 处真实、零副作用的微创缺口</strong>通过了严格复审，已直接落盘到两个按需自研技能 <code>best-of-n/SKILL.md</code> 与 <code>debug-unstick/SKILL.md</code> 并完成校验。</li>
+</ul>
+<hr>
+<h3>一、<code>nyldn/claude-octopus</code> 底层原理深度拆解（[实测] 源码与规格文档）</h3>
+<p>它本质上是一个寄生在 <strong>Claude Code（macOS / Linux / WSL）</strong> 上的<strong>重型 Bash + Python 多模型总控框架</strong>（314 个脚本、59 个 Hook、91 个 Skill、50 个人格），核心入口是 <code>scripts/orchestrate.sh</code>：</p>
+<ul>
+<li><strong>多提供商调度 + 双钻流水线（<code>docs/ARCHITECTURE.md</code>）</strong>：</li>
+<li>把本机 Claude 作为主控，通过 CLI/API 并发调度最多 <strong>12 个外部提供方</strong>（Codex、Antigravity CLI <code>agy</code>、Perplexity、OpenRouter、Copilot、Qwen、Ollama、Cursor CLI、Grok、Kimi Code、OpenCode、OrcaRouter），按 <strong>Discover（probe）→ Define（grasp）→ Develop（tangle）→ Deliver（ink）</strong> 串起 4 阶段，并设 75% 共识门禁。</li>
+<li><strong><code>/octo:council</code> 的机械引文核验（<code>docs/COUNCIL.md</code>）</strong>：</li>
+<li>最硬核的设计不是“多模型投票”，而是<strong>反幻觉验证器</strong>：用 Python 校验审稿席位给出的 <code>path:line</code> 与代码引用是否真实存在于仓库/diff 中，编造引用直接判 <code>invalid-ungrounded</code> 踢出法定人数；并支持禁收“裸 <code>APPROVE</code>”（无真实源码定位的放行一律算盲审作废）。</li>
+<li><strong><code>/octo:refine</code> 的“冻结评分尺 + 保守取低分”（<code>docs/REFINEMENT.md</code> + <code>MODEL-ROUTING-STRATEGY.md</code>）</strong>：</li>
+<li>改稿前先<strong>冻结 Rubric 与 SHA-256 快照</strong>；由 Claude + Codex 两个独立家族在看不到历史分数与目标分的情况下盲评，<strong>取两者中较低分</strong>作为当轮成绩；中途若修改 Rubric，强制把原始稿与当前最优稿一起重评，杜绝“边改边调尺子自嗨”。</li>
+<li>明确写死一条跨家族纪律：<strong>同家族两档模型（如 Opus 5 与 Fable 5.1、或 GPT-5.6 与 Astra）意见一致不算独立视角多样性</strong>。</li>
+<li><strong>独立来源感知研究 + 进度感知看门狗（<code>docs/RESEARCH-EVIDENCE.md</code>、<code>docs/tangle-adaptive-timeouts.md</code>、<code>docs/V10-MIGRATION.md</code>）</strong>：</li>
+<li>网页调研时按内容指纹/域名划“独立来源组”，两篇内容相同的转载不算“多方印证”；</li>
+<li>V10 把每席位做成 <code>planned → ... → validated → contributed</code> 持久状态机（明确“进程 <code>exit 0</code> 不等于产出有效”），编码超时改用“无输出/无工作树变化窗口”而非死卡墙钟时间。</li>
+</ul>
+<h4>实测源码暴露出的“宣传落差”与硬伤（为什么绝不安装）</h4>
+<ul>
+<li><strong>原生 Windows 硬不兼容</strong>：<code>hooks/subagent-stop-gate.sh</code> L3–5 直接写死 <code>MINGW*|MSYS*|CYGWIN* -&gt; exit 0</code>，README L132–135 明确要求 Windows 必须进 WSL 或远端 SSH。</li>
+<li><strong>部分卖点实为“伪优化”</strong>：</li>
+<li><code>hooks/output-compressor.sh</code> L13 注释自己承认 <strong><code>PostToolUse</code> Hook 无法替换工具输出，只能额外追加 <code>additionalContext</code></strong>——所谓“输出压缩”实际在增加上下文 Token；</li>
+<li><code>hooks/subagent-stop-gate.sh</code> L91–100 的“0–100 质量评分门禁”源码其实是 <code>len(msg) // 7</code>（字数越长分越高）+ 有无 <code>#</code>/代码块 + 有无 <code>PASS</code> 单词，极易被废话刷分。</li>
+<li><strong>高度臃肿且与现有体系冲突</strong>：56 条 <code>/octo:*</code> 斜杠命令、1,684 文件体量，而核心方法论（<code>skill-verification-gate</code>、<code>skill-pressure-test</code>、<code>skill-prototype</code>、<code>skill-review-response</code>）在 <code>THIRD_PARTY_NOTICES.md</code> 里明写就是从 <code>obra/superpowers</code> 和 <code>mattpocock/skills</code> 搬运改写的——你本机已经用精简原版搭好了。</li>
+</ul>
+<hr>
+<h3>二、严格复审对照表：把所有候选点挤干水分（对照本机真实文件）</h3>
+<p>| 候选思路（来源） | 本机现状（[实测] 文件与行号） | 严格复审结论 |</p>
+<p>| :--- | :--- | :--- |</p>
+<p>| <strong>过滤可实证技术分叉（Empirical Forks）</strong>（<code>agy-swarm-forge</code>） | <code>mattpocock-skills/grilling/SKILL.md</code> 已写明 *“Finding facts is your job (filesystem, tools, etc.); don&#39;t ask the user for anything you could look up yourself”*，且属 <code>local-overlay.json</code> 托管的第三方上游包（刚以 30 行拿下消融最高正增益） | <strong>❌ 不改</strong>：已有覆盖，改第三方上游纯属画蛇添足 |</p>
+<p>| <strong>连续失败 2 次强制换策略</strong>（<code>claude-octopus</code> <code>strategy-rotation.sh</code>） | <code>core-reasoning-protocol.md</code> + <code>debug-unstick/SKILL.md</code> 已有「2 次复现即切模式 B 前提爆破 + 探针证伪 + 3 种不同机制换路 + 并发安全快照清场」 | <strong>❌ 不改</strong>：你现有设计严格强于它 |</p>
+<p>| <strong>反盲目顺从审稿 + 禁裸 PASS</strong>（<code>claude-octopus</code>） | <code>cross-model-reviewer.md</code> 已有盲审、<code>PASS \| 已做的一处具体检查</code>、主模型逐条核验有据才采错判驳回 | <strong>❌ 不改</strong>：已覆盖，不动全局 <code>always_on</code> 规则保预算 |</p>
+<p>| <strong>步间文件权限 + 单步快测 + 终局宽测</strong>（<code>agy-swarm-forge</code>） | <code>subagent-pipeline/SKILL.md</code> 已写全：可写/只读权限清单、单条实测校验命令、硬禁令、<code>≤400</code> 字回执、Gate 1/2 复验、第 4 步唯一一次端到端宽测 | <strong>❌ 不改</strong>：95% 已覆盖，不塞冗余英文模板 |</p>
+<p>| <strong>来源独立性判定 / <code>agy --print</code> CLI 坑点</strong>（<code>claude-octopus</code>） | <code>citation-management</code> 已有“格式/DOI/原文支持”三区分；目前未用外部脚本无头调 <code>agy --print</code> | <strong>❌ 不落盘</strong>：无漏判实证与当前场景，避免规则/记忆膨胀 |</p>
+<p>| <strong>① 并行盲评的“派前冻结评分尺 + 跨家族定义 + 候选 <code>NEVER</code> 与有界快测”</strong>（<code>claude-octopus</code> + <code>agy-swarm-forge</code>） | <code>best-of-n/SKILL.md</code> 原文未写“派前冻结细则（防看完成品事后改尺子）”，未写“异构须跨模型家族（同家族两档不算独立视角）”，<code>brief</code> 也未明写允许修改范围与禁止候选跑耗时全仓慢测 | <strong>✅ 通过复审，直接微创合入</strong>（自研按需 Skill，0 全局预算成本） |</p>
+<p>| <strong>② 硬固化后的逆向减法闭环</strong>（<code>agy-swarm-forge</code>） | <code>debug-unstick/SKILL.md</code> 已写同类错 ≥2 次按优先级固化进脚本/类型/Hook，但缺后半句“固化生效后移除旧文字提醒”，长期会导致规则/笔记单向堆积 | <strong>✅ 通过复审，直接微创合入</strong>（1 句话收口，不动全局规则） |</p>
+<hr>
+<h3>三、本次实际落地修改与实测验真</h3>
+<p>仅修改了以下 <strong>2 个本地自研按需 Skill</strong>（均保留原有 <code>name</code> / <code>description</code> frontmatter 触发契约不变，行数维持原 49 行不变，全局 <code>rules/*.md</code> 与 <code>local-overlay.json</code> 第三方包零改动）：</p>
+<ul>
+<li><strong><code>best-of-n/SKILL.md</code></strong>（<code>v1.3 → v1.4</code>）：</li>
+<li>第 1 步 <code>brief</code> 补入：<code>允许修改范围与明确 NEVER 禁区——含禁止自行调用同济 MCP/外脑工具、禁止候选阶段跑耗时全仓慢测，局部快测须有界</code>；</li>
+<li>第 1 步细则补入：<code>并在派工前冻结……严禁看完成品后临时改尺子（若中途确须补硬指标，须用新版细则重评全部候选）</code>；</li>
+<li>第 2 步模型选择补入：<code>（异构须跨模型家族，同家族不同档位不算独立视角）</code>。</li>
+<li><strong><code>debug-unstick/SKILL.md</code></strong>（<code>v1.3 → v1.4</code>）：</li>
+<li>模式 B 第 6 步补入：<code>固化并实测生效后，顺手移除已被硬约束替代的旧文字提醒，防规则与笔记只增不减</code>。</li>
+</ul>
+<h4>实测验证结果（[实测]）</h4>
+<ul>
+<li><strong>编码与结构检查</strong>：两文件均为无 BOM UTF-8（首字节 <code>2D 2D 2D 0A 6E 61 6D 65 3A 20</code>），frontmatter 完整，各 49 行：</li>
+<li><code>best-of-n/SKILL.md</code>：6,083 B，SHA-256 = <code>C01F8ED30A36CEDDFC03A3BDCFECF410BB99D7E3C96AA8CDAA75F004D4946196</code></li>
+<li><code>debug-unstick/SKILL.md</code>：5,217 B，SHA-256 = <code>0C947D8D1BEBD3F8C90C1CC8C811CEEF34E6648939CC64086C032DCD89755121</code></li>
+<li><strong>Overlay 零漂移校验</strong>：执行 <code>sync_overlay.py --check</code> 输出 <code>ALL OVERLAY CHECKS PASSED (0 drifts)</code>（退出码 <code>0</code>）。</li>
+</ul>
+<hr>
+<h3>一个收口确认</h3>
+<ul>
+<li>这两处微创修改都是纯按需、零全局 Token 成本的收紧；如果你觉得其中某一条过于严格，或者未来你真的准备在 Windows 上写脚本无头调 <code>agy --print</code>（<code>claude-octopus</code> 的 <code>agy-exec.sh</code> 实测记录了 3 个真实 CLI 坑：<code>--print</code> 要把 prompt 当参数值而非 stdin、<code>--print-timeout</code> 必须带单位如 <code>5m0s</code>、MSYS 下子进程丢 <code>%USERPROFILE%</code>），到时候我们再按需把那 3 条记进 <code>local-windows-env.md</code> 即可，现在保持零冗余。</li>
 </ul>
 </div></article>
 
