@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="fa66a2bf-30cd-4788-97c4-7a7e22db9f66" data-base-prefix="./" data-turn-count="5" data-update-time="2026-11-26 13:28" data-meta-ver="407d6bef" data-is-index="0">
+<body data-conv-id="fa66a2bf-30cd-4788-97c4-7a7e22db9f66" data-base-prefix="./" data-turn-count="9" data-update-time="2026-11-26 13:45" data-meta-ver="407d6bef" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="AI Radar Project Checkpoint Validation">AI Radar Project Checkpoint Validation</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64">【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64</span><span>会话 ID: fa66a2bf-30cd-4788-97c4-7a7e22db9f66 | 轮次: 5 | 更新于: 2026-11-26 13:28</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64">【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64</span><span>会话 ID: fa66a2bf-30cd-4788-97c4-7a7e22db9f66 | 轮次: 9 | 更新于: 2026-11-26 13:45</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./fa66a2bf-30cd-4788-97c4-7a7e22db9f66.md" download="AI_Radar_Project_Checkpoint-fa66a2bf.md" onclick="return downloadMarkdown(event, './fa66a2bf-30cd-4788-97c4-7a7e22db9f66.md', 'AI_Radar_Project_Checkpoint-fa66a2bf.md')">⬇️ 下载 Markdown (.md)</a>
@@ -552,6 +552,54 @@
 <p>   *(另：上轮确认的 <code>CONTEXT_ai_radar.md</code> 第 1 节两处“待确认修订”是否也一并同步？)*</p>
 </div></article>
 <article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>都按照你说的来。选择2A把，修一下吧，我更希望的是同步，这样两边不会出现内容上的差错</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>正在等待类型检查、前端构建与单元测试完成…</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>独立目录实机验收 <code>AIRadar.exe</code> 正在运行中（已自动识别本机 Windows 系统代理 <code>http://127.0.0.1:12450</code>，启动 3 秒即完成 10/30 个信源并入库 143 条），等待完整自检结束…</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>正在等待独立目录 <code>AIRadar.exe</code> 跑完 30 源完整并发验收…</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>三项改造已全部落地、通过测试与独立目录实机验收，并已原地重打包最新的 <code>AIRadar.exe</code>（<code>86.21 MB</code>，<strong>原有 <code>release/data/radar.db</code> 及 WAL 全程无损保留</strong>），同时已同步更新 <code>CONTEXT_ai_radar.md</code>。</p>
+<hr>
+<h3>本次完成的 4 块改造</h3>
+<ul>
+<li><strong>极速并发采集 + 自动系统代理 + 打开即快刷</strong></li>
+<li><strong>解除采集期 AI 阻塞</strong>：<code>collectors/index.ts</code> 单机无推送模式下不再同步死等 AI 审核与语义去重，抓完即刻入库可见，AI 全部转入后台异步队列。</li>
+<li><strong>受控并发池 &amp; 修复双倍超时</strong>：30 个信源改为 6 并发分泳道调度（国内直连源优先出新，同域名/GitHub 独立限速并在遇 GitHub 403 时本轮快速降级跳过）；<code>http.ts</code> 修复 <code>curl</code> 超时后二次回退 <code>fetch</code> 导致的双倍超时。</li>
+<li><strong>自动读取 Windows 系统代理</strong>：<code>network-settings.ts</code> 默认开启自动检测 Windows 注册表系统代理（并在 <code>NetworkProxyCard.tsx</code> 实时显示识别结果），国内源仍坚持永远直连。</li>
+<li><strong>打开自动快刷 + 实时进度条</strong>：<code>index.ts</code> 启动检测距上次抓取超过 15 分钟即后台并发快刷；<code>App.tsx</code> 桌面与手机顶栏均显示实时抓取进度（如 <code>抓取 14/30 &#183; +8</code>），每有新增或后台预译完成自动静默刷新列表。</li>
+</ul>
+<ul>
+<li><strong>后台自动预译中文 + 方案 2A 翻译与已读解耦 + <code>NEW</code> 新旧水位线</strong></li>
+<li><strong>后台轻量预翻译外文列表</strong>：<code>ai-settings.ts</code> 与 <code>ai-admin.ts</code> 新增后台自动预译（遵循 <code>temperature=0.01</code> 与局部索引护栏），启动后及采集完成后自动为首页与未读外文批量补齐中文标题 <code>titleZh</code> 与核心要点 <code>takeaway</code>。</li>
+<li><strong>方案 2A 已读解耦（<code>ItemView.tsx</code>、<code>App.tsx</code>）</strong>：</li>
+<li>列表行支持点击 <strong><code>原地译</code></strong> 按钮直接原地出中文（不打开抽屉、不标已读），点左侧小圆点可直接切换已读/未读；</li>
+<li>点开详情抽屉<strong>不再第 0 秒标已读</strong>，改为「点击查看原文链接 / 点击底部 <strong><code>已读并下一条</code></strong> / 或真实停留满 4 秒（等待自动翻译期间暂停计时）」才标已读，自动标读后顶栏带 <strong><code>已读 &#183; 撤销</code></strong> 一键撤回；</li>
+<li><strong>新旧一目了然（<code>routes.ts</code>）</strong>：新增持久化访问水位线 <code>visit_watermark</code>，比水位线更新的未读条目挂醒目 <strong><code>NEW</code></strong> 徽标；「半小时精选」默认<strong>未读与新收录优先浮顶、已读自动沉底</strong>；频道栏直接提供 <strong><code>本次新增 (+N)</code></strong>、<strong><code>仅看未读</code></strong>、<strong><code>全部已看</code></strong> 三个快捷按钮。</li>
+</ul>
+<ul>
+<li><strong>安卓手机实时同步（PWA + 安全 PIN 门禁 + 离线本地二维码）</strong></li>
+<li><strong>安全门禁与热切换（<code>mobile-access.ts</code>）</strong>：默认仅监听 <code>127.0.0.1</code>；在顶栏「<strong>手机同步</strong>」或「信源与代理」一键开启后热切换至 <code>0.0.0.0:8788</code>（无需重启程序）。电脑本机永远免密，非本机设备一律强制校验 6 位口令或扫码 <code>?pair=PIN</code> 颁布 30 天 HttpOnly Cookie；重置口令可立即踢出所有旧设备。</li>
+<li><strong>本地零外链二维码 &amp; PWA 桌面图标</strong>：内置纯本地 ISO 18004 QR 生成器（<code>qrcode.ts</code>、<code>MobileSyncCard.tsx</code>）与 <code>manifest.webmanifest</code> / PNG 图标，安卓浏览器扫码进入后点「添加到主屏幕」即可像原生 App 一样全屏运行，与电脑实时读写同一份 <code>release/data/radar.db</code>。</li>
+</ul>
+<hr>
+<h3>外部验证与实机自检结果（全部实测）</h3>
+<ul>
+<li><strong>类型检查与前端构建</strong>：<code>npm run build</code> 通过（<code>4.17s</code>，0 报错，内嵌 23 个前端资源含 PWA manifest 与 PNG 图标）。</li>
+<li><strong>单元测试</strong>：<code>npm test</code> <strong>13/13 全绿</strong>（覆盖原 9 项 + 系统代理注册表解析、水位线筛选参数、QR 矩阵、手机同步 PIN 门禁与口令重置即时吊销）。</li>
+<li><strong>二维码实测解码</strong>：使用 <code>zxing-cpp</code> 对 V3 / V5 多组局域网与 Tailscale 配对链接生成的图像实测解码，<strong>4/4 100% 原样还原</strong>。</li>
+<li><strong>单文件 EXE 独立目录 + 异地 CWD 实机验收</strong>：</li>
+<li>自动识别到你本机正在运行的 Windows 系统代理 <strong><code>http://127.0.0.1:12450</code></strong>（<code>proxySource: &quot;system&quot;</code>）；</li>
+<li>30 个信源全量并发首轮仅耗时 <strong>12.1 秒</strong>（启动 2 秒即完成 10 源入库 143 条；最终 <code>26 ok / 4 degraded / 0 failed</code>，入库 <code>359</code> 条，对比原先 3–6 分钟大幅提速）；</li>
+<li>手机同步开关 <code>127.0.0.1</code> ↔ <code>0.0.0.0</code> 热重绑存活验证通过；<code>/manifest.webmanifest</code>（<code>200</code>）与 <code>/icon-192.png</code>（<code>200</code>）正常响应；</li>
+<li>数据库严格落在 <code>AIRadar.exe</code> 同级 <code>data/</code>，异地 CWD 零散落；真实 <code>release/data/radar.db</code>（<code>2.07 MB</code>）及 <code>radar.db-wal</code>（<code>4.09 MB</code>）无损在位。</li>
+</ul>
+<hr>
+<h3>两个实用边界提示（方便你上手直接用）</h3>
+<ul>
+<li><strong>手机首次连不上怎么办</strong>：双击桌面快捷方式打开新版 <code>AIRadar.exe</code> 后，点右上角「<strong>手机同步</strong>」开启并扫码；若同一 Wi-Fi 下手机打不开，通常是 Windows 防火墙拦了 <code>8788</code> 端口（弹窗内已提供一键复制放行命令），或校园网开启了客户端隔离——如果校园网隔离或你出门在外也想看，在电脑和手机各装免费 <strong>Tailscale</strong> 并登录同账号，直接扫弹窗里的 <code>100.x.x.x</code> 远程地址即可。</li>
+<li><strong>关于 GitHub 403 限流</strong>：实测里那 4 个 <code>degraded</code> 源都是 GitHub 未登录 API 的每小时 60 次匿名限流（现已自动快速跳过、不拖慢抓取）。如果你希望 GitHub 热门工具每小时都满额抓取，后续可以在 <code>release/.env</code> 里配一行免费的个人只读 <code>GITHUB_TOKEN=...</code>（不配也完全不影响正常使用）。</li>
+</ul>
 </div></article>
 
     </section>

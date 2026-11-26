@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="fc732d35-c3f0-44b8-92af-c8b53567eb60" data-base-prefix="./" data-turn-count="9" data-update-time="2026-11-26 13:29" data-meta-ver="551a3519" data-is-index="0">
+<body data-conv-id="fc732d35-c3f0-44b8-92af-c8b53567eb60" data-base-prefix="./" data-turn-count="10" data-update-time="2026-11-26 13:31" data-meta-ver="551a3519" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="分享对话插件">分享对话插件</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="独立对话">独立对话</span><span>会话 ID: fc732d35-c3f0-44b8-92af-c8b53567eb60 | 轮次: 9 | 更新于: 2026-11-26 13:29</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="独立对话">独立对话</span><span>会话 ID: fc732d35-c3f0-44b8-92af-c8b53567eb60 | 轮次: 10 | 更新于: 2026-11-26 13:31</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./fc732d35-c3f0-44b8-92af-c8b53567eb60.md" download="分享对话插件-fc732d35.md" onclick="return downloadMarkdown(event, './fc732d35-c3f0-44b8-92af-c8b53567eb60.md', '分享对话插件-fc732d35.md')">⬇️ 下载 Markdown (.md)</a>
@@ -520,6 +520,35 @@
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>线上部署已就绪（提交 <code>6da35e7</code>，Actions Run <code>45761763280</code> 为 <code>Success</code>）。现同步回写 <code>CONTEXT</code> 最新断点，并调用浏览器实机检验线上页面的项目分组、真实标题、搜索框、折叠展开与视图切换是否零报错正常渲染。</p>
 </div></article>
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>浏览器验证子代理已启动，正在实机检查 <code>https://yangllllc.github.io/antigravity-share/</code> 的分组渲染与交互；同时留意到 <code>2026-10-18 - 副本.md</code> 似乎已被移动或重命名，待浏览器校验返回后一并核实状态文件路径并收口汇报。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已全部完成并上线验证（保留 <code>setup_github_pages.ps1</code>，本会话保持公开同步，未触碰个人主页仓库与排雷墓碑）。</p>
+<h3>1. 已落地改动</h3>
+<ul>
+<li><strong>清理 6 个早期废案</strong>：已删除插件根目录 <code>server.ps1</code>、<code>server.log</code>、<code>run_daemon.vbs</code>、<code>run_service.bat</code>、<code>start.bat</code>、<code>export_static.ps1</code>，并同步清理 <code>SKILL.md</code> 中已失效的桌面入口说明。</li>
+<li><strong>按 Antigravity 原生格式分类与真实标题</strong>（<code>sync_share.ps1</code>、<code>template.html</code>）：</li>
+<li><strong>三层纯 PowerShell 5.1 + .NET 元数据读取（零 Python/Node 依赖）</strong>：优先调官方 <code>ConversationService/ListConversations</code>（Tier 1，直连绕过系统代理延迟），缺失时自动懒加载离线解析 <code>annotations\*.pbtxt</code>（含八进制 UTF-8 反转义）、<code>agyhub_summaries_proto.pb</code>、<code>config\projects\*.json</code> 与 <code>app_storage.json</code>（Tier 2），最后回退 <code>sync_cache.json</code> 与首条消息（Tier 3）。</li>
+<li><strong>侧边栏结构对齐 Antigravity</strong>：默认 <strong><code>按项目</code></strong> 视图，按 <code>projectsOrder</code> 优先排序（<code>Zemax</code>、<code>光路</code> 在前，其余活跃项目按最新会话时间倒序），下方展示 <strong><code>独立对话</code></strong>；有置顶/归档对话时自动出现 <code>置顶对话</code> 与默认折叠的 <code>已归档</code> 分组；当前正在查看的对话所属分组自动展开。</li>
+<li><strong>快捷检索与离线兼容</strong>：侧栏顶部新增实时搜索框（支持按标题/项目名/短 ID 过滤）、<code>按项目 / 按时间</code> 视图切换（<code>按时间</code> 下每条带项目胶囊标签）及 <code>全部折叠 / 全部展开</code>；全部逻辑内置于 <code>sidebar.js</code> 且 <code>localStorage</code> 容错，直接双击本地 <code>index.html</code> 同样可用。</li>
+<li><strong>标题与下载文件对齐</strong>：页面 <code>&lt;h1&gt;</code> / <code>&lt;title&gt;</code>、顶栏项目徽章、导出 <code>.md</code> 头部与下载文件名全部改用 Antigravity 真实标题（不再用 <code>@[c:\Users\&lt;USER&gt;</code> 截断拼凑）；同步扩展 <code>sync_cache.json</code> 键（含 <code>title</code>/<code>project_id</code>/<code>project_name</code>/<code>meta_ver</code>），在 Antigravity 内重命名或移动项目时仅定向重绘受影响会话。</li>
+<li><strong>更新单文件状态锚点</strong>：检测到原状态文件已重命名为 <code>分享对话插件.md</code>，已在不动第 1 节铁律与排雷墓碑的前提下回写最新断点。</li>
+</ul>
+<hr>
+<h3>2. 外部验证与真机自检结果 <code>[实测]</code></h3>
+<p>| 验证维度 | 实测结果 | 状态 |</p>
+<p>| :--- | :--- | :---: |</p>
+<p>| 改前 <code>blast-radius</code>（L4） | 纯 PS 解析 <code>agyhub_summaries_proto.pb</code> 与官方 API 37/37 在 <code>projectId</code> 与 <code>title</code> 上 100% 一致；<code>.gemini/config</code> 无越界依赖 | <strong>通过</strong> |</p>
+<p>| PS 语法与性能（L5） | 0 语法错误；全量冷重建 35 会话+推送 <code>22.9s</code>（&lt; 25s Hook 上限）；日常增量 Tier 1 <code>2.85s</code> / Tier 2 离线 <code>1.70s</code> | <strong>通过</strong> |</p>
+<p>| Tier 1 与 Tier 2 离线等价 | 剥离 <code>ANTIGRAVITY_LS_ADDRESS</code>/<code>CSRF_TOKEN</code> 运行后，生成 <code>sidebar.js</code> 与在线 API 产物 <code>SHA256</code> 完全一致 | <strong>通过</strong> |</p>
+<p>| 隐私与模板完整性 | <code>sidebar.js</code> 与 <code>sync_cache.json</code> 对黑名单会话（<code>a0ca09c2</code>/<code>eb9e76bb</code>）、4 个 sidecar 项目、<code>folderUri</code>、本机用户名均零命中；36 份 HTML 模板壳层未替换占位符为 <code>0</code> | <strong>通过</strong> |</p>
+<p>| GitHub Pages 线上部署 | 提交 <code>6da35e7</code>（72 文件变更）已推至 <code>origin/main</code>，Actions Run <a href="https://github.com/yangllllc/antigravity-share/actions/runs/45761763280" target="_blank" rel="noopener noreferrer"><code>45761763280</code></a> 为 <strong><code>Success</code></strong>；<code>sidebar.js</code> <code>HTTP 200</code>（<code>Last-Modified: 2026-11-26 13:28:10 +08:00</code>） | <strong>通过</strong> |</p>
+<p>| 浏览器真机渲染与交互 | 访问 https://yangllllc.github.io/antigravity-share/ 控制台 <strong>0 报错</strong>、网络 <strong>0 失败</strong>；已实见 8 个分组共 35 条会话（<code>Zemax(1)</code>、<code>光路(3)</code>、<code>【资源雷达成品整合包】FreebieRadar...(3)</code>、<code>mcp(5)</code>、<code>memory(4)</code>、<code>skills(1)</code>、<code>ppt(2)</code>、<code>独立对话(16)</code>），搜索 <code>&quot;光学&quot;</code> 精准筛出 <code>工程光学复习</code>，<code>按项目 / 按时间</code> 切换与分组折叠展开均正常 | <strong>通过</strong> |</p>
+<blockquote>提示：因全量重写 72 个站点文件，<code>.git</code> 体积从 <code>1.61 MB</code> 增至 <code>3.22 MB</code>（属松散对象正常增长）；浏览器如之前打开过旧页，首次刷新可按一次 <code>Ctrl+F5</code> 立即跳过旧缓存。</blockquote>
+<hr>
+<h3>边界追问</h3>
+<ul>
+<li><strong>项目分组默认展开策略</strong>：当前 8 个分组默认全部展开（共 35 条对话，左侧栏需轻微滚动）。如果后续对话涨到 60+ 条，你希望保持“全部默认展开”，还是改成“仅展开当前对话所属项目，其余默认折叠”？</li>
+<li><strong>带有 <code>已过期...</code> 标题的历史会话</strong>：目前你在 Antigravity 里把部分旧会话改名为 <code>已过期1</code> / <code>已过期2</code> 等（但未点“归档”），它们现在都原样归在各自项目下。需要保持现状，还是希望后续在分享站里加一个开关把标题以 <code>已过期</code> 开头的会话自动折进折叠区？</li>
+</ul>
 </div></article>
 
     </section>

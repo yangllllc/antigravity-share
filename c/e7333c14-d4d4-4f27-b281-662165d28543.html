@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="e7333c14-d4d4-4f27-b281-662165d28543" data-base-prefix="./" data-turn-count="22" data-update-time="2026-11-26 13:29" data-meta-ver="9ae0d6d9" data-is-index="0">
+<body data-conv-id="e7333c14-d4d4-4f27-b281-662165d28543" data-base-prefix="./" data-turn-count="24" data-update-time="2026-11-26 13:33" data-meta-ver="9ae0d6d9" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="Antigravity 方案优化与智能体理解">Antigravity 方案优化与智能体理解</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="mcp">mcp</span><span>会话 ID: e7333c14-d4d4-4f27-b281-662165d28543 | 轮次: 22 | 更新于: 2026-11-26 13:29</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="mcp">mcp</span><span>会话 ID: e7333c14-d4d4-4f27-b281-662165d28543 | 轮次: 24 | 更新于: 2026-11-26 13:33</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./e7333c14-d4d4-4f27-b281-662165d28543.md" download="Antigravity_方案优化与智能体理解-e7333c14.md" onclick="return downloadMarkdown(event, './e7333c14-d4d4-4f27-b281-662165d28543.md', 'Antigravity_方案优化与智能体理解-e7333c14.md')">⬇️ 下载 Markdown (.md)</a>
@@ -623,6 +623,55 @@
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已归档 Case 06 裸模型组，继续等待最后 3 路子代理（<code>C06 Skill</code>、<code>C07 Bare</code>、<code>C07 Skill</code>）返回。</p>
 </div></article>
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已收齐二轮 Case 06（长稿区间内去 AI 味对照），继续等待最后一组 Case 07（<code>exploratory-data-analysis</code> 科研脏数据对照）2 路子代理返回。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已归档 Case 07 裸模型组，等待最后 1 路子代理（<code>C07 Skill</code>）返回后即可完成全部二轮汇总与最终交付。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>三项任务已全部完成并实测验收。先把你最关心的 <strong>GPT/Codex 打开报错排查定案</strong> 放最前面，再汇报 <strong>Antigravity 触发收窄</strong> 与 <strong>二轮 3 项精确对照实测结果</strong>。</p>
+<hr>
+<h3>一、GPT / Codex 桌面端报“ChatGPT 遇到了问题”：实测根因与处置方案</h3>
+<h4>1. 排查与三轮对照证伪结果（实测）</h4>
+<p>查看桌面端原始日志（<code>AppData\Local\Codex\Logs\2026\11\26\*.log</code>）与 <code>logs_2.sqlite</code> 后，定位到每次打开窗口都会在 <code>Loaded MCP server catalog</code> 后约 0.2 秒触发同一个 React 前端崩溃：</p>
+<pre><code>error boundary: Error: Missing scope instance (name=AppRoutes)
+  at ez (app://-/assets/async/19090.212868ea77.js:1:46521)
+  at PepperOnboardingAnnouncementHost (app://-/assets/async/538169.be09525a41.js:1:680)</code></pre>
+<p>为彻底排除是我们修改本地配置引起，我做了 <strong>3 轮单一变量对照实测</strong>：</p>
+<ul>
+<li>删除今天 <code>codex exec</code> 留下的单条测试会话 <code>01a21630</code>（并把防残留参数 <code>--ephemeral</code> 写入了封装脚本）→ 桌面端<strong>仍复现同一报错</strong>；</li>
+<li>将冷备的 33 个旧技能原样移回 <code>.codex\skills</code> 并移走新建的 <code>scheme-redteam-review</code>（100% 回到修改前技能状态）→ 桌面端<strong>仍复现同一报错</strong>（随后已恢复为你精简后的 4 技能状态）；</li>
+<li>备份并重置 Electron 的 <code>Cache</code>、<code>Code Cache</code>、<code>Session Storage</code>、<code>GPUCache</code>（不动登录态 <code>Local Storage</code>）→ 桌面端<strong>仍复现同一报错</strong>。</li>
+</ul>
+<h4>2. 定案结论与立即可用的解决路径</h4>
+<ul>
+<li><strong>真实根因</strong>：这是 <strong>OpenAI Windows 桌面客户端 <code>OpenAI.Codex 26.1120.6357.0</code>（日志显示你本机于 11/25 13:01 从 <code>26.1120.5083.0</code> 自动升级到此版本）的已知前端回归 Bug</strong>（<code>AppRoutes / Missing scope instance</code>，多由服务端 Statsig/引导组件状态触发）；<strong>与我们清理 <code>.codex\skills</code> 及升级 <code>AGENTS*.md</code> 无关</strong>。</li>
+<li><strong>底层状态核验（实测健康）</strong>：<code>codex doctor</code> 检查通过（<code>config.toml parse ok</code>、<code>startup warning skills 0</code>、WebSocket <code>HTTP 101</code> 连通），且本轮用 <code>codex.exe exec --ephemeral -m gpt-6.2-astra</code> 跑 Case 08 一次性 <code>EXIT=0</code>、<code>state_5.sqlite</code> 零 <code>exec</code> 残留。</li>
+<li><strong>你现在的 3 个具体应对方式</strong>：</li>
+<li><strong>检查客户端热修复</strong>：打开 <strong>Microsoft Store → 库 → 获取更新</strong>，查看 OpenAI 是否已推送高于 <code>26.1120.6357.0</code> 的修复版本；</li>
+<li><strong>不影响当前工作流</strong>：红队审查方案可直接走本机 <code>invoke_codex_review.ps1</code>（直调 <code>gpt-6.2-astra</code> CLI，完全绕开坏掉的 Electron 界面），日常交互可临时用网页版 <code>chatgpt.com</code>；</li>
+<li><strong>可选尝试（需你确认）</strong>：清理 <code>AppData\Roaming\Codex\web\Codex\Default\Local Storage</code> 可重置本地缓存的 Statsig 标志，但会退出桌面端登录需要重新扫码/浏览器登录；未经你确认我未动你的登录态。</li>
+</ul>
+<hr>
+<h3>二、Antigravity 主力端：4 个 Skill 触发描述精准收窄（已落地 &amp; 零漂移验真）</h3>
+<p>已通过 <code>local-overlay.json</code> + <code>sync_overlay.py --apply</code> 无损更新（不动上游源码、不切断 <code>venue-templates</code>/<code>literature-review</code>/<code>peer-review</code> 后台联动），<code>sync_overlay.py --check</code> 实测 <strong>0 drifts</strong>（新开对话即生效）：</p>
+<ul>
+<li><strong><code>lieflat-less-ai-tone</code></strong>：限定为“≥800 字中文长稿保原声微创去 AI 味或英文 <code>english-unslop.md</code>；<code>&lt;500</code> 字短段重度 AI 腔直接改写勿调用”；</li>
+<li><strong><code>scientific-writing</code></strong>：限定为“英文 SCI 整稿、期刊 LaTeX 模板（<code>venue-templates</code>）、系统综述（<code>literature-review</code>）或正式审稿回复；日常中文单段/光学小节审校勿调用”；</li>
+<li><strong><code>statistical-analysis</code></strong>：限定为“正式投稿级统计审查、复杂多因素设计、Q-Q/残差诊断图或稳健检验与 MDE 效能敏感性分析；常规小样本统计原生直算”；</li>
+<li><strong><code>uncertainty-and-units</code></strong>：限定为“非线性模型蒙特卡洛 GUM（<code>propagate_uncertainty.py</code>）、正式计量级 JCGM 100 声明或批量代码单位审计（<code>audit_units.py</code>）；常规换算与线性误差传播原生直算”。</li>
+</ul>
+<hr>
+<h3>三、二轮 3 项精确对照实测结果（全部归档至 <code>skills</code> 项目）</h3>
+<p>完整 8 组 16 路报告已更新至 <code>REPORT_2026-11-26.md</code> 与 <code>CONTEXT_skill_ablation.md</code>（<code>mcp.md</code> 已同步；<code>Desktop/skills</code> 目录共 29 个隔离归档文件）：</p>
+<p>| 二轮用例 | 实测目标 | 裸模型（Arm A） | 启用 Skill（Arm B） | 实测结论 |</p>
+<p>| :--- | :--- | :--- | :--- | :--- |</p>
+<p>| <strong>Case 06</strong> (<code>题目</code>) | <code>lieflat-less-ai-tone</code>（<strong>1,069 字长稿区间内</strong>） | 改得流畅并抓出 3 处语句矛盾，但大面积替换用词与口吻，偏“风格重写”（<code>c06-bare.md</code>） | <code>detect.py</code> + 12 语义判据 + <code>report.py</code> 全链路跑通；<strong>全部 AI 指纹清零</strong>（翻案腔 3.74→0、同义重命名 0.80→0、结论冒号 2→0、分号 2→0），仅减 34 字（−3.2%），严格保原声并排除 2 处误报（<code>c06-skill.md</code>） | <strong>区间内强正增益（++）</strong>——完美印证刚刚收窄的“≥800 字长稿保原声专用”边界 |</p>
+<p>| <strong>Case 07</strong> (<code>题目</code> / <code>CSV</code>) | <code>exploratory-data-analysis</code>（48 行 6 陷阱脏数据） | 仅靠 <code>numpy</code> 抓全 6 陷阱 + 完整 ANCOVA 剥离 <code>rig_2</code> 偏置（<code>-2.4 pp</code>）+ 8 变换对比 + 跨批外推证伪（RMSE <code>35.5→1.34 pp</code>）（<code>c07-bare.md</code>） | 同等抓全 6 陷阱、零依赖内置 CLI 全跑通；<strong>独特增量在于脱敏防泄露红线</strong>（不输出原始 ID/行/路径）与 HDF5/NPY/TIFF 等异构格式解析能力（<code>c07-skill.md</code>） | <strong>小明文 CSV 裸跑已极强；大表/二进制格式/脱敏审计时 Skill 有不可替代价值</strong> |</p>
+<p>| <strong>Case 08</strong> (<code>对照</code>) | Codex <code>gpt-6.2-astra</code> <strong>同家族消融</strong>（裸 vs <code>scheme-redteam-review</code>） | 仅耗 <strong><code>6,223</code> tokens</strong>，已独立抓出“双层全波 vs 独立级联近似”深层物理反例与全 5 硬伤（受 <code>AGENTS.override.md</code> &#167;5 锚点约束）（<code>codex-l5-case03-bare.txt</code>） | 耗 <code>26,600</code> tokens（4.3&#215;），同等物理深度下额外产出标准 P0/P1 分级、跨段冲突并排表与 <code>[未核验]</code> 引文标记（<code>codex-l5-case03-review.txt</code>） | <strong>短段快审靠 <code>gpt-6.2-astra</code> + 规则足矣（省 77% token）；多页长文/论文终审走 <code>scheme-redteam-review</code> 收益最高</strong> |</p>
+<hr>
+<h3>两个收口确认</h3>
+<ul>
+<li><strong>桌面端登录态重置尝试</strong>：如果 Microsoft Store 暂无高于 <code>26.1120.6357.0</code> 的更新，你是否愿意让我备份并清空 <code>AppData\Roaming\Codex\web\Codex\Default\Local Storage</code>（需重新登录一次 ChatGPT 账号）来测试能否清掉触发 <code>Missing scope instance</code> 的本地 Statsig 缓存？</li>
+<li><strong>是否顺手微调 <code>exploratory-data-analysis</code> 描述</strong>：按 Case 07 实测，要不要也通过 <code>local-overlay.json</code> 补一句“&lt;500 行简单明文 CSV 可原生分析，大表/HDF5/NPY/脱敏审计时调用”，把 Antigravity 全部灰区 Skill 的触发边界一次收齐？</li>
+</ul>
 </div></article>
 
     </section>
