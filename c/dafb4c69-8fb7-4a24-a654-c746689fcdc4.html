@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="dafb4c69-8fb7-4a24-a654-c746689fcdc4" data-base-prefix="./" data-turn-count="4" data-update-time="2026-11-26 16:36" data-meta-ver="e41ecb8f" data-is-index="0">
+<body data-conv-id="dafb4c69-8fb7-4a24-a654-c746689fcdc4" data-base-prefix="./" data-turn-count="5" data-update-time="2026-11-26 16:41" data-meta-ver="e41ecb8f" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="Codex Recovery And Skill Optimization">Codex Recovery And Skill Optimization</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="skills">skills</span><span>会话 ID: dafb4c69-8fb7-4a24-a654-c746689fcdc4 | 轮次: 4 | 更新于: 2026-11-26 16:36</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="skills">skills</span><span>会话 ID: dafb4c69-8fb7-4a24-a654-c746689fcdc4 | 轮次: 5 | 更新于: 2026-11-26 16:41</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./dafb4c69-8fb7-4a24-a654-c746689fcdc4.md" download="Codex_Recovery_And_Skill_Opt-dafb4c69.md" onclick="return downloadMarkdown(event, './dafb4c69-8fb7-4a24-a654-c746689fcdc4.md', 'Codex_Recovery_And_Skill_Opt-dafb4c69.md')">⬇️ 下载 Markdown (.md)</a>
@@ -473,6 +473,54 @@
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>正在完成更新后 <code>scheme-redteam-review</code> 的 UTF-8 同口径无头复测，结果返回后将一并提交异构复审并收口。</p>
 </div></article>
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>三项改动与 L5 实测已完成，正由 Claude Opus 5.5 (High) 做跨模型盲审收口（急用可直接回复“跳过”）。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>三项任务及只读影响面评估（<code>blast-radius</code> L4/L5）均已执行完毕，并经 Claude Opus 5.5 (High) 异构盲审后吸收了 4 项精度修正（Statsig 时间序举证、因果定性、EDA <code>≥500</code> 行边界与 stdout 契约措辞、<code>invoke_codex_review.ps1</code> 部分通过披露）；<code>CONTEXT_agent_arch.md</code> 的【排雷墓碑】与 Codex <code>Local Storage</code> 均未触碰。</p>
+<hr>
+<h3>1. Codex 桌面端恢复取证与残留风险</h3>
+<ul>
+<li><strong>无静默更新（实测）</strong>：MSIX 包仍为 <code>OpenAI.Codex 26.1120.6357.0</code>（安装时间 <code>2026-11-25 12:53</code>，<code>app.asar</code> 与二进制未变），Electron 发布号仍为 <code>codex@26.1120.50957</code>，CLI 为 <code>codex-cli 0.171.0-alpha.13.2</code>；<code>16:19:12</code> 轮询 <code>windows-store-update.json</code> 返回 200 但未升级。</li>
+<li><strong>非 Statsig 热修复触发（实测）</strong>：<code>sentry/scope_v3.json</code> 时间线显示界面在 <code>16:09:07</code> 已恢复并完成多轮正常点击，<strong>早于</strong> <code>16:14:15</code> 首次恢复后的 Statsig 请求，且 <code>16:14:15</code> 与 <code>16:24:13</code> 两次 <code>POST https://ab.chatgpt.com/v1/initialize</code> 均返回 HTTP <code>204 No Content</code>（无新 Flag 下发）。</li>
+<li><strong>恢复机制与事件链</strong>：</li>
+<li><strong>实测事实</strong>：同一 Electron 会话（<code>13:34:02</code> 启动）于 <code>14:11:10</code> 命中 <code>Matched leaf route at location &quot;/&quot;</code> 警告，随后 <code>14:11:14</code> 抛出 <code>Error: Missing scope instance</code>（<code>366996.9782070574.js</code> / <code>19090.212868ea77.js</code>）；<code>14:19–16:04</code> 期间另并发一段网络/代理超时（Statsig 与 <code>codex_models_manager</code> 连续超时）；<code>16:09:07</code> 点击 UI 按钮后所有 <code>chatgpt.com/backend-api/*</code> 返回 HTTP <code>200</code>，此后至 <code>16:24:13</code> 零新崩溃、Crashpad 零转储。</li>
+<li><strong>因果评估（推断）</strong>：<code>14:11:14</code> 崩溃早于 <code>14:19</code> 断网，并非网络中断直接引发；本质是 <code>26.1120.6357.0</code> 的瞬态 React scope/路由 ErrorBoundary 缺陷在 <code>16:09:07</code> 重载/重挂载后清除了异常组件态。</li>
+<li><strong>残留隐患（实测）</strong>：</li>
+<li><code>26.1120.6357.0</code> 前端缺陷未修补，<code>16:09:07</code>/<code>16:09:15</code> 仍出现 <code>Matched leaf route at location &quot;/&quot;</code> 警告，后续命中同类路由竞态仍可能复发（网络正常时重载即可解除，无需清 <code>Local Storage</code>）；</li>
+<li><code>logs_2.sqlite</code> 在 <code>16:18:28</code> 与 <code>16:27:38</code> 仍偶发 <code>codex_models_manager::manager: failed to refresh available models: request timed out</code>（回退本地缓存，非致命；当前 WinINET 代理 <code>127.0.0.1:12450</code> + <code>tun0</code> 仅管 IPv4，是否涉及校园网 IPv6 直出漏流属<strong>未验证</strong>）；</li>
+<li>其余为无害噪音（<code>config.toml</code> 已弃用键 <code>computer_use.windows.always_allowed_app_ids</code>、同济 MCP 不支持 <code>resources/list</code> 的 <code>-32601</code>、内置插件图标 <code>..</code> 警告）。</li>
+</ul>
+<hr>
+<h3>2. <code>.codex/skills</code>（4 技能）重审更新与双端规则同步（<code>v5.5.1</code>）</h3>
+<ul>
+<li><strong>Case 08 <code>26.6k</code> Token 暴涨的底层根因（实测）</strong>：复查原始日志 <code>codex-l5-case03-review.txt</code> 发现，主因不仅是规则冗长，而是原中文 <code>SKILL.md</code> 在 Codex Windows <code>read-only</code> 沙箱（PowerShell CP936 + <code>ConstrainedLanguageMode</code>）下执行 <code>Get-Content</code> 输出全篇乱码，触发 4 轮重试并被迫吐出 <strong>3,502 字节十进制数组</strong>手解 UTF-8。</li>
+<li><strong>4 技能更新结果</strong>：</li>
+<li><code>scheme-redteam-review/SKILL.md</code>：收紧中文 frontmatter <code>description</code>（限定多页长文/论文整节/审稿回复/复杂架构终审，短段直审勿加载）；正文精简重构为 <strong>27 行 / 2,705 B 纯 ASCII 英文</strong>（<code>body_non_ascii=0</code>），保留全部 Case 08 实证增量（P0/P1/P2 分级、跨段冲突表、本地化裁决与 <code>[未核验]</code> 契约、<code>[EXTERNAL-REVIEW]</code> 防嵌套）。<strong>同口径 UTF-8 强制加载复测</strong>（与原 Case 08 Arm B 同样使用 UTF-8 stdin 传参）：仅 1 次 <code>Get-Content</code>（<code>69 ms</code>），Token 从 <strong><code>26,600</code> 降至 <code>8,706</code>（−67.3%）</strong>，完整产出 P0/P1 表、<code>[未核验]</code> 标记、3 行口径冲突表与 2 个关键问题。</li>
+<li><code>grilling/SKILL.md</code>：30 行纯英文正文、Case 05 极大正增益，保持原样未改。</li>
+<li><code>paper-lookup/SKILL.md</code>：上游正文零改写，顶部补充纯 ASCII 本机 Windows 运行契约（指向 WorkBuddy Python 3.13 或已实测存在的 <code>~/.local/bin/python3.12.exe</code> 3.12.15，避免裸调 <code>python3</code>；<code>[EXTERNAL-REVIEW]</code> 离线免查）。</li>
+<li><code>citation-management/SKILL.md</code>：收窄 <code>description</code> 专司批量 BibTeX 转换/清洗与 <code>.bib</code> 校验（单篇元数据/全文交 <code>paper-lookup</code>）；上游正文零改写，顶部补充 WorkBuddy Python（已预装 <code>requests</code>、禁全局 <code>uv pip install</code>）及忽略 4 个已退役联动技能引用的纯 ASCII 说明。</li>
+<li><strong>双端规则同步</strong>：<code>AGENTS.override.md</code> 与 <code>AGENTS.md</code> 同步升级至 <code>v5.5.1</code>，仅细化第五节（明确短段落/单页直审 vs 多页长文调 <code>scheme-redteam-review</code>，以及 <code>paper-lookup</code> 与 <code>citation-management</code> 分工），一至四节原字不动。</li>
+</ul>
+<hr>
+<h3>3. Antigravity <code>exploratory-data-analysis</code> 经 Overlay 收窄</h3>
+<ul>
+<li>更新 <code>local-overlay.json</code>：</li>
+<li><code>description</code> 收窄为：<code>仅用于 ≥500 行大表、二进制科研格式（HDF5/NPY/NPZ/TIFF/FASTA）、含隐私或不可信数据的严格脱敏审计，或需标准化 JSON/MD 泄露与变换敏感性流水线时使用；&lt;500 行无隐私常规明文 CSV/TSV 可直接原生分析。</code></li>
+<li><code>banners</code> 同步补入 Case 07 踩坑契约：只读审计且不想在 <code>--root</code> 原目录落盘时直接捕获 stdout（因脚本禁止 <code>--output</code> 指向 <code>--root</code> 外）。</li>
+<li>运行 <code>sync_overlay.py --apply</code> 落盘至 <code>exploratory-data-analysis/SKILL.md</code>，<code>--check</code> 实测 <code>0 drifts</code>。</li>
+</ul>
+<hr>
+<h3>外部验证判据实测回报（已原地更新至 <code>CONTEXT_skill_ablation.md</code> <code>## 3</code>）</h3>
+<p>| 验收判据 | 实测结果 | 证据摘要 |</p>
+<p>| :--- | :---: | :--- |</p>
+<p>| Codex 日志/版本查明无新崩溃 | <strong>通过</strong> | <code>26.1120.6357.0</code> 未变，16:09:07 后 0 次 <code>Missing scope instance</code>，Crashpad 0 转储 |</p>
+<p>| <code>.codex/AGENTS.override.md</code> 与 <code>AGENTS.md</code> SHA-256 一致且保留必需条款 | <strong>通过</strong> | 双方 SHA-256 均为 <code>493AA0A5EB1BFBA2329D35168273A49AA922B35318C54A76C6339FAD2C5AD42E</code>；L7 含 <code>推进一步</code>，L30 含 <code>## 四、记忆维护</code> |</p>
+<p>| <code>sync_overlay.py --check</code> 零漂移 | <strong>通过</strong> | 全量 18 项 Overlay 校验输出 <code>ALL OVERLAY CHECKS PASSED (0 drifts)</code> |</p>
+<p>| <code>invoke_codex_review.ps1</code> 无头冒烟 <code>EXIT=0</code> 且零 <code>exec</code> 残留 | <strong>部分通过</strong> | 无 <code>-OutFile</code> 路径 <code>EXIT=0</code> 且 <code>state_5.sqlite</code> <code>exec=0</code>；<strong>但实测暴露现有 <code>invoke_codex_review.ps1</code> 两处 PowerShell 5.1 缺陷</strong>（未越权修改）：① 默认 ASCII <code>$OutputEncoding</code> 把中文 <code>$prompt</code> 管道转成 <code>???</code>；② <code>-OutFile</code> 分支 <code>$ErrorActionPreference=&quot;Stop&quot;</code> 遇首行 stderr（<code>2&gt;&amp;1</code>）即 <code>EXIT=1</code> 中止。另用同参数 UTF-8 stdin 实测 <code>EXIT=0</code>、<code>8,706</code> tokens、<code>exec=0</code> |</p>
+<blockquote><strong>未验证项声明</strong>：短段落<strong>不显式点名</strong> <code>SKILL.md</code> 时 Codex 自动跳过加载 <code>scheme-redteam-review</code> 的负向触发效果尚未单跑测试（本次 <code>8,706</code> tokens 为强制读取 <code>SKILL.md</code> 的读盘开销基准）。</blockquote>
+<h3>下一步确认（2 个边界问题）</h3>
+<ul>
+<li>是否授权对 <code>invoke_codex_review.ps1</code> 做最小修补（入口设 UTF-8 <code>$OutputEncoding</code> / <code>[Console]::OutputEncoding</code>，<code>-OutFile</code> 分支局部放宽 <code>$ErrorActionPreference = &#39;Continue&#39;</code> 避免被首行 stderr 误杀），并实测 <code>-OutFile</code> 路径 <code>EXIT=0</code>？</li>
+<li>是否需要顺带补跑 1 轮短段落<strong>不点名技能</strong>的 <code>--ephemeral</code> 负向触发测试，以 L5 确认新 <code>v5.5.1</code> 规则与收紧描述下 0 次读取 <code>scheme-redteam-review/SKILL.md</code>？</li>
+</ul>
 </div></article>
 
     </section>
