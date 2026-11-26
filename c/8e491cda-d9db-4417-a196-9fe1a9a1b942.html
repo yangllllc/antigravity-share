@@ -245,7 +245,7 @@
     }
   </style>
 </head>
-<body data-conv-id="8e491cda-d9db-4417-a196-9fe1a9a1b942" data-base-prefix="./" data-turn-count="27" data-update-time="2026-11-26 12:34" data-is-index="0">
+<body data-conv-id="8e491cda-d9db-4417-a196-9fe1a9a1b942" data-base-prefix="./" data-turn-count="28" data-update-time="2026-11-26 12:34" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -259,7 +259,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1>你现在是我的首席状态架构师与 Windows 自动化工程专家。请...</h1>
-        <div class="sub-meta">会话 ID: 8e491cda-d9db-4417-a196-9fe1a9a1b942 | 轮次: 27 | 更新于: 2026-11-26 12:34</div>
+        <div class="sub-meta">会话 ID: 8e491cda-d9db-4417-a196-9fe1a9a1b942 | 轮次: 28 | 更新于: 2026-11-26 12:34</div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./8e491cda-d9db-4417-a196-9fe1a9a1b942.md" download="你现在是我的首席状态架构师与_Windows_自-8e491cda.md" onclick="return downloadMarkdown(event, './8e491cda-d9db-4417-a196-9fe1a9a1b942.md', '你现在是我的首席状态架构师与_Windows_自-8e491cda.md')">⬇️ 下载 Markdown (.md)</a>
@@ -724,6 +724,18 @@
 <article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>确认洗净</p>
 </div></article>
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>正在执行单提交孤立基线重建、强制推送与 <code>.git</code> 对象瘦身，完成后立即汇报瘦身前后体积与线上部署状态。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>Git 历史洗净已执行完毕并完成实测核验（全程加 <code>Mutex</code> 互斥锁，核对远端为 <code>antigravity-share.git</code>，未触碰 <code>brain/</code> 原始对话或 <code>yangllllc.github.io</code> 仓库）。</p>
+<h3>实测结果</h3>
+<ul>
+<li><strong>提交历史清零为单基线</strong>：<code>Commits = 1</code>（<code>0b88799 2026-11-26 12:33:49 chore: clean privacy-hardened baseline</code>），<code>STATUS = ## main...origin/main</code>，<code>Ahead = 0</code>（上游跟踪关系已重新绑定，后续 <code>Stop</code> Hook 自动同步无缝衔接）。</li>
+<li><strong><code>.git</code> 体积骤降 94.8%</strong>：从 <strong><code>23.69 MB</code></strong> 压缩至 <strong><code>1.23 MB</code></strong>。</li>
+<li><strong>线上与隐私状态</strong>：</li>
+<li>GitHub Pages 首页 <code>https://yangllllc.github.io/antigravity-share/</code> 持续返回 <strong><code>HTTP/1.1 200 OK</code></strong>；</li>
+<li>新基线 <code>0b88799</code> 已自动触发 GitHub Actions 部署（run <code>45756013556</code>，前序含 <code>a0ca09c2</code> 下架的 <code>a5a010c</code> 已部署 <code>success</code>）；</li>
+<li>已屏蔽的 <code>eb9e76bb</code> 实测公网返回 <strong><code>HTTP/1.1 404 Not Found</code></strong>，本地 <code>site/c/</code> 中 <code>eb9e76bb</code>、<code>a0ca09c2</code>、<code>407db27e</code> 及全部历史 <code>.p*.md</code> 均已彻底清零。</li>
+</ul>
+<p>后续日常使用保持全自动即可：每轮对话照常本地秒级更新，远程按 90 秒冷却 + 每小时 ≤8 次自动合并推送；如今后新增想屏蔽的对话，将其前 6–8 位 ID 写入 <code>ignore_sessions.txt</code> 即可自动强推下架。</p>
 </div></article>
 
     </section>
