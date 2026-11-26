@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="fd33272e-8930-42b9-92fb-918cf01554ca" data-base-prefix="./c/" data-turn-count="5" data-update-time="2026-11-26 20:31" data-meta-ver="0a031d9e" data-is-index="1">
+<body data-conv-id="fd33272e-8930-42b9-92fb-918cf01554ca" data-base-prefix="./c/" data-turn-count="8" data-update-time="2026-11-26 21:14" data-meta-ver="0a031d9e" data-is-index="1">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="./index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="OpenGym And AI Prompts Analysis">OpenGym And AI Prompts Analysis</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="skills">skills</span><span>会话 ID: fd33272e-8930-42b9-92fb-918cf01554ca | 轮次: 5 | 更新于: 2026-11-26 20:31</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="skills">skills</span><span>会话 ID: fd33272e-8930-42b9-92fb-918cf01554ca | 轮次: 8 | 更新于: 2026-11-26 21:14</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./c/fd33272e-8930-42b9-92fb-918cf01554ca.md" download="OpenGym_And_AI_Prompts_Analy-fd33272e.md" onclick="return downloadMarkdown(event, './c/fd33272e-8930-42b9-92fb-918cf01554ca.md', 'OpenGym_And_AI_Prompts_Analy-fd33272e.md')">⬇️ 下载 Markdown (.md)</a>
@@ -642,6 +642,88 @@
 <ul>
 <li>这两处微创修改都是纯按需、零全局 Token 成本的收紧；如果你觉得其中某一条过于严格，或者未来你真的准备在 Windows 上写脚本无头调 <code>agy --print</code>（<code>claude-octopus</code> 的 <code>agy-exec.sh</code> 实测记录了 3 个真实 CLI 坑：<code>--print</code> 要把 prompt 当参数值而非 stdin、<code>--print-timeout</code> 必须带单位如 <code>5m0s</code>、MSYS 下子进程丢 <code>%USERPROFILE%</code>），到时候我们再按需把那 3 条记进 <code>local-windows-env.md</code> 即可，现在保持零冗余。</li>
 </ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>我觉得就是要严格，因为ai就是需要高效的，当然我的理解不一定对。我刚刚刷视频又看到了谷歌新出的插件。<a href="https://github.com/GoogleChrome/modern-web-guidance" target="_blank" rel="noopener noreferrer">GoogleChrome/modern-web-guidance: Keep your coding agent up to date with the latest web best practices</a> 你跟我讲一下它具体做了什么，原理是什么。我们这里需要这个吗，如果需要的话，具体是哪一方面，是将他本地化进行修改吸收，还是全盘接受。需要的话肯定要进行最大化的利用的。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>你对“严格”的理解非常到位：<strong>严格不是什么都不要，而是追求高信噪比</strong>——把真正能拉高上限、填补真实短板的硬能力吃透，把只会稀释注意力、在 Windows/本机水土不服的噪音拦在门外。</p>
+<p>我把 <a href="https://github.com/GoogleChrome/modern-web-guidance" target="_blank" rel="noopener noreferrer">GoogleChrome/modern-web-guidance</a>（v1.0.2，26.5k★，Apache-2.0 代码 + CC-BY 4.0 文档）完整克隆下来做了源码级核查，并对照了你本机的真实 Web 项目和 Node 运行环境。结论如下：</p>
+<hr>
+<h3>一、它具体做了什么？底层原理是什么？（[实测] 源码拆解）</h3>
+<p>它是 <strong>Google Chrome、Microsoft Edge、Mozilla Firefox 和 MDN 团队联合维护</strong>的官方前端知识插件，专门解决一个大模型老毛病：<strong>训练语料里充斥着过去十几年过时的前端写法</strong>，导致 AI 一写弹窗、抽屉、悬浮提示、手风琴、滚动动效、主题切换，就习惯性堆几百行脆弱 JS、手算 <code>z-index</code> 或乱引三方库，而忽略了现代浏览器已经原生内置的高性能标准 API。</p>
+<h4>1. 它包含什么（[实测] 仓库共 267 个文件，分两套独立 Skill 包）</h4>
+<ul>
+<li><strong><code>modern-web-guidance</code>（主包，核心价值）</strong>：</li>
+<li><code>SKILL.md</code> 本身很克制（91 行 / ~9.9 KB），背后挂着 <strong>211 份精选实战指南</strong>（覆盖 <strong>269 项现代 Web 特性</strong>，分 17 类：CSS 18 / UI 行为 40 / UI 组件 23 / 性能 26 / 视觉设计 22 / 表单 19 / 安全 17 / HTML 8 / JS 6 / 浏览器内置 AI 5 / 无障碍 4 / WebMCP 3 等）。</li>
+<li>写法直击痛点：比如抽屉菜单直接用原生 <code>&lt;dialog&gt;</code> + <code>showModal()</code> + CSS <code>scroll-snap</code> + 滚动驱动动画，免写手势 JS 且自带键盘 Escape、焦点恢复与屏幕阅读器无障碍；并且每份指南都附带 <strong>Baseline 浏览器兼容边界</strong>、隐藏平台坑点（如 <code>fetchLater</code> 的 64KB 限制）和 <strong>&lt;50 行轻量级降级方案（Fallback）</strong>。</li>
+<li><strong>用 E2E 实测反向裁剪废话</strong>：谷歌用 Playwright 在真实浏览器上跑了 229 个前端任务 / 1,955 条断言，<strong>把模型裸跑就会的常识全删掉</strong>，只留真正提分的部分。官方实测在 <strong>Antigravity CLI（Gemini 4）</strong> 上，裸跑通过率 56% → 用它之后 <strong>97%（+41 个百分点）</strong>（Claude Opus 5.5：54% → 94%；Codex GPT-6.1 Sol：49% → 85%）。</li>
+<li><strong><code>chrome-extensions</code>（副包）</strong>：27 KB <code>SKILL.md</code> + 23 份 Chrome Manifest V3 扩展开发文档（Service Worker、Content Script、Side Panel 等）。</li>
+</ul>
+<h4>2. 底层运行原理（本地离线混合检索，零 API Key）</h4>
+<p>它不是把 211 份文档全塞进上下文，而是做了一套<strong>本地零依赖 CLI RAG</strong>：</p>
+<ul>
+<li>写前端代码前，Agent 按“2–5 词英文动作查询”调 CLI：<code>modern-web-guidance search &quot;light dismiss dialog&quot;</code>；</li>
+<li>CLI 在本地用<strong>内置零依赖语义嵌入模型 + BM25 搜索引擎</strong>离线匹配（不调外部搜索 API），只返回精简的 <code>[{id, description}]</code> 列表；</li>
+<li>Agent 挑中条目再调 <code>retrieve &quot;&lt;id&gt;&quot;</code>，只把命中的 1–2 份指南注入上下文；同时对实验性 Origin Trial / 单引擎不稳定 API 设有 <code>.mwgrc</code> 门禁，防 AI 盲用不稳定特性；</li>
+<li>附带一个 <code>legacy-scan &lt;path&gt;</code> 静态扫描命令（覆盖约 20% 指南），专门用来扫老代码里的过时写法。</li>
+</ul>
+<hr>
+<h3>二、我们这里需要它吗？具体用在哪一方面？</h3>
+<p>先按实测核查你本机的真实 Web 足迹（不拍脑袋）：</p>
+<ul>
+<li>你的主业虽然是光学科研，但你<strong>并非“零 Web 场景”</strong>——磁盘实测你本机有 <strong>4 类真实、持续存在的 HTML/CSS/JS 产出</strong>：</li>
+<li><strong>桌面正在跑的前端项目</strong>：如 <code>C:\Users\&lt;USER&gt;\Desktop\ai-radar</code>（React + Vite + TypeScript Web 界面，今天 20:26 还在运行）；</li>
+<li><strong>自建 Antigravity Sidecar 桌面 UI</strong>：<code>antigravity-archive-manager</code> 与 <code>agy-capsule</code>（原生 HTML/CSS/JS）；</li>
+<li><strong>静态站点与对话分享站</strong>：<code>antigravity-share-hub</code>（GitHub Pages SSR HTML + <code>sidebar.js</code>）与 <code>yangllllc.github.io</code> 个人主页；</li>
+<li><strong>光学交互可视化小工具</strong>：你偏好用轻量交互 HTML 滑块/演示啃空间光路卡点（内置 <code>generative_ui/SKILL.md</code> 目前<strong>只管 iframe 尺寸、Tailwind CDN 和宿主主题变量，完全不管现代 CSS/DOM/无障碍/性能写法</strong>）。</li>
+<li><strong>技能池缺口核查</strong>：你现有的 15 个自动技能里，科研、PPT、Office、排错、审稿都齐全，<strong>唯一空白的就是现代 Web/HTML/CSS/JS 工程层</strong>。</li>
+</ul>
+<p><strong>因此我的严格判断是</strong>：</p>
+<ul>
+<li><strong>需要，但定位于“高频精准工具包”，不是“全局常驻教条”</strong>——具体服务上面这 4 类前端/Sidecar/交互 HTML 场景（尤其是改 <code>ai-radar</code>、迭代 Sidecar 面板、做复杂光学交互可视化和给老静态站体检时，收益非常直接）。</li>
+<li><strong>结论：坚决不能“全盘接受”，必须“本地化裁剪吸收 + 纳入你的 <code>local-overlay.json</code> 体系”！</strong></li>
+</ul>
+<hr>
+<h3>三、为什么绝不能全盘接受？（[实测] 4 处本机硬伤）</h3>
+<p>如果按官方 README 直接跑 <code>agy plugin install https://github.com/GoogleChrome/modern-web-guidance</code>：</p>
+<ul>
+<li><strong>在本机直接跑报错（PATH 硬缺口，[实测]）</strong>：</li>
+<li>原版 <code>SKILL.md</code> 写死调用 <code>npx -y modern-web-guidance@latest</code>（硬要求 <strong>Node ≥ 22</strong>），但实测你本机系统 PATH 里根本没有 <code>node</code> / <code>npx</code>（<code>CommandNotFoundException</code>）；</li>
+<li>实际上你本机已经有现成的 <strong>Node.js v22.22.2</strong>，藏在 <code>C:\Users\&lt;USER&gt;\.workbuddy\binaries\node\versions\22.22.2-6\node.exe</code>（满足 ≥22 要求，无需重装 Node！）。直接用原版每次触发都会踩 PATH 报错，还违背你 <code>local-windows-env.md</code> 里的“非 PATH 运行时直接用绝对路径调 <code>node.exe</code> 入口脚本，避免嵌套 <code>npx.cmd</code>”红线。</li>
+<li><strong>附带无用副包，平白稀释注意力</strong>：全盘安装会把你用不到的 <strong><code>chrome-extensions</code></strong>（~175 tokens 常驻描述 + 27 KB 正文 + 23 份 MV3 插件文档）一起灌进自动技能池。</li>
+<li><strong>3 处原生噪音与隐私坑</strong>：</li>
+<li>原版 <code>SKILL.md</code> frontmatter 是 ~205 tokens 的英文强推墙（<code>MANDATORY: Execute FIRST for all HTML/CSS...</code>），连改一行样式或画一个极简光学滑块都要强制触发，拖慢节奏；</li>
+<li><code>SKILL.md</code> <strong>Step 4 强制每次回复末尾贴英文 <code>### Modern Web Guidance</code> 原文引用段</strong>（给谷歌跑 E2E 评测归因用的，和你中文精简输出习惯冲突）；</li>
+<li><strong>默认开启后台遥测</strong>（未设 <code>DISABLE_TELEMETRY=1</code> 时向 Google 上报代理名、查询词与命中的指南 ID）。</li>
+<li><strong>和本机 Electron Sidecar / <code>generative_ui</code> 主题契约打架</strong>：</li>
+<li>原版指南默认按全网旧浏览器兼容补 Fallback，且示例常在 <code>:root</code> 声明变量；而你的 Antigravity Sidecar 和 <code>generative_ui</code> 明确跑在现代 Chromium/Electron 内核且<strong>严禁在 <code>:root</code> 覆盖宿主 <code>--background</code>/<code>--foreground</code> 主题变量</strong>。</li>
+</ul>
+<hr>
+<h3>四、最大化利用的本地化落地方案（如你点头，我直接按此执行）</h3>
+<p>核心思路：<strong>保留谷歌原版离线检索引擎与 211 份高质量指南（不人工删改、方便未来无损更新），用你现有的 <code>skills-meta/local-overlay.json</code> 薄层做精准本地化控制</strong>：</p>
+<ul>
+<li><strong>离线固化 CLI 运行时（彻底摆脱 <code>npx</code> 联网与 PATH 依赖）</strong>：</li>
+<li>用本机 WorkBuddy <code>Node v22.22.2</code> 的 <code>npm.cmd</code>，把 <code>modern-web-guidance</code> 独立安装到固定工具目录（如 <code>C:\Users\&lt;USER&gt;\.gemini\tools\modern-web-guidance\</code>），把它的离线嵌入模型 + BM25 索引 + <code>modern-web.mjs</code> + 211 份指南锁在本地；</li>
+<li>以后调用直接 <code>&amp; &quot;C:/Users/&lt;USER&gt;/.workbuddy/binaries/node/versions/22.22.2-6/node.exe&quot; &quot;&lt;绝对入口路径&gt;&quot; search/retrieve/legacy-scan ...</code>，全程毫秒级离线运行，并默认注入 <code>DISABLE_TELEMETRY=1</code>。</li>
+<li><strong>只装 <code>modern-web-guidance</code> 主包，彻底剔除 <code>chrome-extensions</code></strong>。</li>
+<li><strong>通过 <code>local-overlay.json</code> + <code>sync_overlay.py</code> 注入本地化薄层（未来升级零漂移）</strong>：</li>
+<li><strong>精简中文触发描述</strong>：收窄为“开发/重构 Web 前端页面（React/Vite/原生 HTML+CSS+JS）、Antigravity Sidecar 界面、复杂交互 HTML 可视化或执行旧前端现代化扫描（<code>legacy-scan</code>）时使用；单行文案/颜色微调或极简 <code>generative_ui</code> 单滑块勿触发”；</li>
+<li><strong>写入本机运行与兼容契约 Banner</strong>（顺手吃到它原生的 <code>Custom Browser Policy</code> 能力）：</li>
+<li>固定 WorkBuddy Node v22.22.2 绝对路径 + <code>DISABLE_TELEMETRY=1</code>；</li>
+<li><strong>区分两套兼容基线</strong>：Antigravity Sidecar / Electron / OpenBrowser 内核直接按现代 Chromium 基线免写冗余旧浏览器 Fallback，且严格服从宿主 <code>--background</code>/<code>--foreground</code> 主题变量、禁覆写 <code>:root</code>；公开网页（<code>ai-radar</code> 对外页 / GitHub Pages）再按 Baseline Widely Available 补轻量 Fallback；</li>
+<li><strong>取消强制英文 Step 4 附言</strong>：仅在指南真实避免了某个隐蔽坑点时用 1 句简体中文带过即可。</li>
+<li><strong>装好后如何最大化利用（4 个现成抓手）</strong>：</li>
+<li><strong>抓手 1（立刻见效）</strong>：装完当场拿 <code>legacy-scan</code> 对你的 <code>ai-radar/src/web</code> 和 <code>antigravity-archive-manager/sidecars</code> 跑一次只读体检，看看有没有能立刻用原生 <code>&lt;dialog&gt;</code> / <code>popover</code> / 现代 CSS 砍掉的陈旧写法；</li>
+<li><strong>抓手 2</strong>：以后再写 Sidecar UI 或复杂光学交互 HTML 模拟器时，自动按需拉取现代布局、动画、Canvas 性能与深浅色适配范式；</li>
+<li><strong>抓手 3</strong>：更新零成本——隔几个月想同步谷歌新增的 Web 新特性时，工具目录一条 <code>npm update</code> + <code>sync_overlay.py --apply</code> 即可无损升级。</li>
+</ul>
+<hr>
+<h3>两个确认点（你拍板我立刻动手）</h3>
+<ul>
+<li><strong>是否按上面的「本地化离线工具目录 + <code>local-overlay.json</code> 托管（舍弃 <code>chrome-extensions</code>、关遥测、去英文 Step 4 附言）」方案落地到 Antigravity？</strong></li>
+<li><strong>装完验收时，顺手用 <code>legacy-scan</code> 对 <code>ai-radar/src/web</code> 和 <code>antigravity-archive-manager/sidecars</code> 跑一次只读体检（只出报告不改业务代码）验证实战威力，好不好？</strong></li>
+</ul>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>（后台全盘 Node 扫描已完成确认：本机除 WorkBuddy 内置的 <code>v22.22.2</code> 外仅有 Adobe 旧版 <code>v8.11.4</code>，结论不变——等你确认上面 2 个问题即可按需动手。）</p>
 </div></article>
 
     </section>
