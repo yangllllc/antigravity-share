@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="dafb4c69-8fb7-4a24-a654-c746689fcdc4" data-base-prefix="./" data-turn-count="10" data-update-time="2026-11-26 16:58" data-meta-ver="e41ecb8f" data-is-index="0">
+<body data-conv-id="dafb4c69-8fb7-4a24-a654-c746689fcdc4" data-base-prefix="./" data-turn-count="11" data-update-time="2026-11-26 17:00" data-meta-ver="e41ecb8f" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="Codex Recovery And Skill Optimization">Codex Recovery And Skill Optimization</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="skills">skills</span><span>会话 ID: dafb4c69-8fb7-4a24-a654-c746689fcdc4 | 轮次: 10 | 更新于: 2026-11-26 16:58</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="skills">skills</span><span>会话 ID: dafb4c69-8fb7-4a24-a654-c746689fcdc4 | 轮次: 11 | 更新于: 2026-11-26 17:00</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./dafb4c69-8fb7-4a24-a654-c746689fcdc4.md" download="Codex_Recovery_And_Skill_Opt-dafb4c69.md" onclick="return downloadMarkdown(event, './dafb4c69-8fb7-4a24-a654-c746689fcdc4.md', 'Codex_Recovery_And_Skill_Opt-dafb4c69.md')">⬇️ 下载 Markdown (.md)</a>
@@ -531,6 +531,57 @@
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p><code>-OutFile</code> 冒烟实测（<code>gpt-6.2-astra</code> <code>ultra</code>）亦已通过（<code>EXIT=0</code>、中文入参零 <code>???</code>、单次读盘 <code>73 ms</code>、<code>14,462</code> tokens、<code>state_5.sqlite exec=0</code>）；正等待最后一路 GPT-6.2-Astra Ultra 自身 4 技能体检返回。</p>
 </div></article>
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>GPT-6.2-Astra（<code>ultra</code>）正在深度审阅其 4 个本地技能与 <code>AGENTS.override.md v5.5.1</code>（进程存活且有活跃 CPU 消耗），已设 180s 保护倒计时继续等待回传。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已按授权完成 <code>invoke_codex_review.ps1</code> 修补、开启 <strong><code>gpt-6.2-astra</code> + <code>ultra</code> 思考档位</strong>，并跑完三路 L5 只读 <code>--ephemeral</code> 实测（含 GPT-6.2-Astra Ultra 自身 4 技能深度体检），结果已原地更新至 <code>CONTEXT_skill_ablation.md</code> <code>## 3</code>。</p>
+<hr>
+<h3>一、<code>gpt-6.2-astra</code> <code>ultra</code> 档位核实与三路 L5 实测结果</h3>
+<ul>
+<li><strong>模型档位核实（实测）</strong>：查 <code>models_cache.json</code> 确认 <code>gpt-6.2-astra</code> 支持 6 档推理强度（<code>low / medium / high / xhigh / max / ultra</code>）。已将 <code>invoke_codex_review.ps1</code> 修补为 UTF-8 无 BOM 管道 + <code>-OutFile</code> 安全 stderr 捕获，并默认 <code>-Model gpt-6.2-astra -ReasoningEffort ultra</code>（桌面端 <code>config.toml</code> 目前仍是 <code>gpt-6-astra / high</code>，未擅自修改）。</li>
+</ul>
+<p>| 实测项（全部 <code>gpt-6.2-astra / ultra</code>） | 退出码 &amp; 残留 | 关键实测指标 | 结论 |</p>
+<p>| :--- | :---: | :--- | :--- |</p>
+<p>| <strong>Test 1：<code>-OutFile</code> 无头冒烟</strong>（<code>invoke_codex_review.ps1</code>） | <code>EXIT=0</code> / <code>exec=0</code> | 中文入参零 <code>???</code>；仅 1 次 <code>Get-Content</code>（<code>73 ms</code>）；<strong><code>14,462</code> tokens</strong>（低于旧 <code>high</code> 技能组 <code>26,600</code>，甚至低于 Ultra 裸跑的 <code>22,969</code>） | 两处 PowerShell 5.1 缺陷彻底修复，结构化契约反而帮 Ultra 更快收敛 |</p>
+<p>| <strong>Test 2：短段不点名负向触发</strong> | <code>EXIT=0</code> / <code>exec=0</code> | <strong><code>exec_calls=0</code></strong>、<strong>0 次读取 <code>scheme-redteam-review/SKILL.md</code></strong>；<code>22,969</code> tokens；原生直审输出总裁决 + 4 行反例表 + <code>[未核验]</code> | <code>AGENTS.override.md v5.5.1</code> &#167;5 与收紧描述实机生效 |</p>
+<p>| <strong>Test 3：GPT-6.2-Astra Ultra 自身 4 技能与规则体检</strong> | <code>EXIT=0</code> / <code>exec=0</code> | 只读实跑多条内存 Python/PowerShell 探针，耗 <code>79,840</code> tokens，零写盘 | 实证抓出上游 BibTeX 误删 bug 与 Windows 管道摩擦（见下节） |</p>
+<hr>
+<h3>二、GPT-6.2-Astra（Ultra）对自身 4 技能与 <code>AGENTS.override.md</code> 的自检裁决</h3>
+<blockquote><strong>方法学边界</strong>：模型自评不能直接替代多页长稿 A/B 测增益百分比，但这次 GPT-6.2-Astra Ultra <strong>真跑了只读脚本探针</strong>，抓出的脚本 bug 与沙箱摩擦均属 L4/L5 实证。</blockquote>
+<p>| 对象 | Ultra 自评裁决 | 核心实证依据与摩擦点 |</p>
+<p>| :--- | :---: | :--- |</p>
+<p>| <code>scheme-redteam-review</code> | <strong><code>[保持现状]</code></strong> | 五轴纯 ASCII 正文与条件式冲突表<strong>无需改动</strong>；唯一提醒是“仅按页数分流”可能漏掉“单页但含复杂耦合对照的实验设计” |</p>
+<p>| <code>grilling</code> | <strong><code>[微调收口]</code></strong> | “只问先决条件已确定的前沿问题”价值极高；但“查事实必派子代理 / 整层全问 / 遍历全部分支 / 一律 yes 接受推荐”易导致简单本地事实也派代理、无头模式卡等答 |</p>
+<p>| <code>paper-lookup</code> | <strong><code>[微调收口]</code></strong> | <strong>四项中最不可替代</strong>（实测无 <code>&lt;body&gt;</code> JATS 退回码 <code>2</code>、arXiv <code>Error</code> 退回码 <code>3</code>，硬防“拿元数据冒充读全文”）；资料与解析器无需改动，但正文仍是 Bash <code>curl</code>（PowerShell 下 <code>curl</code> 会被解析为 <code>Invoke-WebRequest</code>）+ 相对路径 + 中文管道变 <code>?? ?</code> |</p>
+<p>| <code>citation-management</code> | <strong><code>[建议精简主流程]</code></strong> | <strong>实测抓出高危 bug</strong>：对 <code>format_bibtex.py</code> 跑内存 <code>--deduplicate</code> 样例（<strong>同 key、不同标题、不同 DOI 的两篇文献</strong>），结果 <strong>2 条进、1 条出（第二篇不同 DOI 文献被静默误删）</strong>；另正文仍把 <code>MANDATORY</code> 联网补全、单篇搜文和已退役技能留在默认流程中 |</p>
+<p>| <code>AGENTS.override.md</code> (<code>v5.5.1</code>) | <strong><code>[微调收口]</code></strong> | 一、四节与“同稿一次终审”无需改动；但二、三节叠加在普通桌面任务下易让 Ultra 过早触发两轮同济外调，且“提示词含 <code>[EXTERNAL-REVIEW]</code> 字面匹配”若稿件正文恰好引用该词会误触发直出 |</p>
+<p><strong>Ultra 给出的 5 条高杠杆优先修复顺序</strong>（均未动盘，待确认）：</p>
+<ul>
+<li><strong>P0</strong>：修复 <code>citation-management/scripts/format_bibtex.py</code> 的 <code>--deduplicate</code> 逻辑，分离“书目身份重复”与“引用键冲突”（不同 DOI 必须保留并报错提示冲突）；</li>
+<li><strong>P1</strong>：在 <code>paper-lookup</code> 与 <code>citation-management</code> 顶部给一条本机可直接照抄的 PowerShell 只读命令范式（绝对路径 <code>&amp; $py -B -X utf8 $script</code> + <code>curl.exe</code> + 走文件/Python 读字节避开 ASCII 管道）；</li>
+<li><strong>P1</strong>：将 <code>AGENTS.override.md</code> &#167;5 触发边界从纯“短段/多页”微调为“是否含跨段口径/复杂耦合对照”，并明确外审身份判定与联网权限分离；</li>
+<li><strong>P2</strong>：给 Codex 端 <code>grilling</code> 加简洁顶部约束（本地事实就地查不滥派子代理、每轮优先 1–3 个最关键决策、无头/禁委派时直接交付关键未知项）；</li>
+<li><strong>P2</strong>：让 <code>citation-management</code> 正文兑现窄描述（弱化 <code>MANDATORY</code> 联网补全，输出显式区分“格式通过 / DOI 已解析 / 原文支持论断”）。</li>
+</ul>
+<hr>
+<h3>三、你的其他技能是否需要做同样流程的检验？</h3>
+<p><strong>结论：不需要全部铺开做 A/B 裸跑（纯烧额度、收益递减），建议按 <code>catalog.md</code> 分四层处理</strong>：</p>
+<ul>
+<li><strong>已完成 A/B 消融并落地的 7 项（已结案，勿重复测）</strong></li>
+<li>Antigravity：<code>grilling</code>、<code>lieflat-less-ai-tone</code>、<code>scientific-writing</code>、<code>statistical-analysis</code>、<code>uncertainty-and-units</code>、<code>exploratory-data-analysis</code>；</li>
+<li>Codex：<code>scheme-redteam-review</code>（含本次 Ultra 负向触发与自检）。</li>
+<li><strong>纯确定性工具 / 外部 API / 本地插件引擎（不做 A/B 裸跑，只做“轻度只读脚本冒烟 + Windows 编码检查”）</strong></li>
+<li>涵盖：<code>paper-lookup</code>、<code>citation-management</code>、<code>course-ppt-lab</code> / <code>ppt-master</code>、<code>wps-office-suite</code>、<code>markitdown</code> / <code>liteparse</code>、<code>session-diagnose</code>、<code>dream</code>、<code>archive-manager</code>、<code>share-conversation</code>。</li>
+<li><strong>理由</strong>：裸模型本身没有这些脚本与私有插件契约，A/B 胜负没有悬念；但这次 GPT-6.2-Astra 自检证明，<strong>针对 K-Dense 等第三方脚本包做一次低成本只读代码/边界探针</strong>（特别是 <code>markitdown</code>、<code>paper-lookup</code>、<code>citation-management</code> 在 Windows PowerShell 5.1 下的路径/编码/边界 bug）比 A/B 对比有价值得多。</li>
+<li><strong>极简协议与纪律护栏类（不造玩具题，靠真实任务 + <code>session-diagnose</code> 复盘）</strong></li>
+<li>涵盖：<code>blast-radius</code>、<code>debug-unstick</code>、<code>best-of-n</code>、<code>subagent-pipeline</code>（正文仅 19–41 行，零冗余，按日常实际使用后的 <code>session-diagnose</code> 命中率微调即可）。</li>
+<li><strong>Antigravity 唯一剩下的高价值 A/B 灰区（至多抽检 1 项）</strong></li>
+<li><strong><code>scientific-visualization</code></strong>（306 行 + 8 脚本，联动 435 行 <code>matplotlib</code>）：和 <code>statistical-analysis</code> 同属“强模型原生写 <code>matplotlib</code> 已经很强”的灰区，建议下次你真正要画论文光谱/色散图时<strong>顺手做 1 组实战 A/B</strong>（检验期刊规范/色盲审计脚本的真实净增量），决定是否像 EDA/统计一样收窄描述即可，无需现在专门造题批量测。</li>
+</ul>
+<hr>
+<h3>下一步决策确认（2 个边界问题）</h3>
+<ul>
+<li><strong>是否落地 GPT-6.2-Astra Ultra 自检发现的改动</strong>？特别是 <strong>P0 的 <code>format_bibtex.py</code> 同 key 不同 DOI 防误删</strong>（注意：Antigravity 端的 <code>citation-management/scripts/format_bibtex.py</code> 属同源 K-Dense 脚本，如需修复要确认是先只在 Codex 端修，还是两处一起修并记入维护备注）以及 P1 的 <code>curl.exe</code> / <code>-B -X utf8</code> 入口与规则微调？</li>
+<li><strong>桌面端 <code>config.toml</code> 是否也要从 <code>gpt-6-astra / high</code> 改为 <code>gpt-6.2-astra / ultra</code></strong>？（实测代价：Ultra 即使 0 工具调用、纯短段直审也消耗 ~23k tokens；更省额度的折中是桌面默认 <code>gpt-6.2-astra / high</code> 或 <code>xhigh</code>，重度长文审查经 <code>invoke_codex_review.ps1</code> 或桌面手动切 <code>ultra</code>。）</li>
+</ul>
 </div></article>
 
     </section>
