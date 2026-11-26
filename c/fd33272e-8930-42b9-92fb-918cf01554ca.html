@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>OpenGym And AI Prompts Analysis - Antigravity Share</title>
+  <style>
+    :root {
+      --bg-main: #131314;
+      --bg-sidebar: #1e1f20;
+      --bg-active: #2b2c2f;
+      --bg-bubble-user: #2b2c2f;
+      --bg-bubble-ai: #1e1f20;
+      --text-main: #e3e3e3;
+      --text-sub: #c4c7c5;
+      --accent: #a8c7fa;
+      --border: #3c4043;
+      --code-bg: #0d0e11;
+      --badge-green: #34d399;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100vh;
+    }
+    #sidebar {
+      width: 320px;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+    .sidebar-header {
+      padding: 16px 14px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-header h2 {
+      font-size: 16px;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sidebar-header a.home-link {
+      text-decoration: none;
+      color: inherit;
+    }
+    .sync-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--badge-green);
+      background: rgba(52, 211, 153, 0.1);
+      padding: 3px 8px;
+      border-radius: 12px;
+      margin-top: 8px;
+    }
+    .sidebar-tools {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .sidebar-search {
+      width: 100%;
+      background: var(--bg-main);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 12.5px;
+      outline: none;
+    }
+    .sidebar-search:focus {
+      border-color: var(--accent);
+    }
+    .sidebar-search::placeholder {
+      color: #8e918f;
+    }
+    .view-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .view-tabs {
+      display: inline-flex;
+      background: var(--bg-main);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2px;
+      gap: 2px;
+    }
+    .view-tab {
+      background: transparent;
+      color: var(--text-sub);
+      border: none;
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 11.5px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .view-tab:hover {
+      color: #fff;
+    }
+    .view-tab.active {
+      background: var(--bg-active);
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .mini-btn {
+      background: transparent;
+      color: var(--text-sub);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .mini-btn:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #fff;
+    }
+    .conv-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .group-section {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      margin-bottom: 4px;
+    }
+    .group-header {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: var(--text-sub);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 8px;
+      border-radius: 7px;
+      cursor: pointer;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 600;
+      transition: background 0.15s, color 0.15s;
+    }
+    .group-header:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #fff;
+    }
+    .group-chevron {
+      display: inline-block;
+      width: 12px;
+      font-size: 10px;
+      text-align: center;
+      transition: transform 0.15s;
+      flex-shrink: 0;
+    }
+    .group-section.collapsed .group-chevron {
+      transform: rotate(-90deg);
+    }
+    .group-icon {
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+    .group-name {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--text-main);
+    }
+    .group-count {
+      font-size: 10.5px;
+      font-weight: 500;
+      color: var(--text-sub);
+      background: rgba(255, 255, 255, 0.08);
+      padding: 1px 6px;
+      border-radius: 10px;
+      flex-shrink: 0;
+    }
+    .group-items {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      padding-left: 8px;
+      margin-left: 9px;
+      border-left: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .group-section.collapsed .group-items {
+      display: none;
+    }
+    .conv-item {
+      display: block;
+      text-decoration: none;
+      padding: 8px 10px;
+      border-radius: 8px;
+      transition: background 0.15s;
+      border: 1px solid transparent;
+      color: inherit;
+    }
+    .conv-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .conv-item.active {
+      background: var(--bg-active);
+      border-color: var(--border);
+    }
+    .conv-title {
+      font-size: 13px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #fff;
+    }
+    .conv-meta {
+      font-size: 11px;
+      color: var(--text-sub);
+      margin-top: 3px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+    }
+    .conv-meta-left {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .proj-pill {
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 999px;
+      background: rgba(168, 199, 250, 0.13);
+      color: var(--accent);
+      max-width: 115px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .empty-hint {
+      padding: 20px 12px;
+      text-align: center;
+      color: var(--text-sub);
+      font-size: 12.5px;
+    }
+    #main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .main-header {
+      padding: 16px 28px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-sidebar);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .main-header h1 {
+      font-size: 17px;
+      color: #fff;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .sub-meta {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .header-project-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--accent);
+      background: rgba(168, 199, 250, 0.14);
+      border: 1px solid rgba(168, 199, 250, 0.25);
+      padding: 1px 8px;
+      border-radius: 999px;
+      max-width: 240px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .btn {
+      background: var(--bg-active);
+      color: var(--accent);
+      border: 1px solid var(--border);
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .btn:hover { background: #3c4043; }
+    .chat-canvas {
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 28px 24px 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .turn {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .turn.user { align-items: flex-end; }
+    .turn.assistant { align-items: flex-start; }
+    .role-tag {
+      font-size: 12px;
+      color: var(--text-sub);
+      font-weight: 600;
+      padding: 0 4px;
+    }
+    .bubble {
+      max-width: 88%;
+      padding: 16px 20px;
+      border-radius: 18px;
+      line-height: 1.7;
+      font-size: 15px;
+      word-break: break-word;
+    }
+    .turn.user .bubble {
+      background: var(--bg-bubble-user);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .turn.assistant .bubble {
+      background: var(--bg-bubble-ai);
+      color: var(--text-main);
+      border-bottom-left-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .bubble p { margin: 0 0 10px 0; }
+    .bubble p:last-child { margin-bottom: 0; }
+    .bubble h1, .bubble h2, .bubble h3, .bubble h4 {
+      margin: 14px 0 8px;
+      color: var(--accent);
+      line-height: 1.4;
+    }
+    .bubble h1 { font-size: 19px; }
+    .bubble h2 { font-size: 17px; }
+    .bubble h3 { font-size: 15.5px; }
+    .bubble ul, .bubble ol { margin: 8px 0 10px 22px; }
+    .bubble li { margin: 4px 0; }
+    .bubble blockquote {
+      border-left: 3px solid var(--accent);
+      padding-left: 12px;
+      margin: 8px 0;
+      color: var(--text-sub);
+    }
+    .bubble code {
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 5px;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 13.5px;
+    }
+    .bubble pre {
+      background: var(--code-bg);
+      padding: 14px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 10px 0;
+      border: 1px solid #2b2d31;
+    }
+    .bubble pre code {
+      background: transparent;
+      padding: 0;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .bubble a { color: var(--accent); }
+    .bubble hr {
+      border: 0;
+      border-top: 1px solid var(--border);
+      margin: 14px 0;
+    }
+    @media (max-width: 820px) {
+      body { flex-direction: column; }
+      #sidebar { width: 100%; height: auto; position: static; max-height: 360px; }
+      .main-header { flex-wrap: wrap; padding: 14px 16px; }
+      .header-actions { flex-wrap: wrap; }
+      .bubble { max-width: 96%; }
+    }
+  </style>
+</head>
+<body data-conv-id="fd33272e-8930-42b9-92fb-918cf01554ca" data-base-prefix="./" data-turn-count="3" data-update-time="2026-11-26 20:16" data-meta-ver="0a031d9e" data-is-index="0">
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
+      <div class="sync-badge" id="syncBadge">自动同步加载中...</div>
+      <div class="sidebar-tools">
+        <input type="search" id="convSearch" class="sidebar-search" placeholder="搜索对话标题或项目..." aria-label="搜索对话标题或项目" autocomplete="off">
+        <div class="view-bar">
+          <div class="view-tabs" role="tablist" aria-label="分类视图">
+            <button type="button" class="view-tab active" id="viewProjectBtn" data-view="project">按项目</button>
+            <button type="button" class="view-tab" id="viewTimeBtn" data-view="time">按时间</button>
+          </div>
+          <button type="button" class="mini-btn" id="toggleAllBtn" title="展开或折叠全部项目分组">全部折叠</button>
+        </div>
+      </div>
+    </div>
+    <nav class="conv-list" id="convList" aria-label="Conversations">
+      <noscript><div style="padding:12px;color:#c4c7c5;font-size:12px;">请启用 JavaScript 查看全部历史对话列表，或直接访问对应对话链接。</div></noscript>
+    </nav>
+  </aside>
+  <main id="main">
+    <header class="main-header">
+      <div style="min-width:0;">
+        <h1 title="OpenGym And AI Prompts Analysis">OpenGym And AI Prompts Analysis</h1>
+        <div class="sub-meta"><span class="header-project-badge" title="skills">skills</span><span>会话 ID: fd33272e-8930-42b9-92fb-918cf01554ca | 轮次: 3 | 更新于: 2026-11-26 20:16</span></div>
+      </div>
+      <div class="header-actions">
+        <a class="btn" id="downloadMdBtn" href="./fd33272e-8930-42b9-92fb-918cf01554ca.md" download="OpenGym_And_AI_Prompts_Analy-fd33272e.md" onclick="return downloadMarkdown(event, './fd33272e-8930-42b9-92fb-918cf01554ca.md', 'OpenGym_And_AI_Prompts_Analy-fd33272e.md')">⬇️ 下载 Markdown (.md)</a>
+        <button class="btn" id="copyBtn" type="button" onclick="copyCanonicalUrl('./fd33272e-8930-42b9-92fb-918cf01554ca.html', 'copyBtn', '已复制直链')">复制对话直链</button>
+      </div>
+    </header>
+    <section class="chat-canvas" aria-label="Conversation Content">
+      <article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>我发现了这个健身软件不知道有什么功效，对我健身有没有帮助，你向我说明一下他的原理(网址是https://github.com/DuarteSantos8/openGym)。这个octopus是不是看过了，如果没有的话你检查一下，看看他是什么原理的，有没有能够借鉴的地方。(https://github.com/DuarteSantos8/openGym)。你觉得这个防火墙对你来说有没有用，我是觉得我们这里没有设置这个，但是没有不一定就要补充，因为可能用不到嘛(https://github.com/hashgraph-online/hol-guard)。@[c:\Users\&lt;USER&gt;\Desktop\新建文本文档 (4).txt] 这个文档记录了别人对ai的提示词，你觉得这个对我们有帮助嘛，虽然我觉得我们一直是这么进行的。</p>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>我发现了这个健身软件不知道有什么功效，对我健身有没有帮助，你向我说明一下他的原理(网址是https://github.com/DuarteSantos8/openGym) 。这个octopus是不是看过了，如果没有的话你检查一下，看看他是什么原理的，有没有能够借鉴的地方。(https://github.com/DuarteSantos8/openGym) 。你觉得这个防火墙对你来说有没有用，我是觉得我们这里没有设置这个，但是没有不一定就要补充，因为可能用不到嘛(https://github.com/hashgraph-online/hol-guard) 。@[c:\Users\&lt;USER&gt;\Desktop\新建文本文档 (4).txt] 这个文档记录了别人对ai的提示词，你觉得这个对我们有帮助嘛，虽然我觉得我们一直是这么进行的。https://github.com/MICAHFANG/agy-swarm-forge 。这个也是一个更好的使用的插件，你看看是什么原理，我看了下github上星级不怎么高，说明是初创的，不怎么成熟所以更方便借鉴他的思路。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>先给你一张<strong>总览裁决表</strong>，把 5 件事的结论先压成一句话，后面按项拆原理与实测依据（所有判断均基于仓库源码/规范文档及本机真实配置的<strong>[实测]</strong>，而非只看宣传页）：</p>
+<p>| 项目 / 材料 | 实测定位 | 对现在的你是否有用 / 是否借鉴 | 一句话结论 |</p>
+<p>| :--- | :--- | :--- | :--- |</p>
+<p>| <strong>1. <code>openGym</code></strong>（24.1k★） | 开源无订阅力量训练与体重记录器 | <strong>健身练力量时很实用</strong> | 零广告、纯手机可离线跑，核心是确定性“渐进超负荷”算法，非视频跟练/算热量 App |</p>
+<p>| <strong>2. <code>octopus</code></strong>（⚠️链接贴重） | 可能指 <code>TencentCloud/Octop</code> 或 <code>nyldn/claude-octopus</code> | <strong>前者看过且已抽完；后者不装</strong> | <code>TencentCloud/Octop</code> 昨天在 [186265ff](conversation://186265ff-8f5c-4338-84a6-b84c7866e34f) 已审完；<code>claude-octopus</code> 硬不支持原生 Windows 且与现有体系重叠 |</p>
+<p>| <strong>3. <code>hol-guard</code></strong>（1.1k★） | AI Agent 本地运行时防火墙 + 插件扫描器 | <strong>现阶段无需安装</strong> | <strong>[实测]</strong> 它对 Antigravity 目前仅 <code>observe_only_degraded</code>（<strong>完全拦不住 Shell 命令</strong>），Codex 端你又已锁死只读沙箱 |</p>
+<p>| <strong>4. <code>新建文本文档 (4).txt</code></strong> | “准备/执行分离 + 文件防失忆 + 分阶段新对话”提示词法 | <strong>你已覆盖 90%，仅留 1 个习惯提醒</strong> | 你现有的 <code>CONTEXT_*.md</code> + Dream 记忆比它更强，只需保持“每完一个里程碑就开新对话推进下一步” |</p>
+<p>| <strong>5. <code>agy-swarm-forge</code></strong>（10★） | 面向 Antigravity + TS 全栈的异构 Swarm 插件 | <strong>绝不整包安装，可抽 3 个思路</strong> | 源码里带 Windows 失效 Hook 与中文 Opus 误杀坑，但“过滤可实证分叉”“6 字段 <code>NEVER</code> 派单”“升级硬约束后删旧文字规则”很值得吸收 |</p>
+<hr>
+<h3>1. <code>DuarteSantos8/openGym</code>：原理与对健身的实际帮助</h3>
+<h4>它是什么、底层怎么运作（[实测] <code>README.md</code>）</h4>
+<p>它本质上是<strong>开源、永久免费、无广告无遥测版的 Strong / Hevy / FitNotes</strong>（AGPL-3.0），定位非常纯粹：<strong>力量训练（器械/自由重量/自重）与体重进度追踪</strong>。</p>
+<ul>
+<li><strong>架构极简，可单机也可自托管</strong>：前端是 React 19 + Vite + Zustand，通过 Capacitor 直接打成 <strong>iOS（App Store，带 Apple Watch）</strong> 和 <strong>Android APK（315–760 MB，内置动画包）</strong>。你完全可以<strong>只在手机上离线单机用，不需要服务器和账号</strong>；只有想手机/电脑多端同步时，才用 <code>docker compose up</code> 自建（<code>nginx</code> + 纯 <code>node:http</code> 后端，<strong>连数据库都不需要</strong>，每人的数据就是一个 <code>./data/state-&lt;user&gt;.json</code>）。</li>
+<li><strong>同步与隐私原理</strong>：自建版用 <strong>Passkey（Face ID / 指纹）</strong> 鉴权，私钥不出手机；多端同步采用<strong>版本乐观锁 + 字段级时间戳合并</strong>（提交携带上次 <code>revision</code>，冲突返回 <code>409</code> 由客户端按字段最新时间戳合并，并保留删除标记防误复活）。</li>
+<li><strong>核心“功效”来自确定性算法，默认零 AI</strong>：所有训练计算都在 <code>frontend/src/lib/</code> 的纯函数里完成，<strong>核心原理是帮你把“渐进超负荷（Progressive Overload）”量化落地</strong>：</li>
+<li><strong>5,600+ 动作库与灵活排课</strong>：内置 PPL（推拉腿）、上下肢、全身、5&#215;5 模板；除了按星期排，还支持 <strong>A/B/C 轮换制</strong>（某天忙没练，下次自动接下一个，不怕整周节奏崩掉）。</li>
+<li><strong>自动渐进规则引擎</strong>：支持线性递增、Greyskull LP、双渐进（先加次数再加重）、三渐进（次数 → 组数 → 重量），<strong>每次给出的目标重量都会明写计算理由</strong>；没做满目标次数不会瞎加重，连续卡平台自动提示减载周（Deload）。</li>
+<li><strong>实战细节很强</strong>：按所在健身房实际有的杠铃片/器械配重阶梯算配片（Plate Math）、记 RIR/RPE、e1RM 曲线、结构平衡比例、<strong>3 模式肌肉热力图</strong>（已练容量 / 恢复中 / 长期漏练）、器械被占时一键换备选动作且保留组次、双向同步 Apple Health / Health Connect / 手表心率与锁屏实时活动。</li>
+<li><strong>AI 教练与 MCP 默认关闭</strong>：只有手动填你自己的 API Key 或 Ollama 才会开启。</li>
+</ul>
+<h4>对你健身有没有帮助？</h4>
+<ul>
+<li><strong>强推荐的场景</strong>：你在健身房或居家做<strong>撸铁/自重增肌增力</strong>，常忘记上次推了多少公斤、该不该加重，又不想给商业记录软件交月费——它能直接替代付费 App。建议先打开官方免安装网页 <a href="https://opengym.ch/demo/" target="_blank" rel="noopener noreferrer">Live Demo</a> 点两分钟试手感，满意直接下手机客户端单机用即可。</li>
+<li><strong>帮不上大忙的场景</strong>：① 如果你的目标是<strong>跑步有氧或精细算每日摄入热量</strong>，它没有食物热量库；② 如果你是<strong>零基础需要视频跟练与纠正动作发力</strong>，它只有小尺寸动图，没有教练口令视频；③ <strong>[未验证项]</strong> README 明写支持 26 种语言并单列了繁体中文（Traditional Chinese），但未直接检出其静态 <code>locales</code> 文件列表，简体中文翻译完整度建议在 Live Demo 的设置里切一下实测确认。</li>
+</ul>
+<hr>
+<h3>2. <code>octopus</code>：前提纠错 + 本地检索核查结果</h3>
+<p>先指出一个输入细节：你在 <code>octopus</code> 后面粘贴的网址仍是 <code>https://github.com/DuarteSantos8/openGym</code>（和第一题贴重了）。我全量检索了你的 Dream 记忆、全局规则与全部历史会话日志，按目前 AI 圈最常见的两个“章鱼”分别交代：</p>
+<ul>
+<li><strong>如果你指的是腾讯云开源的 <code>TencentCloud/Octop</code>（常称“章鱼”）→ 看过了！</strong></li>
+<li><strong>[实测]</strong> 就在昨天（2026-11-25）的会话 [186265ff](conversation://186265ff-8f5c-4338-84a6-b84c7866e34f) 里已经完整拆解过：它是单进程自托管多智能体助手平台（主打 7&#215;24 挂机、连微信/飞书/QQ/钉钉、多用户隔离和 <code>SQLite FTS5</code> 记忆）。</li>
+<li><strong>当时结论与现状</strong>：它最可借的 <strong><code>SQLite FTS5</code> 内存全文检索</strong>已经被抽进你的 <code>antigravity-dream-memory</code>（<code>dream.ps1 search</code>）；至于整套平台，除非你有“出门在外用手机微信远程给家里电脑派活”的强需求，否则没必要再叠一层底座。</li>
+<li><strong>如果你指的是另一个叫 <code>octopus</code> 的热门项目 <code>nyldn/claude-octopus</code>（4.5k★，v11.30.0）→ 没看过，但实测也不建议装</strong></li>
+<li><strong>原理</strong>：寄生在 <strong>Claude Code（兼支持 Codex CLI）</strong> 上的多模型编排插件，靠调最多 12 个外部 CLI/API（Codex、Antigravity CLI、Copilot、Ollama、Grok 等）跑多模型议会（<code>/octo:council</code>）、75% 共识门禁和全自动流水线（Dark Factory），默认休眠须手动敲 <code>/octo:*</code>。</li>
+<li><strong>为什么不装（[实测] <code>README.md</code> L132–135）</strong>：</li>
+<li><strong>Windows 原生硬不兼容</strong>：官方明写仅原生支持 macOS/Linux，Windows 必须进 WSL 或 SSH，<strong>Git Bash / MSYS2 / Cygwin 下所有 Hook 直接退出</strong>；</li>
+<li><strong>能力高度重叠且交互更重</strong>：你现在这套 Antigravity 原生 <code>swarm</code> 跨模型审稿 + 同济双核 MCP + Codex 无头红队 + <code>best-of-n</code>/<code>subagent-pipeline</code> 已经解决了多模型互审和并发分流，而且不需要你去背 56 个 <code>/octo:*</code> 斜杠命令。</li>
+<li><strong>如果你问的其实是另一个名字带 <code>octopus</code> 的仓库</strong>：把正确链接贴给我，我再单独核查。</li>
+</ul>
+<hr>
+<h3>3. <code>hashgraph-online/hol-guard</code>：这个防火墙对我们有没有用？</h3>
+<p>你的直觉非常准确——<strong>“我们没设 ≠ 需要补”</strong>，实测完它的技术规格后，结论很干脆：<strong>现阶段完全不需要安装。</strong></p>
+<h4>原理</h4>
+<p>它是一个本地优先的 <strong>Rust 匹配引擎 + Python CLI 拦截层</strong>，通过接入各个 AI Agent 的原生 Hook（如 <code>PreToolUse</code>、<code>PermissionRequest</code>）或受控 MCP 代理，在 Agent 执行危险 Shell 命令、读取凭据文件（<code>.env</code> / SSH / AWS 密钥）、跑 <code>npm</code>/<code>pip</code> 安装恶意包或调用 MCP 前，按策略做出 <code>allow / ask / block</code> 判定并留存审计回执；同仓库还附带一个面向插件开发者的静态扫描工具 <code>plugin-scanner</code>。</p>
+<h4>为什么现阶段对我们几乎没有实际收益（[实测] 源码文档）</h4>
+<ul>
+<li><strong>在 Antigravity 上目前是“半残观测态”，拦不住最核心的风险</strong>：</li>
+<li>虽然它的 README 把 <code>Antigravity</code> 列进了支持名单，但查阅它自己的 <a href="https://github.com/hashgraph-online/hol-guard/blob/main/docs/guard/antigravity-harness-support-spec.md" target="_blank" rel="noopener noreferrer">antigravity-harness-support-spec.md</a> 和 <a href="https://github.com/hashgraph-online/hol-guard/blob/main/docs/guard/harness-support.md" target="_blank" rel="noopener noreferrer">harness-support.md</a> 后发现：</li>
+<li>Antigravity 当前评级仅为 <strong><code>observe_only_degraded</code>（降级仅观测模式）</strong>；</li>
+<li>官方明确写死：<strong><code>shell commands are not observable through the Antigravity hook surface</code></strong>（完全看不见、也拦不住 Antigravity 跑的任何终端命令），且 <code>Native Approval: ❌</code>、<code>Resume: ❌</code>；</li>
+<li>它最关键的 MCP 代理拦截（<code>hol-guard mcp-relay</code>）和 Subagent 隔离都还停留在 <strong>Phase 1 / Phase 2 Roadmap（尚未落地）</strong>；</li>
+<li>连它的 Skill 目录扫描范围都只认 <code>.gemini/antigravity/skills/</code>、<code>.gemini/config/plugins/*/skills/</code> 和工作区 <code>.agents/skills/</code>，<strong>根本没扫你存放主力自建技能的 <code>C:\Users\&lt;USER&gt;\.gemini\config\skills\</code></strong>。</li>
+<li><strong>在 Codex 端你已经有更低摩擦的原生硬锁</strong>：</li>
+<li><code>hol-guard</code> 对 Codex 倒是支持完整的 <code>PreToolUse</code> 拦截，但根据 <code>CONTEXT_skill_ablation.md</code>，你的 Codex 刚刚瘦身到只留 4 个只读审查/引文技能，无头调用也已用 <code>--sandbox read-only</code> + 禁用 MCP 锁死了写权限和外部调用。</li>
+<li><strong>真实威胁面不匹配，引入反而徒增故障点</strong>：</li>
+<li>你的主要工作是科研学习、自用脚本和少量已审计插件/单一内部 MCP，既没有接入邮箱/银行/生产云数据库的读写 MCP，也没开 YOLO 模式批量拉陌生三方包。相反，在 Windows 上再叠一层 <code>pipx</code> + Rust 守护进程 + 改写 <code>.codex/config.toml</code> Hook，反而增加误报和启动链排查成本。</li>
+</ul>
+<ul>
+<li><strong>未来唯一值得启用它的条件</strong>：① 你打算让 Agent 无人值守跑陌生开源代码、或接入高权限外部读写 MCP；② 或者你准备安装一个<strong>来历不明的第三方 Agent 插件</strong>时，可以临时只跑它附带的静态扫描命令 <code>plugin-scanner scan &lt;插件目录&gt;</code> 做一次性离线体检，不必装常驻防火墙。</li>
+</ul>
+<hr>
+<h3>4. <code>新建文本文档 (4).txt</code>.txt)：这套提示词流程对我们有帮助吗？</h3>
+<p>你的感觉是对的——<strong>这套方法论的 4 根支柱，你现在的配置已经全部涵盖，而且比它更严谨</strong>：</p>
+<p>| 文章里的做法 | 你现有的对应机制 | 对比判断 |</p>
+<p>| :--- | :--- | :--- |</p>
+<p>| “先检查环境获取基础信息，不开始实现”（准备与执行分离） | <code>core-reasoning-protocol.md</code> &#167;1“先审前提，再动手” + <code>blast-radius</code> 只读影响面评估 + <code>grilling</code> | <strong>你更强</strong>：不只停在“先看再写”，还加了前提证伪与高危变更举证 |</p>
+<p>| 落盘 <code>AGENTS.md</code> + <code>TODO.md</code> 对抗跨对话失忆 | 课题级单文件 <code>CONTEXT_&lt;课题名&gt;.md</code>（约束只增不减 / 决策压缩 / 进度原地覆写）+ <code>antigravity-dream-memory</code> | <strong>你更强</strong>：<code>TODO.md</code> 久了易成流水账，你的三段式单文件锚点与分层主题记忆更干净，<strong>不要另起 <code>TODO.md</code> 制造双写冲突</strong> |</p>
+<p>| 每完成一个阶段就新开对话，只发“推进一个阶段，实时保存进度” | 已有单点下一步机制，但实操中容易在长旧对话里顺手继续聊 | <strong>这是唯一值得顺手强化的操作习惯</strong> |</p>
+<ul>
+<li><strong>真正可取的一点习惯</strong>：推进多阶段长任务时，每做完一个里程碑并把新断点写回 <code>CONTEXT_*.md</code>，就干脆新开一个干净对话（例如直接发 <code>@CONTEXT_xxx.md 推进当前下一步，完成后原位更新断点</code>）。这样既省上下文、防注意力稀释，也能绕开 Antigravity 旧对话沿用旧规则快照的已知边界。</li>
+<li><strong>要避开文章的一个盲区</strong>：它说“你不必盯着，让 AI 自己实时保存进度”，但全文<strong>缺少外部验证与防错门禁</strong>。如果用在你的物理推导或脚本改造上，没有你现有的“外部验证断言 + 双次失败即停 + 跨模型审稿”，AI 一旦把半对半错的中间结论实时写进进度文件，反而会把错误固化传染给下一轮新对话。</li>
+</ul>
+<hr>
+<h3>5. <code>MICAHFANG/agy-swarm-forge</code>（10★，v1.4.0）：原理拆解与可借鉴零件</h3>
+<p>你挑得非常准——这个仓库虽然刚起步（10 Stars），但<strong>是原生写给 Google Antigravity 2.0（同款 Gemini 4 Neon/Hydrogen + Claude Sonnet/Opus 5.5 生态）的</strong>，作者的工程抽象质量远高于一般玩具插件。我直接浅克隆并读完了它的全部规则、5 个技能和 3 个脚本。</p>
+<h4>它的底层原理（[实测] 仓库源码）</h4>
+<p>它围绕“<strong>把中大型 TypeScript 全栈项目（Next.js + Hono + Drizzle/PGSQL + Redis）从 60 分拉到 95 分</strong>”串起了一条 4 阶段自动化工程流：</p>
+<ul>
+<li><strong>确定性 AST 图谱 + 错题本（<code>ts-repo-wiki</code> + <code>SessionStart</code> Hook）</strong>：</li>
+<li><code>scan_ts_graph.mjs</code> 调用项目本地 <code>typescript</code> 编译器 API（无依赖时降级正则），零 Token 消耗秒出 <code>COMPONENT_INDEX.md</code>（导出组件与 <code>variant/size/slot</code> Props）、<code>MODULE_GRAPH.md</code>、<code>graph.json</code>（含 <code>importedBy</code> 反向依赖用于查爆炸半径）以及离线可交互的 <code>graph-viewer.html</code>。</li>
+<li>配合增量覆写的 <code>SYSTEM_PATTERNS.md</code> 和 <strong>≤30 条硬上限的 <code>PITFALLS.md</code> 错题本</strong>。</li>
+<li><strong>先探测实证再拷问（<code>grill-spec</code>）</strong>：</li>
+<li>明确禁止拿两类问题打扰用户：① 读源码就能查到的事实；② <strong>跑一条命令 / 写 10 行脚本就能分出高下的技术分叉（Empirical Forks）</strong>。把 <code>ask_question</code> 100% 留给产品/交互取舍，落盘 30–60 行极简验收契约 <code>.agents/specs/*.md</code>，取代冗长的技术实现计划。</li>
+<li><strong>跨家族异构 Swarm + 两级有界验证（<code>swarm-delivery</code> + <code>strict-review</code>）</strong>：</li>
+<li>用 <code>gemini-3.8-flash-medium</code> 做 <code>scout</code>/<code>wiki</code>，<code>gemini-4-hydrogen-high</code> / <code>neon-high</code> 做并发 <code>author-*</code>，<code>claude-sonnet-5-5-high</code>（高危升 <code>opus-5-5-high</code>）做只读对抗式 <code>reviewer</code>。</li>
+<li><strong>6 字段 <code>NEVER</code> 派单契约</strong>（<code>JOB / INPUT &amp; OWNED FILES / REUSE &amp; NEVER / DONE WELL / HANDOFF / ESCALATE IF</code>）锁死文件所有权和禁区；</li>
+<li><strong>两级有界验证</strong>：<code>author</code> 阶段严禁跑全仓测试，只跑本领域单测（超时 ≤30s）；<code>reviewer</code> 阶段才按 <code>graph.json</code> 影响面跑<strong>唯一一次集成检查</strong>（超时 60–90s）并按 100 分制证据制打分（≥90 放行）；</li>
+<li><strong>最多 2 轮熔断 + <code>Attack the Premise</code></strong>：满 2 轮未过禁止第 3 轮盲改，退回主控先质疑前两轮共享的底层前提。</li>
+<li><strong>开源标杆寻优（<code>arch-best-practices</code> + <code>find_gold_repos.mjs</code>）</strong>：</li>
+<li>4 份全栈参考手册 + 过滤 <code>awesome/tutorial/demo/starter</code> 玩具仓的 GitHub 检索脚本。</li>
+</ul>
+<h4>为什么绝对不要直接整包安装？（[实测] 5 处初创硬伤 / 水土不服）</h4>
+<ul>
+<li><strong>Windows 实测直接失效</strong>：<code>install.sh</code> 与 <code>hooks.json</code> 指向的 <code>scripts/session_start.sh</code> 是纯 POSIX Shell + <code>jq</code>，在你的 Windows 环境下 Hook 跑不起来；<code>find_gold_repos.mjs</code> L36 甚至残留了作者私人环境里的 <code>fish</code> 命令与拼错的环境变量名 <code>GITHUBT_ACCESS_TOKEN_AGY</code>。</li>
+<li><strong>会污染并挤占你现有的全局规则预算</strong>：它的 <code>rules/AGENTS.md</code> 是 <code>always_on</code> 的，直接把你固定成“TS 全栈工程师”，强推查 <code>.agents/wiki/</code> 与强制 Swarm，与你当前的光学/科研场景及 <code>core-reasoning-protocol.md</code> / <code>cross-model-reviewer.md</code> 冲突，还会吃掉 Antigravity 全局 20k token 的规则限额。</li>
+<li><strong>踩中了你本机已实测避过的 Opus 中文拦截大坑</strong>：它的 <code>strict-review</code> 让 <code>claude-opus-5-5-high</code> 用<strong>中文</strong>写审稿报告，也没有派前 <code>swarm(action=&quot;models&quot;)</code> 预检与双稿熔断——你本机在 Vertex 通道已实测 Opus 长段中文 29 次请求拦 26 次，你现有的 <code>cross-model-reviewer.md</code>（强制简洁英文 ≤350 words 回执 + 预检 + 熔断）在这点上比它成熟得多。</li>
+<li><strong>技术栈强绑定</strong>：核心资产约 70% 写死在 Next.js / Drizzle / PGSQL / Hono / Redis / UI Variant 上，对 Python 科研、光学推导和轻量脚本几乎无用。</li>
+<li><strong>未认证 API 脆弱</strong>：<code>find_gold_repos.mjs</code> 无 Token 裸调 GitHub Search API，在代理共享 IP 下极易触发 403 限流（刚才拉取这三个仓库元数据时就已实测撞限）。</li>
+</ul>
+<h4>真正值得“拆零件”吸收的 3 个好思路</h4>
+<ul>
+<li><strong>把“Empirical Forks（实证可判的技术分叉）”彻底排除出提问清单</strong>（来自 <code>grill-spec</code>）：以后用 <code>grilling</code> 或技术对齐时，凡是跑个 10 行脚本、看下日志或 <code>tsc</code>/<code>pytest</code> 就能分胜负的技术路线，先自己测出结果再汇报，不把这类问题抛给你拍板。</li>
+<li><strong>多工位 Swarm 的“6 字段 <code>NEVER</code> 派单 + 两级有界验证”</strong>（来自 <code>swarm-delivery</code>）：等你以后真的起 <code>/swarm</code> 或 <code>best-of-n</code> 并发改多文件代码时，可以直接套它的模板——派单明写独占文件与 <code>NEVER</code> 禁区，且编码工位只跑局部快测、审查/汇总位才跑唯一一次受影响范围全测，大幅减少重复耗时和配额浪费。</li>
+<li><strong>“规则防膨胀的逆向减法闭环”</strong>（来自 <code>ts-repo-wiki</code> 的 <code>PITFALLS.md</code>）：你 <code>core-reasoning-protocol.md</code> &#167;4 已经写了“同类错犯 ≥2 次改用脚本/测试/Hook 锁死”，它补上了关键后半句——<strong>一旦硬约束落地生效，就把对应的文字防坑条目从规则或笔记里删掉</strong>，防止规则库只增不减、越积越钝。</li>
+</ul>
+<p>*(注：至于它的 <code>scan_ts_graph.mjs</code> + <code>render_graph_viewer.mjs</code> 这套零依赖 TS AST 依赖图与离线看板，等你哪天真的要接手/开发一个几十个文件以上的 TypeScript/React 项目时，再单独把这两个 <code>.mjs</code> 脚本抽出来用即可，现在不必预装。)*</p>
+<hr>
+<h3>两个直指边界的追问（帮你决定要不要落任何动作）</h3>
+<ul>
+<li><strong>关于 <code>octopus</code></strong>：你原本想查的是不是昨天看过的 <code>TencentCloud/Octop</code>，还是 <code>nyldn/claude-octopus</code>，或是另一个粘贴漏掉的仓库网址？如果是第三个仓库，直接把原链接发我，我单核它。</li>
+<li><strong>关于 <code>agy-swarm-forge</code> 的 3 个思路</strong>：目前我们不需要动你的全局规则文件（遵守防膨胀原则）；你近期有没有计划启动中大型 <strong>TypeScript / 前端多文件项目</strong>，或者要不要把“6 字段 <code>NEVER</code> 派单 + 两级有界验证”先沉淀到你已有的 <code>best-of-n</code> / <code>subagent-pipeline</code> 技能里备用？（若不动现有文件，这轮就可以直接收口零改动。）</li>
+</ul>
+</div></article>
+
+    </section>
+  </main>
+  <script>
+    (function() {
+      var src = '../sidebar.js';
+      if (window.location.protocol !== 'file:') {
+        src += (src.indexOf('?') >= 0 ? '&' : '?') + '_t=' + Date.now();
+      }
+      var s = document.createElement('script');
+      s.src = src;
+      document.body.appendChild(s);
+    })();
+  </script>
+  <script>
+    function triggerBlobDownload(blob, filename) {
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function() { URL.revokeObjectURL(url); }, 1500);
+    }
+    function downloadMarkdown(e, relPath, filename) {
+      if (window.location.protocol === 'file:' || !window.fetch || !window.Blob) {
+        return true;
+      }
+      if (e) e.preventDefault();
+      var btn = document.getElementById('downloadMdBtn');
+      var orig = btn ? (btn.getAttribute('data-orig') || btn.innerText) : '';
+      if (btn) {
+        btn.setAttribute('data-orig', orig);
+        btn.innerText = '正在下载...';
+      }
+      var targetUrl = relPath;
+      try { targetUrl = new URL(relPath, window.location.href).href; } catch (err) {}
+      fetch(targetUrl, { cache: 'no-cache' })
+        .then(function(resp) {
+          if (!resp.ok) throw new Error('HTTP ' + resp.status);
+          return resp.text();
+        })
+        .then(function(text) {
+          var blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
+          triggerBlobDownload(blob, filename);
+          if (btn) {
+            btn.innerText = '已下载 .md';
+            setTimeout(function() { btn.innerText = orig; }, 2000);
+          }
+        })
+        .catch(function() {
+          if (btn) btn.innerText = orig;
+          var a = document.createElement('a');
+          a.href = targetUrl;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        });
+      return false;
+    }
+    function fallbackCopy(text, onDone) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try {
+        if (document.execCommand('copy')) { onDone(); }
+      } catch (e) {}
+      document.body.removeChild(ta);
+    }
+    function copyCanonicalUrl(relPath, btnId, doneLabel) {
+      var btn = document.getElementById(btnId);
+      if (!btn) return;
+      var orig = btn.getAttribute('data-orig') || btn.innerText;
+      btn.setAttribute('data-orig', orig);
+      var targetUrl = window.location.href;
+      try {
+        targetUrl = new URL(relPath, window.location.href).href;
+      } catch (e) {}
+      var onDone = function() {
+        btn.innerText = doneLabel;
+        setTimeout(function() { btn.innerText = orig; }, 2000);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(targetUrl).then(onDone, function() { fallbackCopy(targetUrl, onDone); });
+      } else {
+        fallbackCopy(targetUrl, onDone);
+      }
+    }
+  </script>
+</body>
+</html>
