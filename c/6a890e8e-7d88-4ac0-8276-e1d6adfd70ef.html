@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>帮我检查一下我的sakuracat是不是最新版的，你去官网查看一... - Antigravity Share</title>
+  <style>
+    :root {
+      --bg-main: #131314;
+      --bg-sidebar: #1e1f20;
+      --bg-active: #2b2c2f;
+      --bg-bubble-user: #2b2c2f;
+      --bg-bubble-ai: #1e1f20;
+      --text-main: #e3e3e3;
+      --text-sub: #c4c7c5;
+      --accent: #a8c7fa;
+      --border: #3c4043;
+      --code-bg: #0d0e11;
+      --badge-green: #34d399;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100vh;
+    }
+    #sidebar {
+      width: 310px;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+    .sidebar-header {
+      padding: 18px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-header h2 {
+      font-size: 16px;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sidebar-header a.home-link {
+      text-decoration: none;
+      color: inherit;
+    }
+    .sync-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--badge-green);
+      background: rgba(52, 211, 153, 0.1);
+      padding: 3px 8px;
+      border-radius: 12px;
+      margin-top: 8px;
+    }
+    .conv-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .conv-item {
+      display: block;
+      text-decoration: none;
+      padding: 11px 13px;
+      border-radius: 10px;
+      transition: background 0.15s;
+      border: 1px solid transparent;
+      color: inherit;
+    }
+    .conv-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .conv-item.active {
+      background: var(--bg-active);
+      border-color: var(--border);
+    }
+    .conv-title {
+      font-size: 14px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #fff;
+    }
+    .conv-meta {
+      font-size: 11px;
+      color: var(--text-sub);
+      margin-top: 4px;
+      display: flex;
+      justify-content: space-between;
+    }
+    #main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .main-header {
+      padding: 16px 28px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-sidebar);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .main-header h1 {
+      font-size: 17px;
+      color: #fff;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .sub-meta {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-top: 3px;
+    }
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .btn {
+      background: var(--bg-active);
+      color: var(--accent);
+      border: 1px solid var(--border);
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .btn:hover { background: #3c4043; }
+    .chat-canvas {
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 28px 24px 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .turn {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .turn.user { align-items: flex-end; }
+    .turn.assistant { align-items: flex-start; }
+    .role-tag {
+      font-size: 12px;
+      color: var(--text-sub);
+      font-weight: 600;
+      padding: 0 4px;
+    }
+    .bubble {
+      max-width: 88%;
+      padding: 16px 20px;
+      border-radius: 18px;
+      line-height: 1.7;
+      font-size: 15px;
+      word-break: break-word;
+    }
+    .turn.user .bubble {
+      background: var(--bg-bubble-user);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .turn.assistant .bubble {
+      background: var(--bg-bubble-ai);
+      color: var(--text-main);
+      border-bottom-left-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .bubble p { margin: 0 0 10px 0; }
+    .bubble p:last-child { margin-bottom: 0; }
+    .bubble h1, .bubble h2, .bubble h3, .bubble h4 {
+      margin: 14px 0 8px;
+      color: var(--accent);
+      line-height: 1.4;
+    }
+    .bubble h1 { font-size: 19px; }
+    .bubble h2 { font-size: 17px; }
+    .bubble h3 { font-size: 15.5px; }
+    .bubble ul, .bubble ol { margin: 8px 0 10px 22px; }
+    .bubble li { margin: 4px 0; }
+    .bubble blockquote {
+      border-left: 3px solid var(--accent);
+      padding-left: 12px;
+      margin: 8px 0;
+      color: var(--text-sub);
+    }
+    .bubble code {
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 5px;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 13.5px;
+    }
+    .bubble pre {
+      background: var(--code-bg);
+      padding: 14px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 10px 0;
+      border: 1px solid #2b2d31;
+    }
+    .bubble pre code {
+      background: transparent;
+      padding: 0;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .bubble a { color: var(--accent); }
+    .bubble hr {
+      border: 0;
+      border-top: 1px solid var(--border);
+      margin: 14px 0;
+    }
+    @media (max-width: 820px) {
+      body { flex-direction: column; }
+      #sidebar { width: 100%; height: auto; position: static; max-height: 280px; }
+      .main-header { flex-wrap: wrap; padding: 14px 16px; }
+      .header-actions { flex-wrap: wrap; }
+      .bubble { max-width: 96%; }
+    }
+  </style>
+</head>
+<body data-conv-id="6a890e8e-7d88-4ac0-8276-e1d6adfd70ef" data-base-prefix="./" data-turn-count="16" data-update-time="2026-11-23 19:05" data-is-index="0">
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
+      <div class="sync-badge" id="syncBadge">自动同步加载中...</div>
+    </div>
+    <nav class="conv-list" id="convList" aria-label="Conversations">
+      <noscript><div style="padding:12px;color:#c4c7c5;font-size:12px;">请启用 JavaScript 查看全部历史对话列表，或直接访问对应对话链接。</div></noscript>
+    </nav>
+  </aside>
+  <main id="main">
+    <header class="main-header">
+      <div style="min-width:0;">
+        <h1>帮我检查一下我的sakuracat是不是最新版的，你去官网查看一...</h1>
+        <div class="sub-meta">会话 ID: 6a890e8e-7d88-4ac0-8276-e1d6adfd70ef | 轮次: 16 | 更新于: 2026-11-23 19:05</div>
+      </div>
+      <div class="header-actions">
+        <a class="btn" id="downloadMdBtn" href="./6a890e8e-7d88-4ac0-8276-e1d6adfd70ef.md" download="帮我检查一下我的sakuracat是不是最新版的-6a890e8e.md" onclick="return downloadMarkdown(event, './6a890e8e-7d88-4ac0-8276-e1d6adfd70ef.md', '帮我检查一下我的sakuracat是不是最新版的-6a890e8e.md')">⬇️ 下载 Markdown (.md)</a>
+        <button class="btn" id="copyBtn" type="button" onclick="copyCanonicalUrl('./6a890e8e-7d88-4ac0-8276-e1d6adfd70ef.html', 'copyBtn', '已复制直链')">复制对话直链</button>
+      </div>
+    </header>
+    <section class="chat-canvas" aria-label="Conversation Content">
+      <article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>帮我检查一下我的sakuracat是不是最新版的，你去官网查看一下，官网是：114514-sakuracat.com或者sakuracat-cn1.com。不是的话就进行安装最新版本并覆盖旧版本，D:\sakuracat这个是路径</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已检查本地安装目录 <code>D:\sakuracat</code>，当前已安装的 SakuraCat 版本为 <strong><code>1.6.2</code></strong>（NSIS 安装版，构建时间 <code>2025/11/30</code>）。</p>
+<p>正在通过浏览器访问官网（<code>114514-sakuracat.com</code> / <code>sakuracat-cn1.com</code>）核对最新 Windows 版本及下载信息，请稍候。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p><code>114514-sakuracat.com</code> 直接跳转到了账号登录页（未登录前不展示公开下载入口），正在顺便核对备用域名 <code>sakuracat-cn1.com</code>，请稍候。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><h3>当前检查进度</h3>
+<ul>
+<li><strong>本地版本（已确认）</strong></li>
+<li>目录：<code>D:\sakuracat</code></li>
+<li>可执行文件：<code>SakuraCat.exe</code></li>
+<li>当前版本：<strong><code>1.6.2</code></strong>（<code>ProductVersion: 1.6.2.0</code>，构建时间 <code>2025/11/30</code>，NSIS 安装版，目录内含 <code>Uninstall SakuraCat.exe</code>）</li>
+</ul>
+<ul>
+<li><strong>官网状态（需要登录）</strong></li>
+<li>已通过内置浏览器依次访问 <code>https://114514-sakuracat.com</code> 与 <code>https://sakuracat-cn1.com</code>，两个域名均可正常打开，但均会直接跳转到 <code>/login</code> 登录页，未登录前不公开展示客户端下载入口与版本号。</li>
+</ul>
+<hr>
+<h3>下一步操作</h3>
+<p>内置浏览器当前已停留在 <code>https://sakuracat-cn1.com/login</code> 登录页面。请你<strong>直接在浏览器面板中登录你的 SakuraCat 账号</strong>，登录完成后回复我一声（例如“已登录”），我会在同一个标签页里继续核对最新 Windows 版本号，若高于 <code>1.6.2</code> 再下载安装包并覆盖安装到 <code>D:\sakuracat</code>。</p>
+<blockquote><strong>提前提醒一个关键边界条件</strong>：如果你当前正依赖本机的 SakuraCat 维持联网，后续覆盖安装到 <code>D:\sakuracat</code> 前需要先退出正在运行的 <code>SakuraCat.exe</code>，这可能会导致网络短暂断开（甚至中断当前会话与模型的连接）。登录后如果确认有新版本，我会先下载安装包并提醒你确认是否允许我直接关闭进程并静默/覆盖安装。</blockquote>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>已经登录好了，是的，正在适用sakuracat联网</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>收到，正在通过已登录的浏览器标签页查看 SakuraCat 官方 Windows 客户端的最新版本（若高于 <code>1.6.2</code> 且存在明确的官方 Windows 安装包，将先安全下载安装包，不会立即关闭当前正在运行的 SakuraCat）。请稍候。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已在官网（<code>https://sakuracat-cn1.com/knowledge?id=57</code>）核对到最新 Windows 官方客户端版本为 <strong><code>2.4.6</code></strong>（高于你当前的 <code>1.6.2</code>），直链为 <code>com.sakuracat.app-2.4.6-windows-setup.exe</code>。</p>
+<p>目前正在后台下载官方安装包到 <code>C:\Users\&lt;USER&gt;\Downloads\com.sakuracat.app-2.4.6-windows-setup.exe</code> 并校验其签名与安装器类型（下载期间不会关闭正在运行的 SakuraCat）。请稍候。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>安装包已下载并校验完成（<code>23.35 MB</code>，SHA256 已记录），发现 <code>1.6.2</code>（Electron / NSIS 安装器）与 <code>2.4.6</code>（Inno Setup 安装器，疑似架构重写）属于<strong>不同安装框架</strong>，且当前系统开启了 <code>127.0.0.1:7897</code> 系统代理与 <code>com.vortex.helper</code> 服务。</p>
+<p>正在快速查看官网教程页下方是否有关于旧版升级/卸载的注意事项，随后给出最稳妥的覆盖安装方案供你确认。请稍候。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><h3>检查结果：不是最新版（存在跨代大版本更新）</h3>
+<p>| 项目 | 本地已安装版本 | 官网最新版本（<code>sakuracat-cn1.com</code>） |</p>
+<p>| :--- | :--- | :--- |</p>
+<p>| 版本号 | <strong><code>1.6.2</code></strong>（<code>1.6.2.0</code>） | <strong><code>2.4.6</code></strong>（<code>2.4.6+20406</code>） |</p>
+<p>| 客户端/安装器框架 | Electron + <strong>NSIS</strong>（<code>Vortex Maintainers</code>，目录 <code>414.43 MB</code>） | 架构重写版 + <strong>Inno Setup</strong>（安装包 <code>23.35 MB</code>） |</p>
+<p>| 文件路径 | <code>SakuraCat.exe</code> | 已下载至 <code>com.sakuracat.app-2.4.6-windows-setup.exe</code> |</p>
+<p>| 校验信息 | 后台运行服务 <code>com.vortex.helper</code>；系统代理 <code>127.0.0.1:7897</code> 已开启 | SHA256: <code>2B4AB3C2...114E4E</code>；未代码签名（官网教程已明确提示首次运行可能触发 SmartScreen） |</p>
+<hr>
+<h3>核心矛盾与暂缓直接覆盖的原因</h3>
+<p><strong>核心矛盾</strong>：你当前正在靠 <code>1.6.2</code> 联网，但 <code>1.6.2</code>（Electron / NSIS）与 <code>2.4.6</code>（Inno Setup）属于<strong>跨代不同安装框架</strong>——直接覆盖会留下旧版垃圾与服务冲突，而卸载旧版会立刻中断外网（含当前会话与模型的连接）。</p>
+<p>动手前定位到 3 个必须规避的失效机制：</p>
+<ul>
+<li><strong>不能直接硬覆盖</strong>：Inno Setup 安装器无法自动卸载旧版 NSIS（卸载 GUID 不同），直接覆写进 <code>D:\sakuracat</code> 会导致 414 MB 的旧版 Electron/Chromium 文件、<code>Uninstall SakuraCat.exe</code> 及后台服务 <code>com.vortex.helper</code> 全部残留，并产生两个卸载项与潜在代理/TUN 冲突。</li>
+<li><strong>不能直接强杀进程</strong>：当前系统代理 <code>HKCU\...\Internet Settings\ProxyEnable = 1</code>（<code>127.0.0.1:7897</code>）。若强杀 <code>SakuraCat.exe</code> 而不清除系统代理，连国内直连及新版 <code>2.4.6</code> 登录接口都会无法访问（官网教程也专门提醒了这一点）。</li>
+<li><strong>装完无法自动恢复联网</strong>：官网教程明确说明 <code>2.4.6</code> 安装后需用注册邮箱/密码重新登录，并手动开启主页的 <strong>系统代理</strong> 开关才会恢复联网（首次启动还会弹出 Windows 防火墙授权提示，需点“允许”）。</li>
+</ul>
+<hr>
+<h3>请确认执行方式（选其一）</h3>
+<ul>
+<li><strong>方案 A（推荐，全自动本地迁移，断网瞬间不影响本地安装脚本跑完）</strong>：</li>
+</ul>
+<p>  确认后我直接通过一条本地 PowerShell 流程按序完成：</p>
+<ul>
+<li>备份旧版用户目录 <code>C:\Users\&lt;USER&gt;\AppData\Roaming\sakuracat</code>；</li>
+<li>停止 <code>SakuraCat.exe</code> 并将 Windows <code>ProxyEnable</code> 重置为 <code>0</code>（防止断网锁死）；</li>
+<li>静默卸载旧版 <code>&quot;D:\sakuracat\Uninstall SakuraCat.exe&quot; /allusers /S</code>，清理 <code>D:\sakuracat</code> 残留文件并检查停止旧服务 <code>com.vortex.helper</code>；</li>
+<li>以 Inno Setup 参数 <code>/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /DIR=&quot;D:\sakuracat&quot;</code> 干净安装 <strong><code>2.4.6</code></strong> 到 <code>D:\sakuracat</code>；</li>
+<li>校验新版本并<strong>自动拉起 <code>SakuraCat 2.4.6</code> 窗口</strong>。</li>
+</ul>
+<p>  &gt; *注意*：执行第 2 步起本对话会暂时掉线，等你看到弹出的 <code>2.4.6</code> 窗口后登录并开启<strong>系统代理</strong>，网络和对话即会恢复。</p>
+<ul>
+<li><strong>方案 B（完全手动可控，零对话中途卡死风险）</strong>：</li>
+<li>你先右键右下角托盘图标点击<strong>“退出”</strong>关闭 <code>1.6.2</code>（自动解除系统代理），再运行 <code>Uninstall SakuraCat.exe</code> 卸载旧版；</li>
+<li>双击我已下好的 <code>com.sakuracat.app-2.4.6-windows-setup.exe</code>（若弹 SmartScreen 点“更多信息 → 仍要运行”），安装路径选 <code>D:\sakuracat</code>；</li>
+<li>登录并开启<strong>系统代理</strong>恢复联网后告诉我，我再帮你复查 <code>D:\sakuracat</code> 版本号及 <code>com.vortex.helper</code> 是否有残留。</li>
+</ul>
+<hr>
+<h3>确认前两个关键问题</h3>
+<ul>
+<li>你更倾向我直接执行<strong>方案 A</strong>，还是你按<strong>方案 B</strong> 手动切换后再让我复检？</li>
+<li>旧版 <code>1.6.2</code> 里有没有手动写过的自定义分流规则或链式代理配置需要单独留档（若无，普通订阅在 <code>2.4.6</code> 登录后会自动同步）？</li>
+</ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>请按 https://github.com/Lumidarin/agy-capsule/blob/main/docs/windows-install.md 帮我安装 agy-capsule。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已严格按照 <code>docs/windows-install.md</code> 完成 <strong>第 1～2 步</strong>（未修改插件源码、Antigravity 安装目录或设置，也未退出/重启 Antigravity）：</p>
+<h3>已完成步骤与校验输出</h3>
+<ul>
+<li><strong>拉取最新代码</strong></li>
+<li>克隆仓库至 <code>C:\Users\&lt;USER&gt;\agy-capsule</code>（<code>main</code> 分支，提交 <code>3c4380b4a71d0d78cd343a0ac3f1c6a7309c8e6a</code>）。</li>
+<li><strong>安装插件</strong>（执行 <code>manage-plugin.ps1</code> <code>-Action install</code>）</li>
+<li>输出确认：<code>已安装/更新 agy-capsule 到 C:\Users\&lt;USER&gt;\.gemini\config\plugins\agy-capsule</code>（退出码 <code>0</code>）。</li>
+<li><strong>配置底栏胶囊调试参数 <code>--remote-debugging-port=0</code></strong>（执行 <code>enable-cdp.ps1</code>，非管理员权限）</li>
+<li>逐行结果（全部成功，无无法修改项）：</li>
+<li><strong>已更新</strong>：<code>Antigravity.lnk（桌面）</code>（<code>C:\Users\&lt;USER&gt;\Desktop\Antigravity.lnk</code>）</li>
+<li><strong>已更新</strong>：<code>Antigravity.lnk（开始菜单）</code>（<code>C:\Users\&lt;USER&gt;\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Antigravity.lnk</code>）</li>
+<li><strong>重要</strong>：以后请从以上两个快捷方式打开 Antigravity，以保证 <code>--remote-debugging-port=0</code> 生效（若任务栏曾手动固定了旧图标，请重新从桌面/开始菜单快捷方式固定，或确认任务栏图标属性目标末尾带该参数）。</li>
+</ul>
+<hr>
+<h3>接下来请你完成：第 3 步（启用插件）</h3>
+<ul>
+<li><strong>完全退出</strong> Antigravity，再从上面已更新的<strong>桌面或开始菜单快捷方式</strong>重新打开。</li>
+<li>在 Antigravity 的 <strong>Plugins</strong> 面板中启用 <strong><code>agy-capsule</code></strong>。</li>
+<li>在对话顶部点击 <strong><code>… → Extensions → agy-capsule</code></strong>，打开侧栏。</li>
+</ul>
+<h3>验证成功的标准</h3>
+<ul>
+<li>侧栏正常显示上下文与 token 统计；</li>
+<li>输入框下方出现底栏胶囊，且侧栏顶部没有「底栏胶囊未启用」提示。</li>
+</ul>
+<blockquote><strong>补充说明</strong>：</blockquote>
+<blockquote>- 该调试端口仅监听本机；如日后想撤销快捷方式参数，可在 <code>C:\Users\&lt;USER&gt;\agy-capsule</code> 下运行 <code>powershell -ExecutionPolicy Bypass -File scripts\enable-cdp.ps1 -Undo</code>。</blockquote>
+<blockquote>- 若重启后侧栏打不开或空白，可查看日志 <code>%USERPROFILE%\.gemini\antigravity\sidecar_data\agy-capsule\agy_capsule\logs\sidecar.log</code>；若 Antigravity 后续自动更新覆盖了快捷方式导致底栏胶囊消失，重新运行一次 <code>enable-cdp.ps1</code> 即可。</blockquote>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>底栏胶囊未启用，无法在输入框下方显示胶囊。不过它有说明可以在下载agy-capsule的文件夹里运行owershell -ExecutionPolicy Bypass -File scripts\enable-cdp.ps1，就可同意了。你来试一下，如果还是不行的话你来分析一下这个插件的用处，然后找到为什么不能实现这个功能，然后讲清楚原理就开始修复</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p><strong>核心结论</strong>：<code>enable-cdp.ps1</code> 其实早已把桌面和开始菜单快捷方式改好了；底栏胶囊没出来，是因为你当前运行的 Antigravity 不是从快捷方式打开的，而是由 <strong>Cockpit Tools 切号时直接拉起的</strong>，绕过了快捷方式且缺少 <code>--remote-debugging-port=0</code>。我已把 Cockpit Tools 的默认启动参数一并修好，你再完全重启一次 Antigravity 即可生效。</p>
+<hr>
+<h3>一、重跑 <code>enable-cdp.ps1</code> 的结果</h3>
+<p>已按说明在 <code>C:\Users\&lt;USER&gt;\agy-capsule</code> 运行 <code>scripts\enable-cdp.ps1</code>，两条快捷方式均显示<strong>已设置</strong>（退出码 <code>0</code>）：</p>
+<ul>
+<li><code>Antigravity.lnk（桌面）</code>：<code>Arguments = --remote-debugging-port=0</code></li>
+<li><code>Antigravity.lnk（开始菜单）</code>：<code>Arguments = --remote-debugging-port=0</code></li>
+</ul>
+<hr>
+<h3>二、<code>agy-capsule</code> 的用处与底栏胶囊实现原理</h3>
+<p>根据 <code>README.md</code> 与源码，这个插件由两套机制组成：</p>
+<ul>
+<li><strong>主要用途</strong></li>
+<li>在输入框底栏模型按钮旁提供紧凑悬浮胶囊，实时查看 <strong>上下文占用/明细/缓存过期提醒</strong>、<strong>生成速度与首字等待提醒</strong>、<strong>多模型 5h/周剩余额度与重置倒计时</strong>、<strong>请求报错原因诊断</strong>，以及可选的<strong>优化模型与思考强度选择器</strong>（你当前在 <code>settings.json</code> 里也已开启 <code>modelEffortPicker: true</code>）。</li>
+<li><strong>为什么侧栏能用、底栏胶囊却必须依赖 CDP 参数</strong></li>
+<li><strong>侧栏（Sidecar）</strong>：走 Antigravity 官方插件协议（当前运行在 <code>127.0.0.1:50061</code>），通过本地 Language Server 读取会话和配额数据，不依赖调试端口。</li>
+<li><strong>底栏胶囊（CDP 注入，见 <code>deck_injector.mjs</code>）</strong>：Antigravity 2.0 官方插件接口只开放了右侧 Aux Pane 侧栏，不提供输入框底栏（<code>.agy-composer-footer</code>）的原生 UI 挂载点。因此底栏胶囊必须走一条 4 步链路：</li>
+<li>启动 <code>Antigravity.exe</code> 时带上 Electron 参数 <code>--remote-debugging-port=0</code> → Chromium 在 <code>127.0.0.1</code> 随机绑定本地调试端口，并把端口号写入 <code>%APPDATA%\Antigravity\DevToolsActivePort</code>；</li>
+<li>插件 sidecar 读取 <code>DevToolsActivePort</code>，向 <code>http://127.0.0.1:&lt;port&gt;/json/list</code> 查询页面列表；</li>
+<li>对照 <code>daemon/hub_*.json</code> 核验当前会话的 composer 页面源（已确认本机 <code>hub_50031.json</code> 正常，且插件明确适配当前安装的 <code>Antigravity 2.33.0</code>）；</li>
+<li>通过本机 CDP WebSocket 调用 <code>Runtime.evaluate</code>，在 <code>.agy-composer-footer &gt; div:first-child</code> 注入隔离的 Shadow DOM 胶囊条（<code>#agy-capsule-host</code>）。</li>
+</ul>
+<hr>
+<h3>三、为什么刚才一直「底栏胶囊未启用」（实证根因）</h3>
+<p>核查进程树与日志后，锁定完整因果链：</p>
+<ul>
+<li><code>sidecar.log</code> 明确报错：<code>[deck] DevToolsActivePort not found</code>，且 <code>%APPDATA%\Antigravity\</code> 下确实不存在 <code>DevToolsActivePort</code> 文件。</li>
+<li>检查当前运行的 Antigravity 主进程（<code>PID 17304</code>，启动时间 <code>18:55:12</code>）：</li>
+<li>实际命令行：<code>&quot;C:\Users\&lt;USER&gt;\AppData\Local\Programs\antigravity\Antigravity.exe&quot; --reuse-window</code>（<strong>不含 <code>--remote-debugging-port=0</code></strong>）；</li>
+<li>父进程：<code>PID 2960</code> = <strong><code>cockpit-tools.exe</code>（Cockpit Tools <code>1.4.2</code>）</strong>。</li>
+<li>核对 <code>app.log.2026-11-20</code>：<code>18:55:07–18:55:12</code> Cockpit Tools 执行了 <code>[Antigravity] 开始桌面切号</code>，关闭了旧 Antigravity 并直接拉起 <code>Antigravity.exe</code>，<strong>完全绕过了桌面/开始菜单快捷方式</strong>。</li>
+<li>对照 Cockpit Tools 上游源码（<code>commands/account.rs</code> 与 <code>process_close_lifecycle.rs</code>）与本机数据库 <code>instance_registry.sqlite</code>：</li>
+<li>它启动默认桌面实例时执行 <code>cmd.arg(&quot;--reuse-window&quot;).args(extra_args)</code>，其中 <code>extra_args</code> 直接从 SQLite 表 <code>instance_registry</code> 中 <code>registry = &#39;antigravity_legacy_instances.json&#39;</code> 的 <code>defaults.extraArgs</code> 读取（每次现读，无内存陈旧缓存）；</li>
+<li>你本机该字段原本为空字符串 <code>&quot;&quot;</code>，所以每次切号/重启都会把 CDP 参数丢掉。</li>
+</ul>
+<hr>
+<h3>四、已完成的修复与验证步骤</h3>
+<ul>
+<li><strong>快捷方式启动链路</strong>：桌面与开始菜单两个 <code>.lnk</code> 均已验证带 <code>--remote-debugging-port=0</code>。</li>
+<li><strong>Cockpit Tools 切号/重启链路（已原地修复）</strong>：</li>
+<li>以 SQLite 原子事务更新 <code>instance_registry.sqlite</code> 中 <code>antigravity_legacy_instances.json</code> 的 <code>defaults.extraArgs</code> 为 <strong><code>--remote-debugging-port=0</code></strong>，并按其乐观锁规则将 <code>revision</code> 从 <code>62</code> 递增至 <code>63</code>（防止旧界面覆盖）；</li>
+<li>已回读校验且 <code>PRAGMA integrity_check = ok</code>。</li>
+<li>*注*：全程未修改 <code>agy-capsule</code> 插件源码、未修改 Antigravity 安装目录与设置，也未强杀正在运行的 Antigravity。</li>
+</ul>
+<h4>最后一步（需你手动重启一次）</h4>
+<p>由于 <code>--remote-debugging-port=0</code> 是 Electron 启动期参数、无法热注入到已运行的 <code>PID 17304</code>，请你<strong>任选以下一种方式重启 Antigravity</strong>：</p>
+<ul>
+<li><strong>方式 A</strong>：完全退出 Antigravity，再从<strong>桌面或开始菜单快捷方式</strong>重新打开；</li>
+<li><strong>方式 B</strong>：直接在 <strong>Cockpit Tools</strong> 里触发一次重启/切号（现在同样会自动附带 <code>--remote-debugging-port=0</code>）。</li>
+</ul>
+<h4>成功判据（外部可验证）</h4>
+<p>重启后打开任意对话，应同时看到：</p>
+<ul>
+<li>输入框左下角模型按钮旁出现底栏胶囊，侧栏顶部「底栏胶囊未启用」提示消失；</li>
+<li>磁盘上生成 <code>C:\Users\&lt;USER&gt;\AppData\Roaming\Antigravity\DevToolsActivePort</code> 文件。</li>
+</ul>
+<hr>
+<h3>两个边界提醒</h3>
+<ul>
+<li>你目前在 Cockpit Tools 里只有默认实例（<code>instance_profiles</code> 为空）；如果日后新建 <strong>Antigravity 多开实例</strong>，需要在该多开实例的「额外启动参数」里也填上 <code>--remote-debugging-port=0</code>，否则多开窗口不会显示底栏胶囊。</li>
+<li>如果你按上面步骤完全重启后胶囊仍未显示，直接回复我一声，我马上帮你检查新进程命令行和 <code>sidecar.log</code>，排查是否存在后续 CDP 握手或 DOM 挂载问题。</li>
+</ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>agy-capsule好像更新了你查看你下然后更新插件看看</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已检测到更新（<code>1.3.0</code> → <strong><code>1.5.0</code></strong>），已完成代码拉取与插件文件更新，正在完成最后一步快捷方式状态校验，请稍候。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已检查并完成更新：<strong><code>agy-capsule</code> 已从 <code>1.3.0</code> 更新到最新 <code>1.5.0</code></strong>，且侧栏与底栏胶囊已自动热重载（无需重启 Antigravity）。</p>
+<h3>一、更新与验证结果</h3>
+<ul>
+<li><strong>仓库拉取</strong>：在 <code>C:\Users\&lt;USER&gt;\agy-capsule</code> 执行 <code>git pull --ff-only origin main</code>，由 <code>3c4380b</code> 快进至 <code>867a32d</code>（<code>HEAD</code> 与 <code>FETCH_HEAD</code> 一致）。</li>
+<li><strong>插件更新</strong>：执行 <code>manage-plugin.ps1</code> <code>-Action install</code>（退出码 <code>0</code>），已同步至 <code>C:\Users\&lt;USER&gt;\.gemini\config\plugins\agy-capsule</code>，核验 <code>plugin.json</code> 版本为 <strong><code>1.5.0</code></strong>（原有 <code>settings.json</code> 保留未被覆盖）。</li>
+<li><strong>自动重载实测</strong>：核查 <code>sidecar.log</code>，插件已于 <code>2026-11-23 19:05:02</code> 自动重启并绑定新端口 <code>127.0.0.1:62410</code>，<code>deck injector</code> 正常启动且无报错。</li>
+<li><strong>快捷方式状态</strong>：重跑 <code>enable-cdp.ps1</code>（退出码 <code>0</code>），<code>桌面快捷方式</code> 与 <code>开始菜单快捷方式</code> 均显示 <code>已设置</code>。</li>
+</ul>
+<hr>
+<h3>二、<code>1.3.0</code> → <code>1.5.0</code> 主要更新内容</h3>
+<ul>
+<li><strong>新增统计与可视化</strong>：</li>
+<li>底栏直接显示<strong>缓存命中率</strong>；</li>
+<li>侧栏新增可选 <strong>Token 活动热力图</strong>与<strong>按模型用量图表</strong>；</li>
+<li>支持<strong>子代理（Subagent）会话</strong>及<strong>侧边聊天框</strong>胶囊、云端对话遥测计时。</li>
+<li><strong>交互与模型选择升级</strong>：</li>
+<li>新增可选<strong>动画思考强度滑块（Effort Slider）</strong>与 Orchestrator 主题/合并版模型选择器适配；</li>
+<li>底栏弹出面板提升至顶层（不再被排队消息遮挡），并兼容中文汉化补丁。</li>
+<li><strong>运维与安全改进</strong>：</li>
+<li>侧栏内置<strong>版本检查与一键更新</strong>（修复了 Windows 侧栏目录文件锁与自定义 Node 路径保留问题），后续更新可直接点侧栏更新按钮；</li>
+<li><code>1.5.0</code> 为新建/修复的 CDP 快捷方式增加了 <code>--remote-debugging-address=127.0.0.1</code> 仅限回环地址加固（已有 <code>--remote-debugging-port=0</code> 的快捷方式默认保持不变，Chromium 本身默认仅绑定本机回环）。</li>
+</ul>
+<hr>
+<h3>验证建议与边界确认</h3>
+<ul>
+<li>现在直接打开 <code>… → Extensions → agy-capsule</code> 侧栏即可看到 <code>1.5.0</code> 的新设置项（如热力图、按模型图表、思考强度滑块、缓存命中率等），底栏胶囊也会同步刷新。</li>
+<li>如你希望把 <code>1.5.0</code> 新增的 <code>--remote-debugging-address=127.0.0.1</code> 防御加固参数也同步补进桌面/开始菜单快捷方式和 Cockpit Tools 的 <code>extraArgs</code> 里，告诉我一声我再帮你加上。</li>
+</ul>
+</div></article>
+
+    </section>
+  </main>
+  <script>
+    (function() {
+      var src = '../sidebar.js';
+      if (window.location.protocol !== 'file:') {
+        src += (src.indexOf('?') >= 0 ? '&' : '?') + '_t=' + Date.now();
+      }
+      var s = document.createElement('script');
+      s.src = src;
+      document.body.appendChild(s);
+    })();
+  </script>
+  <script>
+    function triggerBlobDownload(blob, filename) {
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function() { URL.revokeObjectURL(url); }, 1500);
+    }
+    function downloadMarkdown(e, relPath, filename) {
+      if (window.location.protocol === 'file:' || !window.fetch || !window.Blob) {
+        return true;
+      }
+      if (e) e.preventDefault();
+      var btn = document.getElementById('downloadMdBtn');
+      var orig = btn ? (btn.getAttribute('data-orig') || btn.innerText) : '';
+      if (btn) {
+        btn.setAttribute('data-orig', orig);
+        btn.innerText = '正在下载...';
+      }
+      var targetUrl = relPath;
+      try { targetUrl = new URL(relPath, window.location.href).href; } catch (err) {}
+      fetch(targetUrl, { cache: 'no-cache' })
+        .then(function(resp) {
+          if (!resp.ok) throw new Error('HTTP ' + resp.status);
+          return resp.text();
+        })
+        .then(function(text) {
+          var blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
+          triggerBlobDownload(blob, filename);
+          if (btn) {
+            btn.innerText = '已下载 .md';
+            setTimeout(function() { btn.innerText = orig; }, 2000);
+          }
+        })
+        .catch(function() {
+          if (btn) btn.innerText = orig;
+          var a = document.createElement('a');
+          a.href = targetUrl;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        });
+      return false;
+    }
+    function fallbackCopy(text, onDone) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try {
+        if (document.execCommand('copy')) { onDone(); }
+      } catch (e) {}
+      document.body.removeChild(ta);
+    }
+    function copyCanonicalUrl(relPath, btnId, doneLabel) {
+      var btn = document.getElementById(btnId);
+      if (!btn) return;
+      var orig = btn.getAttribute('data-orig') || btn.innerText;
+      btn.setAttribute('data-orig', orig);
+      var targetUrl = window.location.href;
+      try {
+        targetUrl = new URL(relPath, window.location.href).href;
+      } catch (e) {}
+      var onDone = function() {
+        btn.innerText = doneLabel;
+        setTimeout(function() { btn.innerText = orig; }, 2000);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(targetUrl).then(onDone, function() { fallbackCopy(targetUrl, onDone); });
+      } else {
+        fallbackCopy(targetUrl, onDone);
+      }
+    }
+  </script>
+</body>
+</html>

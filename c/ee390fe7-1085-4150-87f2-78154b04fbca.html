@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>我想买一件衣服，现在是上海十一月底马上十二月了。我在为后天的冬天... - Antigravity Share</title>
+  <style>
+    :root {
+      --bg-main: #131314;
+      --bg-sidebar: #1e1f20;
+      --bg-active: #2b2c2f;
+      --bg-bubble-user: #2b2c2f;
+      --bg-bubble-ai: #1e1f20;
+      --text-main: #e3e3e3;
+      --text-sub: #c4c7c5;
+      --accent: #a8c7fa;
+      --border: #3c4043;
+      --code-bg: #0d0e11;
+      --badge-green: #34d399;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100vh;
+    }
+    #sidebar {
+      width: 310px;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+    .sidebar-header {
+      padding: 18px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-header h2 {
+      font-size: 16px;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sidebar-header a.home-link {
+      text-decoration: none;
+      color: inherit;
+    }
+    .sync-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--badge-green);
+      background: rgba(52, 211, 153, 0.1);
+      padding: 3px 8px;
+      border-radius: 12px;
+      margin-top: 8px;
+    }
+    .conv-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .conv-item {
+      display: block;
+      text-decoration: none;
+      padding: 11px 13px;
+      border-radius: 10px;
+      transition: background 0.15s;
+      border: 1px solid transparent;
+      color: inherit;
+    }
+    .conv-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .conv-item.active {
+      background: var(--bg-active);
+      border-color: var(--border);
+    }
+    .conv-title {
+      font-size: 14px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #fff;
+    }
+    .conv-meta {
+      font-size: 11px;
+      color: var(--text-sub);
+      margin-top: 4px;
+      display: flex;
+      justify-content: space-between;
+    }
+    #main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .main-header {
+      padding: 16px 28px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-sidebar);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .main-header h1 {
+      font-size: 17px;
+      color: #fff;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .sub-meta {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-top: 3px;
+    }
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .btn {
+      background: var(--bg-active);
+      color: var(--accent);
+      border: 1px solid var(--border);
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .btn:hover { background: #3c4043; }
+    .chat-canvas {
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 28px 24px 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .turn {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .turn.user { align-items: flex-end; }
+    .turn.assistant { align-items: flex-start; }
+    .role-tag {
+      font-size: 12px;
+      color: var(--text-sub);
+      font-weight: 600;
+      padding: 0 4px;
+    }
+    .bubble {
+      max-width: 88%;
+      padding: 16px 20px;
+      border-radius: 18px;
+      line-height: 1.7;
+      font-size: 15px;
+      word-break: break-word;
+    }
+    .turn.user .bubble {
+      background: var(--bg-bubble-user);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .turn.assistant .bubble {
+      background: var(--bg-bubble-ai);
+      color: var(--text-main);
+      border-bottom-left-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .bubble p { margin: 0 0 10px 0; }
+    .bubble p:last-child { margin-bottom: 0; }
+    .bubble h1, .bubble h2, .bubble h3, .bubble h4 {
+      margin: 14px 0 8px;
+      color: var(--accent);
+      line-height: 1.4;
+    }
+    .bubble h1 { font-size: 19px; }
+    .bubble h2 { font-size: 17px; }
+    .bubble h3 { font-size: 15.5px; }
+    .bubble ul, .bubble ol { margin: 8px 0 10px 22px; }
+    .bubble li { margin: 4px 0; }
+    .bubble blockquote {
+      border-left: 3px solid var(--accent);
+      padding-left: 12px;
+      margin: 8px 0;
+      color: var(--text-sub);
+    }
+    .bubble code {
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 5px;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 13.5px;
+    }
+    .bubble pre {
+      background: var(--code-bg);
+      padding: 14px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 10px 0;
+      border: 1px solid #2b2d31;
+    }
+    .bubble pre code {
+      background: transparent;
+      padding: 0;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .bubble a { color: var(--accent); }
+    .bubble hr {
+      border: 0;
+      border-top: 1px solid var(--border);
+      margin: 14px 0;
+    }
+    @media (max-width: 820px) {
+      body { flex-direction: column; }
+      #sidebar { width: 100%; height: auto; position: static; max-height: 280px; }
+      .main-header { flex-wrap: wrap; padding: 14px 16px; }
+      .header-actions { flex-wrap: wrap; }
+      .bubble { max-width: 96%; }
+    }
+  </style>
+</head>
+<body data-conv-id="ee390fe7-1085-4150-87f2-78154b04fbca" data-base-prefix="./" data-turn-count="4" data-update-time="2026-11-25 22:51" data-is-index="0">
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
+      <div class="sync-badge" id="syncBadge">自动同步加载中...</div>
+    </div>
+    <nav class="conv-list" id="convList" aria-label="Conversations">
+      <noscript><div style="padding:12px;color:#c4c7c5;font-size:12px;">请启用 JavaScript 查看全部历史对话列表，或直接访问对应对话链接。</div></noscript>
+    </nav>
+  </aside>
+  <main id="main">
+    <header class="main-header">
+      <div style="min-width:0;">
+        <h1>我想买一件衣服，现在是上海十一月底马上十二月了。我在为后天的冬天...</h1>
+        <div class="sub-meta">会话 ID: ee390fe7-1085-4150-87f2-78154b04fbca | 轮次: 4 | 更新于: 2026-11-25 22:51</div>
+      </div>
+      <div class="header-actions">
+        <a class="btn" id="downloadMdBtn" href="./ee390fe7-1085-4150-87f2-78154b04fbca.md" download="我想买一件衣服，现在是上海十一月底马上十二月了-ee390fe7.md" onclick="return downloadMarkdown(event, './ee390fe7-1085-4150-87f2-78154b04fbca.md', '我想买一件衣服，现在是上海十一月底马上十二月了-ee390fe7.md')">⬇️ 下载 Markdown (.md)</a>
+        <button class="btn" id="copyBtn" type="button" onclick="copyCanonicalUrl('./ee390fe7-1085-4150-87f2-78154b04fbca.html', 'copyBtn', '已复制直链')">复制对话直链</button>
+      </div>
+    </header>
+    <section class="chat-canvas" aria-label="Conversation Content">
+      <article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>我想买一件衣服，现在是上海十一月底马上十二月了。我在为后天的冬天做准备，我不太喜欢穿很厚的球衣，所以我更偏向于第二件衣服很保暖，然后再穿件保暖的羽绒服。但是我不太清楚那种衣服更暖和，是选择毛衣，摇粒绒衣服，还是什么类型的。因为是穿在里面的，所以好看没有那么重要，保暖是第一要务。然后就是价格，我的预算是200以内，当然那种又便宜又保暖的当然是最好不过，我尝试过迪卡侬的mh100，100以内确实也保暖我确实喜欢也有了这件衣服。我希望你来帮我筛选一下，有那种衣服是可以符合我的要求的</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>你的穿法（<strong>薄秋衣 + 保暖中层 + 羽绒服</strong>）在思路上是对的，而且你手里已经有一件 <strong>迪卡侬 MH100（约 200 g/m&#178; 双面微抓绒）</strong> 作为基准，这让筛选变得非常明确：<strong>没必要再买和 MH100 同档位的薄抓绒，要么“加量升级厚度”，要么“换更高保暖效率的材质”。</strong></p>
+<hr>
+<h3>一、先看核心判断：穿在羽绒服里面，哪种衣服最暖？</h3>
+<p>衣服保暖的本质是<strong>锁住静止空气</strong>。因为你最外层已经是保暖羽绒服（防风和主要厚空气层已经有了），第二件衣服的筛选逻辑和单穿完全不同：</p>
+<p>| 品类（200 元预算内） | 相对 MH100 的保暖度 | 核心优缺点 | 结论 |</p>
+<p>| :--- | :---: | :--- | :--- |</p>
+<p>| <strong>轻薄 90% 鸭绒马甲</strong> | <strong>明显更暖（核心区）</strong> | 同厚度下保暖效率最高，不挤袖子，极冷时还能<strong>直接套在你的 MH100 外面</strong> | <strong>强推（核心升温王）</strong> |</p>
+<p>| <strong>300g 重磅/长毛摇粒绒</strong> | <strong>明显更暖（全身）</strong> | 锁温约 MH100 的 1.4~1.5 倍；透气排湿、不怕上海湿冷、耐机洗 | <strong>强推（稳妥升级版）</strong> |</p>
+<p>| <strong>轻量棉服内胆（如 3M 新雪丽）</strong> | <strong>明显更暖（全身静态）</strong> | 尼龙滑面极好穿进羽绒服袖子、静态比抓绒暖；但透气差，快走易闷汗 | <strong>备选（怕胳膊冷选它）</strong> |</p>
+<p>| <strong>毛衣（200 元以内）</strong> | 持平甚至偏弱 | 200 元内买不到真羊绒；纯羊毛多为薄款精纺（只赢在体面）；厚毛衣多为腈纶混纺，沉、静电大、洗后变形起球 | <strong>淘汰</strong> |</p>
+<p>| <strong>加绒纯棉卫衣 / 德绒卫衣</strong> | 弱于同重抓绒 | 纯棉外层在上海湿冷天易吸潮返凉，连帽款卡羽绒服领口；德绒营销溢价高 | <strong>淘汰</strong> |</p>
+<blockquote><strong>两个容易忽略的物理坑</strong>：</blockquote>
+<blockquote>1. <strong>别买带“防风膜”的摇粒绒</strong>：羽绒服本身已经防风，里面再加一层防风膜只会闷汗变硬，反而降低舒适度。</blockquote>
+<blockquote>2. <strong>谨防“塞太厚把羽绒压扁”</strong>：如果外层羽绒服本身偏合身，里面塞太蓬松臃肿的长袖厚衣，会把羽绒服的蓬松层挤瘪，肩膀和袖子反而更冷。</blockquote>
+<hr>
+<h3>二、200 元以内具体怎么选？（按需求分 3 路）</h3>
+<p>*(注：以下价格均为电商常规或促销期参考区间，实际以平台实时价为准)*</p>
+<h4>路线 1：最稳妥、直接把 MH100 升级一档 —— 重磅 / 长毛摇粒绒</h4>
+<p>因为你已经习惯且喜欢 MH100 的穿着感，升级时唯一硬指标是<strong>明显比 MH100 更厚更蓬</strong>（避免买到克重一样的 200g 款）：</p>
+<ul>
+<li><strong>优衣库 长绒摇粒绒全拉链夹克</strong>（正价 &#165;199，限时特优常到 <strong>&#165;149 / &#165;99</strong>）</li>
+<li><strong>选它理由</strong>：毛比 MH100 长且蓬松，在无风环境（即羽绒服里面）锁温体感明显高出一截，贴身更软糯。</li>
+<li><strong>注意</strong>：买<strong>普通长绒款</strong>即可，避开带硬防风膜的防风款；静电略大于迪卡侬。</li>
+<li><strong>迪卡侬 SH100 抓绒衣</strong>（参考价 <strong>&#165;129–179</strong>）或遇促销的 <strong>MH500 / SH500 抓绒</strong>（部分款促销可落到 <strong>&#165;150–199</strong>）</li>
+<li><strong>选它理由</strong>：迪卡侬命名里 <code>SH</code>（Snow Hiking）比 <code>MH</code>（Mountain Hiking）更偏向低温静态保暖，同家族版型熟悉、耐洗抗造。</li>
+<li><strong>国产户外 300g 重磅抓绒</strong>（如 <strong>伯希和 / 拓路者</strong> 促销款，参考价 <strong>&#165;120–190</strong>）</li>
+<li><strong>硬标准</strong>：详情页明确标出面料克重 <strong>≥ 280–300 g/m&#178;</strong>（MH100 约 200 g/m&#178;）。</li>
+</ul>
+<h4>路线 2：单位厚度最暖 + 性价比最高 —— 90% 鸭绒轻薄马甲（背心）</h4>
+<p>为什么 200 元内推荐买<strong>马甲</strong>而不是长袖羽绒内胆？</p>
+<p>第一，大厂 90% 绒长袖羽绒内胆（如迪卡侬 MT100）正价常在 &#165;249–299，200 元内很难买到不钻绒的好货，而<strong>马甲在 &#165;120–190 随便挑</strong>；第二，穿在羽绒服里<strong>不卡袖子、不显臃肿</strong>；第三，上海 1 月零度湿冷最狠那几天，你甚至可以叠穿成 <strong>「薄秋衣 + 现有 MH100 + 羽绒马甲 + 羽绒服」</strong>，把旧衣服也盘活。</p>
+<ul>
+<li><strong>网易严选 / 雪中飞 轻薄羽绒马甲</strong>（活动常见价 <strong>&#165;120–190</strong>）</li>
+<li><strong>优衣库 高级轻型羽绒背心</strong>（正价 &#165;249，限时特优常到 <strong>&#165;149–179</strong>，极轻薄、适合修身羽绒服）</li>
+<li><strong>验货硬标准</strong>：必须认准水洗标执行新国标 <strong><code>GB/T 14272-2021</code></strong>，且标注<strong>绒子含量 ≥ 85%–90%</strong>（不是老标准的“含绒量”）；轻薄马甲充绒量在 <strong>30–50g</strong> 即可，优先选<strong>立领</strong>或可内折 V 领。</li>
+</ul>
+<h4>路线 3：如果“胳膊也很怕冷”且预算卡死 200 —— 轻量棉服内胆</h4>
+<ul>
+<li>搜索关键词：<strong>“3M 新雪丽 轻薄棉服内胆”</strong> 或 <strong>户外轻量立领棉服</strong>（参考价 <strong>&#165;140–200</strong>）。</li>
+<li>化纤保暖棉静态保暖超过抓绒，外面是顺滑尼龙布，往羽绒服袖子里钻非常丝滑，也不怕上海的潮气；缺点是透气性不如抓绒。</li>
+</ul>
+<hr>
+<h3>三、到手后怎么用 10 秒验证没买错？</h3>
+<p>把 <strong>「薄秋衣 + 新买的第二件 + 羽绒服」</strong> 全套穿上，拉上拉链后做<strong>双臂前平举/抱胸</strong>动作：</p>
+<ul>
+<li><strong>合格</strong>：腋下和后背无明显紧绷感，羽绒服外表面依然保持自然蓬松起鼓。</li>
+<li><strong>踩坑信号</strong>：肩膀发紧、羽绒服外层被绷平——说明内搭太厚撑挤了羽绒层，实际保暖反而会下降，建议退换更薄的羽绒马甲或小半档厚度的内搭。</li>
+</ul>
+<hr>
+<h3>帮你做最后二选一的两个边界问题</h3>
+<p>如果你拿不准该买 <strong>重磅抓绒</strong> 还是 <strong>羽绒马甲</strong>，告诉我这两点我就能帮你直接定死：</p>
+<ul>
+<li><strong>你在上海室内（办公室/教室/宿舍）是不是经常要脱掉羽绒服，只穿着第二件久坐？</strong>（如果经常脱外套单穿，选长袖重磅抓绒/棉服，穿马甲胳膊会凉；如果室内大多继续披着外衣，羽绒马甲性价比和上限更高。）</li>
+<li><strong>你那件羽绒服版型偏宽松还是偏修身，另外上下班/通勤有没有快走、挤地铁容易出汗的情况？</strong>（修身羽绒服优先薄羽绒马甲；通勤易出汗优先重磅抓绒。）</li>
+</ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>https://mobile.yangkeduo.com/goods1.html?ps=LMX3VSTDsC 这是我买了的链接，我买的是骆驼的380g摇粒绒的。在上海市内确实经常要拖羽绒服，只穿着第二件就久坐。既然买了第二件，有没有第一件的分析。肯定是买长袖嘛，但是买什么样得呢。然后也要分场景，夜晚睡觉穿什么，平时穿什么。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>既然你在上海室内经常要脱掉羽绒服、只穿第二件久坐，那你买 <strong>长袖重磅摇粒绒</strong> 是选对了（如果买马甲，室内单穿胳膊确实会凉）。</p>
+<p>*(说明：拼多多链接需要登录/跳转 App，我未直接抓取页面商品详情；以下对骆驼 380g 摇粒绒的判断基于该品类的常见参数与公开口碑，<strong>建议到货后做个 10 秒实测</strong>：直接把它和手头的迪卡侬 MH100 放一起掂分量、捏厚度。真正的 380 g/m&#178; 成人抓绒整衣重量通常在 <strong>500–650g 以上</strong>，明显比约 200 g/m&#178; 的 MH100 厚实一圈；如果摸起来和 MH100 差不多厚，说明“380g”可能只是整衣克重而非面料克重，需按实际体感决定去留。)*</p>
+<p>有了 380g 摇粒绒做第二件，<strong>第一件（贴身长袖）和睡觉穿的衣服，物理逻辑完全不同，千万不要混着用。</strong> 下面按场景拆给你：</p>
+<hr>
+<h3>一、平时白天穿的第一件（贴身穿在 380g 摇粒绒里面）</h3>
+<h4>核心矛盾</h4>
+<p>380g 摇粒绒是厚聚酯纤维（化纤）。你又不喜欢穿很厚的秋衣，所以第一件的核心任务<strong>不是靠厚度硬扛</strong>，而是同时搞定三件事：<strong>轻薄不臃肿 + 压制摇粒绒的静电 + 排走微汗不闷冷</strong>。</p>
+<h4>3 种靠谱选择（按性价比与体验排序）</h4>
+<ul>
+<li><strong>最均衡首选：高比例「莫代尔 + 棉」薄款打底 / 优衣库常规或棉混纺 Heattech</strong>（参考价 <strong>&#165;50–120</strong>）</li>
+<li><strong>莫代尔棉薄款打底</strong>（如蕉内、网易严选、三枪等基础薄款，认准成分表 <strong>莫代尔 + 棉 ≥ 85%–90%</strong>，加 5% 左右氨纶）：</li>
+<li><strong>为什么配 380g 摇粒绒最舒服</strong>：莫代尔和棉都是亲水纤维素纤维，<strong>抗静电比纯化纤强一大截</strong>；手感像丝一样滑，钻进摇粒绒袖子完全不卡顿；微修身但不紧绷，满足你讨厌厚秋衣的习惯。</li>
+<li><strong>避坑</strong>：别买标题写着“莫代尔”，点开成分表第一项却是“聚酯纤维 60%”的假莫代尔。</li>
+<li><strong>优衣库 Heattech 常规款（轻舒暖，特价约 &#165;59–79）或 棉混纺极暖款（特价约 &#165;99–129）</strong>：</li>
+<li>常规款极薄、不占空间，里面含有粘胶纤维（人造棉），配摇粒绒静电可控；棉混纺款贴皮肤那面是纯棉，体感更温和。</li>
+<li><strong>避坑</strong>：<strong>不要买最厚的“超极暖（Ultra Warm）”</strong>，那款本身带厚化纤绒，又厚又容易和外层摇粒绒叠加起静电、久坐闷汗。</li>
+</ul>
+<ul>
+<li><strong>极简实用备选（如果室内偶尔热到连摇粒绒也想脱）：中等克重精梳纯棉长袖 T 恤</strong>（参考价 <strong>&#165;40–80</strong>）</li>
+<li>选 <strong>180–220 g/m&#178; 的普通纯棉长袖 T 恤</strong>（优衣库、无印、迪卡侬基础款都有），<strong>完全不起静电</strong>，且真遇到空调打太足的室内，脱掉摇粒绒单穿也能直接见人，不会像穿秋衣那么尴尬。</li>
+<li><strong>局限</strong>：仅适合基本不出汗的静态通勤/久坐；如果你赶地铁爱出汗，纯棉吸汗后干得慢，出门吹风容易背发凉。别选 280g+ 重磅纯棉（太硬太厚，套在摇粒绒里卡手肘）。</li>
+</ul>
+<ul>
+<li><strong>进阶上限方案（怕冷 + 通勤易出汗 + 零静电）：薄款美利奴羊毛长袖打底</strong>（参考价 <strong>&#165;150–250+</strong>）</li>
+<li>如迪卡侬 MT500 美利奴羊毛长袖或国产户外 150–190 g/m&#178; 羊毛打底。它是唯一同时做到<strong>超薄 + 吸湿不冰背 + 天然几乎不起静电</strong>的面料。</li>
+<li><strong>放弃原因（为什么没放第一）</strong>：价格明显高一截、不能随便暴力机洗烘干，且极少数敏感皮肤贴身穿会有轻微扎感（要挑细度 ≤ 18.5 微米）。预算有限的话，直接选第 1 类即可。</li>
+</ul>
+<h4>明确劝退（配 380g 摇粒绒最容易踩雷）</h4>
+<ul>
+<li><strong>纯化纤户外速干衣</strong>（100% 聚酯纤维/锦纶，如迪卡侬跑步/滑雪基础速干打底）：配 380g 化纤摇粒绒 = <strong>脱衣服噼里啪啦发电</strong>，日常静坐体验极差。</li>
+<li><strong>加绒厚德绒/厚保暖秋衣</strong>：你本就不爱厚秋衣，叠 380g 摇粒绒后在室内久坐极容易闷热燥痒。</li>
+<li><strong>领口/袖口选型细节</strong>：骆驼 380g 摇粒绒如果是立领，里面选<strong>常规圆领</strong>即可（不勒脖子）；袖口尽量选<strong>贴合手腕不宽大</strong>的，穿摇粒绒时捏住袖口一撸就进，不会整团卷在胳膊肘。</li>
+</ul>
+<hr>
+<h3>二、夜晚睡觉穿什么？（上海无集中暖气的湿冷冬夜）</h3>
+<p>睡觉和白天穿衣的铁律<strong>完全相反</strong>：白天要贴身抗风，睡觉要<strong>绝对宽松（不压迫末梢血液循环）+ 强吸湿透气（整晚人会隐性排汗约 200–300 ml）+ 刚钻被窝不冰人</strong>。</p>
+<h4>1. 最推荐：宽松「100% 纯棉磨毛」或「100% 纯棉法兰绒」长袖睡衣</h4>
+<ul>
+<li><strong>为什么不选普通光面纯棉，而特意选“磨毛纯棉 / 纯棉法兰绒”？</strong></li>
+</ul>
+<p>  普通薄光面纯棉刚钻进上海冷被窝时表面冰凉；<strong>磨毛纯棉（或双层纯棉纱布、纯棉华夫格）</strong> 表面有一层极短的天然棉绒，<strong>入被不冰人</strong>，同时底层仍是纯棉，整晚透气吸湿、完全不起静电。</p>
+<ul>
+<li><strong>尺码铁律</strong>：比平时衣服<strong>买大一码</strong>，尤其是裤腰松紧带和袖口不能勒（勒住手腕脚踝会直接导致手脚更冰）。</li>
+</ul>
+<h4>2. 强烈避坑：别贴身穿「厚珊瑚绒 / 羊羔绒 / 摇粒绒睡衣」睡觉</h4>
+<ul>
+<li>市面上大多数厚毛绒睡衣都是 <strong>100% 聚酯纤维（化纤）</strong>。刚钻进被窝前 5 分钟确实很暖，但睡熟后身体散发的湿气排不出去，<strong>后半夜被窝里又闷又潮，极易踢被子着凉</strong>。</li>
+<li><strong>正确用法</strong>：如果你房间特别冷（&lt;10&#176;C），厚珊瑚绒只当<strong>睡前坐着玩手机、半夜起夜披在外面的“睡袍”</strong>，钻进被窝前脱掉，被窝里只穿宽松纯棉长袖。</li>
+</ul>
+<h4>3. 两个小习惯（比多套一件衣服暖得多）</h4>
+<ul>
+<li><strong>白天穿的贴身打底不要直接穿着睡</strong>：白天打底偏修身且吸了一天的微汗，睡前换上专门的宽松干爽睡衣，入睡体感会暖和很多。</li>
+<li><strong>如果钻被窝半小时脚还是冰的</strong>：与其上身穿两件，不如穿一双<strong>橡筋极松、不勒脚踝的纯棉毛巾睡眠袜</strong>，或睡前用热水袋/电热毯预热被窝（<strong>入睡时关掉电热毯</strong>，避免后半夜干燥口渴）。</li>
+</ul>
+<hr>
+<h3>帮你落到最后一步的两个确认</h3>
+<ul>
+<li>你在上海市内脱掉羽绒服坐着的时候，<strong>会不会经常遇到空调太热、连 380g 摇粒绒都想脱掉只穿第一件的情况？</strong>（如果会，第一件就避开紧身秋衣感，优先选 <strong>180–220g 精梳纯棉长袖 T 恤</strong> 或稍宽松的莫代尔棉卫衣感薄长袖；如果基本一直穿着摇粒绒不脱，薄贴身莫代尔棉或 Heattech 最舒服。）</li>
+<li>你的卧室夜里是<strong>完全不开空调/取暖器的纯冷房</strong>，还是会开空调睡？（纯冷房更推荐<strong>纯棉磨毛/薄纯棉夹棉</strong>配起夜睡袍；开空调则普通单层宽松纯棉长袖就够，穿厚了反而燥热。）</li>
+</ul>
+</div></article>
+
+    </section>
+  </main>
+  <script>
+    (function() {
+      var src = '../sidebar.js';
+      if (window.location.protocol !== 'file:') {
+        src += (src.indexOf('?') >= 0 ? '&' : '?') + '_t=' + Date.now();
+      }
+      var s = document.createElement('script');
+      s.src = src;
+      document.body.appendChild(s);
+    })();
+  </script>
+  <script>
+    function triggerBlobDownload(blob, filename) {
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function() { URL.revokeObjectURL(url); }, 1500);
+    }
+    function downloadMarkdown(e, relPath, filename) {
+      if (window.location.protocol === 'file:' || !window.fetch || !window.Blob) {
+        return true;
+      }
+      if (e) e.preventDefault();
+      var btn = document.getElementById('downloadMdBtn');
+      var orig = btn ? (btn.getAttribute('data-orig') || btn.innerText) : '';
+      if (btn) {
+        btn.setAttribute('data-orig', orig);
+        btn.innerText = '正在下载...';
+      }
+      var targetUrl = relPath;
+      try { targetUrl = new URL(relPath, window.location.href).href; } catch (err) {}
+      fetch(targetUrl, { cache: 'no-cache' })
+        .then(function(resp) {
+          if (!resp.ok) throw new Error('HTTP ' + resp.status);
+          return resp.text();
+        })
+        .then(function(text) {
+          var blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
+          triggerBlobDownload(blob, filename);
+          if (btn) {
+            btn.innerText = '已下载 .md';
+            setTimeout(function() { btn.innerText = orig; }, 2000);
+          }
+        })
+        .catch(function() {
+          if (btn) btn.innerText = orig;
+          var a = document.createElement('a');
+          a.href = targetUrl;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        });
+      return false;
+    }
+    function fallbackCopy(text, onDone) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try {
+        if (document.execCommand('copy')) { onDone(); }
+      } catch (e) {}
+      document.body.removeChild(ta);
+    }
+    function copyCanonicalUrl(relPath, btnId, doneLabel) {
+      var btn = document.getElementById(btnId);
+      if (!btn) return;
+      var orig = btn.getAttribute('data-orig') || btn.innerText;
+      btn.setAttribute('data-orig', orig);
+      var targetUrl = window.location.href;
+      try {
+        targetUrl = new URL(relPath, window.location.href).href;
+      } catch (e) {}
+      var onDone = function() {
+        btn.innerText = doneLabel;
+        setTimeout(function() { btn.innerText = orig; }, 2000);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(targetUrl).then(onDone, function() { fallbackCopy(targetUrl, onDone); });
+      } else {
+        fallbackCopy(targetUrl, onDone);
+      }
+    }
+  </script>
+</body>
+</html>

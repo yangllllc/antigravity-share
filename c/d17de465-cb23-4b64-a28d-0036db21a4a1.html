@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>先读 获取约束与断点，勿复述历史。我学校赠送一周1000积分，按... - Antigravity Share</title>
+  <style>
+    :root {
+      --bg-main: #131314;
+      --bg-sidebar: #1e1f20;
+      --bg-active: #2b2c2f;
+      --bg-bubble-user: #2b2c2f;
+      --bg-bubble-ai: #1e1f20;
+      --text-main: #e3e3e3;
+      --text-sub: #c4c7c5;
+      --accent: #a8c7fa;
+      --border: #3c4043;
+      --code-bg: #0d0e11;
+      --badge-green: #34d399;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100vh;
+    }
+    #sidebar {
+      width: 310px;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+    .sidebar-header {
+      padding: 18px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-header h2 {
+      font-size: 16px;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sidebar-header a.home-link {
+      text-decoration: none;
+      color: inherit;
+    }
+    .sync-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--badge-green);
+      background: rgba(52, 211, 153, 0.1);
+      padding: 3px 8px;
+      border-radius: 12px;
+      margin-top: 8px;
+    }
+    .conv-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .conv-item {
+      display: block;
+      text-decoration: none;
+      padding: 11px 13px;
+      border-radius: 10px;
+      transition: background 0.15s;
+      border: 1px solid transparent;
+      color: inherit;
+    }
+    .conv-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .conv-item.active {
+      background: var(--bg-active);
+      border-color: var(--border);
+    }
+    .conv-title {
+      font-size: 14px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #fff;
+    }
+    .conv-meta {
+      font-size: 11px;
+      color: var(--text-sub);
+      margin-top: 4px;
+      display: flex;
+      justify-content: space-between;
+    }
+    #main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .main-header {
+      padding: 16px 28px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-sidebar);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .main-header h1 {
+      font-size: 17px;
+      color: #fff;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .sub-meta {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-top: 3px;
+    }
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .btn {
+      background: var(--bg-active);
+      color: var(--accent);
+      border: 1px solid var(--border);
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .btn:hover { background: #3c4043; }
+    .chat-canvas {
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 28px 24px 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .turn {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .turn.user { align-items: flex-end; }
+    .turn.assistant { align-items: flex-start; }
+    .role-tag {
+      font-size: 12px;
+      color: var(--text-sub);
+      font-weight: 600;
+      padding: 0 4px;
+    }
+    .bubble {
+      max-width: 88%;
+      padding: 16px 20px;
+      border-radius: 18px;
+      line-height: 1.7;
+      font-size: 15px;
+      word-break: break-word;
+    }
+    .turn.user .bubble {
+      background: var(--bg-bubble-user);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .turn.assistant .bubble {
+      background: var(--bg-bubble-ai);
+      color: var(--text-main);
+      border-bottom-left-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .bubble p { margin: 0 0 10px 0; }
+    .bubble p:last-child { margin-bottom: 0; }
+    .bubble h1, .bubble h2, .bubble h3, .bubble h4 {
+      margin: 14px 0 8px;
+      color: var(--accent);
+      line-height: 1.4;
+    }
+    .bubble h1 { font-size: 19px; }
+    .bubble h2 { font-size: 17px; }
+    .bubble h3 { font-size: 15.5px; }
+    .bubble ul, .bubble ol { margin: 8px 0 10px 22px; }
+    .bubble li { margin: 4px 0; }
+    .bubble blockquote {
+      border-left: 3px solid var(--accent);
+      padding-left: 12px;
+      margin: 8px 0;
+      color: var(--text-sub);
+    }
+    .bubble code {
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 5px;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 13.5px;
+    }
+    .bubble pre {
+      background: var(--code-bg);
+      padding: 14px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 10px 0;
+      border: 1px solid #2b2d31;
+    }
+    .bubble pre code {
+      background: transparent;
+      padding: 0;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .bubble a { color: var(--accent); }
+    .bubble hr {
+      border: 0;
+      border-top: 1px solid var(--border);
+      margin: 14px 0;
+    }
+    @media (max-width: 820px) {
+      body { flex-direction: column; }
+      #sidebar { width: 100%; height: auto; position: static; max-height: 280px; }
+      .main-header { flex-wrap: wrap; padding: 14px 16px; }
+      .header-actions { flex-wrap: wrap; }
+      .bubble { max-width: 96%; }
+    }
+  </style>
+</head>
+<body data-conv-id="d17de465-cb23-4b64-a28d-0036db21a4a1" data-base-prefix="./" data-turn-count="20" data-update-time="2026-11-23 16:49" data-is-index="0">
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
+      <div class="sync-badge" id="syncBadge">自动同步加载中...</div>
+    </div>
+    <nav class="conv-list" id="convList" aria-label="Conversations">
+      <noscript><div style="padding:12px;color:#c4c7c5;font-size:12px;">请启用 JavaScript 查看全部历史对话列表，或直接访问对应对话链接。</div></noscript>
+    </nav>
+  </aside>
+  <main id="main">
+    <header class="main-header">
+      <div style="min-width:0;">
+        <h1>先读 获取约束与断点，勿复述历史。我学校赠送一周1000积分，按...</h1>
+        <div class="sub-meta">会话 ID: d17de465-cb23-4b64-a28d-0036db21a4a1 | 轮次: 20 | 更新于: 2026-11-23 16:49</div>
+      </div>
+      <div class="header-actions">
+        <a class="btn" id="downloadMdBtn" href="./d17de465-cb23-4b64-a28d-0036db21a4a1.md" download="先读_获取约束与断点，勿复述历史。我学校赠送一周-d17de465.md" onclick="return downloadMarkdown(event, './d17de465-cb23-4b64-a28d-0036db21a4a1.md', '先读_获取约束与断点，勿复述历史。我学校赠送一周-d17de465.md')">⬇️ 下载 Markdown (.md)</a>
+        <button class="btn" id="copyBtn" type="button" onclick="copyCanonicalUrl('./d17de465-cb23-4b64-a28d-0036db21a4a1.html', 'copyBtn', '已复制直链')">复制对话直链</button>
+      </div>
+    </header>
+    <section class="chat-canvas" aria-label="Conversation Content">
+      <article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>先读 @[mcp2.md]  获取约束与断点，勿复述历史。我学校赠送一周1000积分，按稳妥组合执行。</p>
+<ul>
+<li>单次只读核验断点磁盘，勿中途请示；不符报差异停手，一致直推【唯一单点下一步】。</li>
+<li>禁碰【排雷墓碑】，删改前确认，完后按【外部验证判据】实测汇报。</li>
+</ul>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成断点磁盘只读核验（与 <code>mcp2.md</code> 一致，另发现 Codex 实际生效规则文件 <code>AGENTS.override.md</code> 优先级高于 <code>AGENTS.md</code>）。模块 3 <code>Kimi-K3.1-Pro</code> 开思考压测（共 11 组，含单路各模式与双核并发含 Wave 2）已在后台运行，待实测完成后汇报数据并推进下一步。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><h3>1. 断点磁盘核验结论（与 <code>mcp2.md</code> 一致）</h3>
+<ul>
+<li><strong>双端脚本一致且未改码</strong>：<code>tongji_deepseek_mcp.ps1</code> 与 <code>D:/tongji_plugin/tongji_deepseek_mcp.ps1</code> 均为 <code>43126 B</code>、UTF-8 BOM、<code>SHA-256 = 6842ACE2888FDC75C0EB6B03D39BD172441862A459E2AFDAE2B56A8569FA16FB</code>、含 <code>mihomo</code> 黑名单、无 <code>test_forge</code>/<code>draft_struct</code>、Kimi 全模式 <code>Thinking=$false</code>。</li>
+<li><strong>DSH 与代理基线一致</strong>：两处 DSH 补丁均含 <code>10.67.0.251</code> 与 <code>mihomo</code>；<code>SDKDNS\adv.json</code> 含 <code>deepseek.com</code>/<code>qianwenaiapi.com</code>/<code>agi.tongji.edu.cn</code>；SakuraCat 配置为 <code>Rule</code> 且当前仅运行 SDKDNS（无双 TUN 冲突）。（顺注：<code>tongji-mcp-and-network.md</code> 的 <code>MEM-NET-001</code> 实已更新为 <code>Rule</code> 模式。）</li>
+<li><strong>发现 1 处高危隐藏项（影响模块 1）</strong>：Codex 目录下同时存在 <code>AGENTS.override.md</code>（v5.2.1，2026-11-18）与 <code>AGENTS.md</code>（v5.2.0）。Codex 中 <code>AGENTS.override.md</code> 优先级高于 <code>AGENTS.md</code>，且其正文把门槛定在“可直接验证的常规任务由主模型处理 / 存在具体疑点才按需调用”，若只改 <code>AGENTS.md</code> 将完全不生效。</li>
+</ul>
+<hr>
+<h3>2. 模块 3 只读实测：<code>Kimi-K3.1-Pro</code> 开思考压测（10 次开思考 + 1 次关思考对照）</h3>
+<p>走生产同源路径（<code>WLAN 100.73.220.134 -&gt; 10.67.0.251/252</code>，<code>curl.exe --disable --config -</code>），原始记录见 <code>bench_results.json</code>：</p>
+<p>| 用例 | 模式风格 / <code>max_tokens</code> | 思考参数 | 耗时 | 状态 / <code>finish</code> | 正文字数 | 思考 Tokens / 总输出 Tokens |</p>
+<p>| :--- | :--- | :--- | ---: | :--- | ---: | ---: |</p>
+<p>| <code>C0</code> | 基线对照 / 900 | <code>false</code> | <strong>13.52 s</strong> | <code>ok</code> / <code>stop</code> | 539 | 0 / 346（25.6 tok/s） |</p>
+<p>| <code>T1</code> | <code>deep_panel</code> / 2048 | 默认开 | 44.97 s | <code>ok</code> / <code>stop</code> | 374 | 1244 / 1516（33.7 tok/s） |</p>
+<p>| <code>T2</code> | <code>delegate</code> / 3072 | 默认开 | 74.71 s | <code>ok</code> / <code>stop</code> | 364 | 2595 / 2854（38.2 tok/s） |</p>
+<p>| <code>T3</code> | <code>delegate</code> / 4096 | 默认开 | 80.40 s | <code>ok</code> / <code>stop</code> | 578 | 2182 / 2558（31.8 tok/s） |</p>
+<p>| <code>T4</code> | <code>code_audit</code> / 2048 | 默认开 | 39.09 s | <code>ok</code> / <code>stop</code> | 536 | 1198 / 1469（37.6 tok/s） |</p>
+<p>| <code>T5</code> | <code>math_check</code> / 3072 | 默认开 | 75.15 s | <code>ok</code> / <code>stop</code> | 507 | 2647 / 2942（39.1 tok/s） |</p>
+<p>| <code>T6</code> | <code>test_forge</code> / 3072 | <code>true</code> | <strong>88.44 s</strong> | <strong><code>thinking_limit</code></strong> / <code>length</code> | <strong>0</strong> | <strong>3072 / 3072（空包）</strong> |</p>
+<p>| <code>T7</code> | <code>draft_struct</code> / 3072 | <code>true</code> | <strong>80.89 s</strong> | <strong><code>content_limit</code></strong> / <code>length</code> | 2307 | <strong>2070 / 3072（截断）</strong> |</p>
+<p>| <code>T8</code> | <code>delegate</code> / 4800 | 默认开 | 79.15 s | <code>ok</code> / <code>stop</code> | 585 | 1817 / 2204（27.8 tok/s） |</p>
+<p>| <code>T9</code> | 双核 <code>delegate</code> / 3500 (68s限) | 默认开 | <strong>68.05 s</strong> | <strong><code>curl timeout (28)</code></strong> | <strong>0</strong> | Kimi 超时；DS <code>ok</code>；Wave 2 仅 <strong>2.72 s</strong>，总 <strong>70.78 s</strong> |</p>
+<p>| <code>T10</code> | 双核 <code>delegate</code> / 4096 (68s限) | 默认开 | 36.32 s | <code>ok</code> / <code>stop</code> | 392 | 732 / 1007；DS <code>ok</code>；Wave 2 仅 <strong>1.21 s</strong>，总 <strong>37.54 s</strong> |</p>
+<p><strong>关键机理与失效边界（决定架构取舍）</strong>：</p>
+<ul>
+<li><strong>核心矛盾</strong>：<code>Kimi-K3.1-Pro</code> 开思考实测吞吐仅 <strong>27.8–39.1 tok/s</strong>，且 <code>reasoning_tokens</code> 占总输出的 <strong>73%–91%</strong>；10 次总体无异常率仅 <strong>7/10（70%）</strong>，耗时 p50 = <strong>74.93 s</strong>，观测 p95 = <strong>85.04 s</strong>（含 T9 在 68s 被截断）。</li>
+<li><strong>明确排除开思考的场景</strong>：</li>
+<li><strong><code>test_forge</code> / <code>draft_struct</code> 禁开思考</strong>：需输出 1100–1800 字（约 1500–2200 content tokens），叠加热思考后总输出逼近 4500–5500 tokens，按 30 tok/s 必撞 110–170s 超时或如 <code>T6</code>/<code>T7</code> 空包截断。</li>
+<li><strong>日常 4 模式（<code>fast_dual</code>/<code>code_audit</code>/<code>math_check</code>/<code>deep_panel</code>）禁开思考</strong>：现行 Wave 1 预算 28–52s，开思考后 <code>T4</code>(39s)/<code>T5</code>(75s) 全超现行预算，且破坏高频轻量体验（关思考仅 13.5s）。</li>
+<li><strong>唯一可灰度位点</strong>：<strong>仅 <code>delegate_to_deepseek</code></strong>（要求 ≤380 字短输出，~300 content tokens）。由于 Wave 2（关思考 DeepSeek 整理）实测仅 <strong>1.21–2.72 s</strong>，若将 <code>delegate_to_deepseek</code> 的 Wave 1 从 72s 放宽至 <strong>105s</strong>（Kimi <code>max_tokens=4800, max_time=100s</code>，DeepSeek <code>max_tokens=4800, max_time=95s</code>），Wave 2 留 28s，则 <code>T2/T3/T8/T10</code> 端到端仅 <strong>38–83 s</strong>（留 &gt;60s 安全裕量，仍受 145s 总预算与单路退化闸门托底）。</li>
+</ul>
+<hr>
+<h3>3. 删改前确认清单（待您拍板后一次性落盘 + 实测）</h3>
+<p>拟修改以下 <strong>5 个已有文件</strong>（不碰任何排雷墓碑，不删原有核心准则与 4 个既有模式）：</p>
+<ul>
+<li><strong>模块 1：双端规则升级 + 前置检查点</strong></li>
+<li><code>deepseek-subagent.md</code>（Antigravity）</li>
+<li><code>AGENTS.override.md</code> 与 <code>AGENTS.md</code>（Codex 双文件同步，<strong>完整保留</strong>原有“一、独立判断与工程验证”和“三、重度任务三阶段协议”）</li>
+<li><strong>改动要点</strong>：</li>
+<li>加入<strong>显式前置检查点</strong>（动手写非平凡代码/方案/推导/测试前先判一次：是否可卸载至 <code>test_forge</code> / <code>draft_struct</code> / <code>code_audit</code> / <code>math_check</code> / <code>deep_panel</code> / <code>delegate_to_deepseek</code>），去掉 Codex 中“可直接验证的常规任务免调”“仅存在具体疑点才按需调”这两条扼杀触发率的被动表述；</li>
+<li>补充 <code>test_forge</code> 与 <code>draft_struct</code>（专职重度窄卸载，默认 1600 字、上限 1800 字）的清晰触发条件；</li>
+<li>保持 <code>/dream</code>、纯闲聊、简单单行修改直出红线不变。</li>
+</ul>
+<ul>
+<li><strong>模块 2：MCP 脚本升级 <code>v5.2.1 -&gt; v5.3.0</code>（双端同步）</strong></li>
+<li>目标文件：<code>tongji_deepseek_mcp.ps1</code> 与 <code>D:/tongji_plugin/tongji_deepseek_mcp.ps1</code>（保持 UTF-8 BOM + 双端 SHA-256 一致）</li>
+<li>新增两个窄卸载模式到 <code>consult_tongji_brain.mode</code>（均为 2 路并发、零状态自包含、两路均 <code>Thinking=$false</code>）：</li>
+<li><strong><code>test_forge</code></strong>（默认 <code>output_limit=1600</code>，上限 <code>1800</code>，Wave 1 <code>48s</code>）：<code>DeepSeek 用例</code>（等价类/极端输入/数值边界/断言矩阵，<code>max_tokens=2000</code>） + <code>Kimi 对抗</code>（隐含契约破坏/竞态/编码与回归陷阱，<code>max_tokens=1200</code>）。</li>
+<li><strong><code>draft_struct</code></strong>（默认 <code>output_limit=1600</code>，上限 <code>1800</code>，Wave 1 <code>48s</code>）：<code>Kimi 骨架</code>（模块边界/接口契约/分步实施骨架，<code>max_tokens=1900</code>） + <code>DeepSeek 校验</code>（遗漏约束/失效路径/验收判据/最小回滚，<code>max_tokens=1200</code>）。</li>
+<li><strong>防截断硬约束同步修改</strong>：</li>
+<li>日常 4 模式严格硬钳制 <code>output_limit &lt;= 900</code>（默认 900）；仅 <code>test_forge</code>/<code>draft_struct</code> 允许 <code>300..1800</code>（默认 1600）。</li>
+<li>Wave 2 死守 <code>enable_thinking=$false</code> + <code>thinking=$false</code>；动态计算 Wave 2 <code>MaxTokens</code>（日常 <code>1600</code>，重度模式升至 <code>2800</code>）及 evidence 截断上限（<code>1400 -&gt; 1800</code>），且 <code>Complete-RpcWorkers</code> 单包上限由 <code>12000</code> 放宽至 <code>16000</code> 防 1800 字误判；<code>test_forge</code>/<code>draft_struct</code> 仅在两路合计超 <code>limit</code> 或任一路触顶时才触发 Wave 2。</li>
+<li><strong>模块 3 灰度选项（二选一，推荐 3A）</strong>：</li>
+<li><strong>方案 3A（推荐）</strong>：仅对 <code>delegate_to_deepseek</code> 的 <code>Kimi-K3.1-Pro</code> 灰度开启思考（<code>max_tokens=4800, max_time=100s</code>，Wave 1=<code>105s</code>，Wave 2=<code>28s</code>，总预算仍守 <code>145s</code>，超时/触顶自动退化 DeepSeek 单路 + Wave 2 兜底）；其余全部 6 个 <code>consult</code> 模式 Kimi 保持 <code>Thinking=$false</code>。</li>
+<li><strong>方案 3B（保守）</strong>：全模式维持 Kimi <code>Thinking=$false</code>，本次仅落地模块 1 + 模块 2。</li>
+</ul>
+<ul>
+<li><strong>确认落盘后的外部验证判据（自动执行并实测汇报）</strong>：</li>
+<li>PS 5.1 AST 语法解析 0 错；</li>
+<li>双端 <code>tongji_deepseek_mcp.ps1</code> 均含 UTF-8 BOM 且 SHA-256 完全一致；</li>
+<li>启动独立 MCP stdio 子进程 E2E 实测：<code>initialize</code>、<code>tools/list</code>、<code>fast_dual</code>（验 ≤900 字硬钳制）、<code>test_forge</code>（验 1600–1800 字无截断）、<code>draft_struct</code>（验 1600–1800 字无截断）、以及 <code>delegate_to_deepseek</code>（验双路并发 + Wave 2 端到端耗时 &lt; 145s 无截断），外加非法 <code>mode</code>/超限 <code>output_limit</code> 参数边界断言。</li>
+</ul>
+<hr>
+<h3>请确认（2 个边界拍板点）</h3>
+<ul>
+<li><strong>是否确认按上述清单修改这 5 个文件，且模块 3 选 <code>3A</code>（仅 <code>delegate_to_deepseek</code> 灰度开 Kimi 思考）还是 <code>3B</code>（全关）？</strong></li>
+<li><strong>关于状态卡与旧缓存</strong>：确认后是否同时将本次里程碑覆写同步到 <code>mcp.md</code>（<code>mcp2.md</code> 第 2 行标注了该覆写路径）？另请注意，改完脚本后 Antigravity 需重载 MCP 连接（刷新 <code>consult_tongji_brain.json</code> 的懒加载 schema）才会对新会话暴露 <code>test_forge</code>/<code>draft_struct</code>。</li>
+</ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>确认，且模块3选3A.我不清楚覆写会怎么样，会影响使用吗还是记录一下这次的流程方便理解什么的？如果不会影响使用就直接覆写把。我停止了一个task的进行，因为他实在是太慢了，你检查一下是什么原因，然后查看一下我这次的停止会造成什么影响，能不能弥补。然后看看有没有方法能继续进行的。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已核查：您取消的 <code>task-29</code> 是前期排错时因双层 PowerShell 变量展开写错而挂起的只读诊断命令（零写操作，与已完成的 <code>task-37</code> 压测无关），<strong>无任何负面影响，无需弥补</strong>，且当前无遗留僵尸任务。</p>
+<p>5 个目标文件已完成落盘并双端同步（UTF-8 BOM、双端 SHA-256 一致、PS 5.1 AST 0 错、<code>initialize</code>/<code>tools/list</code>/3 项参数负例 <code>-32602</code> 已通过）。现正在后台执行 4 组独立 MCP stdio 真实 E2E（<code>fast_dual</code> 硬钳制、<code>test_forge</code>、<code>draft_struct</code>、<code>delegate_to_deepseek</code> 灰度 3A），实测完成后立即覆写 <code>mcp.md</code> 并统一汇报。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>首轮 E2E 中 <code>fast_dual</code>（12.78s，硬钳 754 字，无截断）与 <code>delegate_to_deepseek</code> 灰度 3A（59.77s，553 字，无截断）均一次通过；但 <code>test_forge</code>/<code>draft_struct</code> 因 Markdown 表格与代码块拉高字符膨胀比（原 Wave 2 目标比 <code>0.85</code> 偏高）触发了尾部 <code>…（已截断）</code>。已收紧两模式为紧凑编号格式并将重度模式整理目标比下调至 <code>0.68</code>、完成双端同步（<code>SHA256 = 3097E15C…7EDC92</code>，BOM/AST 均过），现正在后台重跑全量 E2E 复测，完成后汇报并同步覆写 <code>mcp.md</code>。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><h3>1. 关于您取消的 Task 与 <code>mcp.md</code> 覆写说明</h3>
+<ul>
+<li><strong>取消的 <code>task-29</code> 无任何影响</strong>：经核查，您停止的是前期排错时因双层 PowerShell <code>$s</code> 变量展开写错而空挂的只读诊断命令（零写操作，与已完成的 <code>task-37</code> 压测及本轮 E2E 无关），当前无残留后台任务，无需弥补。</li>
+<li><strong>覆写 <code>mcp.md</code> 不影响实际运行</strong>：它只是跨对话延续工程进度的纯文档状态卡（不参与 MCP/DSH/Codex 运行）。已将本次 <code>v5.3.0</code> 完整落盘结果、新 SHA-256 与后续观察项同步覆写至 <code>mcp.md</code>，未删除 <code>mcp2.md</code>。</li>
+</ul>
+<hr>
+<h3>2. 已落盘资产清单（<code>v5.3.0</code> 稳妥组合 + 模块 3A）</h3>
+<ul>
+<li><strong>双端 MCP 脚本（模块 2 + 模块 3A）</strong>：</li>
+<li><code>tongji_deepseek_mcp.ps1</code> 与 <code>D:/tongji_plugin/tongji_deepseek_mcp.ps1</code></li>
+<li>新增 <code>test_forge</code>（边界测试矩阵与对抗断言）与 <code>draft_struct</code>（结构化技术方案骨架与回滚校验），默认 <code>output_limit=1600</code>、上限 <code>1800</code>，两路均 <code>Thinking=$false</code>；日常 4 模式仍严格硬钳制 <code>≤900</code>；Wave 2 死守 <code>enable_thinking=$false</code> + <code>thinking=$false</code> 并按模式定制整合提示词与动态 <code>MaxTokens</code>（重度模式至 <code>2880</code>），单包上限放宽至 <code>16000</code>。</li>
+<li><strong>模块 3A 灰度</strong>：仅对 <code>delegate_to_deepseek</code> 的 <code>Kimi-K3.1-Pro</code> 开启思考（<code>max_tokens=4800, max_time=100s</code>，Wave 1=<code>105s</code>，Wave 2=<code>28s</code>，总预算守 <code>145s</code>，保留超时/触顶单路退化与 Wave 2 交叉复核闸门）。</li>
+<li><strong>三处规则同步（模块 1）</strong>：</li>
+<li>Antigravity：<code>deepseek-subagent.md</code></li>
+<li>Codex 双文件同步：<code>AGENTS.override.md</code> 与 <code>AGENTS.md</code>（完整保留反迎合铁律与三阶段协议，移除原 <code>AGENTS.override.md</code> 中扼杀触发率的被动表述，补齐动手前前置检查点与 6 模式路由）。</li>
+</ul>
+<hr>
+<h3>3. 【外部验证判据】实测汇报</h3>
+<h4>A. 静态、编码与红线核验</h4>
+<p>| 验证项 | 实测结果 | 判据状态 |</p>
+<p>| :--- | :--- | :---: |</p>
+<p>| 双端 BOM 与 SHA-256 | 主/备均 <code>47885 B</code>、<code>UTF-8 BOM = True</code>、<code>SHA-256 = 3097E15CBFFEF4E4BE39F9EFAFAF11AEFDEB13BB30E1E2064D77A181897EDC92</code> | 通过 |</p>
+<p>| PowerShell 5.1 语法 | 主/备 AST <code>ParseErrors = 0</code>（DSH 两处 JS 本轮未触碰） | 通过 |</p>
+<p>| 排雷墓碑红线 | 无 <code>GLM</code>/<code>MiMo</code>/<code>Qwen</code>；保留 <code>sing-tun</code>/<code>mihomo</code>/<code>172.19.*</code>；Wave 2 硬编码 <code>$false</code> | 通过 |</p>
+<p>| Codex 双规则一致性 | <code>AGENTS.override.md</code> 与 <code>AGENTS.md</code> <code>SHA-256 = C3E4E4ED803C461E0DB0F950ABE376826C33A031763D369BCE48B9B48C18C64A</code> 完全一致 | 通过 |</p>
+<h4>B. 独立 MCP stdio 子进程 E2E 实测（原始记录：<code>e2e_results.json</code>）</h4>
+<ul>
+<li><strong>协议与边界断言</strong>：<code>initialize</code> 返回 <code>version = 5.3.0</code>（561 ms）；<code>tools/list</code> 暴露全部 6 模式且 <code>output_limit.maximum = 1800</code>；非法 <code>mode</code>、<code>output_limit = 250</code>、<code>output_limit = 1801</code> 均毫秒级返回 <code>-32602</code>；服务端退出码 <code>0</code>、<code>stderr = 0 B</code>。</li>
+<li><strong>首轮调优说明</strong>：首轮 E2E 中 <code>test_forge</code>/<code>draft_struct</code> 因 Markdown 表格与缩进代码块导致总字符膨胀（原重度目标比 <code>0.85</code> 偏高）触发 <code>…（已截断）</code>。随后将两模式输出约束改为紧凑编号条目、重度整理目标比下调至 <code>0.68</code>，同步双端后复测全部收敛：</li>
+</ul>
+<p>| E2E 用例 | 入参特征 | 实测耗时 | 回包长度 | 截断 / 报错 | 验收结论 |</p>
+<p>| :--- | :--- | ---: | ---: | :---: | :--- |</p>
+<p>| <code>fast_dual</code> | 故意传 <code>output_limit=1600</code> | <code>12.78–13.08 s</code> | <code>754–884 字</code>（<code>≤900</code>） | <code>isError=False</code> | 日常模式 900 字硬钳制生效（第二轮 884 字处安全句末兜底） |</p>
+<p>| <code>test_forge</code> | 默认 <code>output_limit=1600</code> | <strong><code>7.53 s</code></strong> | <code>686 字</code>（<code>≤1600</code>） | 无截断 / 无错 | 覆盖等价类、代理对边界、CRLF/ZWJ 对抗点，两路互补直出 |</p>
+<p>| <code>draft_struct</code> | 显式 <code>output_limit=1750</code> | <strong><code>16.68 s</code></strong> | <code>1115 字</code>（<code>≤1750</code>） | 无截断 / 无错 | 完整覆盖模块边界、契约、NaN 防线、量化验收与回滚策略 |</p>
+<p>| <code>delegate_to_deepseek</code> (3A) | 双旗舰思考 + Wave 2 关思考 | <strong><code>59.77 s</code> / <code>74.93 s</code></strong> | <code>553 字</code> / <code>740 字</code>（<code>≤1100</code>） | 无截断 / 无错 | 两轮均 <code>&lt;&lt; 145 s</code>，Kimi 思考精准拆穿初稿 3 处物理误判，退化复核闸门实测生效 |</p>
+<hr>
+<h3>4. 下一步与 2 个边界追问</h3>
+<ul>
+<li><strong>即时生效动作</strong>：请<strong>重载 Antigravity 的 MCP 服务（或重启一次 Antigravity）</strong>，以刷新懒加载缓存 <code>consult_tongji_brain.json</code> 与 <code>instructions.md</code>（刷新后新会话才可看到 <code>test_forge</code>/<code>draft_struct</code> 枚举；Codex 下次新对话将自动读取新 <code>AGENTS.override.md</code>）。</li>
+<li><strong>边界追问 1（DeepSeek 思考 token 裕量）</strong>：两轮 <code>delegate_to_deepseek</code> 3A 实测中，Kimi 思考均稳健完成，反倒是 <code>DeepSeek-V4.1-Flash</code> 在复杂光学推导上两次触碰了默认 <code>4800</code> 的 <code>thinking limit</code>（好在 Wave 2 关思考交叉复核无缝兜底且总耗时仅 60–75s）。后续试跑 1 周后，若您常见物理推导触发“探针触顶”，是否考虑把 <code>delegate_to_deepseek</code> 的默认 <code>max_tokens</code> 从 <code>4800</code> 上调至脚本允许上限 <code>5500</code>？</li>
+<li><strong>边界追问 2（旧状态卡留存）</strong>：<code>mcp2.md</code> 的内容现已完整并入 <code>mcp.md</code>，后续继续推进时统一以 <code>mcp.md</code> 为单一状态锚点即可；是否保留 <code>mcp2.md</code> 作备份还是由您自行清理？</li>
+</ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>我觉得可以将deepseek的思考阈值提高，不过这应该是建立在效果上的，如果把相同的token花在kimi上效果会更好，那我为什么不使用kimi。所以我希望的是更加优秀的分工使用，做到在预算充足的情况下，效果最大化。后续推进以mcp为主把，mcp2只是用来开新对话的，如果对MCP的使用无影响的话就删除了吧。】</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已删除 <code>mcp2.md</code>（工作区现仅留单一状态锚点 <code>mcp.md</code>），并确认刚才重启后 Antigravity 缓存的 <code>consult_tongji_brain.json</code> 已自动刷新为 <code>v5.3.0</code> 全 6 模式（<code>maximum = 1800</code>）。</p>
+<p>针对您“相同 token 预算给 Kimi 还是 DeepSeek 效果更好、如何分工收益最大”的问题，我未直接拍脑袋调高 DeepSeek 阈值，而是先在后台跑一组 <strong>4 类同题同预算 A/B 对照实测</strong>（光学 DBR 推导含 <code>DS 4800 / DS 6500 / DS 防打转约束</code>、高斯光束精确数值硬算、异步并发代码排错、极化激元 Hopfield 有效质量推演），待实测完成后按准确度、打转率与耗时给出实证分工方案。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><h3>1. 已完成事项</h3>
+<ul>
+<li><strong>已删除 <code>mcp2.md</code></strong>：工作区现仅保留唯一状态卡 <code>mcp.md</code>。</li>
+<li><strong>已确认 Antigravity MCP Schema 刷新</strong>：刚才重启后，<code>consult_tongji_brain.json</code> 已自动更新至 <code>v5.3.0</code> 全 6 模式（<code>maximum = 1800</code>）。</li>
+</ul>
+<hr>
+<h3>2. 同题同预算 A/B 实测真相：<code>Kimi-K3.1-Pro</code> vs <code>DeepSeek-V4.1-Flash</code></h3>
+<p>针对您“相同 token 花给 Kimi 还是 DeepSeek 效果更好、盲提 DeepSeek 阈值是否值得”的核心问题，实测了 4 类科研/工程硬核题（原始结果见 <code>ab_results.json</code>）：</p>
+<p>| 题组 | 用例（模型 / <code>max_tokens</code>） | 耗时 | 吞吐 | 输出 Tokens（思考） | 状态 / 人工逐字质量评分 |</p>
+<p>| :--- | :--- | ---: | ---: | ---: | :--- |</p>
+<p>| <strong>A. DBR 斜入射微腔</strong> | <code>A_Kimi_4800</code>（加定量任务） | <strong>110.1 s</strong> | — | 0 | <strong>超时（<code>curl_28</code>）</strong>：一旦让 Kimi 兼算复杂代入即撞时间墙 |</p>
+<p>| | <code>A_DS_4800</code>（原开放提示词） | 25.8 s | 186 tok/s | 4800 (4800) | <strong><code>thinking_limit</code> 空包</strong>：陷在传输矩阵特征值展开中打转 |</p>
+<p>| | <code>A_DS_6500</code>（<strong>拉高阈值到 6500</strong>） | 37.7 s | 172 tok/s | 6500 (6500) | <strong>依然 <code>thinking_limit</code> 空包</strong>：证明单纯提阈值<strong>完全无效</strong> |</p>
+<p>| | <code>A_DS_4800_scoped</code>（<strong>加 1 句防打转收束</strong>） | <strong>9.08 s</strong> | <strong>220 tok/s</strong> | 2001 (1600) | <strong><code>ok</code>（724 字）</strong>：立刻给出 Snell 角度数值反例（<code>21.5&#176;/36.1&#176;</code>），但穿透公式近似漏了 $n_C$ 细节（需 Kimi 机制侧补位） |</p>
+<p>| <strong>B. 高斯光束 ABCD 硬算</strong> | <code>B_Kimi_4800</code> | 69.5 s | 45.7 tok/s | 3177 (2792) | <code>ok</code>：4 问全对（<code>628.3 mm / 31.73 μm / 50.31 mm / 98.75%</code>） |</p>
+<p>| | <code>B_DS_4800</code> | <strong>15.4 s</strong> | <strong>199 tok/s</strong> | 3078 (2605) | <code>ok</code>：4 问 <strong>100% 精度持平</strong>（还多给 $q_2$ 与 $z_R&#39;$），<strong>快 4.5 倍</strong> |</p>
+<p>| <strong>C. 异步并发代码排错</strong> | <code>C_Kimi_think</code>（3072） | 85.0 s | 35.4 tok/s | 3009 (2717) | <code>ok</code>（527 字）：4 个高危竞态/取消/协程泄漏/吞异常 Bug <strong>全抓出</strong> |</p>
+<p>| | <code>C_DS_think</code>（3072，无收束） | <strong>16.7 s</strong> | <strong>183 tok/s</strong> | 3072 (3072) | <code>thinking_limit</code>：思考链其实已推出 6 个 Bug，刚要写正文时差 ~300 tok 截断 |</p>
+<p>| <strong>D. 极化激元 Hopfield 质量</strong> | <code>D_Kimi_4800</code> | 47.7 s | 41.9 tok/s | 1997 (1600) | <code>ok</code>：符号/质量/极限 100% 全对（Hellmann-Feynman 推导） |</p>
+<p>| | <code>D_DS_4800</code> | <strong>8.4 s</strong> | <strong>230 tok/s</strong> | 1931 (1700) | <code>ok</code>：符号/质量/极限 <strong>100% 全对</strong>，表达更精炼，<strong>快 5.7 倍</strong> |</p>
+<p><strong>核心结论（推翻两个常见直觉）</strong>：</p>
+<ul>
+<li><strong>为什么不能盲目提高 DeepSeek 思考上限</strong>：实测 <code>A_DS_4800</code> 与 <code>A_DS_6500</code> <strong>双双烧空</strong>，根因不是 token 不够，而是 <code>Flash</code> 推理模型在开放式推导下会死磕高阶矩阵微扰（overthinking）；同一道题给它加一句<strong>“只做最小必要计算、思考简洁收束、发现致命错即定论”</strong>后，耗时直接从 37.7s 空包骤降至 <strong>9.08s 完赛</strong>。</li>
+<li><strong>为什么也不能把预算全堆给 Kimi</strong>：两者存在 <strong>4.5–5.7 倍的物理速度鸿沟</strong>（DeepSeek <code>172–230 tok/s</code> vs Kimi <code>35–46 tok/s</code>）。在确定性数值硬算（题 B）与解析公式验算（题 D）上，两者精度 100% 持平，但 DeepSeek 快 5 倍；而一旦把繁琐数值代入塞给 Kimi，Kimi 会像 <code>A_Kimi_4800</code> 一样在 110s 直接超时。</li>
+<li><strong>真正的互补甜点</strong>：</li>
+<li><strong>Kimi-K3.1-Pro（慢但深、全局视野强）</strong> 专攻<strong>隐含前提、概念界定、物理/架构边界</strong>（如上轮 DBR 题中只有 Kimi 第一时间指出“35&#176; 未界定外/内角、DBR 终止层与总往返相位导数定义”），禁让它做繁琐数值代入；</li>
+<li><strong>DeepSeek-V4.1-Flash（极速 200 tok/s，但须加防打转笼头）</strong> 专攻<strong>精确数值硬算、代数代入反例、带收束约束的深层并发代码排错，以及 2 秒级 Wave 2 仲裁整理</strong>。</li>
+</ul>
+<hr>
+<h3>3. 拟落地最优分工方案（<code>v5.3.1</code> 精准微调，待确认后落盘）</h3>
+<p>仅微调双端脚本 <code>tongji_deepseek_mcp.ps1</code> 与 <code>D:/tongji_plugin/tongji_deepseek_mcp.ps1</code>（不碰排雷墓碑，规则文件无需再改）：</p>
+<ul>
+<li><strong><code>delegate_to_deepseek</code>（深度机制 &#215; 闪电定量，防超时 + 治空包）</strong>：</li>
+<li><strong>Kimi（思考开，<code>max_tokens=4800, 100s</code>）</strong>：在 <code>$PROMPT_KIMI</code> 中显式限定<strong>只攻物理/工程机制漏洞、概念界定与隐含前提，禁做繁琐数值或矩阵展开</strong>（杜绝 <code>A_Kimi_4800</code> 的 110s 超时）。</li>
+<li><strong>DeepSeek（思考开，<code>max_tokens=5200, 75s</code>）</strong>：在 <code>$PROMPT_MATH</code> 中加入<strong>防打转收束指令</strong>（只做最小必要计算：检验等式因子、量纲与 1–2 个代入反例，严禁反复自我验证或展开高阶矩阵，定位致命错即定论输出），从根源消除 <code>thinking_limit</code> 空包，实测 10–25s 完赛。</li>
+<li><strong><code>code_audit</code>（预算充足下最高 ROI 升级：延迟几乎不变，抓 Bug 深度翻倍）</strong>：</li>
+<li>改为 <strong><code>DeepSeek 代码</code>（开思考 + 防打转收束，<code>max_tokens=3600, 35s</code>） &#215; <code>Kimi 契约</code>（保持关思考，<code>900 tok, 25s</code>）</strong>，Wave 1 预算由 <code>28s</code> 轻调至 <code>38s</code>。</li>
+<li><strong>收益推算</strong>：按 DeepSeek ~190 tok/s 速度，带收束的 3600 tok 思考仅需 <strong>12–19 秒</strong>，与 Kimi 关思考（~13s）几乎同步撞线，不拖慢日常体验，但可把题 C 这类隐蔽并发/协程泄漏/取消竞态 Bug 的检出深度拉满。</li>
+<li><strong><code>math_check</code>（加固防打转）</strong>：</li>
+<li>保持现有最优分工（<code>DeepSeek</code> 开思考 15s 极速硬算 &#215; <code>Kimi</code> 关思考 13s 查量纲边界），给 DeepSeek 加上同样的防打转收束句并将上限从 <code>4096</code> 轻提至 <code>4500</code>。</li>
+<li><strong>其余模式保持不动</strong>：<code>test_forge</code> / <code>draft_struct</code> / <code>fast_dual</code> / <code>deep_panel</code> 维持双路关思考（已实测 7.5–16.7s 零截断）。</li>
+</ul>
+<hr>
+<h3>请确认（确认后立即落盘 + 实测）</h3>
+<ul>
+<li><strong>是否确认按上述 <code>v5.3.1</code> 分工方案更新双端 <code>tongji_deepseek_mcp.ps1</code>？</strong>（落盘后我将直接用题 A 复测 <code>delegate_to_deepseek</code> 是否彻底消除“探针触顶”，并用题 C 复测升级后的 <code>code_audit</code> 能否在 ~20s 内抓全 4 个并发 Bug 且零截断，同时同步 <code>mcp.md</code>。）</li>
+<li><strong>关于 <code>deep_panel</code> 的边界取舍</strong>：目前 <code>deep_panel</code>（概念/实验机理辨析）仍保持双路关思考（约 15s 返回），您平时用它偏重“快速答疑”还是“深度机理拆解”？若偏重深度，也可考虑像 <code>code_audit</code> 一样给 <code>DeepSeek</code> 路开带收束的思考（仅增 ~5–8s）；若偏重快问快答则维持现状即可。</li>
+</ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>确认。我更偏重于深度机理拆解。因为我更偏向于学习，而不是简单的问答。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p><code>v5.3.1</code> 最优分工（含 <code>deep_panel</code> 学习导向深度机理拆解、<code>code_audit</code> DeepSeek 防打转思考升级、<code>delegate_to_deepseek</code>/<code>math_check</code> 双核边界加固及专属 Wave 2 整理 Prompt）已完成双端落盘同步（<code>49427 B</code>、UTF-8 BOM、<code>SHA256 = B56612A0…BE79FDD</code>、AST 0 错、<code>initialize</code> 返回 <code>5.3.1</code>）。</p>
+<p>现正在后台执行 4 组独立 MCP stdio 真实 E2E（DBR <code>delegate_to_deepseek</code>、异步 <code>code_audit</code>、极化激元 <code>deep_panel</code>、高斯 <code>math_check</code>），实测完成后立即检验结果并同步更新 <code>mcp.md</code>。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p><code>v5.3.1</code> 4 组实测均 <code>probeHit=False</code> 且 <code>singleRoad=False</code>（<code>delegate_to_deepseek</code> 87.5s、<code>deep_panel</code> 18.8s、<code>math_check</code> 33.5s 全部零触顶、零截断），仅 <code>code_audit</code>（14.7s）因英文代码标识较多在末条触及 850 字截断。已下调 <code>code_audit</code> Wave 2 目标比至 <code>0.65</code> 并收束至 3~4 条最高危 Bug，完成双端同步（<code>SHA256 = 7AFDF29D…6B85B8D</code>），正在后台跑 15 秒单测复验，完成后同步更新 <code>mcp.md</code> 并统一汇报。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><h3>1. <code>v5.3.1</code> 实证最优分工落盘与双端校验</h3>
+<p>已将 <code>v5.3.1</code> 落盘至 <code>tongji_deepseek_mcp.ps1</code> 并同步至 <code>D:/tongji_plugin/tongji_deepseek_mcp.ps1</code>，同时更新了唯一状态锚点 <code>mcp.md</code>。</p>
+<p><strong>最终 6+1 模式分工矩阵（全 2 路并发、Wave 2 死守 <code>Thinking=$false</code>）</strong>：</p>
+<p>| 工具 / 模式 | Kimi-K3.1-Pro 职责与配置 | DeepSeek-V4.1-Flash 职责与配置 | 字符上限 |</p>
+<p>| :--- | :--- | :--- | :---: |</p>
+<p>| <code>delegate_to_deepseek</code> | <strong>开思考</strong>（<code>4800 tok / 100s</code>）：机制漏洞、概念界定与隐含前提（显式禁繁琐代入） | <strong>开思考+防打转</strong>（<code>5200 tok / 75s</code>）：等式因子、量纲与代入反例（修复了 Dispatcher 强传 4800 覆盖默认值隐患） | <code>≤1100</code> |</p>
+<p>| <code>deep_panel</code>（学习导向） | 关思考（<code>950 tok / 32s</code>）：物理/工程机制、概念区分与直觉图像 | <strong>开思考+防打转</strong>（<code>3600 tok / 38s</code>）：定量判据、极限行为与推导主线 + <strong>专属学习解析 Wave 2</strong> | <code>≤900</code> |</p>
+<p>| <code>code_audit</code> | 关思考（<code>900 tok / 25s</code>）：接口契约、状态假定与兼容性 | <strong>开思考+防打转</strong>（<code>3600 tok / 35s</code>）：高危并发/取消/泄漏 Bug + <strong>专属高危清单 Wave 2（目标比 <code>0.65</code>）</strong> | <code>≤900</code> |</p>
+<p>| <code>math_check</code> | 关思考（<code>900 tok / 35s</code>）：量纲、符号与近似失效边界 | <strong>开思考+防打转</strong>（<code>4500 tok / 48s</code>）：公式、单位与精确数值硬算 | <code>≤900</code> |</p>
+<p>| <code>test_forge</code> / <code>draft_struct</code> | 关思考（对抗点 / 方案骨架） | 关思考（边界用例 / 硬约束与回滚校验） | 默认 <code>1600</code> / 上限 <code>1800</code> |</p>
+<p>| <code>fast_dual</code> | 关思考（前提与边界） | 关思考（核心结论） | <code>≤900</code> |</p>
+<hr>
+<h3>2. 【外部验证判据】实测汇报</h3>
+<ul>
+<li><strong>双端一致与静态检查</strong>：主/备脚本均 <code>49562 B</code>、<code>UTF-8 BOM = True</code>、AST <code>ParseErrors = 0</code>、双端 <code>SHA-256 = 7AFDF29D659E403B651833495C349B1DAB874D19C2AEF8A26F6D0370A6B85B8D</code>。</li>
+<li><strong>独立 MCP stdio 子进程 E2E 实测</strong>（详细回包见 <code>e2e_v531_results.json</code>，服务端退出码 <code>0</code>、<code>stderr = 0 B</code>）：</li>
+</ul>
+<p>| 实测模式 | 测试题（与上轮对比） | 实测耗时 | 回包字数 | 探针触顶 / 单路退化 / 截断 | 核心内容验收 |</p>
+<p>| :--- | :--- | ---: | ---: | :---: | :--- |</p>
+<p>| <code>delegate_to_deepseek</code> | DBR 斜入射微腔（原连续 2 次触顶） | <strong><code>87.45 s</code></strong> | <code>864 字</code> | <strong>全 False</strong> | Kimi + DeepSeek 双路满血完赛；精准指出 DBR 偏振相位劈裂、漏项、欠定前提并驳回单界面近似外推 |</p>
+<p>| <code>deep_panel</code> | 激子极化激元强耦合 vs Fano 假象 | <strong><code>18.78 s</code></strong> | <code>729 字</code> | <strong>全 False</strong> | 给出非厄米复本征值、EP 与线宽严格判据、Hopfield 权重交换图像及变角度/时间分辨实验判据 |</p>
+<p>| <code>math_check</code> | 高斯光束 ABCD 复参数硬算 | <strong><code>33.48 s</code></strong> | <code>857 字</code> | <strong>全 False</strong> | <code>z_R=628.3 mm</code>、<code>w0&#39;=31.73 μm</code>、<code>s&#39;=50.315 mm</code>、相对误差 <code>98.75%</code>（并区分分母口径 <code>49.69%</code>）全对 |</p>
+<p>| <code>code_audit</code> | <code>asyncio</code> 异步任务池并发排错 | <strong><code>35.48 s</code></strong> | <code>489 字</code> | <strong>全 False</strong> | 经调优 Wave 2 目标比至 <code>0.65</code> 后复测零截断，4 条最高危 Bug（去重竞态、排队不可取消/协程泄漏、超时契约、取消回收）全抓出 |</p>
+<hr>
+<h3>3. 后续使用与 1 个小边界提醒</h3>
+<ul>
+<li><strong>无需再改配置即可直接使用</strong>：刚才重启后 Antigravity 已经把 6 模式 Schema 刷新生效，Codex 下次新会话自动加载新版规则；如果您希望 MCP 进程立即跑 <code>v5.3.1</code> 内存副本（而非旧常驻进程），可在闲暇时重载一次 MCP 服务（因为 <code>tongji_deepseek_mcp.ps1</code> 的每次 <code>tools/call</code> 都会新拉起 <code>-Worker</code> 读取磁盘最新代码，其实<strong>工具逻辑已热生效</strong>，仅 <code>initialize</code> 的 <code>5.3.1</code> 文案待下次重载刷新）。</li>
+<li><strong>边界观察点</strong>：<code>v5.3.1</code> 把 <code>code_audit</code> 与 <code>deep_panel</code> 的 DeepSeek 路也打开了带收束思考（实测 18–35s）；接下来试跑 1 周后，如发现学校晚高峰出现频繁排队或周积分逼近 1000 分，再按实际日志微调这两个模式的思考开关或上限即可。</li>
+</ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>目前使用这个mcp已经有段时间了，你检查一下现在用的怎么样，我觉得效果挺好的，有什么优点已经显现了，然后有什么不足或者缺点出现了，你进行再一次的修改，不过我对这些的原理已经不太了解了，你怎么修改的为什么要这样修改，原理都要和我说明。额度的消耗也确实有增长，目前用下来已经有用100积分了，不过还比较来说还是有点少，我使用的gemini额度也挺多的。所以我希望这次能再次增强他的效果。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>我刚刚对 <code>v5.3.1</code> 上线以来（2026-11-21 13:55 至 2026-11-23 16:20）<strong>Antigravity 与 Codex 两端的全部真实对话和调用日志</strong>做了完整盘点。先用大白话把这套 MCP 的工作原理给你重新串一遍，再基于真实数据汇报<strong>优点、暴露出的缺点</strong>，以及本次 <strong><code>v5.4.0</code> 的具体修改方案和每一步原理</strong>。</p>
+<hr>
+<h3>一、先用 1 分钟重温：这套同济 MCP 是怎么工作的？</h3>
+<p>你可以把它想象成你给 Gemini / Codex 配的<strong>“校内免费双专家外脑”</strong>，整个运转分三步：</p>
+<pre><code>你提问 ──► 主模型（Gemini / Codex，花你的主力额度）
+              │  ① 先看一眼“路由规则”（决定要不要叫外脑、叫哪个模式）
+              ▼
+         【第 1 波：双专家同时干活（花学校免费积分）】
+         ├─ Kimi-K3.1-Pro（慢但视野广，~40 字/秒）：擅长抓物理机制、隐含前提、概念漏洞
+         └─ DeepSeek-V4.1-Flash（极快，~200 字/秒）：擅长精确算公式、查并发 Bug、快速整理
+              │
+              ▼  （若两份报告合起来超字数、或需要交叉核对）
+         【第 2 波：DeepSeek 关思考闪电整理（仅 ~2 秒）】
+              │  把两人的报告去重合并、驳回瞎猜，压成精炼干货
+              ▼
+         回传给主模型 ──► 主模型做最终裁决并按你的习惯讲给你听</code></pre>
+<p>之所以要严格分工，是因为我们之前实测发现两个硬规律：</p>
+<ul>
+<li><strong>Kimi 慢 5 倍</strong>：给它太重的数值计算会超 100 秒卡死，所以只让它干“抓概念/机制/前提”的高价值活；</li>
+<li><strong>DeepSeek 快 5 倍但容易钻牛角尖</strong>：如果给它一个大而空的难题，它会陷入自我怀疑把思考字数全烧光（变成空包），必须给它明确范围和“防打转收束指令”。</li>
+</ul>
+<hr>
+<h3>二、过去 2 天的真实体检成绩单（基于全量日志实测）</h3>
+<p>上线两天多，两端的<strong>日常真实调用</strong>共 <strong>5 次</strong>（Antigravity 3 次 + Codex 2 次；不含我们开发时的测试和 DSH 对话）。</p>
+<h4>已经显现出来的 3 个硬优点</h4>
+<ul>
+<li><strong>真的帮你在关键决策上踩住了刹车（高质量红队价值）</strong>：</li>
+<li>在你的“技能库瘦身”对话中（耗时 22s/23s），外脑直接指出“物理合并第三方活跃技能会破坏后续 <code>git pull</code> 升级、<code>ds-unstick</code> 与 <code>blast-radius</code> 权限边界不同不能强合并”，主模型当场采纳，避免把技能库改坏。</li>
+<li>在你的“工程光学跨目录知识隔离”对话中（耗时 22s），外脑一眼戳破核心漏洞：“笔记核对过（<code>verified</code>）不等于你真掌握了（<code>mastered</code>），跳过复述直接写入光路记录本等于伪造掌握状态”，直接拦停了有隐患的方案。</li>
+<li>在 Codex 11-22 工程光学推导中，外脑抓出了“镜头组倒装焦距不必然不变、从右入射要重定焦点、场镜仍改变光瞳不能直接忽略” 3 条关键陷阱。</li>
+<li><strong>Codex 彻底破冰</strong>：之前 10 天 Codex 是 <strong>0/33（0% 触发）</strong>；升级 <code>AGENTS.override.md</code> 后，Codex 在 11-22 光学推导中单轮连续主动调用了 <code>math_check</code> + <code>delegate_to_deepseek</code>。</li>
+<li><strong>Antigravity 端速度非常稳</strong>：3 次真实调用耗时全是 <strong>22–23 秒</strong>，零报错、零超时。</li>
+</ul>
+<h4>实测抓出的 5 个真实缺点（也是为什么你觉得“积分用得还太少、Gemini 额度烧得多”）</h4>
+<p>| # | 实测发现的缺点 | 真实日志证据 | 底层原因（原理） |</p>
+<p>| :-: | :--- | :--- | :--- |</p>
+<p>| <strong>1</strong> | <strong>你最耗 Gemini 额度的“光学深度学习”竟然 0 次调用 MCP</strong> | 你的光学辅导对话（<code>c9eb2bf0</code>）11-22 讲傅里叶变换、11-23 推菲涅尔公式与半波损失，Gemini 自己烧了 <strong>3.2 万字思考 + 1.6 万字输出</strong>，<strong>一次外脑都没叫</strong> | ① 挂载你自己的光学带教规则后，主模型忘了检查 MCP 规则；② 现行 <code>deep_panel</code>/<code>math_check</code> 上限锁死在 <strong>900 字</strong>，装不下一套完整公式推导，主模型觉得“叫了也得自己重推”，干脆全部自己硬扛 |</p>
+<p>| <strong>2</strong> | <strong>Antigravity 3 次调用 100% 全选默认 <code>fast_dual</code>，5 个专职新模式使用率为 0%</strong> | 技能库架构评审、知识隔离方案评审全用了 <code>fast_dual</code>（900 字），其中一次还把“架构评审+公式速核”混塞进 1 次调用导致尾部截断 | 工具定义里 <code>mode</code> 是可选参数（默认 <code>fast_dual</code>），主模型犯懒就不细选；而且规则里对“架构方案走 <code>draft_struct</code>、多子题拆开调”约束不够硬 |</p>
+<p>| <strong>3</strong> | <strong><code>fast_dual</code> 一进第 2 波就被扭成“挑刺体”且截断</strong> | 3 次 <code>fast_dual</code> 本是方案对比，结果全输出成“致命修正一/驳回伪反例”，且 11-22 那次结尾触发 <code>…（已截断）</code> | 代码里 <code>fast_dual</code> 没写专属第 2 波整理模板，超字数时误用了重度红队的“挑错驳回”模板，且目标字数留余量不够 |</p>
+<p>| <strong>4</strong> | <strong>偶发 HTTP 500 没重试 + 单路超长直接剪刀砍尾巴</strong> | Codex 11-22 <code>math_check</code>（27.1s）遇同济网关偶发 <code>Kimi HTTP 500</code>，直接退化单路，且把 DeepSeek 推导的最后一问生生砍断成 <code>…（已截断）</code> | ① 脚本遇到 <code>500/502/503</code> 没切换同济另一台内网 IP（<code>10.67.0.252</code>）重试；② 代码只对“双路都活着”才跑第 2 波整理，单路超长直接硬截断 |</p>
+<p>| <strong>5</strong> | <strong>把 6 道光学题硬塞进 1 次调用，撞 108s + 探针触顶</strong> | Codex 11-22 <code>delegate_to_deepseek</code> 把 6 个独立光学问题压成 1 个大包，跑了 <strong>108.4 秒</strong> 并触发 <code>探针触顶</code> | 单次思考有 5200 token 上限，6 道题挤在一起必爆；而且脚本当前并发锁限制为 2，规则也没要求把多子题拆开并行调 |</p>
+<hr>
+<h3>三、本次 <code>v5.4.0</code> 增强修改方案（怎么做 + 为什么这样改）</h3>
+<p>核心思路：<strong>不是靠瞎加字数浪费积分，而是把“你最耗 Gemini 额度的物理推导/学习打草稿”安全卸载给免费的同济双核，同时修掉上面 4 个底层代码缺陷，让每次调用都更稳、更深、更省 Gemini 额度。</strong></p>
+<h4>修改 1：解放“学习推导双模式”容量，替 Gemini 扛起长推导打草稿（需您同意微调原“日常 4 模式死守 900 字”约束）</h4>
+<ul>
+<li><strong>改什么</strong>：</li>
+<li><code>deep_panel</code>（深度学习与机理拆解）：上限从 <code>900</code> 放宽至 <strong>默认 <code>1500</code> / 上限 <code>1800</code> 字符</strong>，并把 Kimi 路从 <code>950</code> token 提至 <code>1500</code> token、DeepSeek 思考路从 <code>3600</code> 提至 <code>4200</code> token（仍带防打转收束），Wave 2 动态给足整理 token（<code>~2800</code>）。</li>
+<li><code>math_check</code>（多步公式与数值硬算）：上限从 <code>900</code> 放宽至 <strong>默认 <code>1200</code> / 上限 <code>1500</code> 字符</strong>。</li>
+<li><code>fast_dual</code>、<code>code_audit</code> 维持 <code>≤900</code> 字符轻量定位不变。</li>
+<li><strong>为什么这样改（原理）</strong>：</li>
+<li>900 字只够写结论，装不下完整公式推导步骤和极限边界，导致主模型宁可自己烧 1.6 万字 Gemini 思考也不愿调用外脑。</li>
+<li>放宽到 1200–1500 字后，同济双核能直接把<strong>完整公式推导、符号前提、物理图像、极限校验</strong>一次性算清交回来（只占 Gemini 上下文不到 1%，绝不稀释注意力），Gemini 只需要核验并按苏格拉底教学节奏讲给你听——<strong>同济免费积分利用率提升，Gemini 额度立省一大块，推导还多了双模型交叉防错！</strong></li>
+</ul>
+<h4>修改 2：修复脚本 4 处底层机制缺陷（纯代码增益，零副作用）</h4>
+<p>修改双端 <code>tongji_deepseek_mcp.ps1</code> 与 <code>D:/tongji_plugin/tongji_deepseek_mcp.ps1</code>：</p>
+<ul>
+<li><strong>瞬时故障自动切备 IP 重试 1 次</strong>：</li>
+<li>*原理*：同济校内有 <code>10.67.0.251</code> 和 <code>10.67.0.252</code> 两扇门。若某一路撞到偶发 <code>HTTP 500/502/503/504</code> 或连接抖动，只要剩余时间 ≥15s，自动切另一台内网 IP 静默重试失败那一路（不重跑成功那一路），根治 Codex #1 那种“一抖就少一条腿”的单路退化。</li>
+<li><strong>单路超长也走第 2 波语义压缩，告别剪刀砍尾句</strong>：</li>
+<li>*原理*：把第 2 波整理的触发条件从“必须两路都在”改为“只要总长超限（哪怕单路）就让 2 秒的关思考 DeepSeek 做完整语义压缩”，避免把最后一条关键推导砍成 <code>…（已截断）</code>。</li>
+<li><strong>给 <code>fast_dual</code> 独立第 2 波“方案对比”模板 + 调优防截断目标比</strong>：</li>
+<li>*原理*：<code>fast_dual</code> 超长整理时不再误套红队“挑错驳回”模板，改为“共识 + 分歧 + 适用边界 + 建议”；同时把常规模式整理目标比从 <code>0.72</code> 微调为 <code>0.66</code>（给公式/英文变量名留出 34% 膨胀缓冲），彻底消灭尾部截断。</li>
+<li><strong>并发上限从 2 提至 3 + <code>mode</code> 在 Schema 中设为必填（服务端仍保留缺省兜底）</strong>：</li>
+<li>*原理*：Schema 把 <code>mode</code> 设为必填能强迫主模型每次认真挑对专职模式，打破“100% 偷懒走默认 <code>fast_dual</code>”的惯性；并发提至 3 支持把多子题拆开同时跑，既加速又防单包爆思考上限。</li>
+</ul>
+<h4>修改 3：升级双端路由规则（补上“光学学习/公式推导强卸载”与“多子题拆包并发”）</h4>
+<p>同步微调 <code>deepseek-subagent.md</code> 与 Codex 的 <code>AGENTS.override.md</code> / <code>AGENTS.md</code>（<strong>完整保留您在 <code>AGENTS.override.md</code> 里新增的“学习推进”和“四、记忆维护”条款，一字不删</strong>）：</p>
+<ul>
+<li><strong>补强教学/推导卸载触发器</strong>：凡涉及公式推导、物理机理拆解、概念辨析（<strong>即使同时挂载了 <code>optics-tutor</code> 等教学规则</strong>），先调 <code>deep_panel</code> 或 <code>math_check</code> 拿双核校验过的推导骨架，再由主模型加工讲解。</li>
+<li><strong>禁混装、禁偷懒</strong>：架构/目录/协议方案明确走 <code>draft_struct</code>（禁扔 <code>fast_dual</code>）；单轮出现 ≥3 个独立子问题或“方案+公式”混合问题时，<strong>拆成 2–3 次并发调用</strong>，绝不把 6 道题压进 1 次调用。</li>
+</ul>
+<h4>修改 4：加一个“无隐私、零干扰”的 1 行本地统计日志</h4>
+<ul>
+<li>*原理*：每次调用结束，在 <code>C:\Users\&lt;USER&gt;\.gemini\config\tongji_mcp_metrics.jsonl</code> 里追加 1 行纯数字元数据（时间、模式、耗时、双路状态、是否重试、是否截断；<strong>绝不存任何聊天正文或密钥</strong>）。以后你随时让我体检，1 秒就能拉出精准统计表，不用再去翻几十 MB 的对话日志。</li>
+</ul>
+<hr>
+<h3>请您确认（按删改前确认铁律，确认后我立即落盘 + 做全套真实 E2E 验证）</h3>
+<ul>
+<li><strong>是否同意以上 <code>v5.4.0</code> 全部 4 项修改</strong>（含将 <code>deep_panel</code> 放宽至默认 1500/上限 1800 字、<code>math_check</code> 放宽至默认 1200/上限 1500 字，以及添加纯元数据本地统计日志）？</li>
+<li><strong>关于您的光学带教场景边界</strong>：您平时在 <code>光路/</code> 用 <code>Optics Grilling Tutor</code> 学习时，更希望 Gemini <strong>先调 <code>deep_panel</code>/<code>math_check</code> 拿双核严谨公式再按您熟悉的节奏慢慢引导讲解</strong>（推荐，省 Gemini 额度且公式零出错），还是有些特别简单的基础概念仍让 Gemini 直接讲、只对含 ≥2 步公式推导或复杂机理才调 MCP？</li>
+</ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>选择你推荐的，我全部同意</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p><code>v5.4.0</code> 全部 4 项修改（学习推导扩容、备 VIP 重试/单路 Wave 2 压缩/<code>fast_dual</code> 专属模板、3 路并发与 <code>mode</code> 必填、本地零隐私元数据日志，以及三处双端规则同步且完整保留 <code>AGENTS.override.md</code> 记忆维护条款）已完成落盘。</p>
+<p>静态与协议校验已全绿：双端 <code>58060 B</code>、UTF-8 BOM、<code>SHA256 = 4EFC0D53…D159D3F</code>、AST <code>0</code> 错、<code>version = 5.4.0</code>、<code>required = (query, mode)</code>。现正在后台执行 4 组独立 stdio 真实 E2E（菲涅尔 <code>deep_panel</code>、Codex 回归 <code>math_check</code>、<code>fast_dual</code> 方案对比、3+1 并发与遥测日志校验），完成后立即核验质量并同步更新 <code>mcp.md</code>。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>首轮 <code>v5.4.0</code> E2E 全项零截断通过，且新上线的本地遥测日志 <code>tongji_mcp_metrics.jsonl</code> 立刻抓出两个极隐蔽的细节：</p>
+<ul>
+<li>3 路并发同时打向同济网关时，第 3 路的 <code>Kimi</code> 在 110ms 收到 <code>HTTP 429</code>（校园网关对 Kimi 并发限流为 2）；</li>
+<li><code>deep_panel</code> 菲涅尔长推导中，Kimi 关思考抢写公式撞了 <code>1600</code> token 上限。</li>
+</ul>
+<p>已顺手将 <code>HTTP 429</code> 纳入 2.5s 退避 + 切备 VIP 自动重试，并将 <code>deep_panel</code> Kimi 上限微调至 <code>2000</code> token 且收束分工（双端同步 <code>SHA256 = F630A9AA…885988FA</code>，BOM/AST 均过），正在后台跑 ~1 分钟复测，完成后汇报全部实测结果并更新 <code>mcp.md</code>。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p><code>v5.4.0</code> 已全部落盘、双端同步、通过独立 MCP stdio 实测，并已更新至 <code>mcp.md</code>。</p>
+<hr>
+<h3>一、本次落盘清单与核心原理回溯</h3>
+<ul>
+<li><strong>双端 MCP 脚本</strong>：<code>tongji_deepseek_mcp.ps1</code> 与 <code>D:/tongji_plugin/tongji_deepseek_mcp.ps1</code></li>
+<li><strong>学习推导扩容</strong>：<code>deep_panel</code> 升至默认 <code>1500</code>/上限 <code>1800</code> 字（Kimi <code>2000 tok</code> 专攻物理图像/前提/实验边界，DeepSeek <code>4200 tok</code> 思考专攻公式推导步骤）；<code>math_check</code> 升至默认 <code>1200</code>/上限 <code>1500</code> 字（DeepSeek <code>4800 tok</code>）。</li>
+<li><strong>底层韧性三修</strong>：</li>
+<li>偶发 <code>HTTP 429/500/502/503/504</code> 或连接抖动自动<strong>确定性切换另一台校内 VIP</strong>（显式翻转 <code>PinStartIndex</code>，避免 2 探针 mod 2 相位重合仍打回原 IP）重试 1 次；遇到同济网关 <code>429</code> 限流时自动退避 <code>2.5s</code> 等并发槽释放再重试。</li>
+<li>单路回退若超字数上限，改为走 2 秒级 Wave 2（关思考）做语义完整收束，不再用剪刀生硬砍尾句。</li>
+<li>为 <code>fast_dual</code>、<code>deep_panel</code>、<code>math_check</code> 补齐专属第 2 波整理模板（<code>fast_dual</code> 改为“共识 / 分歧 / 适用边界 / 建议”，不再被误套成红队挑刺体）。</li>
+<li><strong>防偷懒与拆包并发</strong>：工具 Schema 将 <code>mode</code> 设为必填（服务端仍保留缺省兜底向后兼容）；并发上限由 <code>2</code> 提至 <code>3</code>。</li>
+<li><strong>本地零隐私统计日志</strong>：每次调用自动向 <code>tongji_mcp_metrics.jsonl</code> 追加 1 行纯数字元数据（带跨进程锁、超过 1 MB 自动截断，绝不存任何正文或 API Key）。</li>
+<li><strong>三端规则同步</strong>：</li>
+<li>Antigravity：<code>deepseek-subagent.md</code></li>
+<li>Codex 双文件同步：<code>AGENTS.override.md</code> 与 <code>AGENTS.md</code>（完整保留您新增的“推进学习”与“四、记忆维护”条款）</li>
+<li>明确加入<strong>光学/物理教学推导强卸载</strong>（即使挂载 <code>Optics Grilling Tutor</code> 等带教规则，写长推导前也先调 <code>deep_panel</code>/<code>math_check</code> 拿双核校验骨架）与 <strong>≥3 子题拆成 2–3 路并发</strong>原则。</li>
+</ul>
+<hr>
+<h3>二、【外部验证判据】实测成绩单</h3>
+<h4>1. 静态、编码与安全核验</h4>
+<ul>
+<li><strong>双端一致</strong>：主/备均 <code>58345 B</code>、<code>UTF-8 BOM = True</code>、PS 5.1 AST <code>ParseErrors = 0</code>、双端 <code>SHA-256 = F630A9AA94164DA2539E4A2DF1B3A892278B548E35611B2128D45178885988FA</code>。</li>
+<li><strong>红线与规则校验</strong>：无 <code>GLM</code>/<code>MiMo</code>/<code>Qwen</code>；保留 <code>sing-tun|mihomo|172.19.*</code>；Wave 2 硬编码 <code>$false</code>；Codex 双文件 SHA-256 一致且“记忆维护”完整保留；<code>initialize</code> 返回 <code>5.4.0</code>，<code>tools/list</code> 确认 <code>required = (query, mode)</code>、<code>maxOut = 1800</code>。</li>
+</ul>
+<h4>2. 独立 MCP stdio 子进程 E2E 实测（服务端退出码 <code>0</code>、<code>stderr = 0 B</code>，详细回包见 <code>e2e_v540_report.txt</code>）</h4>
+<p>| 实测场景 | 耗时 | 回包字数 | 截断 / 报错 | 核心验收点 |</p>
+<p>| :--- | ---: | ---: | :---: | :--- |</p>
+<p>| <code>deep_panel</code>（菲涅尔推导 + 半波损失 + DBR） | <code>43.4 s</code> | <code>693 字</code>（<code>≤1500</code>） | 零截断 / 零错 | 完整给出 $r_s/r_p$、全部前提与失效边界、点破教材 $r_p$ 基矢符号陷阱与 DBR Airy 相干叠加；下午高峰 Kimi 超时时 DeepSeek 20.1s 完整兜底 |</p>
+<p>| <code>math_check</code>（Codex 原截断光学题回归） | <code>21.7 s</code> | <code>403 字</code>（<code>≤1200</code>） | 零截断 / 零错 | 高斯式推正切递推 + 特殊光线 + 拉赫不变量 4 问全部完整收尾，彻底解决旧版截断 |</p>
+<p>| <code>fast_dual</code>（单文件状态卡 vs 零散笔记） | <code>13.2–19.0 s</code> | <code>185–434 字</code>（<code>≤900</code>） | 零截断 / 零错 | 清晰按“共识 / 分歧 / 适用边界 / 建议”输出，彻底消除原版红队挑刺腔 |</p>
+<p>| <strong>3+1 并发压力测试</strong>（<code>fast_dual</code> + <code>code_audit</code> + <code>math_check</code> + 第 4 路） | <strong>总墙钟 <code>36.3 s</code></strong> | <code>434 / 797 / 244 字</code> | 零截断 / 零错 | 3 路全部成功且 <code>Kimi</code> 0 次 <code>HTTP 429</code>；第 4 路立即触发过载保护返回“已有三项调用正在执行” |</p>
+<p>| <strong>本地零隐私遥测日志</strong> | — | 已写入 10 条 | 全合法 JSON | <code>PrivacyClean = True</code>（已断言绝不含 prompt 中文原文与 <code>sk-</code> 密钥） |</p>
+<hr>
+<h3>三、立即生效动作与后续观测</h3>
+<ul>
+<li><strong>请重载一次 Antigravity 的 MCP 服务（或重启一次 Antigravity）</strong>：把缓存的 <code>consult_tongji_brain.json</code> 刷到 <code>v5.4.0</code>（这样新会话里主模型才能看到 <code>mode</code> 必填和 <code>1500/1800</code> 新上限说明；Codex 下次新会话会自动生效）。</li>
+<li><strong>1 周后快速复盘</strong>：接下来正常使用几天（尤其是您的光学辅导与工程任务），之后只要告诉我“检查一下 <code>tongji_mcp_metrics.jsonl</code>”，我 1 秒就能直接拉出各模式调用次数、平均耗时、重试率与单路退化率，帮您继续精准微调。</li>
+</ul>
+</div></article>
+
+    </section>
+  </main>
+  <script>
+    (function() {
+      var src = '../sidebar.js';
+      if (window.location.protocol !== 'file:') {
+        src += (src.indexOf('?') >= 0 ? '&' : '?') + '_t=' + Date.now();
+      }
+      var s = document.createElement('script');
+      s.src = src;
+      document.body.appendChild(s);
+    })();
+  </script>
+  <script>
+    function triggerBlobDownload(blob, filename) {
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function() { URL.revokeObjectURL(url); }, 1500);
+    }
+    function downloadMarkdown(e, relPath, filename) {
+      if (window.location.protocol === 'file:' || !window.fetch || !window.Blob) {
+        return true;
+      }
+      if (e) e.preventDefault();
+      var btn = document.getElementById('downloadMdBtn');
+      var orig = btn ? (btn.getAttribute('data-orig') || btn.innerText) : '';
+      if (btn) {
+        btn.setAttribute('data-orig', orig);
+        btn.innerText = '正在下载...';
+      }
+      var targetUrl = relPath;
+      try { targetUrl = new URL(relPath, window.location.href).href; } catch (err) {}
+      fetch(targetUrl, { cache: 'no-cache' })
+        .then(function(resp) {
+          if (!resp.ok) throw new Error('HTTP ' + resp.status);
+          return resp.text();
+        })
+        .then(function(text) {
+          var blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
+          triggerBlobDownload(blob, filename);
+          if (btn) {
+            btn.innerText = '已下载 .md';
+            setTimeout(function() { btn.innerText = orig; }, 2000);
+          }
+        })
+        .catch(function() {
+          if (btn) btn.innerText = orig;
+          var a = document.createElement('a');
+          a.href = targetUrl;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        });
+      return false;
+    }
+    function fallbackCopy(text, onDone) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try {
+        if (document.execCommand('copy')) { onDone(); }
+      } catch (e) {}
+      document.body.removeChild(ta);
+    }
+    function copyCanonicalUrl(relPath, btnId, doneLabel) {
+      var btn = document.getElementById(btnId);
+      if (!btn) return;
+      var orig = btn.getAttribute('data-orig') || btn.innerText;
+      btn.setAttribute('data-orig', orig);
+      var targetUrl = window.location.href;
+      try {
+        targetUrl = new URL(relPath, window.location.href).href;
+      } catch (e) {}
+      var onDone = function() {
+        btn.innerText = doneLabel;
+        setTimeout(function() { btn.innerText = orig; }, 2000);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(targetUrl).then(onDone, function() { fallbackCopy(targetUrl, onDone); });
+      } else {
+        fallbackCopy(targetUrl, onDone);
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>我把近期在 GPT/Codex 端精读《工程光学》第 1–2 章... - Antigravity Share</title>
+  <style>
+    :root {
+      --bg-main: #131314;
+      --bg-sidebar: #1e1f20;
+      --bg-active: #2b2c2f;
+      --bg-bubble-user: #2b2c2f;
+      --bg-bubble-ai: #1e1f20;
+      --text-main: #e3e3e3;
+      --text-sub: #c4c7c5;
+      --accent: #a8c7fa;
+      --border: #3c4043;
+      --code-bg: #0d0e11;
+      --badge-green: #34d399;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100vh;
+    }
+    #sidebar {
+      width: 310px;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+    .sidebar-header {
+      padding: 18px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-header h2 {
+      font-size: 16px;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sidebar-header a.home-link {
+      text-decoration: none;
+      color: inherit;
+    }
+    .sync-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--badge-green);
+      background: rgba(52, 211, 153, 0.1);
+      padding: 3px 8px;
+      border-radius: 12px;
+      margin-top: 8px;
+    }
+    .conv-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .conv-item {
+      display: block;
+      text-decoration: none;
+      padding: 11px 13px;
+      border-radius: 10px;
+      transition: background 0.15s;
+      border: 1px solid transparent;
+      color: inherit;
+    }
+    .conv-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .conv-item.active {
+      background: var(--bg-active);
+      border-color: var(--border);
+    }
+    .conv-title {
+      font-size: 14px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #fff;
+    }
+    .conv-meta {
+      font-size: 11px;
+      color: var(--text-sub);
+      margin-top: 4px;
+      display: flex;
+      justify-content: space-between;
+    }
+    #main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .main-header {
+      padding: 16px 28px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-sidebar);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .main-header h1 {
+      font-size: 17px;
+      color: #fff;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .sub-meta {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-top: 3px;
+    }
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .btn {
+      background: var(--bg-active);
+      color: var(--accent);
+      border: 1px solid var(--border);
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .btn:hover { background: #3c4043; }
+    .chat-canvas {
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 28px 24px 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .turn {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .turn.user { align-items: flex-end; }
+    .turn.assistant { align-items: flex-start; }
+    .role-tag {
+      font-size: 12px;
+      color: var(--text-sub);
+      font-weight: 600;
+      padding: 0 4px;
+    }
+    .bubble {
+      max-width: 88%;
+      padding: 16px 20px;
+      border-radius: 18px;
+      line-height: 1.7;
+      font-size: 15px;
+      word-break: break-word;
+    }
+    .turn.user .bubble {
+      background: var(--bg-bubble-user);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .turn.assistant .bubble {
+      background: var(--bg-bubble-ai);
+      color: var(--text-main);
+      border-bottom-left-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .bubble p { margin: 0 0 10px 0; }
+    .bubble p:last-child { margin-bottom: 0; }
+    .bubble h1, .bubble h2, .bubble h3, .bubble h4 {
+      margin: 14px 0 8px;
+      color: var(--accent);
+      line-height: 1.4;
+    }
+    .bubble h1 { font-size: 19px; }
+    .bubble h2 { font-size: 17px; }
+    .bubble h3 { font-size: 15.5px; }
+    .bubble ul, .bubble ol { margin: 8px 0 10px 22px; }
+    .bubble li { margin: 4px 0; }
+    .bubble blockquote {
+      border-left: 3px solid var(--accent);
+      padding-left: 12px;
+      margin: 8px 0;
+      color: var(--text-sub);
+    }
+    .bubble code {
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 5px;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 13.5px;
+    }
+    .bubble pre {
+      background: var(--code-bg);
+      padding: 14px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 10px 0;
+      border: 1px solid #2b2d31;
+    }
+    .bubble pre code {
+      background: transparent;
+      padding: 0;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .bubble a { color: var(--accent); }
+    .bubble hr {
+      border: 0;
+      border-top: 1px solid var(--border);
+      margin: 14px 0;
+    }
+    @media (max-width: 820px) {
+      body { flex-direction: column; }
+      #sidebar { width: 100%; height: auto; position: static; max-height: 280px; }
+      .main-header { flex-wrap: wrap; padding: 14px 16px; }
+      .header-actions { flex-wrap: wrap; }
+      .bubble { max-width: 96%; }
+    }
+  </style>
+</head>
+<body data-conv-id="49f340ef-6162-4313-800e-9d8a6d7a6a35" data-base-prefix="./" data-turn-count="7" data-update-time="2026-11-25 17:29" data-is-index="0">
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
+      <div class="sync-badge" id="syncBadge">自动同步加载中...</div>
+    </div>
+    <nav class="conv-list" id="convList" aria-label="Conversations">
+      <noscript><div style="padding:12px;color:#c4c7c5;font-size:12px;">请启用 JavaScript 查看全部历史对话列表，或直接访问对应对话链接。</div></noscript>
+    </nav>
+  </aside>
+  <main id="main">
+    <header class="main-header">
+      <div style="min-width:0;">
+        <h1>我把近期在 GPT/Codex 端精读《工程光学》第 1–2 章...</h1>
+        <div class="sub-meta">会话 ID: 49f340ef-6162-4313-800e-9d8a6d7a6a35 | 轮次: 7 | 更新于: 2026-11-25 17:29</div>
+      </div>
+      <div class="header-actions">
+        <a class="btn" id="downloadMdBtn" href="./49f340ef-6162-4313-800e-9d8a6d7a6a35.md" download="我把近期在_GPTCodex_端精读《工程光学》-49f340ef.md" onclick="return downloadMarkdown(event, './49f340ef-6162-4313-800e-9d8a6d7a6a35.md', '我把近期在_GPTCodex_端精读《工程光学》-49f340ef.md')">⬇️ 下载 Markdown (.md)</a>
+        <button class="btn" id="copyBtn" type="button" onclick="copyCanonicalUrl('./49f340ef-6162-4313-800e-9d8a6d7a6a35.html', 'copyBtn', '已复制直链')">复制对话直链</button>
+      </div>
+    </header>
+    <section class="chat-canvas" aria-label="Conversation Content">
+      <article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>我把近期在 GPT/Codex 端精读《工程光学》第 1–2 章沉淀的笔记同步过来了，文件@[c:\Users\&lt;USER&gt;\Desktop\成像光学\gpt\物理推导笔记.md] 在（其中的gpt文件夹的插图文件夹内），对照的课件基准是 我上传的期末复习文件（当前进度到 PDF 第 83 页第二章小结）。</p>
+<p>希望你结合你这边之前和我讨论光学的上下文与理解，帮我接管并完善这份知识库。不需要机械套模板，你可以按你认为最通透的物理逻辑来思考和修订，重点帮我把关这几个方向：</p>
+<ul>
+<li><strong>跨端上下文融合与直觉补充</strong>：对照你记忆里我容易卡壳的地方（比如正负号直觉、物理图像与几何作图的对应），看看现有笔记的推导链条有哪些地方还可以讲得更透彻，或者把我们之前聊过的有效理解方式融合进来。</li>
+<li><strong>对照课件的查漏与一致性审视</strong>：我初步梳理时怀疑第 1–2 章可能还遗漏了一些关键节点（例如 &#167;2.6 透镜光焦度与磨镜者公式、显微镜视角放大率 Γ 的完整推导、含反射面时的两焦距关系、有限距离轴向放大率，以及引用页码似乎全局偏小 1 页）。请你亲自核对一遍课件第 1–84 页，自主判断哪些遗漏对建立完整知识体系和后续实验是核心必需的，并合理补充进去。</li>
+<li><strong>保留既有约定</strong>：全篇继续严格沿用课件的符号规则（右正、顺时针为正，区分实际光线与近轴光线），保持推导闭合、不堆砌繁琐的纯数值算表，也先不要剧透第 3 章及以后的内容。</li>
+</ul>
+<p>你可以先直接检查文件并给出你的审视思路，或者直接在原文件上迭代完善后告诉我改动逻辑。</p>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>@[c:\Users\&lt;USER&gt;\Desktop\知识隔离.md] ，我想把gpt上学习的工程光学内容也让你了解一下，因为我觉得他可能会有漏掉的地方或者解释不清楚的地方同时我也不清楚，所以我希望你来帮助我解决这件事，但是我又不希望这样会污染我们原本的对光学知识的记录，所以我担心可能会两边串起来，然后我让gemini生成了这么一份协议，当然他不是完美的，你应该按照我们的讨论结果进行修改，找出好的方案然后实行。接下去是我交给你的gpt的生成。内容请先读取工作区根目录的 <code>AGENTS.md</code> 确认文件读写隔离规则，然后基于@[c:\Users\&lt;USER&gt;\Desktop\成像光学\gpt\物理推导笔记.md] （第 1–2 章已学内容）和工程光学课件（第 1–84 页）执行本次同步：</p>
+<ul>
+<li><strong>修订与完善 </strong>：结合你这边之前和我讨论光学的上下文，核对第 1–2 章的物理直觉、页码偏移（目前似乎全局偏小 1 页）以及可能遗漏的关键公式（如 &#167;2.6 磨镜者公式、显微镜视角放大率 Γ、含反射面的两焦距关系等），直接在原文件迭代完善。</li>
+<li><strong>更新原有记录本的前置背景</strong>：严格遵守隔离规则，不要在@[c:\Users\&lt;USER&gt;\Desktop\光路\01_光路学习历程.md] @[c:\Users\&lt;USER&gt;\Desktop\光路\02_探讨与理解记录.md] 中写入任何公式推导，仅在它的背景/前置区块用 3–5 句话补充我目前已经掌握的《工程光学》第 1–2 章核心能力（方便后续光路分析直接调用）。</li>
+</ul>
+<p>开始前先简要列出你准备修改的两个文件及其各自改动边界，确认无越权后再落盘。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>按你的要求，<strong>本轮暂不落盘任何文件</strong>。我先逐页实测核对了课件 PDF（第 1–84 页）、<code>物理推导笔记.md</code>、<code>知识隔离.md</code> 以及 <code>光路/</code> 目录下的两份记录本与带教规则。</p>
+<p>动手前发现 <strong>3 个事实偏差</strong> 和 <strong>1 个协议级的致命矛盾</strong>，必须先摊开对齐，否则按原提示词执行反而会造成“改错页码 + 污染记录”。</p>
+<hr>
+<h3>一、先审前提：实测核查出的 4 个关键问题</h3>
+<p><strong>核心矛盾</strong>：原隔离协议把“GPT 写进推导笔记（理论已核对）”直接当成“你已经掌握（后续实验分析直接调用、无需重复推导）”，这恰恰会<strong>绕过你原本的过关机制、污染实验记录本</strong>。</p>
+<ul>
+<li><strong>【实测证伪】页码并未全局偏小 1 页，且第 83–84 页已属第 3 章</strong></li>
+<li>逐页对照 PDF 原图（从 1 计数）：<code>物理推导笔记.md</code> 引用的所有页码（第 10、14–21、24–32、36–37、40–41、44–55、58、63–65、67–74、75–79、80–82 页）与 PDF 实际页码 <strong>100% 精确一致，偏移量为 0</strong>。</li>
+<li>PDF 第 82 页是《第二章 小结》，<strong>第 83–84 页已经进入《第三章 平面与平面系统 &#167;3.1 平面镜成像》</strong>（等大正像、手性翻转）。如果按原提示词“全局 +1”，会把全篇原本正确的页码全部改错。</li>
+<li><strong>【实测】工作区根目录不存在 <code>AGENTS.md</code>，且 <code>光路/</code> 两份文件定位不同</strong></li>
+<li><code>c:\Users\&lt;USER&gt;\Desktop\光路</code> 与 <code>c:\Users\&lt;USER&gt;\Desktop\成像光学</code> 下均无 <code>AGENTS.md</code>（也无 <code>.agent/</code> 目录）；<code>知识隔离.md</code> 只是桌面上的草稿，还留有占位符 <code>&lt;原有记录本路径/文件名.md&gt;</code>。</li>
+<li><code>光路/</code> 下实际有两份分工明确的文件：<code>01_光路学习历程.md</code> 是<strong>按次追加的实操历史档案</strong>（保留每次口述原话与修正表）；<code>02_探讨与理解记录.md</code> 是<strong>动态状态本</strong>（置顶维护 <code>未解问题清单</code> 和 <code>下一步想学的</code>）。原提示词把两者混为一谈，若两份都写背景摘要会造成状态重复。</li>
+<li><strong>【核心设计缺陷】<code>理论推导已归档</code> $\neq$ <code>你已真正掌握</code></strong></li>
+<li>你明确提到“我觉得他可能会有漏掉或解释不清楚的地方，同时我也不清楚”；<code>Optics Grilling Tutor.md</code> 也有硬性规定 <strong>先过关、后写盘（Write-Gate）</strong>；且 <code>02_探讨与理解记录.md</code> 中 <code>#7 高斯成像公式、正弦条件…球差</code> 目前仍是 <code>🔴 未解</code>。</li>
+<li>如果按原协议往 <code>光路/</code> 写入“已掌握《工程光学》第 1–2 章核心能力，后续直接调用无需重复推导”，后续在 <code>光路/</code> 带教时 AI 就会把你未吃透的内容跳过，直接破坏原有记录的真实性。</li>
+<li><strong>【实测】第 1–2 章确实存在几处关键遗漏，以及 3 处课件原页笔误（原笔记尚未标注）</strong></li>
+<li>原笔记已有的推导（单球面符号、阿贝不变量、拉赫不变量、主面、节点、凹透镜作图、正切追迹、远摄/反远距算例）整体严谨度很高，<strong>不需要推倒重写</strong>，但对照 PDF 第 1–82 页有 6 块明显缺口（见下方改动清单）。</li>
+</ul>
+<hr>
+<h3>二、修订后的跨目录隔离方案（对比原协议的 4 点改进）</h3>
+<p>我建议用<strong>“单向只读指针 + 三态过关门禁”</strong>替代原协议的“已掌握声明”：</p>
+<p>| 维度 | 原草稿（<code>知识隔离.md</code>） | 修订方案（建议实行） | 原因 |</p>
+<p>| :--- | :--- | :--- | :--- |</p>
+<p>| <strong>理论 SSOT</strong> | 仅写 <code>gpt/物理推导笔记.md</code> | <strong>保留</strong>，但区分 <code>已核对推导</code> 与 <code>待你复述/抽查点</code> | 避免把 AI 补全的推导误算成你的掌握度 |</p>
+<p>| <strong>历程记录本</strong> | 未区分两份文件，两份都改 | <strong><code>01_光路学习历程.md</code> 设为完全不动</strong> | 它是实验课实操历史流水账，不混入教材进度 |</p>
+<p>| <strong>状态记录本</strong> | 写“已掌握…无需重复推导” | 仅在 <code>02_探讨与理解记录.md</code> 顶部加一个 <strong>3–5 行只读指针区块</strong>，明确标注 <strong><code>已归档待抽查（未过 Write-Gate，不等同已掌握）</code></strong> | 既让后续光路分析知道你读过哪些概念、可直接引用术语定位，又守住“未经你复述不算过关”的铁律 |</p>
+<p>| <strong>协议生效方式</strong> | 散落在桌面且含占位符 | 将定稿协议写入 <code>知识隔离.md</code>，并可选同步为两个工作区根目录的 <code>AGENTS.md</code>（或 <code>.agent/rules/</code>） | 避免每次新开对话都重复粘贴协议 |</p>
+<p><strong>单向指针的新接口格式示例</strong>（仅写入 <code>02_探讨与理解记录.md</code>）：</p>
+<pre><code>## 外部教材同步指针（只读对照，未经本目录拷问不算已掌握）
+- **理论推导源**：`成像光学/gpt/物理推导笔记.md`（所有公式推导、作图与课件勘误仅存此处，本目录禁止粘贴推导）
+- **[2026-11-22] 《工程光学》第 1–2 章（PDF p.1–82）**：状态=`已读并完成公式核验 / 待实操抽查`；覆盖单球面符号与近轴成像、阿贝/拉赫不变量、球面反射与球差、理想系统基点基面（主面/焦点/节点）、牛顿与高斯公式、正切追迹与两光组组合（远摄/反远距/望远/显微）、厚薄透镜磨镜者公式。
+- **调用边界**：后续光路探讨可按需对照上述概念，但涉及 `未解问题清单`（如 `#7` 高斯公式与球差）时，**仍须先提问确认理解，不默认已掌握**。</code></pre>
+<hr>
+<h3>三、本次准备修改的文件及各自改动边界（确认无越权后再落盘）</h3>
+<h4>文件 1：<code>物理推导笔记.md</code></h4>
+<ul>
+<li><strong>改动定位</strong>：仅做<strong>第 1–2 章（PDF 第 1–82 页）的补漏、物理直觉补强与课件勘误补充</strong>；保留现有正确推导与全部正确页码。</li>
+<li><strong>具体改动清单</strong>：</li>
+<li><strong>不改页码、不越界</strong>：保持原 PDF 实际页码（绝不全局 +1）；<strong>不写入第 83–84 页（第 3 章平面镜）内容</strong>，留待第 3 章统一归档。</li>
+<li><strong>第 1 章补缺（对照 p.4–39）</strong>：</li>
+<li>补简明前置：全反射条件与临界角 $\sin I_m = n&#39;/n$（p.7，衔接后续光纤 NA 与棱镜）、完善成像三等价表述及虚实定量判据（p.10–12）、相邻面间隔 $d$“顺光线正、逆光线负”（p.15）。</li>
+<li>补放大率与共轴系统缺口：恒等式 $\alpha\gamma = \beta$（p.27）；单折射/反射面成像特性符号判据及<strong>多面系统反例边界</strong>（p.25、39）；多面高度过渡公式 $h_{i+1} = h_i - d_i u&#39;_i$、组合放大率连乘式与宽光束过渡适用边界（p.32–34）；球面 $\to$ 平面（$r \to \infty$）退化式 $l&#39; = (n&#39;/n)l$（p.36）。</li>
+<li><strong>新增 2 处实测课件笔误</strong>：p.29 反射球面 $\alpha = -\beta^2 &lt; 0$ 旁误写“横向移动时，像移动方向相反”（应为<strong>轴向</strong>移动）；p.33 组合垂轴放大率黄框分母漏写了 $n&#39;_k$ 的撇号。</li>
+<li><strong>第 2 章补缺（对照 p.40–82）</strong>：</li>
+<li>补逻辑入口与焦面通式：共线成像确定性定理（p.42–43，说明为何一对主面 + 一对焦点充分确定系统）；无限远轴外物点像高通式 $y&#39; = f\tan\omega$（p.45）；轴上物点双焦面作图与双光组“同一空间辅助线”原则索引（p.51–53）。</li>
+<li>补 <strong>理想系统有限孔径拉赫公式</strong> $ny\tan U = n&#39;y&#39;\tan U&#39;$ 与 <strong>含 $k$ 个反射面的两焦距一般关系</strong> $\frac{f&#39;}{f} = (-1)^{k+1}\frac{n&#39;}{n}$（p.59）——重点注明此式中 $n, n&#39;$ 必须取<strong>正物理折射率</strong>，避免与单面形式代换 $n&#39;=-n$ 重复计负号，并用单个球面镜 $k=1 \implies f&#39;=f=r/2$ 验算。</li>
+<li>补 <strong>&#167;2.4 有限距离轴向放大率</strong> $\bar{\alpha} = \frac{\Delta x&#39;}{\Delta x} = \frac{n&#39;}{n}\beta_1\beta_2$（p.62，牛顿式不跳步推导）及 $\alpha\gamma = \beta$。</li>
+<li>补 <strong>&#167;2.5 一般介质两光组组合公式与光焦度</strong>（p.56–57、67–70）：$\Delta_i = d_i - f&#39;_i + f_{i+1}$、$f&#39; = -f&#39;_1 f&#39;_2/\Delta$、$f = f_1 f_2/\Delta$、$x&#39;_F, x_F, l_F, l_H$、光焦度 $\Phi = \Phi_1 + \Phi_2 - d\Phi_1\Phi_2$ 与密接薄透镜/无焦分类；并<strong>新增实测课件笔误</strong>：p.79 小结物方主点蓝框 $l_H = f + (-l_F)$ 符号反了（应为 $l_H = l_F - f = f d/f_2$，附 p.72–73 远摄例题数值验算 $-1750 - (-1000) = -750\text{ mm}$），以及 p.72/p.74 正切法分母漏写撇号。</li>
+<li>补 <strong>视角放大率 $\Gamma$ 与显微镜放大率推导</strong>（p.77–78）：辨析角放大率 $\gamma$（孔径角比）与视角放大率 $\Gamma$（观察张角比），给出 $\Gamma = -\frac{\Delta L}{f&#39;_1 f&#39;_2}$（$L=250\text{ mm}$）的完整推导，并明确指出 p.78 课件中 $\beta = \frac{f&#39;_1+\Delta}{-f_1} \approx \frac{\Delta}{-f_1}$ 与牛顿严格式 $\beta = -\Delta/f&#39;_1$ 的差别。</li>
+<li>补 <strong>&#167;2.6 厚/薄透镜磨镜者公式（从双折射面组合不跳步推导）</strong>（p.80–81）：$\Phi = \frac{1}{f&#39;} = (n-1)(\rho_1 - \rho_2) + \frac{(n-1)^2}{n}\rho_1\rho_2 d$，写清符号与近轴前提、薄透镜退化式，并用 p.22 玻璃哑铃（$r_1=+2, r_2=-2, d=20\text{ cm}, n=1.6 \implies \Phi = -0.525\text{ cm}^{-1} &lt; 0$）做直觉反例检验（破除“中间厚必会聚”误区），同时点出与实验色散 $n(\lambda) \to \Phi(\lambda)$ 的衔接。</li>
+<li><strong>同步更新修订记录</strong>，并在文末增设轻量“第 1–2 章待实操抽查清单（供你自己复核薄弱点）”。</li>
+</ul>
+<h4>文件 2：<code>02_探讨与理解记录.md</code>（<strong>不修改</strong> <code>01_光路学习历程.md</code>）</h4>
+<ul>
+<li><strong>改动边界</strong>：</li>
+<li>仅在文档开头（<code>## 未解问题清单</code> 上方或下方）新增上述 <strong>3–5 行纯文字“外部教材同步指针”区块</strong>。</li>
+<li><strong>严禁写入任何公式推导</strong>、<strong>严禁把任何一条 <code>🔴 未解</code> 问题改成 <code>🟢 已解</code></strong>、<strong>严禁改动原有正文与自查清单</strong>。</li>
+</ul>
+<hr>
+<h3>四、落盘前需要你拍板的 2 个边界问题</h3>
+<ul>
+<li><strong>隔离协议的落盘位置</strong>：是否同时更新 <code>知识隔离.md</code> 为修订定稿，并把这份精简版隔离规则同步一份为两个工作区（<code>光路/</code>、<code>成像光学/</code>）各自的 <code>AGENTS.md</code>，让今后新对话（包括 GPT/Codex 或 Antigravity）都能直接读到，不再出现“找 <code>AGENTS.md</code> 找不到”的问题？</li>
+<li><strong>你目前最感模糊的 1–2 个第 1–2 章卡点</strong>：除了上述我按课件查出的 6 块遗漏外，你在跟 GPT 学第 1–2 章时，有没有哪一节（比如符号正负号、主平面/节点位置、厚透镜磨镜者公式，或显微镜筒长 $\Delta$）感觉“好像听懂了但一画图就卡壳”？告诉我后，我在补写 <code>物理推导笔记.md</code> 时会重点把那一节的几何直觉和分步检验写透，并在后续带教中优先抽查。</li>
+</ul>
+<p>确认上述改动边界及这两个问题后，我立刻执行落盘。</p>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>我觉得可以的，将这个知识隔离弄起来方便两边都能同步信息且各自工作还是不错的，。但是你说的补充可能和我有关，因为我是将我的理解直接告诉gpt，他可能就之阅读了课件中相关的部分，并没有全部整理，因为光光整理下来那就只是全部的工程光学笔记了，好吧这个我也不清楚我的想法，因为我不确定这样学习是好还是坏嘛。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><h3>一、先直接回答你的困惑：你这种“带自己理解去碰 GPT”的学法好不好？</h3>
+<p><strong>结论：方向非常对，远胜过把整本《工程光学》抄成“大而全笔记”。</strong></p>
+<ul>
+<li><strong>为什么这样学是好的</strong>：你先看课件、用自己的话讲给 GPT、被指出漏洞再深挖，留下来的每一节都是你真正动过脑子的“卡点沉淀”。如果反过来让 AI 把 82 页全铺开写满，文档只会变成第二本教材，反而给你制造“都在笔记里了＝我懂了”的假安全感。</li>
+<li><strong>它唯一的短板</strong>：<strong>“不知道自己漏了什么（unknown unknowns）”</strong>——有些你碰巧没问到的硬主干（比如磨镜者公式连着后面的色散、含反射面的两焦距关系连着第 3 章棱镜）、以及课件原页隐藏的笔误，会不知不觉滑过去。</li>
+<li><strong>两全其美的解法（本次已按此执行）</strong>：<strong>分层防抄书</strong>。</li>
+<li><strong>高耦合硬缺口 + 课件真笔误</strong>：精炼补全（不跳步、直接附物理反例），堵住后面必踩的坑；</li>
+<li><strong>其余未展开条目</strong>：<strong>绝不铺开抄书</strong>，只在每章末尾放一张 <strong>1 行 1 条的查漏索引表</strong>（页码 + 一句话定位 + 什么时候用到再挖），既不膨胀笔记，又让你一眼看见盲区在哪。</li>
+</ul>
+<hr>
+<h3>二、本次已落盘的文件与边界实测验证</h3>
+<h4>1. 跨目录隔离协议与双工作区规则（3 份）</h4>
+<ul>
+<li><code>知识隔离.md</code>：升级为定稿 v2.0，移除占位符，确立“职责硬隔离 + <code>verified</code> $\neq$ <code>mastered</code> 三态门禁 + 分层防抄书”。</li>
+<li><code>成像光学/AGENTS.md</code> 与 <code>光路/AGENTS.md</code>：已在两个工作区根目录同步建好。之后无论开 Antigravity 还是 GPT/Codex，都能直接按同一套边界干活。</li>
+</ul>
+<h4>2. <code>光路/</code> 实操带教区（严格防污染）</h4>
+<ul>
+<li><code>01_光路学习历程.md</code>：<strong>零改动</strong>（实测文件长度与最后修改时间 <code>2026/11/6</code> 均未变化）。</li>
+<li><code>02_探讨与理解记录.md</code>：仅在 <code>## 未解问题清单</code> 上方新增 <strong>4 行纯文字「外部教材同步指针」</strong>，状态明确标为 <strong><code>已核验推导 / 待实操抽查</code></strong>；<strong>零公式推导</strong>，原有 14 条未解问题（包括 <code>#7</code> 高斯公式与球差）状态全部保持原样，不越权标绿。</li>
+</ul>
+<h4>3. <code>成像光学/</code> 理论推导区（精简补漏、不抄书）</h4>
+<ul>
+<li><code>物理推导笔记.md</code>：</li>
+<li><strong>守住原有正确内容</strong>：保留全部原有 PDF 实际页码（逐页核实无偏移，绝不 +1）；未写入第 83–84 页（第 3 章平面镜），留待第 3 章统一归档。</li>
+<li><strong>精补 4 块高耦合硬主干</strong>：</li>
+<li><code>2.5 节</code>：补入理想系统有限孔径拉赫公式 $ny\tan U=n&#39;y&#39;\tan U&#39;$ 与<strong>含 $k$ 个反射面的两焦距一般关系</strong> $\frac{f&#39;}{f}=(-1)^{k+1}\frac{n&#39;}{n}$（明确 $n,n&#39;$ 须取正物理折射率、勿与形式 $-n$ 重复计号，附单球面镜 $k=1$ 验算）。</li>
+<li><code>2.9 节</code>：补入<strong>一般介质两光组组合公式</strong>（$\Delta=d-f&#39;_1+f_2$、$f&#39;=-f&#39;_1 f&#39;_2/\Delta$、$l_H=fd/f_2$）与<strong>光焦度</strong> $\Phi=\Phi_1+\Phi_2-d\Phi_1\Phi_2$。</li>
+<li><code>2.10 节</code>：区分<strong>角放大率 $\gamma$ 与视角放大率 $\Gamma$</strong>，补齐<strong>显微镜视角放大率</strong> $\Gamma=-\frac{\Delta\cdot L}{f&#39;_1 f&#39;_2}$（并点明第 78 页近似写法与牛顿严格式 $\beta_1=-\Delta/f&#39;_1$ 的差别）。</li>
+<li><code>2.11 节</code>：从双折射面组合不跳步推出<strong>厚/薄透镜磨镜者公式</strong> $\Phi=(n-1)(\rho_1-\rho_2)+\frac{(n-1)^2}{n}\rho_1\rho_2 d$ 与主面坐标，附第 22 页<strong>玻璃哑铃反例验算</strong>（外形“双凸”但总光焦度 $\Phi=-0.525\text{ cm}^{-1}&lt;0$，破除“中间厚必会聚”的直觉）及与色散 $n(\lambda)\to\Phi(\lambda)$ 的衔接。</li>
+<li><strong>新增实测课件勘误 4 处</strong>：第 29 页（$\alpha&lt;0$ 旁误写“横向移动”，应为轴向）、第 33 页（组合 $\beta$ 黄框分母漏 $n&#39;_k$ 撇号）、第 72/74 页（正切法分母漏焦距撇号）、第 79 页（物方主点蓝框 $l_H=f+(-l_F)$ 符号反了，已用远摄例题 $-750\text{ mm}$ 实测验算）。</li>
+<li><strong>章末未展开项一行索引</strong>：<code>第 1 章 5 条</code> + <code>第 2 章 4 条</code>，用到时再深挖，不占篇幅。</li>
+</ul>
+<hr>
+<h3>三、接下来怎么用这套双轨最省心（附 2 个小抽查切口）</h3>
+<p>以后你继续按原本节奏跟 GPT 学第 3 章（平面镜/平行平板/棱镜）时，只管保持“自己讲理解 → 碰撞纠偏”；整章读完后，再丢给我做一次<strong>防抄书核验 + 单向同步 1 行指针</strong>即可。</p>
+<p>如果你想顺手检验一下第 1–2 章里最容易在实验里翻车的 2 个边界点（不需要现在全答，挑一个顺手的用两三句话说说直觉就行）：</p>
+<ul>
+<li><strong>反直觉检验</strong>：同样是玻璃（$n=1.6$）、前后都是凸面（$r_1=+2\text{ cm}, r_2=-2\text{ cm}$），为什么普通双凸透镜会聚光线，而第 22 页长度 $d=20\text{ cm}$ 的玻璃哑铃总光焦度反而成了负值（发散）？光线在哑铃内部究竟经历了什么？</li>
+<li><strong>概念分界</strong>：显微镜物镜的垂轴放大率 $\beta_1=-\Delta/f&#39;_1$ 和整台显微镜的视角放大率 $\Gamma=-\frac{\Delta\cdot 250}{f&#39;_1 f&#39;_2}$ 里都有光学筒长 $\Delta$——如果实验台上的目镜焦距 $f&#39;_2$ 不变，只把镜筒拉长（增大 $\Delta$），除了总倍率变大，你觉得对<strong>物镜前的样品摆放位置</strong>和<strong>视场边缘亮度</strong>会分别产生什么连锁影响？</li>
+</ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>我感觉gpt的解释对我来说作用不是很大，我特别觉得他的回答很奇怪，就是只是在解释现象，根本没有深入到原理。然后我觉得这个工程光学复习件有点不想学习了，太慢了有点，关于他讲的为什么第二组的 \(\tan U_i&#39;\) 要多加一项，这个我依旧理解不了，我希望你能制作成图像什么的方便我进行计算理解。我大概看完了全部，第三章中前面的反射镜偏转角我理解了，其实和我们的两片反射镜就是一样的。不过他的双平面镜成像这个还挺奇特的，我觉得这也是难怪要使用两个平面镜，然后一般角度都为平行的理由。到了平行平板我学习了一下他的基本原理，后面觉得很枯燥不一定用得上我没有心思学这个了。尤其是棱镜这块，其实有点绕绕的。然后就到了第四章，我仔细看了下孔径光阑，视场光阑，渐晕光阑。我觉得主要区别是不是视场光阑是对轴上物点，渐晕光阑是超过后对轴外的点成像不完善，视场光阑是超过后轴外的点不成像，这样简单区分。出瞳是不是将孔径光阑当成物点，用前面的成像系统进行成像所得出的像。光瞳衔接原则我也懂了，其实就是目镜成像后的出瞳正好在瞳孔的入瞳。渐晕系数我不太理解是什么东西。根据照相机的组成我解释一下，A孔径光阑，通过改变宽度，调节入射光的宽度。B通过调节宽度，调节能接收到的像的宽度，超过的就不显示了。然后是物方远心光路，这个我不太了解，看了她的介绍也只是懂它是什么东西，具体的还不清楚。加长光路就是增加场镜，这个我懂。这样我又想到了中继透镜，我有点忘了，我只记得他好像可以缩小孔径角把，将像成的更远。接下去是景深，这里面太多的公式，然后就没心思了解了，不知道要不要懂。接下去的第六章更是概念太多了，我没什么想法去了解，这个重要吗，重要的话只能去深入理解了。第七章我觉得只是将目镜后的眼睛说出来，其实没有什么新东西。不过我在看的途中还是找到了有用的东西，比如艾里斑，不过我不知道这个东西是怎么来的。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><h3>一、先给你松绑：完全可以停掉逐页啃这份复习件了</h3>
+<p>你觉得枯燥、学不动是<strong>非常正常的</strong>——这份 PPT 是面向本科期末应试的，塞了大量棱镜展开手性、景深长公式、人眼视度换算，跟你在同济搭实验光路、测微腔/光谱的真实需求重合度很低。<strong>后面这些章节不需要逐页啃，按实验室实用度直接断舍离：</strong></p>
+<p>| 章节（课件实测） | 优先级 | 实验室视角的正确打开方式 |</p>
+<p>| :--- | :--- | :--- |</p>
+<p>| <strong>第 3 章：平行平板、各类棱镜展开</strong> | 🟢 <strong>直接跳过/挂起</strong> | 只留 1 个直觉：<strong>双反射镜偏转角 $\theta=2\beta$</strong>、<strong>插入玻璃平板会让焦点往后推 $\Delta l&#39;=d(1-1/n)$</strong>。其余棱镜手性/展开结构常数用不到时绝不学 |</p>
+<p>| <strong>第 4 章：光阑/光瞳/场镜/远心</strong> | 🔴 <strong>核心必懂（但不用背题）</strong> | 搭显微/光谱收集光路每天都在跟入瞳、出瞳、渐晕和场镜打交道，<strong>只吃透物理图像即可</strong> |</p>
+<p>| <strong>第 4.5 节：景深公式</strong> | 🟢 <strong>公式直接跳过</strong> | 只记 1 条定性铁律：<strong>孔径角 / NA 越小，景深越大</strong>（和分辨率天生互斥），长公式完全不用背 |</p>
+<p>| <strong>第 5 章：光度学与色度学</strong>（注：课件跳过第 6 章，概念多的是第 5 章） | 🟡 <strong>砍掉 90%，只留 2 条硬规律</strong> | 视见函数、明暗视觉、坎德拉换算全跳过；只留 <strong>辐照度 $E$ vs 辐亮度 $L$ 守恒</strong>、<strong>像面照度 $\propto \text{NA}^2\cos^4\omega&#39;$</strong> |</p>
+<p>| <strong>第 7 章：眼睛/目镜/爱里斑</strong> | 🟡 <strong>跳过眼睛，抓住爱里斑</strong> | 人眼矫正和老花眼直接跳过；把<strong>爱里斑（圆孔衍射）</strong>连回你之前学的物镜 NA 极限即可 |</p>
+<hr>
+<h3>二、彻底打通你卡住的原理：为什么第二组 $\tan U&#39;_2 = \tan U_2 + \dfrac{h_2}{f&#39;_2}$ 要“多加一项”？</h3>
+<p>别背公式，直接看<strong>透镜弯曲光线的物理本质</strong>：</p>
+<ul>
+<li><strong>把一片薄透镜切成无数块“小棱镜”</strong>（看下图镜片落点处画的小三角形）：</li>
+<li>透镜中心上下平行，几乎不掰弯光线；<strong>离光轴越远（高度 $h$ 越大），镜片前后两面夹角越大，等效微棱镜的顶角 $A(h)\propto h$</strong>。</li>
+<li>物理上，小顶角棱镜对光线的偏折角 $\delta\approx(n-1)A\propto h$，<strong>只取决于你打在镜片的什么高度 $h$，跟光线原本以什么角度斜着飞进来无关</strong>（从波前看，就是透镜给波前叠加了一层二次相位 $\phi=-kh^2/(2f&#39;)$，把波前斜率固定改变量 $-h/f&#39;$）。这个比例系数恰好就是光焦度 $1/f&#39;$。</li>
+<li><strong>所以每一片透镜干的事永远只有一件</strong>：</li>
+<li>在你<strong>原本飞过来的斜率</strong>基础上，按你打中它的<strong>落点高度 $h_i$</strong>，顺手再<strong>“踢一脚”</strong> $\dfrac{h_i}{f&#39;_i}$：</li>
+</ul>
+<p>     $$\tan U&#39;_i = \underbrace{\tan U_i}_{\text{飞过来的惯性斜率}} + \underbrace{\frac{h_i}{f&#39;_i}}_{\text{第 } i \text{ 片在高度 } h_i \text{ 额外踢的一脚}}$$</p>
+<ul>
+<li><strong>为什么看起来第二组“多加了一项”？</strong> 其实第一组公式<strong>一模一样</strong>，只是因为第一组入射的是水平平行光（$\tan U_1=0$），把第一项“惯性斜率”藏掉了！光线穿过空气间隔 $d$ 时按直线传播（惯性斜率保持 $\tan U_2=\tan U&#39;_1$），到达第二片时高度落到了 $h_2$，第二片就在这个惯性斜率上叠加它自己踢的那一脚 $+h_2/f&#39;_2$。</li>
+<li><strong>为什么是加号不是减号？</strong> 因为课件规定<strong>顺时针转角为正</strong>（即光线向下走时 $U&gt;0$，直角坐标斜率 $dy/dz=-\tan U$）。正透镜（$f&#39;&gt;0$）打在上半区（$h&gt;0$）把光线往下压，顺时针角度增大，所以是 $+h/f&#39;$；对照常用 ABCD 矩阵 $\theta&#39;=\theta-h/f&#39;$（其中 $\theta=dy/dz=-\tan U$），两边乘 $-1$ 就严丝合缝变回 $\tan U&#39;=\tan U+h/f&#39;$。</li>
+</ul>
+<p>下面这个交互图把第二片处的<strong>黄色虚线（没第二片时的惯性路径）</strong>、<strong>绿色扇形（第二片踢的一脚 $h_2/f&#39;_2$）</strong>和<strong>红色实线（相加后的最终光线）</strong>拆开了，你可以直接点预设或拖滑块算一遍：</p>
+<p>&lt;agent-embed src=&quot;file:///C:/Users/&lt;USER&gt;/.gemini/antigravity/brain/49f340ef-6162-4313-800e-9d8a6d7a6a35/tangent_ray_trace.html&quot;&gt;&lt;/agent-embed&gt;</p>
+<p><strong>推荐顺手试 2 个 10 秒动作，原理一下就通</strong>：</p>
+<ul>
+<li>点 <strong>「无焦望远」</strong>：看光线穿轴打到第 2 片<strong>下方</strong>（$h_2=-20$），绿色那一脚自动变成 $-0.200$（往上掰），刚好把黄色惯性斜率 $+0.200$ 抵消成 $0$（平行出射）。</li>
+<li>在 <strong>「远摄 (p.72)」</strong> 下拖动 <strong><code>入射高度 h₁</code></strong>：你会看到 $\tan U&#39;_1$、$h_2$、$\tan U&#39;_2$ 全都在变，但底下的<strong>总焦距 $f&#39;=1000\text{ mm}$ 纹丝不动</strong>——这就是为什么课件里敢随便“设 $h_1=100\text{ mm}$”来算系统焦距。</li>
+</ul>
+<hr>
+<h3>三、给你刚口述的第 3–4 章理解做一次纠偏（✅/⚠️/❌）</h3>
+<p>| 你的原话理解 | 判定 | 一针见血纠偏 |</p>
+<p>| :--- | :---: | :--- |</p>
+<p>| 双平面镜偏转角很奇特，难怪实验用两个反射镜且一般平行 | ⚠️ | <strong>方向抓对了一半，因果要分开</strong>：两镜夹角 $\beta$ 时总偏转角 $\theta=2\beta$（顺带抓个课件虫：PDF 第 87 页黄框把 $\theta=2\beta$ 印反成 $\beta=2\theta$ 了），平行镜（$\beta=0$）确实只平移不改方向，方便沿光学平台孔距布局；但实验室必须用<strong>两个镜子</strong>的根本原因是光束有 <strong>4 个自由度</strong>，一片镜子只有 2 个旋钮（哪怕两镜不成平行、折 $90^\circ$ 也照样能准直）。 |</p>
+<p>| 视场光阑对轴上物点；渐晕光阑超过后轴外点成像不完善；视场光阑超过后轴外点不成像 | ❌ | ① <strong>笔误/说反</strong>：限制<strong>轴上物点</strong>进光宽度和孔径角的是<strong>孔径光阑</strong>，不是视场光阑。② <strong>概念偏差</strong>：<strong>渐晕光阑</strong>不是让轴外点变模糊（成像不完善），而是镜框挡掉轴外点<strong>一部分</strong>光，让画面边缘<strong>变暗</strong>；<strong>视场光阑</strong>才是硬切边界，超过范围的轴外点<strong>彻底看不到</strong>。 |</p>
+<p>| 出瞳是将孔径光阑当成物，经<strong>前面</strong>系统所成的像 | ❌ | <strong>正好说反了！</strong> 孔径光阑经<strong>前面</strong>系统成像 = <strong>入瞳</strong>（从物方往里看看到的入口）；经<strong>后面</strong>系统成像 = <strong>出瞳</strong>（从像方/人眼往里看看到的出口）。 |</p>
+<p>| 光瞳衔接 = 目镜的出瞳正好重合人眼的入瞳；相机 A 是孔径光阑调进光宽，B 是视场光阑决成像范围 | ✅ | <strong>完全正确！</strong> 这两块直觉非常准。 |</p>
+<p>| 加长光路就是加场镜；中继透镜好像可以缩小孔径角、把像成得更远 | ❌ | <strong>把场镜和中继透镜的分工记串了！</strong>&lt;br&gt;• <strong>中继透镜（转像镜，如 $2f\text{-}2f$ 或 $4f$）</strong>才是负责<strong>加长光路、把实像往远处搬</strong>的搬运工。等大搬运（$\beta=-1$）时按拉赫不变量 $nyu=n&#39;y&#39;u&#39;$，孔径角<strong>并不缩小</strong>；只有放大像（$|\beta|&gt;1$）时才顺带缩小孔径角。&lt;br&gt;• <strong>场镜</strong>不负责加长光路！把光路拉长后，边缘物点的主光线飞太高，后面中继镜得做得超大才接得住；把<strong>场镜紧贴放在中间实像面上</strong>，因为光线已经在像点交汇，所以它<strong>不改像的位置和大小</strong>，专门把飞偏的主光线<strong>压低折回后面镜片中心</strong>（实现光瞳衔接、省口径）。 |</p>
+<hr>
+<h3>四、你顺口问的 4 个概念：各自 1 句底层原理（绝不展开背公式）</h3>
+<ul>
+<li><strong>渐晕系数 $K_\omega$</strong>：对离轴角度 $\omega$ 的那个物点，没被镜框拦住、实际能通过的光束宽度 $\div$ 轴上满口径的宽度（$100\%$ 全亮，$50\%$ 边缘半暗，$0\%$ 就是彻底看不见的视野边界）。</li>
+<li><strong>物方远心光路</strong>：把孔径光阑特意卡在物镜<strong>后焦面</strong>上 $\Rightarrow$ 按焦点性质，所有穿过光阑中心的主光线在物方全部<strong>平行于光轴</strong> $\Rightarrow$ 样品哪怕前后稍微失焦（像点变糊成弥散斑），各弥散斑的<strong>中心间距纹丝不动</strong>，所以工业测长不怕调焦误差。</li>
+<li><strong>第 5 章光度学（实验室只记 2 条）</strong>：</li>
+<li><strong>辐亮度 $L$ 守恒</strong>：单位面积、单位立体角的功率。任何无源透镜组合都<strong>不可能把像聚得比光源本身更亮</strong>（放大光斑降功率密度，缩小光斑必增大发散立体角）；激光之所以极度伤眼，就是因为发散立体角极小、$L$ 爆表。</li>
+<li><strong>像面照度 $E&#39; \propto L\cdot \text{NA}^2\cdot \cos^4\omega&#39;$</strong>：想提高探测器信号强度就提物镜 NA；视场角 $\omega&#39;$ 一大，边缘亮度按 $\cos^4$ 掉得非常凶。</li>
+<li><strong>爱里斑是怎么来的</strong>：几何光学假装波长 $\lambda=0$、以为理想透镜能把点光源聚成一个零尺寸几何点；但真实物镜口径是个<strong>有限大小的圆孔</strong>，对光波做了空间截断。波动光学里，远场/焦面光场是入瞳孔径的<strong>二维傅里叶变换</strong>——圆孔被傅里叶变换后，就变成中心最亮的圆斑加上一圈圈同心明暗环（第一暗环半径 $r=0.61\lambda/\text{NA}$）。这和你 <code>02_探讨与理解记录.md</code> 里记过的“欠填充让焦斑变大”是<strong>完全同一套物理机制</strong>！</li>
+</ul>
+<hr>
+<p>*(注：本轮遵守 Write-Gate，未改写你的任何本地学习笔记。)*</p>
+<p>你先不用急着往下刷教材。等你把上面那个滑块玩两下，如果愿意花 1 分钟做个轻确认（二选一就行，累了也可以直接说挂起）：</p>
+<ul>
+<li>玩完滑块后，用你自己的话解释一句：为什么正切法里<strong>把第 2 片换成凹透镜（$f&#39;_2&lt;0$）且光线打在轴上方（$h_2&gt;0$）时</strong>，光线会被往上掰？如果它此时刚好打在轴下方（$h_2&lt;0$）呢？</li>
+<li>假设你在实验台要给显微镜加一段 $40\text{ cm}$ 的延长光路，<strong>中继透镜</strong>和<strong>场镜</strong>分别该插在什么位置、各自干什么活？</li>
+</ul>
+</div></article>
+
+    </section>
+  </main>
+  <script>
+    (function() {
+      var src = '../sidebar.js';
+      if (window.location.protocol !== 'file:') {
+        src += (src.indexOf('?') >= 0 ? '&' : '?') + '_t=' + Date.now();
+      }
+      var s = document.createElement('script');
+      s.src = src;
+      document.body.appendChild(s);
+    })();
+  </script>
+  <script>
+    function triggerBlobDownload(blob, filename) {
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function() { URL.revokeObjectURL(url); }, 1500);
+    }
+    function downloadMarkdown(e, relPath, filename) {
+      if (window.location.protocol === 'file:' || !window.fetch || !window.Blob) {
+        return true;
+      }
+      if (e) e.preventDefault();
+      var btn = document.getElementById('downloadMdBtn');
+      var orig = btn ? (btn.getAttribute('data-orig') || btn.innerText) : '';
+      if (btn) {
+        btn.setAttribute('data-orig', orig);
+        btn.innerText = '正在下载...';
+      }
+      var targetUrl = relPath;
+      try { targetUrl = new URL(relPath, window.location.href).href; } catch (err) {}
+      fetch(targetUrl, { cache: 'no-cache' })
+        .then(function(resp) {
+          if (!resp.ok) throw new Error('HTTP ' + resp.status);
+          return resp.text();
+        })
+        .then(function(text) {
+          var blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
+          triggerBlobDownload(blob, filename);
+          if (btn) {
+            btn.innerText = '已下载 .md';
+            setTimeout(function() { btn.innerText = orig; }, 2000);
+          }
+        })
+        .catch(function() {
+          if (btn) btn.innerText = orig;
+          var a = document.createElement('a');
+          a.href = targetUrl;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        });
+      return false;
+    }
+    function fallbackCopy(text, onDone) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try {
+        if (document.execCommand('copy')) { onDone(); }
+      } catch (e) {}
+      document.body.removeChild(ta);
+    }
+    function copyCanonicalUrl(relPath, btnId, doneLabel) {
+      var btn = document.getElementById(btnId);
+      if (!btn) return;
+      var orig = btn.getAttribute('data-orig') || btn.innerText;
+      btn.setAttribute('data-orig', orig);
+      var targetUrl = window.location.href;
+      try {
+        targetUrl = new URL(relPath, window.location.href).href;
+      } catch (e) {}
+      var onDone = function() {
+        btn.innerText = doneLabel;
+        setTimeout(function() { btn.innerText = orig; }, 2000);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(targetUrl).then(onDone, function() { fallbackCopy(targetUrl, onDone); });
+      } else {
+        fallbackCopy(targetUrl, onDone);
+      }
+    }
+  </script>
+</body>
+</html>

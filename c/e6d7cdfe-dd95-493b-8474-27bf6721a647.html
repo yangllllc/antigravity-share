@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>我刚刚新建了一个项目，是根据zemax文件夹建的，但是我不知道按... - Antigravity Share</title>
+  <style>
+    :root {
+      --bg-main: #131314;
+      --bg-sidebar: #1e1f20;
+      --bg-active: #2b2c2f;
+      --bg-bubble-user: #2b2c2f;
+      --bg-bubble-ai: #1e1f20;
+      --text-main: #e3e3e3;
+      --text-sub: #c4c7c5;
+      --accent: #a8c7fa;
+      --border: #3c4043;
+      --code-bg: #0d0e11;
+      --badge-green: #34d399;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100vh;
+    }
+    #sidebar {
+      width: 310px;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+    .sidebar-header {
+      padding: 18px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-header h2 {
+      font-size: 16px;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sidebar-header a.home-link {
+      text-decoration: none;
+      color: inherit;
+    }
+    .sync-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--badge-green);
+      background: rgba(52, 211, 153, 0.1);
+      padding: 3px 8px;
+      border-radius: 12px;
+      margin-top: 8px;
+    }
+    .conv-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .conv-item {
+      display: block;
+      text-decoration: none;
+      padding: 11px 13px;
+      border-radius: 10px;
+      transition: background 0.15s;
+      border: 1px solid transparent;
+      color: inherit;
+    }
+    .conv-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .conv-item.active {
+      background: var(--bg-active);
+      border-color: var(--border);
+    }
+    .conv-title {
+      font-size: 14px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #fff;
+    }
+    .conv-meta {
+      font-size: 11px;
+      color: var(--text-sub);
+      margin-top: 4px;
+      display: flex;
+      justify-content: space-between;
+    }
+    #main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .main-header {
+      padding: 16px 28px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-sidebar);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .main-header h1 {
+      font-size: 17px;
+      color: #fff;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .sub-meta {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-top: 3px;
+    }
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .btn {
+      background: var(--bg-active);
+      color: var(--accent);
+      border: 1px solid var(--border);
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .btn:hover { background: #3c4043; }
+    .chat-canvas {
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 28px 24px 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .turn {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .turn.user { align-items: flex-end; }
+    .turn.assistant { align-items: flex-start; }
+    .role-tag {
+      font-size: 12px;
+      color: var(--text-sub);
+      font-weight: 600;
+      padding: 0 4px;
+    }
+    .bubble {
+      max-width: 88%;
+      padding: 16px 20px;
+      border-radius: 18px;
+      line-height: 1.7;
+      font-size: 15px;
+      word-break: break-word;
+    }
+    .turn.user .bubble {
+      background: var(--bg-bubble-user);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .turn.assistant .bubble {
+      background: var(--bg-bubble-ai);
+      color: var(--text-main);
+      border-bottom-left-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .bubble p { margin: 0 0 10px 0; }
+    .bubble p:last-child { margin-bottom: 0; }
+    .bubble h1, .bubble h2, .bubble h3, .bubble h4 {
+      margin: 14px 0 8px;
+      color: var(--accent);
+      line-height: 1.4;
+    }
+    .bubble h1 { font-size: 19px; }
+    .bubble h2 { font-size: 17px; }
+    .bubble h3 { font-size: 15.5px; }
+    .bubble ul, .bubble ol { margin: 8px 0 10px 22px; }
+    .bubble li { margin: 4px 0; }
+    .bubble blockquote {
+      border-left: 3px solid var(--accent);
+      padding-left: 12px;
+      margin: 8px 0;
+      color: var(--text-sub);
+    }
+    .bubble code {
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 5px;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 13.5px;
+    }
+    .bubble pre {
+      background: var(--code-bg);
+      padding: 14px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 10px 0;
+      border: 1px solid #2b2d31;
+    }
+    .bubble pre code {
+      background: transparent;
+      padding: 0;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .bubble a { color: var(--accent); }
+    .bubble hr {
+      border: 0;
+      border-top: 1px solid var(--border);
+      margin: 14px 0;
+    }
+    @media (max-width: 820px) {
+      body { flex-direction: column; }
+      #sidebar { width: 100%; height: auto; position: static; max-height: 280px; }
+      .main-header { flex-wrap: wrap; padding: 14px 16px; }
+      .header-actions { flex-wrap: wrap; }
+      .bubble { max-width: 96%; }
+    }
+  </style>
+</head>
+<body data-conv-id="e6d7cdfe-dd95-493b-8474-27bf6721a647" data-base-prefix="./" data-turn-count="6" data-update-time="2026-11-23 19:20" data-is-index="0">
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
+      <div class="sync-badge" id="syncBadge">自动同步加载中...</div>
+    </div>
+    <nav class="conv-list" id="convList" aria-label="Conversations">
+      <noscript><div style="padding:12px;color:#c4c7c5;font-size:12px;">请启用 JavaScript 查看全部历史对话列表，或直接访问对应对话链接。</div></noscript>
+    </nav>
+  </aside>
+  <main id="main">
+    <header class="main-header">
+      <div style="min-width:0;">
+        <h1>我刚刚新建了一个项目，是根据zemax文件夹建的，但是我不知道按...</h1>
+        <div class="sub-meta">会话 ID: e6d7cdfe-dd95-493b-8474-27bf6721a647 | 轮次: 6 | 更新于: 2026-11-23 19:20</div>
+      </div>
+      <div class="header-actions">
+        <a class="btn" id="downloadMdBtn" href="./e6d7cdfe-dd95-493b-8474-27bf6721a647.md" download="我刚刚新建了一个项目，是根据zemax文件夹建的-e6d7cdfe.md" onclick="return downloadMarkdown(event, './e6d7cdfe-dd95-493b-8474-27bf6721a647.md', '我刚刚新建了一个项目，是根据zemax文件夹建的-e6d7cdfe.md')">⬇️ 下载 Markdown (.md)</a>
+        <button class="btn" id="copyBtn" type="button" onclick="copyCanonicalUrl('./e6d7cdfe-dd95-493b-8474-27bf6721a647.html', 'copyBtn', '已复制直链')">复制对话直链</button>
+      </div>
+    </header>
+    <section class="chat-canvas" aria-label="Conversation Content">
+      <article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>我刚刚新建了一个项目，是根据zemax文件夹建的，但是我不知道按了什么按钮导致了他没有在界面上显示，你来帮我恢复一下，然后我发现antigravity的界面缺少了归档后的选项，就是你选择了归档但是也不能删除对话，也不能主动恢复对话，或者说很麻烦需要根据英文再去寻找，一点都不方便，我希望你能帮我创造一个插件，能够实现查阅antigravity的归档对话和项目，然后对他进行操作，就像chatgpt一样的自主选择删除或恢复</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已为你排查 <code>Zemax</code> 项目的实际状态、完成持久化显示顺序恢复，并创建、上线且验证通过了中文归档管理插件 <strong>「归档与项目管理器」</strong>。</p>
+<hr>
+<h3>一、为什么新建的 <code>Zemax</code> 项目没有在界面显示 &amp; 已完成的恢复</h3>
+<h4>1. 核查结果（项目本身未丢失、未归档）</h4>
+<ul>
+<li>项目文件 <code>294f1ad0-1416-4696-9f8f-7882f7296f91.json</code> 完整存在，指向 <code>C:\Users\&lt;USER&gt;\Desktop\Zemax</code>，<code>isWorkspaceOnly: false</code> 且没有 <code>archived: true</code>；实时查询 Antigravity Language Server（<code>ListProjects</code> / <code>ReadProjects</code>）也均已加载 <code>Zemax</code>。</li>
+<li>之所以创建完切走后界面上看不到，原因如下：</li>
+<li><code>Zemax</code> 文件夹当前是空目录（<code>0</code> 项）且尚未创建任何对话（<code>0</code> 条记录）；</li>
+<li>日志中在 <code>10:28:42</code>、<code>10:29:35</code> 出现过设置页请求（<code>wsl:get-state failed</code>，来自 Settings 页），且 <code>app_storage.json</code> 中 <code>projectsOrder</code> 此前只记录了 <code>光路</code>（未包含 <code>Zemax</code>），<code>new-convo-last-selected-project</code> 被切换到了 <code>outside-of-project</code>（即当前这条外部独立对话）；</li>
+<li>Antigravity 左侧栏的展开/收起状态（快捷键 <code>Ctrl+B</code> 或左上角 <code>Toggle Sidebar</code> 图标，内部状态 <code>sideBar.isOpen</code>）<strong>不持久化</strong>在配置文件中；此外，若误点左侧栏顶部的漏斗筛选菜单（<code>Display Options</code>）把 <code>Group By</code> 设为非 <code>Project</code>、勾选了 <code>Last 7 days</code> / <code>Archived Only</code>，或误点击收起了 <code>Projects</code> 分组标题，都会让 <strong>0 对话的空项目 <code>Zemax</code></strong> 直接隐藏。</li>
+</ul>
+<h4>2. 已执行的持久化修复与当前窗口确认步骤</h4>
+<ul>
+<li>已原子更新 <code>app_storage.json</code>：</li>
+<li>将 <code>Zemax</code>（<code>294f1ad0-1416-4696-9f8f-7882f7296f91</code>）置于 <code>projectsOrder</code> 首位（保留 <code>光路</code> 在其后）；</li>
+<li>确认 <code>projectsArchivedOnlyView</code> 为 <code>&quot;false&quot;</code>、<code>sidebar_collapsed_section_headers</code> 为 <code>&quot;[]&quot;</code>、<code>sidebar_collapsed_sections</code> 不包含 <code>Zemax</code>；</li>
+<li>将 <code>new-convo-last-selected-project</code> 设回 <code>Zemax</code>。</li>
+<li><strong>如果当前已打开的窗口左侧仍未显示</strong>：</li>
+<li>按 <strong><code>Ctrl+B</code></strong>（或点击界面左上角的侧边栏折叠/展开按钮）确认左侧栏已展开；</li>
+<li>点击左侧栏 <strong><code>Projects</code></strong> 右侧的 <strong>漏斗图标（<code>Display Options</code>）</strong>：确认 <code>Group By</code> 为 <strong><code>Project</code></strong>，且未勾选 <strong><code>Archived Only</code></strong> 与 <strong><code>Last 7 days</code></strong>；</li>
+<li>也可以直接点击下方新建的插件面板，在「<strong>项目管理与恢复</strong>」页签中一键为 <code>Zemax</code> 发起首条对话（一旦有对话，它会自动出现在所有时间/状态筛选中）或刷新重载窗口。</li>
+</ul>
+<hr>
+<h3>二、新建插件：归档与项目管理器（<code>antigravity-archive-manager</code>）</h3>
+<p>已在 <code>antigravity-archive-manager</code> 下建成独立插件与原生辅助面板，<strong>无需修改任何内置程序，且已热加载运行</strong>：</p>
+<ul>
+<li>立即打开操作面板：[打开归档与项目管理面板](sidecar://antigravity-archive-manager/archive_manager/)</li>
+<li>查看或管理插件启用状态：[归档与项目管理器](customization://antigravity-archive-manager)</li>
+</ul>
+<h4>1. 核心功能（仿 ChatGPT + 本地安全增强）</h4>
+<ul>
+<li><strong>已归档对话 / 全部对话</strong>：</li>
+<li>统一中文列表展示标题、所属项目名称、对话步数、磁盘体积、最近活跃时间（北京时间）与归档状态；</li>
+<li>支持关键词搜索、按项目筛选、<strong>多选批量操作</strong>，单条或批量 <strong>「恢复对话（取消归档）」「归档」「打开对话」「删除」</strong>；</li>
+<li>优先调用 Antigravity RPC（<code>UpdateConversationAnnotations</code> / <code>DeleteCascadeTrajectory</code>）实时同步，若被权限策略拒绝则自动回退到本地 <code>.pbtxt</code> 与 <code>conversation_summaries.db</code> 原子同步。</li>
+<li><strong>项目管理与恢复（含 <code>Zemax</code> 专项诊断）</strong>：</li>
+<li>自动检测 <code>projects/*.json</code> 与 <code>app_storage.json</code>，诊断 <code>Archived Only</code>、<code>Last 7 days</code>、<code>Group By</code>、<code>main-section-header</code> 折叠及 <code>projectsOrder</code> 缺失问题；</li>
+<li>支持 <strong>「一键修复左侧栏异常设置」</strong>、<strong>「在此发起对话」</strong>（为类似 <code>Zemax</code> 的空项目直接发起首条对话）、以及项目 <strong>归档 / 取消归档 / 删除</strong>（支持保护内置 Sidecar 专属项目，避免误删 <code>swarm/swarm_board</code> 等内置目录）。</li>
+<li><strong>插件回收站与孤立索引清理</strong>：</li>
+<li>默认删除会先把 <code>.pbtxt</code>、对话 <code>.db/.db-wal/.db-shm</code>、<code>brain/&lt;id&gt;</code> 以及 SQLite 索引行快照完整备份到插件 <code>.trash/</code> 目录，支持随时 <strong>一键还原</strong>（需彻底清除时可在确认框勾选「彻底粉碎删除」）；</li>
+<li>自动识别并可清理无对应对话数据库的孤立 <code>.pbtxt</code> 索引残留（已检测到当前共有 <code>4</code> 条孤立 <code>.pbtxt</code>）。</li>
+</ul>
+<h4>2. 主要文件清单</h4>
+<ul>
+<li>插件清单：<code>plugin.json</code></li>
+<li>插件图标：<code>logo.svg</code></li>
+<li>面板服务配置：<code>sidecar.json</code></li>
+<li>核心存储与安全引擎：<code>store.mjs</code></li>
+<li>Sidecar Web 服务入口：<code>main.mjs</code></li>
+<li>中文前端界面：<code>index.html</code>、<code>styles.css</code>、<code>app.js</code></li>
+<li>命令行辅助与配套技能：<code>cli.mjs</code>、<code>SKILL.md</code></li>
+<li>单元测试脚本：<code>test_store.mjs</code></li>
+</ul>
+<hr>
+<h3>三、实测验证结果</h3>
+<ul>
+<li><strong>隔离单元测试</strong>（通过 Antigravity 内置 Node 运行 <code>test_store.mjs</code>）：覆盖 <code>.pbtxt</code> 编解码、对话归档/取消归档、删除进回收站与无损还原（含 SQLite <code>raw_summary</code> BLOB 校验）、项目归档恢复、侧栏诊断修复及孤立索引清理，全部通过（<code>ALL STORE TESTS PASSED</code>）。</li>
+<li><strong>CLI 只读扫描真实数据</strong>（<code>cli.mjs status</code>）：正确识别当前 <code>11</code> 条对话（<code>0</code> 已归档，<code>11</code> 活跃）、<code>2</code> 个用户项目（<code>Zemax</code> <code>0</code> 条对话、<code>光路</code> <code>2</code> 条对话，均在 <code>projectsOrder</code> 中且 <code>isHealthy: true</code>）、<code>4</code> 条孤立 <code>.pbtxt</code> 残留。</li>
+<li><strong>Sidecar Web 路由与鉴权冒烟测试</strong>：验证 <code>/</code>、<code>/styles.css</code>、<code>/app.js</code>、<code>/preload.js</code>、<code>/api/state</code> 均返回 HTTP <code>200</code>，无 Token 的 <code>POST</code> 请求被拒绝（<code>401</code>），非法 UUID 参数返回 JSON <code>400</code>。</li>
+<li><strong>Antigravity 实时插件与服务状态</strong>（<code>GetAllPlugins</code> &amp; <code>GetSidecars</code>）：<code>antigravity-archive-manager</code> 已无报错加载（<code>loadError: null</code>、<code>disabled: null</code>），内置技能 <code>archive-manager</code> 已注册，<code>antigravity-archive-manager/archive_manager</code> 状态为 <strong><code>SIDECAR_STATUS_RUNNING</code></strong>（无错误）。</li>
+</ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>Zemax项目我已经看到了，不过你制作的插件的使用流程我不太懂，我观察了一圈只发现了多了两个项目。你可以在界面上多设置一项专门是这个插件的嘛，或者在settings里面也可以。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>先把两个关键现象说清楚：<strong>你没有看漏，也无法在不改 Antigravity 软件主程序的前提下，把第三方插件硬塞进 <code>Settings</code> 菜单或左侧主栏成为独立一级按钮</strong>。但你已经可以通过对话按钮、<code>Customizations</code>（插件中心）或对话右侧面板直接打开完整中文界面。</p>
+<hr>
+<h2>一、为什么会这样？（实查结论）</h2>
+<ul>
+<li><strong>为什么左侧主栏和 <code>Settings</code> 里没有单独多出这个插件按钮</strong></li>
+<li>核查 Antigravity 主程序前端逻辑与运行时开关（<code>GetMendelFlags</code>）：左侧主栏插件独立分区（<code>x2c</code> / <code>pluginSidebarSection</code>）当前被特性开关 <code>enable-plugin-sidebar-section</code> 关闭；<code>Settings</code> 菜单项也是内置硬编码列表（<code>Account / General / Appearance / Notifications / Customizations / Browser / App / Shortcuts / Models / Developer / Running</code>）。</li>
+<li>第三方插件只能挂载到 Antigravity 开放的两个原生位置：<strong>Customizations（插件中心）</strong> 与 <strong>对话右侧辅助面板（Extensions / Aux Pane）</strong>。</li>
+<li><strong>为什么观察一圈发现“多了两个项目”</strong></li>
+<li>Antigravity 的语言服务会自动为带 Web UI 服务的插件创建一个<strong>后台沙盒载体项目</strong>。目前你的本地项目共有 4 个非临时项目 ID：</li>
+<li>你的真实业务项目：<code>Zemax</code>（已恢复到首位）和 <code>光路</code>；</li>
+<li>插件服务载体项目：<code>antigravity-archive-manager/archive_manager</code>（我们刚创建的归档管理后台服务）和 <code>swarm/swarm_board</code>（Antigravity 内置多智能体扩展自带的后台服务）。</li>
+<li>主界面左侧栏会隐藏这类带 <code>sidecar</code> 标记的服务载体，但 <strong><code>Settings</code> 设置页左侧的 <code>Projects</code> 列表（<code>YRb</code>）没有过滤掉它们</strong>，所以你会同时看到它们。<strong>不要手动删除这两个带 <code>/</code> 名称的项目</strong>（插件面板里的“项目列表”已自动隔离它们，不会让你误删）。</li>
+</ul>
+<hr>
+<h2>二、三种打开与使用方式（推荐按方式 1 最快）</h2>
+<p>已在插件目录新增中文说明文档 <code>README.md</code>，现在整个插件共 12 个文件，均已通过测试与实时服务检查：</p>
+<h3>方式 1：在本对话内一键直达（最快）</h3>
+<p>直接点击下面这个内置快捷入口，会在右侧展开完整的中文管理界面：</p>
+<p>[打开归档与项目管理面板](sidecar://antigravity-archive-manager/archive_manager/)</p>
+<h3>方式 2：从 Antigravity 原生界面“插件中心”打开</h3>
+<p>如果你当前没有打开对话、或者想从一个固定管理入口进去：</p>
+<ul>
+<li>点击下方入口（或打开左侧栏 / Settings 里的 <strong>Customizations -&gt; Installed</strong>）：</li>
+</ul>
+<p>   [归档与项目管理器](customization://antigravity-archive-manager)</p>
+<ul>
+<li>进入插件详情页后：</li>
+<li>顶部会显示插件中文说明和 <strong>3 个快捷指令</strong>（点击即可直接发起对应操作对话）；</li>
+<li>向下滚动到 <strong>UI Extensions</strong>，点击 <strong><code>归档管理</code></strong>，在弹窗里点击 <strong><code>Open in Side Pane</code></strong>，即可直接在右侧面板打开管理界面。</li>
+</ul>
+<h3>方式 3：在任意对话中调出或用 <code>/archive-manager</code></h3>
+<ul>
+<li><strong>右侧面板菜单</strong>：打开任意对话 -&gt; 展开右上角辅助面板（Aux Pane）-&gt; 点击右上角 <strong><code>+</code></strong>（或概览区 <strong><code>Extensions</code></strong>）-&gt; 选择 <strong><code>归档与项目管理</code></strong>。</li>
+<li><strong>命令触发</strong>：在聊天框输入 <strong><code>/archive-manager</code></strong>，或直接打字告诉我需求（例如“查看已归档对话并恢复”“删除某条对话”）。</li>
+</ul>
+<hr>
+<h2>三、打开面板后的操作流程</h2>
+<ul>
+<li><strong>已归档对话 / 全部对话</strong>：上方支持关键字搜索与状态筛选；单条点<strong>恢复</strong>或勾选多条批量点<strong>恢复到侧边栏 / 删除</strong>（取消归档后立即回到主侧边栏）。</li>
+<li><strong>项目与侧栏诊断</strong>：只展示你的真实业务项目（当前为 <code>Zemax</code> 和 <code>光路</code>），自动检测诸如 <code>projectsOrder</code> 缺失、折叠或未对齐等异常并一键修复。</li>
+<li><strong>回收站安全保护</strong>：删除对话默认先进入插件的 <code>.trash/</code> 回收站目录，可随时还原；确认不再需要后再在回收站内<strong>彻底删除</strong>（当前还检测到 4 条历史孤立索引残留，可在面板内查看后决定是否清理）。</li>
+</ul>
+<p>&lt;details&gt;</p>
+<p>&lt;summary&gt;本次补充与运行自检记录（已验证通过）&lt;/summary&gt;</p>
+<ul>
+<li>新增文件：<code>README.md</code>（已验证 12 个插件文件全部为无 BOM UTF-8）。</li>
+<li>实时插件注册检查（<code>GetAllPlugins</code>）：<code>antigravity-archive-manager</code> 已加载，<code>hasReadme: true</code>，包含技能 <code>archive-manager</code> 与界面服务 <code>antigravity-archive-manager/archive_manager</code>。</li>
+<li>实时服务状态检查（<code>GetSidecars</code>）：<code>antigravity-archive-manager/archive_manager</code> 状态为 <code>SIDECAR_STATUS_RUNNING</code>（本地监听端口 <code>54449</code>）。</li>
+<li>单元测试与状态检查（<code>test_store.mjs</code> 与 <code>cli.mjs</code>）：<code>ALL STORE TESTS PASSED</code>；当前检出 12 个活跃对话、0 个已归档对话、2 个用户项目（<code>Zemax</code>、<code>光路</code>）、2 个 <code>sidecarProjects</code> 与 4 条孤立索引残留。</li>
+</ul>
+<p>&lt;/details&gt;</p>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>这个插件有点问题，当我将antigravity的颜色换成浅色后就看不清了，然后你查看一下这个插件有没有不足的地方，然后修改</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已定位浅色主题下看不清的根因，并对整个插件做了一轮前后端深度审计与全面修复（已升级至 <code>v1.1.0</code>）。</p>
+<hr>
+<h3>一、浅色模式看不清的根因（已彻底修复）</h3>
+<ul>
+<li><strong>根因（实测）</strong>：Antigravity 的 <code>preload.js</code> 会在加载时通过<strong>内联样式</strong>将 <code>body</code> 背景切为宿主变量 <code>var(--background)</code>（浅色模式下变白），同时通过 <code>theme-change</code> 消息把宿主配色变量写入 <code>:root</code>。但旧版 <code>styles.css</code> 全部硬编码了深色模式专属浅色字（<code>#eef2ff</code>、<code>#cbd5e1</code>、<code>#93c5fd</code>、<code>#fde68a</code>、<code>#6ee7b7</code> 等），<code>app.js</code> 中还有一处内联浅绿色字体，导致切换浅色主题后变成“白底浅字 / 深黑弹窗浮在白底上”。</li>
+<li><strong>修复方式</strong>：</li>
+<li><strong>对齐官方 <code>swarm_board</code> 宿主变量机制</strong>：<code>styles.css</code> 全面改由宿主变量驱动（<code>--background</code> / <code>--card</code> / <code>--foreground</code> / <code>--muted-foreground</code> / <code>--border</code> / <code>--primary</code> / <code>--primary-foreground</code>），并为浅色模式（<code>:root</code>）与深色模式（<code>:root[data-theme=&quot;dark&quot;]</code>）分别配置高对比度的语义状态色、弹窗、胶囊标签、下拉选项和滚动条。</li>
+<li><strong>实时双层主题同步</strong>：<code>app.js</code> 优先监听 Antigravity 宿主发出的 <code>theme-change</code> 中的 <code>themeType</code>（实查主程序为 <code>light</code> / <code>hcLight</code> / <code>dark</code> / <code>hcDark</code>），并用 <code>MutationObserver</code> + 1&#215;1 <code>canvas</code> 亮度采样兼容任意 CSS 色域（含 <code>oklch</code> / <code>color(srgb ...)</code>）及独立浏览器回退。</li>
+<li><strong>禁止旧样式缓存</strong>：<code>main.mjs</code> 为 <code>/</code>、<code>/styles.css</code>、<code>/app.js</code> 和 <code>/api/*</code> 统一加上 <code>Cache-Control: no-store, no-cache, must-revalidate</code>，避免 WebView 残留旧 CSS。</li>
+</ul>
+<hr>
+<h3>二、顺带排查并修复的插件不足</h3>
+<h4>1. 后端数据一致性与协议 Bug（<code>store.mjs</code>）</h4>
+<ul>
+<li><strong><code>.pbtxt</code> 解析与修改防误伤</strong>：旧正则会误匹配标题字符串或嵌套块里的 <code>archived:true</code>（比如标题含该词会被改坏）。已改写为顶层词法扫描器 <code>scanPbtxtTopLevelFields</code>，跳过双引号字符串与嵌套 <code>{...}</code>；同时在 <code>.pbtxt</code> 缺省 <code>archived:</code> 字段时正确回退读取 SQLite FTS 状态。</li>
+<li><strong>修复 <code>UpdateProject</code> RPC 请求结构错误</strong>：实查 Antigravity 主程序 <code>language_server.exe</code> 发现 <code>UpdateProject</code> 要求 <code>{ project: updatedProject }</code> 包装而非扁平对象；旧代码会导致归档/恢复项目时 RPC 静默失败而退回写本地文件。现已修正为实时 RPC 生效。</li>
+<li><strong>回收站还原防 FTS5 索引重复</strong>：<code>restoreTrashItem</code> 在单事务内先 <code>DELETE FROM conversations_fts WHERE conversation_id = ?</code> 再插入快照，杜绝重复索引行；并回传 <code>wasArchived</code>，若还原的原本是已归档对话，前端会明确提示前往「已归档对话」查看。</li>
+<li><strong>删除对话清理残留与并发容错</strong>：通过 <code>DeleteCascadeTrajectory</code> 删除后若 Antigravity 遗留孤立 <code>.pbtxt</code> 则自动清理，避免越删越多“孤立残留”；文件删除加入 Windows 占用重试（<code>EPERM</code>/<code>EACCES</code>/<code>EBUSY</code>）；只读 SQLite 连接同样开启 <code>PRAGMA busy_timeout = 5000</code>，避免主进程写库时刷新面板触发 <code>SQLITE_BUSY</code>。</li>
+</ul>
+<h4>2. 侧栏交互与窄屏体验补齐（<code>index.html</code> &amp; <code>app.js</code>）</h4>
+<ul>
+<li><strong>窄屏 Aux Pane 响应式布局</strong>：宽度 ≤ 640px 时卡片自动转为纵向排版（标题占满整行、操作按钮在底部分隔栏换行排列），不再把中文标题挤成竖排两三个字。</li>
+<li><strong>实用筛选与排序</strong>：顶部统计卡片可直接点击跳转对应视图；「全部对话」新增状态筛选（全部 / 仅活跃 / 仅已归档）与排序（最近更新 / 占用空间 / 对话步数 / 标题）；卡片新增摘要预览行与一键复制 ID / 项目路径。</li>
+<li><strong>安全护栏与防误触</strong>：自动识别并高亮 <strong><code>当前对话</code></strong> 徽章，删除当前运行中的对话时弹窗醒目告警；项目页「发起对话」增加确认弹窗，防止手滑直接发送消息消耗额度；批量操作栏按勾选内容智能隐藏无意义按钮；空归档页提供直达「全部对话」按钮；新增操作防重入锁、<code>Escape</code> 关闭弹窗、以及窗口切回焦点后自动静默刷新（2 秒防抖）。</li>
+</ul>
+<hr>
+<h3>三、立即体验与验证结果</h3>
+<p>现在直接点击打开（如果右侧已打开旧面板，切一下或重新点此入口即可加载新浅色/深色界面，无需重启 Antigravity）：</p>
+<p>[打开归档与项目管理面板](sidecar://antigravity-archive-manager/archive_manager/)</p>
+<p>&lt;details&gt;</p>
+<p>&lt;summary&gt;完整自动化验证结果（均在最终修改后实测通过）&lt;/summary&gt;</p>
+<ul>
+<li><strong>文件与语法校验</strong>：12 个插件文件 <code>0</code> 个 BOM 问题；<code>store.mjs</code>、<code>main.mjs</code>、<code>cli.mjs</code>、<code>test_store.mjs</code>、<code>app.js</code> 全部通过 <code>node --check</code>。</li>
+<li><strong>单元测试与回归测试（<code>test_store.mjs</code>）</strong>：10 组测试全部通过（<code>ALL STORE TESTS PASSED</code>），覆盖含 <code>archived:true</code> 标题与嵌套块 <code>.pbtxt</code> 词法隔离、无 <code>archived</code> 字段回退 FTS、回收站还原 FTS5 去重、Mock RPC 校验 <code>UpdateProject</code> <code>{ project }</code> 协议及删除后自动清理残留 <code>.pbtxt</code>。</li>
+<li><strong>实时服务校验</strong>：<code>GetAllPlugins</code> 显示 <code>antigravity-archive-manager</code> 正常加载（<code>disabled: false</code>, <code>loadError: null</code>）；<code>GetSidecars</code> 状态为 <code>SIDECAR_STATUS_RUNNING</code>（端口 <code>64124</code>）；实测 <code>GET /</code>、<code>/styles.css</code>、<code>/app.js</code>、<code>/api/state</code> 全部返回 <code>200</code> 且携带 <code>Cache-Control: no-store, no-cache, must-revalidate</code>，未鉴权 <code>POST</code> 返回 <code>401</code>。</li>
+</ul>
+<p>&lt;/details&gt;</p>
+<p>你现在可以切到浅色 / 深色主题分别看一眼——如果有某个特定主题（比如高对比度浅色）里某块文字或按钮你觉得还不够醒目，告诉我主题名我再微调；另外你平时在面板里有没有需要「把某条对话改归属到另一个项目」这类额外功能？</p>
+</div></article>
+
+    </section>
+  </main>
+  <script>
+    (function() {
+      var src = '../sidebar.js';
+      if (window.location.protocol !== 'file:') {
+        src += (src.indexOf('?') >= 0 ? '&' : '?') + '_t=' + Date.now();
+      }
+      var s = document.createElement('script');
+      s.src = src;
+      document.body.appendChild(s);
+    })();
+  </script>
+  <script>
+    function triggerBlobDownload(blob, filename) {
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function() { URL.revokeObjectURL(url); }, 1500);
+    }
+    function downloadMarkdown(e, relPath, filename) {
+      if (window.location.protocol === 'file:' || !window.fetch || !window.Blob) {
+        return true;
+      }
+      if (e) e.preventDefault();
+      var btn = document.getElementById('downloadMdBtn');
+      var orig = btn ? (btn.getAttribute('data-orig') || btn.innerText) : '';
+      if (btn) {
+        btn.setAttribute('data-orig', orig);
+        btn.innerText = '正在下载...';
+      }
+      var targetUrl = relPath;
+      try { targetUrl = new URL(relPath, window.location.href).href; } catch (err) {}
+      fetch(targetUrl, { cache: 'no-cache' })
+        .then(function(resp) {
+          if (!resp.ok) throw new Error('HTTP ' + resp.status);
+          return resp.text();
+        })
+        .then(function(text) {
+          var blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
+          triggerBlobDownload(blob, filename);
+          if (btn) {
+            btn.innerText = '已下载 .md';
+            setTimeout(function() { btn.innerText = orig; }, 2000);
+          }
+        })
+        .catch(function() {
+          if (btn) btn.innerText = orig;
+          var a = document.createElement('a');
+          a.href = targetUrl;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        });
+      return false;
+    }
+    function fallbackCopy(text, onDone) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try {
+        if (document.execCommand('copy')) { onDone(); }
+      } catch (e) {}
+      document.body.removeChild(ta);
+    }
+    function copyCanonicalUrl(relPath, btnId, doneLabel) {
+      var btn = document.getElementById(btnId);
+      if (!btn) return;
+      var orig = btn.getAttribute('data-orig') || btn.innerText;
+      btn.setAttribute('data-orig', orig);
+      var targetUrl = window.location.href;
+      try {
+        targetUrl = new URL(relPath, window.location.href).href;
+      } catch (e) {}
+      var onDone = function() {
+        btn.innerText = doneLabel;
+        setTimeout(function() { btn.innerText = orig; }, 2000);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(targetUrl).then(onDone, function() { fallbackCopy(targetUrl, onDone); });
+      } else {
+        fallbackCopy(targetUrl, onDone);
+      }
+    }
+  </script>
+</body>
+</html>

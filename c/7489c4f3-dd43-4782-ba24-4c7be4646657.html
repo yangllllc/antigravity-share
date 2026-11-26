@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>你现在接手一个已经跑通多期成品的本科生科普 PPT 动画视频制作... - Antigravity Share</title>
+  <style>
+    :root {
+      --bg-main: #131314;
+      --bg-sidebar: #1e1f20;
+      --bg-active: #2b2c2f;
+      --bg-bubble-user: #2b2c2f;
+      --bg-bubble-ai: #1e1f20;
+      --text-main: #e3e3e3;
+      --text-sub: #c4c7c5;
+      --accent: #a8c7fa;
+      --border: #3c4043;
+      --code-bg: #0d0e11;
+      --badge-green: #34d399;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100vh;
+    }
+    #sidebar {
+      width: 310px;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+    .sidebar-header {
+      padding: 18px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-header h2 {
+      font-size: 16px;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sidebar-header a.home-link {
+      text-decoration: none;
+      color: inherit;
+    }
+    .sync-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--badge-green);
+      background: rgba(52, 211, 153, 0.1);
+      padding: 3px 8px;
+      border-radius: 12px;
+      margin-top: 8px;
+    }
+    .conv-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .conv-item {
+      display: block;
+      text-decoration: none;
+      padding: 11px 13px;
+      border-radius: 10px;
+      transition: background 0.15s;
+      border: 1px solid transparent;
+      color: inherit;
+    }
+    .conv-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .conv-item.active {
+      background: var(--bg-active);
+      border-color: var(--border);
+    }
+    .conv-title {
+      font-size: 14px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #fff;
+    }
+    .conv-meta {
+      font-size: 11px;
+      color: var(--text-sub);
+      margin-top: 4px;
+      display: flex;
+      justify-content: space-between;
+    }
+    #main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .main-header {
+      padding: 16px 28px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-sidebar);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .main-header h1 {
+      font-size: 17px;
+      color: #fff;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .sub-meta {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-top: 3px;
+    }
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .btn {
+      background: var(--bg-active);
+      color: var(--accent);
+      border: 1px solid var(--border);
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .btn:hover { background: #3c4043; }
+    .chat-canvas {
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 28px 24px 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .turn {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .turn.user { align-items: flex-end; }
+    .turn.assistant { align-items: flex-start; }
+    .role-tag {
+      font-size: 12px;
+      color: var(--text-sub);
+      font-weight: 600;
+      padding: 0 4px;
+    }
+    .bubble {
+      max-width: 88%;
+      padding: 16px 20px;
+      border-radius: 18px;
+      line-height: 1.7;
+      font-size: 15px;
+      word-break: break-word;
+    }
+    .turn.user .bubble {
+      background: var(--bg-bubble-user);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .turn.assistant .bubble {
+      background: var(--bg-bubble-ai);
+      color: var(--text-main);
+      border-bottom-left-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .bubble p { margin: 0 0 10px 0; }
+    .bubble p:last-child { margin-bottom: 0; }
+    .bubble h1, .bubble h2, .bubble h3, .bubble h4 {
+      margin: 14px 0 8px;
+      color: var(--accent);
+      line-height: 1.4;
+    }
+    .bubble h1 { font-size: 19px; }
+    .bubble h2 { font-size: 17px; }
+    .bubble h3 { font-size: 15.5px; }
+    .bubble ul, .bubble ol { margin: 8px 0 10px 22px; }
+    .bubble li { margin: 4px 0; }
+    .bubble blockquote {
+      border-left: 3px solid var(--accent);
+      padding-left: 12px;
+      margin: 8px 0;
+      color: var(--text-sub);
+    }
+    .bubble code {
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 5px;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 13.5px;
+    }
+    .bubble pre {
+      background: var(--code-bg);
+      padding: 14px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 10px 0;
+      border: 1px solid #2b2d31;
+    }
+    .bubble pre code {
+      background: transparent;
+      padding: 0;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .bubble a { color: var(--accent); }
+    .bubble hr {
+      border: 0;
+      border-top: 1px solid var(--border);
+      margin: 14px 0;
+    }
+    @media (max-width: 820px) {
+      body { flex-direction: column; }
+      #sidebar { width: 100%; height: auto; position: static; max-height: 280px; }
+      .main-header { flex-wrap: wrap; padding: 14px 16px; }
+      .header-actions { flex-wrap: wrap; }
+      .bubble { max-width: 96%; }
+    }
+  </style>
+</head>
+<body data-conv-id="7489c4f3-dd43-4782-ba24-4c7be4646657" data-base-prefix="./" data-turn-count="12" data-update-time="2026-11-19 21:40" data-is-index="0">
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
+      <div class="sync-badge" id="syncBadge">自动同步加载中...</div>
+    </div>
+    <nav class="conv-list" id="convList" aria-label="Conversations">
+      <noscript><div style="padding:12px;color:#c4c7c5;font-size:12px;">请启用 JavaScript 查看全部历史对话列表，或直接访问对应对话链接。</div></noscript>
+    </nav>
+  </aside>
+  <main id="main">
+    <header class="main-header">
+      <div style="min-width:0;">
+        <h1>你现在接手一个已经跑通多期成品的本科生科普 PPT 动画视频制作...</h1>
+        <div class="sub-meta">会话 ID: 7489c4f3-dd43-4782-ba24-4c7be4646657 | 轮次: 12 | 更新于: 2026-11-19 21:40</div>
+      </div>
+      <div class="header-actions">
+        <a class="btn" id="downloadMdBtn" href="./7489c4f3-dd43-4782-ba24-4c7be4646657.md" download="你现在接手一个已经跑通多期成品的本科生科普_PP-7489c4f3.md" onclick="return downloadMarkdown(event, './7489c4f3-dd43-4782-ba24-4c7be4646657.md', '你现在接手一个已经跑通多期成品的本科生科普_PP-7489c4f3.md')">⬇️ 下载 Markdown (.md)</a>
+        <button class="btn" id="copyBtn" type="button" onclick="copyCanonicalUrl('./7489c4f3-dd43-4782-ba24-4c7be4646657.html', 'copyBtn', '已复制直链')">复制对话直链</button>
+      </div>
+    </header>
+    <section class="chat-canvas" aria-label="Conversation Content">
+      <article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>@[c:\Users\&lt;USER&gt;\Desktop\ppt视频制作.md] 你现在接手一个已经跑通多期成品的本科生科普 PPT 动画视频制作工作流。请先完整遵守以下已固化的制作纪律与工程经验，<strong>不要重复进行泛泛的软件推荐或大范围基础需求问卷</strong>。用 course-ppt-lab 的科普视频模式，做一个物理科普动画 PPT，最后后再用 Python 渲染关键定量曲线视频。主题：迈克尔逊干涉仪测量光波长。主要问题：如何利用迈克尔逊干涉仪测量光波长。片首问题：你能想出几种方法测量光波波长？今天我们来介绍其中的一种——迈克尔逊干涉仪法。</p>
+<h2>一、核心制作范式（沿用前序成品《碰撞》《旋转世界》《书堆悬挑》）</h2>
+<ul>
+<li><strong>成品形态</strong>：16:9 横屏、1920&#215;1080（1080p）可编辑 <code>.pptx</code>，最终（仅在我明确指令后）由 PowerPoint 导出无配音 1080p MP4，可以的话也添加字幕。</li>
+<li><strong>视觉与极简版式</strong>：</li>
+<li>可以采用用深色/黑底 + 高对比双主色（如青/金）的克制科普风，也不一定就是这个，根据文案选择最合适的。</li>
+<li><strong>微步进极简拆页</strong>（参考 ppt文件夹下既有的《碰撞_动画完善版.pptx》与《书堆能伸出桌边多远_可编辑动画.pptx`）：每页仅放“短标题 + 核心物理示意图/实拍图/原生公式 + 底部 1 句核心结论”，<strong>底部必须预留剪映字幕安全区</strong>，严禁把整段旁白贴在画布上；完整旁白逐页写入 PPT 备注（Notes）。也不一定按照这个行事，我只是提供一个参考思路，还是按照你觉得合适的来。</li>
+<li><strong>动画与防误导铁律</strong>：</li>
+<li>采用“同一视角、同一对象、前态停留讲解 → 连续过渡 → 临界/后态停留讲解”的简易动画；关键物理过程（碰撞、临界倾倒、受力切换等）必须保留<strong>接触/临界瞬间</strong>，严禁直接平移造成穿透或提前运动。</li>
+<li><strong>避坑</strong>：涉及圆形/刚体旋转时，严禁用相邻页 Morph（平滑切换）强行过渡（PowerPoint 会产生形状重影），必须改用整体刚性旋转动画或分步清晰示意。</li>
+<li>公式必须为 PowerPoint 原生可编辑公式（<code>m:oMath</code>），矢量统一用 <code>\vec</code>（禁用 <code>\boldsymbol</code>），只保留定义、守恒关系与最终结论，采用分步淡入或分页叠加。</li>
+<li><strong>科学严谨与去 AI 腔</strong>：</li>
+<li>所有理想化模型必须在画面显式标注前提条件（如忽略阻力/摩擦、均匀刚体、理论计算值、非实测数据、实际操作留裕量等）；概念图必须标明“示意、不按比例”；<strong>绝不编造未测量的实验数据</strong>，外部实拍图必须核验来源与明确许可。</li>
+<li>若我提供原稿，不擅自删改旁白，科学疑点单列“最小改句建议”等我确认；若由你自拟台词，必须口语化、克制、零 AI 味（拒绝空洞排比、总结腔和翻译腔）。</li>
+<li><strong>时长与字数硬控制</strong>：</li>
+<li>按 220–250 汉字/分钟 + 公式/动作观察停顿预排；若上限为 5 分钟，（目标预排 4 分 30 秒～4 分 45 秒）。在四分钟就可以了。</li>
+</ul>
+<h2>二、强制分阶段执行流程（每阶段需我确认后再推进）</h2>
+<ul>
+<li><strong>Step 0（环境与基线探测）</strong>：先检查工作目录 <code>C:\Users\&lt;USER&gt;\Desktop\ppt</code>、本机可用 Python、Office PowerPoint COM（<code>POWERPNT.EXE</code>），以及你当前环境是否能直接调用或复用 <code>C:\Users\&lt;USER&gt;\.codex\skills\ppt-master</code> 下的自动化脚本（如 <code>svg_to_pptx.py</code>、<code>svg_quality_checker.py</code>、<code>powerpoint_video.py</code>）和本地 <code>lieflat-less-ai-tone</code> 规则；<strong>先如实汇报探测结果与可用工具链方案，不可假设环境已就绪</strong>。</li>
+<li><strong>Step 1（收敛疑点 + 大纲与字数核算）</strong>：如存在影响制作的关键缺口（如是否已有实拍实验数据、已有素材路径），先用简短编号提问（最多 3–5 题，每题附你的推荐方案）与我对齐，然后输出带“逐段字数与秒数预排、科学前提清单、动画拆分规划”的完整大纲。</li>
+<li><strong>Step 2（逐页制作表 + 3–5 页样稿）</strong>：大纲确认后，输出逐页制作表并制作 3–5 页覆盖“问题引入、核心动画/临界态、原生公式、结论边界”的代表性可编辑 PPTX 样稿 + 1080p PNG 预览。</li>
+<li><strong>Step 3（全片可编辑 PPTX）</strong>：样稿确认后扩展全片，并通过 PowerPoint 导出全页 1080p PNG 自检（确保无重叠、无遮挡字幕区、公式渲染正常、备注旁白逐字对齐）。</li>
+<li><strong>Step 4（视频渲染与抽帧验收）</strong>：<strong>只有在我明确说出“可以导出视频”后</strong>，才调用 PowerPoint 导出无配音 1080p MP4，并通过抽帧核验关键动画（无穿透、无重影、按序出现）与总时长。</li>
+</ul>
+<h2>三、本次新视频输入（请先执行 Step 0，再进入 Step 1）</h2>
+<ul>
+<li><strong>新视频主题</strong>：【填写主题，例如：XXX】</li>
+<li><strong>片首引入问题</strong>：【填写核心问题】</li>
+<li><strong>总时长硬上限</strong>：【例如：不超过 5 分钟】</li>
+<li><strong>必备内容模块</strong>：【例如：片首问题引入、实验现象、原理分析、实验测量、结论；可选历史背景/生活或科技应用】</li>
+<li><strong>已有素材/参考文件夹路径</strong>：【填写路径，或写“无，全部自拟”】</li>
+<li><strong>实验数据情况</strong>：【写“我稍后去实验室实拍提供真实数据” 或 “暂不实拍，用可复现的理论算例+标注理论值代替”】</li>
+</ul>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成 <strong>Step 0（环境与基线探测）</strong> 及 <code>course-ppt-lab</code> 科普视频模式规则加载自检。本轮严格停在 Step 0 闸门，不提前生成大纲或 PPTX，待你确认工具链与下方 4 项输入口径后再进入 <strong>Step 1</strong>。</p>
+<hr>
+<h2>一、Step 0 环境与基线探测结果（实测）</h2>
+<h3>1. 工作目录与参考范本（<code>C:\Users\&lt;USER&gt;\Desktop\ppt</code>）</h3>
+<ul>
+<li>目录内现有 <code>_已扫描旧PPT</code>（9 份历史 PPTX）、<code>_已扫描旧视频</code>（6 部标杆视频）与 <code>同济模板</code>，<strong>当前尚无“迈克尔逊干涉仪”相关素材或实拍数据文件</strong>。</li>
+<li>已用 <code>course-ppt-lab/scripts/audit_pptx.py</code>（v4）对两份前序范本完成基线体检：</li>
+<li><code>书堆能伸出桌边多远_可编辑动画.pptx</code>：35 页，ZIP 完好，<code>!!</code> Morph 锁/假定格/白屏风险均 0 项；但备注中混入了模型参数被计入口播字数，本课题将按 <code>S15</code> 保持备注纯净口播。</li>
+<li><code>碰撞_动画完善版.pptx</code>：39 页，ZIP 完好，检出 24 页旧版 <code>cut</code> 错配时长，本课题将按 <code>E14</code> 规避。</li>
+<li>后续拟在 <code>C:\Users\&lt;USER&gt;\Desktop\ppt\迈克尔逊干涉仪测量光波长\</code> 下建立独立课题工程目录，与旧文件隔离。</li>
+</ul>
+<h3>2. Python、FFmpeg 与 Office COM 可用性</h3>
+<blockquote>注：系统默认 <code>PATH</code> 中未注册 <code>python</code> / <code>ffmpeg</code> / <code>node</code>，须显式调用下列实测可用的本机绝对路径（已与 <code>local-environment.md</code> 交叉核实）。</blockquote>
+<p>| 组件 | 实测路径 / 状态 | 实测结果与用途 |</p>
+<p>|---|---|---|</p>
+<p>| <strong>主 Python（3.13.14）</strong> | <code>C:\Users\&lt;USER&gt;\.workbuddy\binaries\python\envs\default\Scripts\python.exe</code> | <strong>可用</strong>。已装 <code>python-pptx 1.0.2</code>、<code>lxml 6.1.3</code>、<code>Pillow 12.3.0</code>、<code>numpy 2.5.3</code>、<code>matplotlib 3.11.2</code>、<code>imageio_ffmpeg 0.6.0</code>、<code>win32com</code>、<code>xlsxwriter</code>、<code>fontTools</code> |</p>
+<p>| <strong>内置 FFmpeg（7.1）</strong> | <code>C:\Users\&lt;USER&gt;\.workbuddy\binaries\python\envs\default\Lib\site-packages\imageio_ffmpeg\binaries\ffmpeg-win-x86_64-v7.1.exe</code> | <strong>可用</strong>。支持 <code>libx264</code>、<code>yuv420p</code>、<code>libass</code>、<code>libfreetype</code>，可支撑 Python 定量曲线 MP4 渲染、抽帧验收与字幕封装 |</p>
+<p>| <strong>PowerPoint COM</strong> | <code>C:\Program Files\Microsoft Office\root\Office16\POWERPNT.EXE</code> | <strong>可用</strong>（<code>PowerPoint.Application</code> v16.0 Build 14334）。实测 <code>powerpoint_video.py</code> <code>--check</code> 返回 <code>PowerPoint video export available (version 16.0)</code>（exit 0） |</p>
+<p>| <strong>WPS COM</strong> | <code>KWPP.Application</code> | <strong>可用</strong>（v12.0），可作跨软件兼容抽检备选 |</p>
+<p>| <strong>备用 Python（3.12.14）</strong> | <code>C:\Users\&lt;USER&gt;\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe</code> | 仅含 <code>pptx/lxml/PIL/numpy</code>，缺 <code>matplotlib/ffmpeg/win32com</code>（放弃，统一用 3.13.14） |</p>
+<p>| <strong>缺失可选库</strong> | <code>scipy</code>、<code>manim</code>、<code>cv2</code>、<code>cairosvg</code>、<code>stable_whisper</code>、<code>edge_tts</code> | <strong>未安装</strong>。本课题二维波动/干涉/拟合曲线由 <code>numpy + matplotlib + FFmpeg</code> 完整覆盖，无需重装 |</p>
+<h3>3. Skills 与自动化脚本校验</h3>
+<ul>
+<li><strong><code>course-ppt-lab</code>（v0.4.0）</strong>：已实际读取 <code>SKILL.md</code>、六份基础规则（<code>content-rules.md</code>、<code>visual-rules.md</code>、<code>video-rules.md</code>、<code>page-types.md</code>、<code>design-system.md</code>、<code>text-style.md</code>）以及科普分支 <code>science-video.md</code>（S01–S20）、<code>animation-engineering.md</code>（E01–E16）、<code>upstream.md</code>、<code>validation.md</code>。</li>
+<li><strong>本次场景覆盖参数</strong>：<code>use_case=&quot;科普短视频/原理动画&quot;</code>、<code>reference_profiles=[&quot;science-video&quot;]</code>、<code>canvas=16:9 (1920&#215;1080 导出)</code>、<code>speaker_notes=true（纯净口播 S15）</code>、<code>animation=true（自动轨 E11 + !! Morph E12）</code>、<code>duration_minutes≈4.0</code>。</li>
+<li><strong><code>ppt-master</code>（v6.9.0）</strong>：<code>C:\Users\&lt;USER&gt;\.codex\skills\ppt-master</code> 与 <code>C:\Users\&lt;USER&gt;\.gemini\config\skills\ppt-master</code> 两处副本的 <code>attribution_guard.py</code> 均通过（exit 0），且均通过 <code>course-ppt-lab/scripts/check_upstream.py</code> 全部 <strong>379 文件 SHA-256 校验</strong>。<code>svg_to_pptx.py</code>、<code>svg_quality_checker.py</code>、<code>powerpoint_video.py</code>、<code>pptx_delivery_check.py</code> 均可直接调用。</li>
+<li><strong><code>lieflat-less-ai-tone</code></strong>：<code>detect.py</code> 与 <code>report.py</code>、<code>semantic-criteria.md</code> 均存在且可执行，将在口播定稿阶段用于三层去 AI 味核检。</li>
+</ul>
+<h3>4. 拟采用的本课题工具链路线（80/20 混合渲染 + 终稿一次性渲染锁）</h3>
+<ul>
+<li><strong>80% 原生可编辑 PPTX 层</strong>：由 Python（<code>python-pptx + lxml</code>）直接写入 16:9 原生形状、原生可编辑 <code>m:oMath</code> 公式（Cambria Math，矢量统一 <code>\vec</code>）、带 <code>!!</code> 命名锁与 <code>&lt;mc:Fallback&gt;</code> 回退的 <code>&lt;p159:morph&gt;</code>、纯净备注 <code>notesSlide</code> 及按字数耦合的 <code>advTm</code>。</li>
+<li><strong>20% Python 定量曲线与干涉联动层（严守 <code>S19</code>–<code>S20</code>）</strong>：前期样稿与全片制作阶段仅以精确尺寸占位框锁定舞台与原生叠加公式/标注；<strong>待全片 PPTX 与口播一次性定稿后</strong>，再统一运行归档脚本（<code>assets/scripts/</code>）以 <code>numpy + matplotlib + FFmpeg (libx264, yuv420p, 30fps)</code> 渲染同底色无边框局部 MP4 并嵌入 PPTX，防止草稿期反复重渲染。</li>
+<li><strong>质检与导出层</strong>：<code>audit_pptx.py</code> v4 结构体检 + <code>lieflat-less-ai-tone</code> 口播检视 + PowerPoint COM 全页 1080p PNG 巡检；仅在 Step 4 获你明确指令后，由 <code>powerpoint_video.py</code> 导出 1080p MP4 并用 FFmpeg 抽帧验收、按 <code>advTm</code> 生成同步 <code>.srt</code>（可选软/硬字幕封装）。</li>
+</ul>
+<blockquote><strong>放弃方案说明</strong>：放弃走 <code>build_deck.py</code> 的静态五布局 SVG 路线（该路线面向静态汇报，不利于连续 <code>!!</code> Morph 光路演进与原生 <code>m:oMath</code> 精调）；也放弃为本项目额外安装 <code>manim</code>（本课题核心为平面光路 + 等倾圆纹二维场 + 光强/线性回归曲线，<code>matplotlib + numpy + FFmpeg</code> 已足够精确且零新装风险）。</blockquote>
+<hr>
+<h2>二、进入 Step 1 前需对齐的 4 个关键问题（附推荐方案）</h2>
+<p>因你在“本次新视频输入”模板底部保留了占位项，在输出完整 4 分钟分镜大纲与字数秒数核算前，请确认以下 4 点（若认可默认方案，直接回复 <strong>“Step 0 确认，按推荐进入 Step 1”</strong> 即可）：</p>
+<ul>
+<li><strong>实验数据与实拍图口径</strong></li>
+<li><strong>推荐（A）</strong>：暂不实拍，使用可复现的本科标准理论算例（He-Ne 激光标称波长 $\lambda = 632.8\text{ nm}$，每计 $\Delta N = 50$ 条等倾圆纹对应理想动镜位移 $\Delta d = 15.82\ \mu\text{m}$，以 10 组数据演示逐差法），画布就地显式微标 <code>理论算例，非实测数据</code>，并单独交代真实实验的螺杆空程误差（回程差）。</li>
+<li><strong>备选（B）</strong>：你稍后去实验室实拍提供真实照片与实验读数，当前先在对应页面留实拍图/实测表占位框。</li>
+</ul>
+<ul>
+<li><strong>20% Python 定量曲线视频的核心镜头选型（终稿一次性渲染）</strong></li>
+<li><strong>推荐（A）</strong>：渲染 <strong>2 段紧扣核心物理因果的高光联动视频</strong>（嵌入舞台，旁侧公式与标签保留 PPT 原生可编辑）：</li>
+<li><strong>等倾干涉三联动</strong>：动镜位移 $\Delta d$ 连续变化 $\leftrightarrow$ 中心光强曲线 $I(\Delta d) = I_0\cos^2\!\left(\frac{2\pi}{\lambda}\Delta d\right)$ 实时描点 $\leftrightarrow$ 观测屏同心圆环按真实光学公式“涌出（吐）/缩进（吞）”联动（直观回答“为何每移 $\lambda/2$ 刚好变化 1 级条纹”）。</li>
+<li><strong>测量采样与线性斜率曲线</strong>：随着条纹计数 $N = 0, 50, 100, \dots$ 递增，动镜位置 $d(N) = d_0 + \frac{\lambda}{2}N$ 逐点落位并显现斜率 $k = \lambda/2$（演示如何把纳米级波长放大成微米级可读位移，并可视化逐差法对单点读数抖动的抑制）。</li>
+<li><strong>备选（B）</strong>：仅渲染第 1 段（干涉三联动），或增加“钠黄光双线拍频/衬比度包络曲线”（但 4 分钟内会显著挤压主线时长）。</li>
+</ul>
+<ul>
+<li><strong>4 分钟篇幅内的模块取舍与物理严谨边界</strong></li>
+<li>4 分钟硬上限下（目标预排 <strong>3 分 40 秒～3 分 50 秒</strong>，按 220–240 字/分 + 动画观察停顿，总口播需严控在 <strong>750–860 汉字</strong>）。</li>
+<li><strong>推荐（A）</strong>：走紧扣主线的 5 段闭环——① 片首设问与测波长方法速览（双缝 / 光栅 / 牛顿环 / 迈克尔逊，约 30 s）→ ② 仪器光路与两大关键细节（分束镜半透半反膜、<strong>补偿板 $G_2$ 仅在复色光/等光程对称中不可缺、单色激光下非“无它不能干涉”</strong>，约 50 s）→ ③ 干涉原理与 $\Delta d = \Delta N\cdot\lambda/2$ 定量联动（约 65 s）→ ④ 实操测量与数据处理（等倾圆环调节、单向旋转防空程误差、逐差法算例，约 55 s）→ ⑤ 结论回扣与精度延伸（一句话点出从亚微米测波长到 LIGO 测引力波，约 20 s）。</li>
+<li><strong>追问</strong>：是否需要专门插入“迈克尔逊-莫雷以太实验”历史片段（若加入需压缩 25–30 秒原理/数据处理篇幅）？</li>
+</ul>
+<ul>
+<li><strong>视觉基调与字幕交付形式</strong></li>
+<li><strong>推荐（A）</strong>：采用<strong>深色暗场光学实验台风</strong>（底色 <code>#101216</code>，青蓝 <code>#58C6E8</code> = 参考臂 $M_2$ 光路、琥珀金 <code>#F3BD68</code> = 动镜臂 $M_1$ 光路与位移 $\Delta d$、珊瑚红 <code>#EF7B6C</code> = 632.8 nm 激光干涉条纹与焦点高亮、柔和白 <code>#F2F2EF</code> = 原生公式与标尺），底部 15% 严守字幕安全区净空（<code>S08</code>）。字幕在 Step 4 导出无配音 1080p MP4 时，同步按各页 <code>advTm</code> 生成外挂 <code>.srt</code>；是否需要届时顺带用 FFmpeg 输出一版<strong>硬烧录字幕 MP4</strong>（若你后续进剪映真人配音，建议用无字幕原片 + 备注口播对口型，避免硬字幕卡死配音语速）？</li>
+</ul>
+<hr>
+<h3>边界追问（帮你提前锁死 2 个最易返工的物理/制作细节）</h3>
+<ul>
+<li><strong>光路物理口径</strong>：在讲分束板 $G_1$ 的半波损失时，你希望保留经典教材的完整说明（两束光在镀膜面经历的反射介质侧不同，仅带来常量相位差，<strong>不改变位移差公式 $\Delta d = \Delta N \cdot \lambda/2$</strong>），还是直接以“等效空气薄膜间距 $d$ 的变化 $\Delta d$”跳过半波损失细节以节省 15 秒？</li>
+<li><strong>字幕用途</strong>：最终成品是<strong>直接作为无配音默片字幕版展示</strong>，还是<strong>会导入剪映配音</strong>？这直接决定 Step 4 是否需要做硬字幕烧录以及每页是否留出更充裕的默读停顿。</li>
+</ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>1.A。2.A。3.A，不需要插入历史片段。4.A。保留经典教材的完整说明把，直接作为无配音字幕版展示</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已锁定全部 6 项需求口径，并在工程目录建立单文件状态锚点 <code>CONTEXT_迈克尔逊干涉仪测量光波长.md</code>。现交付 <strong>Step 1（完整分镜大纲、字数秒数核算、科学前提清单与动画拆分规划）</strong>，经你确认后进入 <strong>Step 2（逐页制作表 + 5 页代表性可编辑样稿）</strong>。</p>
+<hr>
+<h2>一、总控预算与实测校验（无配音字幕版 &#183; 4 分钟硬上限）</h2>
+<p>| 指标 | 本片预排实测值 | 约束边界与校验结论 |</p>
+<p>|---|---|---|</p>
+<p>| <strong>总页数 / 总时长</strong> | <strong>22 页 / 226.0 秒（3 分 46 秒）</strong> | 严守 ≤ 240 秒硬上限，预留 <strong>14 秒</strong> 缓冲 |</p>
+<p>| <strong>字幕纯净字数</strong> | <strong>756 汉字</strong>（含数字/符号 922 非空字符） | 默读均值 <strong>200.7 汉字/分</strong>（244.8 字符/分），留足边看动画边读字幕的消化窗口 |</p>
+<p>| <strong><code>audit_pptx</code> 节奏核验</strong> | <strong>0 页失配</strong>（每页 <code>advTm</code> 9.0–14.5 s） | 全部满足 <code>E16</code> 声画耦合边界，无过快/静默告警 |</p>
+<p>| <strong>去 AI 味初筛（<code>detect.py</code>）</strong> | <strong>A 级 0 处、B 级 0 处、分号 0 处</strong> | 全片仅 1 处破折号，为用户指定片首原句（按 <code>T01</code> 豁免保留） |</p>
+<p>| <strong>同机位连续 Morph 上限</strong> | <strong>最长 2 次（3 页，P04→P06）</strong> | 严守 <code>S03</code> ≤ 4 镜景别切换，且<strong>零圆形/刚体旋转 Morph</strong> |</p>
+<p>| <strong>底部字幕安全区（<code>S08</code>）</strong> | 画布底部 <strong>15%</strong>（1080p 下 <code>y = 918–1080 px</code>） | 全程净空，供后期外挂 <code>.srt</code> 及 FFmpeg 硬字幕烧录（每条 ≤ 20 汉字） |</p>
+<h3>跨镜物理量—颜色—符号锁（<code>S09</code> / <code>G11</code>）</h3>
+<ul>
+<li><strong>画布底色</strong>：<code>#101216</code>（副面板 <code>#181C24</code>，分割线 <code>#2A3140</code>）；字体仅用 <code>Microsoft YaHei</code> + 原生公式 <code>Cambria Math</code>。</li>
+<li><strong>青蓝 <code>#58C6E8</code></strong>：参考臂（定镜 $M_2$、虚像 $M_2&#39;$、光束 2）；<strong>琥珀金 <code>#F3BD68</code></strong>：测量臂（动镜 $M_1$、间距 $d$、位移 $\Delta d$、光束 1）；<strong>珊瑚红 <code>#EF7B6C</code></strong>：He-Ne 632.8 nm 激光干涉条纹、级次变化 $\Delta N$、反例红叉；<strong>柔和白 <code>#F2F2EF</code></strong>：原生 <code>m:oMath</code> 公式与标尺。</li>
+</ul>
+<hr>
+<h2>二、五幕 22 页完整分镜大纲与字数/秒数预排</h2>
+<h3>分幕汇总</h3>
+<p>| 幕次 | 页码 | 页数 | 时长 | 纯汉字 / 非空字符 | 核心叙事任务 |</p>
+<p>|---|---|---:|---:|---:|---|</p>
+<p>| 第一幕：设问导入与核心矛盾 | P01–P03 | 3 | 30.5 s | 97 / 111 | 抛出片首问题、速览 4 法、锚定“微米测纳米”矛盾 |</p>
+<p>| 第二幕：光路结构、补偿板与半波损失 | P04–P09 | 6 | 60.0 s | 201 / 246 | 光路分合、$G_2$ 穿玻璃 3 次对称、半波损失抵消、等效空气膜 |</p>
+<p>| 第三幕：等倾原理、主公式与三联动 | P10–P14 | 5 | 53.0 s | 170 / 210 | 等倾圆环、纠偏 $2\Delta d$、主公式、<strong>Python 视频 #1</strong>、$d\to 0$ 与平行度 |</p>
+<p>| 第四幕：测量策略、防空程与逐差算例 | P15–P19 | 5 | 54.0 s | 179 / 230 | 250 倍放大直觉、单向防空程、10 组理论算例与逐差法、<strong>Python 视频 #2</strong> |</p>
+<p>| 第五幕：闭环回扣、边界声明与 LIGO 延伸 | P20–P22 | 3 | 28.5 s | 109 / 125 | 三步闭环回答开头、三条科学边界、实验室→4 km LIGO 尺度对照 |</p>
+<p>| <strong>合计</strong> | <strong>P01–P22</strong> | <strong>22</strong> | <strong>226.0 s</strong> | <strong>756 / 922</strong> | <strong>3 分 46 秒（预留 14 s 裕量）</strong> |</p>
+<h3>逐页大纲与动画拆分规划（<code>E11</code> 自动轨 + <code>E12</code> <code>!!</code> Morph 锁）</h3>
+<p>| 页 | 幕 | 页面主题与景别 | 转场 / 核心动效（均无旋转 Morph） | <code>advTm</code> | 汉字/字符 | 纯净字幕文案（写入 Notes，分 2 条短字幕出屏） |</p>
+<p>|---|---|---|---|:---:|:---:|---|</p>
+<p>| <strong>P01</strong> | 1 | 片首设问：如何测光波波长（全幅悬念） | <code>fade(400)</code>；标尺淡入（发丝 $70\ \mu\text{m}$ vs 可见光 $0.6\ \mu\text{m}$） | 9.5 s | 32/35 | 你能想出几种方法测量光波波长？可见光波长只有几百纳米，普通尺子量不到。 |</p>
+<p>| <strong>P02</strong> | 1 | 四法速览与聚光锁定（四格聚光 <code>V13</code>） | <code>fade(400)</code>；前 3 法压暗至 30%，迈克尔逊金框高亮 | 10.5 s | 33/38 | 双缝、光栅和牛顿环都能测波长。今天我们来介绍其中的一种——迈克尔逊干涉仪法。 |</p>
+<p>| <strong>P03</strong> | 1 | 核心矛盾：微米鼓轮测纳米光波（双标尺） | <code>fade(400)</code>；左右量级对峙 + 锚定全片 2 问 | 10.5 s | 32/38 | 最小分度 0.1 微米的鼓轮，怎么量出几百纳米的波长？靠干涉条纹把微小位移放大。 |</p>
+<p>| <strong>P04</strong> | 2 | 干涉仪核心结构（全景光路 1） | <code>fade(400)</code>；布置 <code>!!M1</code>（金）、<code>!!M2</code>（青）、<code>!!S</code>、<code>!!E</code> | 9.5 s | 35/42 | 这套仪器的核心是两面互相垂直的平面镜，上方动镜 M1 能精密平移，右侧定镜 M2 固定不动。 |</p>
+<p>| <strong>P05</strong> | 2 | 45&#176; 分束板 $G_1$ 分合光路（全景光路 2） | <code>morph(900)</code>（共享 <code>!!M1/M2/S/E</code>）；插入 <code>!!G1</code> 后表面镀膜，金色/青色光束擦除走通 | 10.0 s | 32/39 | 单色光射向 45 度分束板 G1，在后表面镀膜处分成两束，经两镜反射后汇合到观察屏。 |</p>
+<p>| <strong>P06</strong> | 2 | 补偿板 $G_2$ 穿玻璃对称（全景光路 3） | <code>morph(900)</code>（共享全光路 <code>!!</code>）；插入 <code>!!G2</code>，计数标牌 1→3 次 + 误区微标 | 11.0 s | 35/45 | 光束 1 穿 G1 玻璃三次，光束 2 原本只穿一次。加入补偿板 G2 让两臂各穿三次，消除色散并保对称。 |</p>
+<p>| <strong>P07</strong> | 2 | 特写：$G_1$ 镀膜处半波损失（镀膜特写 1） | <code>fade(400)</code> 切景别；放大镀膜界面（玻璃侧内反 vs 空气侧外反）+ 原生公式 $\Delta L = 2d\cos\theta + \frac{\lambda}{2}$ | 10.0 s | 35/40 | 放大看 G1 镀膜，两束光分别从玻璃侧和空气侧反射，经典教材模型下相差一次半波损失。 |</p>
+<p>| <strong>P08</strong> | 2 | 半波损失为何不影响测量（镀膜特写 2） | <code>morph(800)</code>（共享 <code>!!film</code>/<code>!!eq-box</code>）；两态作差，划去常量 $+\frac{\lambda}{2}$（含 $\varphi_0$ 微注） | 10.0 s | 35/38 | 不论半波损失还是实际镀膜附加相位，都不随动镜位移改变，求位移差时会自动抵消。 |</p>
+<p>| <strong>P09</strong> | 2 | 模型抽离：等效空气薄膜（等效薄膜 1） | <code>fade(400)</code> 切回中景；$M_2$ 压暗，$M_2&#39;$ 虚像在上方浮现，标明厚度 <code>!!gap-d</code> | 9.5 s | 29/42 | 把定镜 M2 通过分束板折成虚像 M2&#39;，光路就等效为 M1 与 M2&#39; 之间厚度为 d 的空气薄膜。 |</p>
+<p>| <strong>P10</strong> | 3 | 等倾干涉同心圆环（等效薄膜 2） | <code>morph(900)</code>（共享 <code>!!M1/M2p/gap-d</code>）；加倾角 $\theta$ 平行光线，右侧呈现同心圆环 | 9.5 s | 33/41 | M1 与 M2&#39; 严格平行时，相同倾角的光线光程差相等，屏上出现明暗相间的等倾同心圆环。 |</p>
+<p>| <strong>P11</strong> | 3 | 反直觉纠偏：为什么是 $\lambda/2$（反例+前态 <code>S05</code>） | <code>fade(400)</code>；左红叉反例“误区：移 $\lambda$ 变 1 条”，右展示 <code>!!M1</code> 初始位 $d_0$ | 9.5 s | 36/39 | 不少人以为动镜移一个波长才变一条纹。其实光在动镜前要走一个来回，光程差会翻倍。 |</p>
+<p>| <strong>P12</strong> | 3 | 动镜平移 $\Delta d$ 与测量主式（后态+公式） | <code>morph(900)</code>（共享 <code>!!M1</code> 线性上移 $\Delta d$，去回程双段伸长）；原生 <code>m:oMath</code> 分步淡入至 $\lambda = \frac{2\Delta d}{\Delta N}$ | 10.0 s | 27/45 | 动镜每平移 Δd，光程差就变 2Δd。盯住圆环中心，每变 ΔN 条纹，就能由 2Δd 除以 ΔN 算出 λ。 |</p>
+<p>| <strong>P13</strong> | 3 | <strong>【Python 视频 #1】等倾干涉三联动</strong> | <code>fade(400)</code>；顶部原生锁色公式 $I(\Delta d)=I_0\cos^2(\frac{2\pi}{\lambda}\Delta d+\frac{\varphi_0}{2})$，主舞台嵌入无边框 30fps MP4（动镜移 $\leftrightarrow$ 圆环涌出/吞进 $\leftrightarrow$ 光强曲线实时描点与计数） | 14.5 s | 39/45 | 间距 d 增大时，新圆环从中心不断向外涌出，光强同步起伏。每走完一个周期，动镜刚好移半个波长。 |</p>
+<p>| <strong>P14</strong> | 3 | 临界态：$d\to 0$ 与平行度判据（双窗对照） | <code>fade(400)</code>；左窗 $d$ 减小圆环变疏粗，右窗未平行出现偏心环/等厚直条纹 | 9.5 s | 35/40 | d 越小圆环越疏粗。如果圆环偏心或变成等厚直条纹，说明两镜还不平行，得先调准再测。 |</p>
+<p>| <strong>P15</strong> | 4 | 量级放大：为何连数 250 条（双轨标尺） | <code>fade(400)</code>；最小分度 $0.1\ \mu\text{m}$ 下 $\Delta N=1$（31.6% 红）vs $\Delta N=250$（0.13% 青） | 10.0 s | 38/49 | 鼓轮最小分度 0.1 微米，只数 1 条分度占比超过三成。连数 250 条，分度占比降到原来的二百五十分之一。 |</p>
+<p>| <strong>P16</strong> | 4 | 实操防坑：单向缓旋消空程（丝杠剖面 <code>S05</code>） | <code>fade(400)</code>；正向啮合贴实 vs 反转齿隙悬空（红标空程误差）+ 三条操作铁律 | 9.5 s | 38/42 | 精密丝杠存在机械间隙，中途反转会带来空程误差。预转消除间隙后，全程只能同向缓慢转动。 |</p>
+<p>| <strong>P17</strong> | 4 | 理论算例与相邻差分陷阱（数据表 1） | <code>fade(400)</code>；排布 <code>!!d0</code>–<code>!!d9</code> 理论读数芯片，红线划掉 $\frac{1}{9}\sum(d_{i+1}-d_i)=\frac{d_9-d_0}{9}$ | 10.5 s | 32/46 | 取 He-Ne 激光 10 组理论读数，每 50 条记一次位置。直接相邻相减求平均，中间 8 组会全被约掉。 |</p>
+<p>| <strong>P18</strong> | 4 | 逐差法配对算出 632.8 nm（数据表 2） | <code>morph(900)</code>（<code>!!d0</code>–<code>!!d9</code> 平移成 5 对配对连线）；右侧原生 <code>m:oMath</code> 算得 $\lambda=632.8\text{ nm}$ | 10.5 s | 31/46 | 用逐差法前后配对，每对跨 250 条纹，10 个读数全部参与计算，代回主式得 λ 等于 632.8 纳米。 |</p>
+<p>| <strong>P19</strong> | 4 | <strong>【Python 视频 #2】$d$–$N$ 直线与斜率收敛</strong> | <code>fade(400)</code>；顶部原生公式 $d(N)=d_0+\frac{\lambda}{2}N$，主舞台嵌入无边框 30fps MP4（10 点落位 + 模拟随机抖动下相邻斜率发散 vs 逐差跨距收敛至 $k=\lambda/2$） | 13.5 s | 40/47 | 把位移对条纹数作图，数据落在斜率为 λ/2 的直线上。拉大跨距并配对逐差，能有效压低读数随机抖动。 |</p>
+<p>| <strong>P20</strong> | 5 | 闭环回扣：三步把纳米放大到微米（三步图） | <code>fade(400)</code>；折返放大 $\to$ 累积计数 $\to$ 逐差求 $\lambda$，显式回扣 P03 矛盾 | 9.0 s | 36/39 | 回到开头的设问，迈克尔逊干涉仪以光波为尺，把亚微米波长转换成可累积的微米位移。 |</p>
+<p>| <strong>P21</strong> | 5 | 科学边界：三条前提与算例声明（三栏卡） | <code>fade(400)</code>；光学前提 / 误差边界 / 理论算例声明 | 9.5 s | 36/40 | 想测准还得守住三条边界，两镜严格平行，全程单向防空程，且逐差法修不了数错的条纹。 |</p>
+<p>| <strong>P22</strong> | 5 | 精度延伸与开放收尾（尺度对照 <code>T07</code>） | <code>fade(400)</code>；桌面干涉仪（臂长 ~$10\text{ cm}$，分辨 ~$\lambda/2$）vs LIGO（$4\text{ km}$，探测 $10^{-18}\text{ m}$ 级微变） | 10.0 s | 37/46 | 把这套干涉测距放大到 4 公里臂长，就是探测引力波的 LIGO。测光波波长，你还能想到哪几种办法？ |</p>
+<hr>
+<h2>三、科学前提清单与数值验算核查（已用脚本精确复核）</h2>
+<ul>
+<li><strong>光学模型前提（逐页就地微标）</strong>：</li>
+<li>光路图均标 <code>示意，不按比例</code>；公式基于近轴单色扩展光源、空气折射率 $n \approx 1$、$M_1 \parallel M_2&#39;$ 严格平行条件。</li>
+<li><strong>补偿板 $G_2$ 严谨口径</strong>：$G_1$ 后表面镀膜时，光束 1 穿 $G_1$ 玻璃 <strong>3 次</strong>，无 $G_2$ 时光束 2 仅穿 <strong>1 次</strong>；加 $G_2$ 后两臂各穿玻璃 <strong>3 次</strong>。显式声明：单色激光因相干长度极长，无 $G_2$ 也能干涉；$G_2$ 的根本作用是消除玻璃色散（使白光可在零光程差附近形成彩色条纹）并保证两臂光程对称。</li>
+<li><strong>半波损失严谨口径</strong>：保留经典教材界面模型（$G_1$ 镀膜处玻璃侧内反射 vs 空气侧外反射，相差 $\lambda/2$）；同时注明实际金属/介质半透膜引入常量附加相位差 $\varphi_0$，两者在取位移变化量 $\Delta d$ 时均严格抵消，不影响 $\Delta d = \Delta N \cdot \lambda/2$。</li>
+<li><strong>条纹运动方向严谨口径</strong>：$d$ 增大时中心级次 $k_0 = 2d/\lambda$ 升高，圆环从中心<strong>向外涌出（吐出）</strong>；$d$ 减小时向中心<strong>缩进（吞进）</strong>；P13 短暂演示反向缩进时将在画面微标 <code>仅演示方向，实测中途不可反转</code>。</li>
+<li><strong>理论算例与误差口径（绝不冒充实测）</strong>：</li>
+<li>采用 He-Ne 激光标称波长 $\lambda = 632.8\text{ nm}$，起始位 $d_0 = 32.0000\text{ mm}$，每 $\Delta N = 50$ 条记一次，每步理想位移 $50\lambda/2 = 0.015820\text{ mm} = 15.820\ \mu\text{m}$；$d_0 \sim d_9$ 从 $32.00000\text{ mm}$ 递增至 $32.14238\text{ mm}$。</li>
+<li>逐差法 5 组跨距（$\Delta N_5 = 250$）理论位移均为 $0.07910\text{ mm} = 79.10\ \mu\text{m}$，反算 $\lambda = 2 \times 0.07910 / 250 = 632.8\text{ nm}$。<strong>不宣称“相当于 5 次独立测量误差缩 $\sqrt{5}$ 倍”</strong>（5 对共享端点误差相关，其价值在全数据参与与大跨距），且明确逐差法不能消除空程系统误差或条纹误计。</li>
+<li><strong>分度占比口径</strong>：最小分度 $0.0001\text{ mm}$（$0.1\ \mu\text{m}$）在 $\Delta N = 1$（$0.3164\ \mu\text{m}$）时占比 $31.6\%$，在 $\Delta N = 250$（$79.10\ \mu\text{m}$）时占比 $0.13\%$（降 250 倍）；画面明确微标 <code>最小分度占比示意，非实测总不确定度</code>。</li>
+<li><strong>Python 视频 #2 随机抖动说明</strong>：为肉眼看清逐差法对随机抖动的抑制效果，模拟点将叠加放大的高斯读数抖动，并显式微标 <code>数值模拟对比，非实验室实测数据</code>。</li>
+<li><strong>参考来源口径</strong>：</li>
+<li>原理与仪器结构口径对照大学物理通行教材（程守洙/江之永《普通物理学》、马文蔚《物理学》、姚启钧《光学教程》迈克尔逊干涉仪章节）；LIGO 臂长 $4\text{ km}$ 与 $10^{-18}\text{ m}$ 级灵敏度量级取自 LIGO Scientific Collaboration 公开科普口径（仅作概念尺度对比，不引入外部未授权实拍图）。</li>
+</ul>
+<hr>
+<h2>四、Step 2 样稿拟选范围与 2 个边界确认</h2>
+<p>若本大纲通过，下一步 <strong>Step 2</strong> 将交付“22 页完整制作表”+ 下列 <strong>5 页代表性可编辑 PPTX 样稿</strong>（含 PowerPoint COM 导出的 1920&#215;1080 PNG 逐页预览 + <code>audit_pptx.py</code> v4 体检）：</p>
+<ul>
+<li><strong>P01</strong>（封面悬念 + 标尺对比 + 字幕安全区模板）</li>
+<li><strong>P05 → P06</strong>（双页连续 <code>!!</code> Morph 实测：45&#176; 分束光路 → 补偿板 $G_2$ 穿玻璃次数对比）</li>
+<li><strong>P12</strong>（动镜位移后态 + 原生可编辑 <code>m:oMath</code> 公式链 $\Delta L \to \Delta d \to \lambda$）</li>
+<li><strong>P13</strong>（Python 定量三联动视频占位框 + 顶部原生锁色公式 + 边角假设微标，验证 <code>S19–S20</code> 混排规范）</li>
+</ul>
+<h3>进入 Step 2 前的 2 个针对性边界追问</h3>
+<ul>
+<li><strong>P13 反向“吞进”演示取舍</strong>：在 P13（14.5 秒）的 Python 三联动动画里，你更希望<strong>（推荐）全程保持单向增大 $d$ 涌出 2 条完整条纹，把“减小 $d$ 吞进”留在 P14 静态对比说明</strong>（避免观众对“实测不可反转”产生潜意识混淆），还是<strong>在 P13 末尾用 3 秒演示一次反向吞进并配警示微标</strong>？</li>
+<li><strong>Step 2 样稿是否需要同步先看一张 Python 曲线静态样帧</strong>（仅生成 1 帧 PNG 静态预览图贴在 P13 占位框内确认配色与坐标可读性，不渲染完整 MP4，严格守住 <code>S20</code> 终稿一次性视频渲染锁）？</li>
+</ul>
+<p>确认大纲及这两点后，回复 <strong>“确认 Step 1，进入 Step 2”</strong> 即可推进。</p>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>确认 Step 1，进入 Step 2</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成 <strong>Step 2（22 页逐页制作表 + 5 页代表性可编辑 PPTX 样稿 + 1920&#215;1080 实渲预览与工程自检）</strong>，本轮停在 Step 2 闸门等待你的审阅确认。</p>
+<h3>交付物与可复现脚本</h3>
+<ul>
+<li><strong>22 页完整逐页制作表</strong>：<code>storyboard_22p.md</code></li>
+<li><strong>5 页代表性可编辑 PPTX 样稿</strong>（覆盖 P01 / P05 / P06 / P12 / P13）：<code>迈克尔逊干涉仪_样稿5页.pptx</code></li>
+<li><strong>PowerPoint 16 实渲 1080p 预览轮播</strong>（已将 5 张实渲 PNG 嵌入可翻页卡片）：<code>sample_5p_preview.md</code></li>
+<li><strong>可复现工程脚本与状态锚点</strong>：<code>ppt_helpers.py</code>、<code>build_sample_5p.py</code>、<code>render_preview_frame_p13.py</code>、<code>CONTEXT_迈克尔逊干涉仪测量光波长.md</code></li>
+</ul>
+<h3>本轮实测与自检修复摘要</h3>
+<ul>
+<li><strong>原生公式与 Morph</strong>：直接复用 <code>ppt-master</code> v6.9.0 内置 <code>formula_compiler.py</code> 生成 4 处原生可编辑 Cambria Math <code>m:oMath</code>（含 <code>\textcolor</code> 跨镜色锁）；P05→P06 共享 34 个 <code>!!</code> 命名锁对象，<code>!!G2-slab</code> 纯直线平移动效入位（零旋转重影），附 <code>&lt;mc:Fallback&gt;</code> 回退。</li>
+<li><strong>实渲巡检与原地修复</strong>：PowerPoint COM 实渲后通过逐页视觉检查，已修复 4 处细节——Matplotlib 缺字方块改数学下标、P06 <code>后表面半透半反膜</code> 标注移至左下消除与 <code>补偿板 G₂</code> 重叠、P05/P06 右卡精简消除孤字换行、P13 移除底部遮挡横轴标签的占位条并移至右上微注。</li>
+<li><strong>验收过关</strong>：<code>audit_pptx.py</code> v4 全项 0 告警（<code>zip_valid=true</code>、Morph 锁/假定格/<code>cut</code>/白屏/节奏全清零）；副本编辑回读通过；严格遵守 <code>S20</code> 终稿锁，尚未渲染任何 MP4。</li>
+</ul>
+<hr>
+<h3>进入 Step 3（全片 22 页）前请确认 2 个细节</h3>
+<ul>
+<li><strong>文字密度与字号体感</strong>：审阅 <code>sample_5p_preview.md</code> 后，P05/P06 右侧解析卡、P12 公式字号及 P13 三联动静态样帧的配色与留白是否合意？有没有需要把局部字号再调大或把卡片文字再压精简的地方？</li>
+<li><strong>底部字幕风格预览</strong>：当前每页底部 15%（<code>y = 918–1080 px</code>）均保持纯净深黑净空，待 Step 4 用 FFmpeg 统一压制字幕（无配音字幕版，每条 ≤ 20 汉字、白色微阴影居中）。你是否希望保持这种“PPTX 纯净留空 + Step 4 压制 <code>.srt</code> 与硬字幕 MP4”的分离方案（推荐，后期改字幕不碰 PPT），还是希望把底部 1 句静态核心结论条提前放进 PPT 安全区上方？</li>
+</ul>
+<p>如无修改意见，回复 <strong>“确认 Step 2，进入 Step 3”</strong> 即可扩展完整 22 页可编辑 PPTX（含 P19 静态样帧核验与全 22 页 1080p PNG 自检）。</p>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>我很满意，确认 Step 2，进入 Step 3” 即可扩展完整 22 页可编辑 PPTX（含 P19 静态样帧核验与全 22 页 1080p PNG 自检）。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成 <strong>Step 3（全片 22 页可编辑 PPTX + P19 静态样帧核验 + 全部 22 页 1920&#215;1080 PNG 逐页巡检）</strong>。现严守 Step 4 闸门与 <code>S20</code> 终稿渲染锁，<strong>尚未渲染任何 MP4</strong>，待你审阅全片后明确下达导出指令。</p>
+<h3>本阶段交付物</h3>
+<ul>
+<li><strong>全片 22 页可编辑 PPTX</strong>：<code>迈克尔逊干涉仪测量光波长_全片22页.pptx</code>（SHA-256 <code>e8406b28...</code>）</li>
+<li><strong>全片 22 页实渲总览与重点页轮播预览</strong>：<code>full_22p_preview.md</code>（单张 1080p 原图存于 <code>full_22p_png</code>）</li>
+<li><strong>新增可复现脚本与状态锚点</strong>：<code>slides_act1_3.py</code>、<code>slides_act4_5.py</code>、<code>build_full_22p.py</code>、<code>render_preview_frame_p19.py</code>、<code>CONTEXT_迈克尔逊干涉仪测量光波长.md</code></li>
+</ul>
+<h3>全片 22 页实测验收结果</h3>
+<p>| 检查项 | 实测结果 | 备注 |</p>
+<p>|---|---|---|</p>
+<p>| <strong>页数与总时长</strong> | <strong>22 页 / 226.0 秒（3 分 46 秒）</strong> | 严格 ≤ 4 分钟硬上限，留 14 秒缓冲 |</p>
+<p>| <strong>原生公式与字体</strong> | <strong>16 处原生 <code>m:oMath</code></strong>；全片仅 2 种字体 | <code>Microsoft YaHei</code> + <code>Cambria Math</code>，副本编辑回读通过 |</p>
+<p>| <strong><code>audit_pptx.py</code> v4</strong> | <strong>全项 0 告警</strong> | 5 组纯线性 <code>!!</code> Morph 链（零旋转），0 假定格/白屏/节奏失配 |</p>
+<p>| <strong>底部字幕安全区</strong> | <strong>0 违规</strong>（全部可见元素 <code>y ≤ 6.38 in</code>） | 底部 15%（<code>y = 918–1080 px</code>）全程纯净留空 |</p>
+<p>| <strong>备注去 AI 味复测</strong> | <strong>A 级 0、B 级 0、分号 0</strong> | 纯汉字 756 字，与确认脚本逐字一致 |</p>
+<p>| <strong>全 22 页实渲巡检</strong> | <strong>22/22 通过</strong> | 首轮巡检已原地修复 P08/P09/P10/P14/P16/P17/P19/P21/P22 共 9 处细节（含 P19 随机抖动改非周期真实 ~5–6&#215; 收敛、消除右上微注孤字换行与遮挡）并复检通过 |</p>
+<hr>
+<h3>进入 Step 4（终稿渲染与视频导出）前确认 2 个细节</h3>
+<ul>
+<li><strong>Python 渲染与终稿交付包</strong>：当你回复 <strong>“可以导出视频”</strong> 后，我将按顺序一次性执行：</li>
+<li>① 用 Python（<code>numpy + matplotlib + FFmpeg libx264 yuv420p 30fps</code>）渲染 P13（14.5 s 等倾干涉三联动）与 P19（13.5 s $d$–$N$ 采样与逐差收敛）两段无边框 MP4 并自动嵌入 PPTX（同步产出带内嵌视频的终稿 <code>.pptx</code>）；</li>
+<li>② 调用 PowerPoint 16 COM（<code>powerpoint_video.py</code>）导出纯净无配音 1080p MP4（30fps）；</li>
+<li>③ 按 22 页精确 <code>advTm</code> 生成同步 <code>.srt</code> 外挂字幕（每条拆分为 ≤ 20 汉字的短字幕），并用 FFmpeg 压制一版底部带微阴影居中硬字幕的 1080p 无配音展示版 MP4，最后抽帧核验关键动画（无穿透、无重影、按序出现）与总时长。</li>
+<li><strong>字幕外观小确认</strong>：硬字幕拟采用<strong>底部居中（安全区 <code>y ≈ 975–1045 px</code>）、微软雅黑 36–38 px 柔和白字 + 半透明深色圆角底衬</strong>，兼顾电脑与手机端清晰度；若你偏好无底衬纯白字加黑描边，可一并说明。</li>
+</ul>
+<p>审阅无误后，回复 <strong>“可以导出视频”</strong> 即可启动 Step 4。</p>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>可以导出视频</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已启动 <strong>Step 4 终稿渲染与视频导出流水线</strong>（先渲染 P13 / P19 两段 <code>1824&#215;656</code> 30fps H.264 定量联动视频并嵌入终稿 PPTX，再调用 PowerPoint 16 导出 1080p 无字幕 MP4，最后基于实测换片时间戳生成零漂移 <code>.srt</code>/<code>.ass</code> 字幕并压制无配音字幕版 1080p MP4）。后台完成后将自动执行关键帧抽帧核验并交付全部成品。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>抽帧验收时发现 P19 动画中段（<code>t=202.5s</code>）两处未显隐标签的边框提前露出空框，其余 9 帧（含 P13 三联动、Morph 过渡、底部字幕与 3 分 59.45 秒总时长）均已达标。已原地修复 P19 脚本的显隐控制并正在重新封装终稿 MP4 与复检抽帧，完成后立即交付最终成品与验收图集。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成 <strong>Step 4（终稿 Python 定量曲线渲染、PowerPoint 1080p MP4 导出、实测零漂移字幕压制与抽帧验收）</strong>，全流程闭环交付完毕。</p>
+<h3>一、最终成品清单（均存于 <code>迈克尔逊干涉仪测量光波长</code>）</h3>
+<p>| 交付文件 | 规格 / 校验 | 用途说明 |</p>
+<p>|---|---|---|</p>
+<p>| <code>迈克尔逊干涉仪测量光波长_无配音字幕版1080p.mp4</code> | <code>1920&#215;1080</code> &#183; <code>H.264 / yuv420p</code> &#183; <code>30 fps</code> &#183; <strong><code>03:59.45</code></strong>（14.5 MB） | <strong>直接展示版</strong>：底部安全区压制 62 条零漂移同步字幕，严守 ≤ 4 分钟上限 |</p>
+<p>| <code>迈克尔逊干涉仪测量光波长_无字幕1080p.mp4</code> | <code>1920&#215;1080</code> &#183; PowerPoint 16 原生导出 &#183; <code>03:59.45</code> | <strong>剪映/后期二次加工底片</strong>：底部 15% 净空无硬字幕 |</p>
+<p>| <code>迈克尔逊干涉仪测量光波长_终稿含视频22页.pptx</code> | 22 页 &#183; 1.79 MB &#183; 16 处原生 <code>m:oMath</code> &#183; <code>audit_pptx</code> v4 全项 0 告警 | <strong>可编辑终稿源文件</strong>：内嵌 P13/P19 自动播放视频，文字/公式/光路全可编辑 |</p>
+<p>| <code>迈克尔逊干涉仪测量光波长.srt</code> / <code>.ass</code> | 62 条短字幕（≤ 22 字/条），基于实出视频 Viterbi 换片时间轴对齐 | 外挂字幕与样式源文件 |</p>
+<p>| <code>p13_equal_inclination_3way.mp4</code> / <code>p19_dn_slope_convergence.mp4</code> | <code>1824&#215;656</code>（mod-16）&#183; <code>30 fps</code> &#183; <code>13.5 s</code> / <code>12.5 s</code> | 2 段独立 Python 定量联动视频（对应脚本均归档于 <code>assets/scripts</code>） |</p>
+<p>| <code>CONTEXT_迈克尔逊干涉仪测量光波长.md</code> | 单文件状态与排雷记录锚点 | 完整约束、决策与复测记录 |</p>
+<h3>二、抽帧验收与本阶段排雷摘要</h3>
+<ul>
+<li><strong>终稿抽帧验收图集</strong>（10 帧实抽核验）：请查阅 <code>step4_video_acceptance.md</code>。</li>
+<li><strong>实测捕获并原地消除的 4 项工程隐患</strong>：</li>
+<li><strong>内嵌视频自动播放</strong>：<code>python-pptx</code> 的 <code>add_movie()</code> 默认仅生成单击触发节点；已通过纯 OOXML <code>set_movie_autoplay()</code> 注入 <code>withEffect(delay=200ms) + playFrom(0.0)</code>，经抽帧实测 P13/P19 在 PowerPoint 原生导出中全程流畅播放。</li>
+<li><strong>DirectX 硬件缩放 1px 绿边</strong>：首次冒烟实测 <code>1836&#215;666</code>（高度非 4/16 倍数）在视频下沿出现 1px 暗绿边；改为严格 mod-16 分辨率 <strong><code>1824&#215;656</code></strong> 后彻底消失，与 <code>#101216</code> 舞台无接缝融合。</li>
+<li><strong>消除 13.45 秒字幕累加漂移</strong>：实测 PowerPoint <code>CreateVideo</code> 累加转场后总时长为 <code>239.45 s</code>（高于理论 <code>advTm</code> 之和 <code>226.0 s</code>）；<code>sync_subtitles_and_burn.py</code> 直接对实出 MP4 顶部静态标题区做单调 Viterbi 对齐，精准锚定全部 22 页实测时间点。</li>
+<li><strong>P19 动画中段空框残留</strong>：首轮抽帧在 <code>t=202.5 s</code> 检出 Matplotlib <code>set_alpha(0)</code> 未隐藏标签 <code>bbox</code> 边框；已改用 <code>set_visible(False)</code> 重渲染并复检 10/10 帧全部清零通过。</li>
+</ul>
+<hr>
+<h3>后续可选微调</h3>
+<ul>
+<li>如果你亲自回看 <code>迈克尔逊干涉仪测量光波长_无配音字幕版1080p.mp4</code> 后希望调大/调小字幕字号、更换字幕样式，或微调某页停留秒数，只需改 <code>迈克尔逊干涉仪测量光波长.ass</code> / 对应脚本即可几秒钟无损重压。</li>
+<li>日后若去实验室测得真实 He-Ne 鼓轮读数，可把 <code>slides_act4_5.py</code> 中的 <code>THEORY_DATA</code> 替换为实测数组并去掉理论算例微标，一键生成实测版。</li>
+</ul>
+<blockquote>提示：本次沉淀的 mod-16 防绿边、<code>set_movie_autoplay</code> 纯 OOXML 自动播放及 Viterbi 实测字幕对齐等经验，如果你希望同步固化进 <code>course-ppt-lab</code> skill 供以后所有科普视频复用，可以用 <code>/learn</code> 或直接告诉我为你归档。</blockquote>
+</div></article>
+
+    </section>
+  </main>
+  <script>
+    (function() {
+      var src = '../sidebar.js';
+      if (window.location.protocol !== 'file:') {
+        src += (src.indexOf('?') >= 0 ? '&' : '?') + '_t=' + Date.now();
+      }
+      var s = document.createElement('script');
+      s.src = src;
+      document.body.appendChild(s);
+    })();
+  </script>
+  <script>
+    function triggerBlobDownload(blob, filename) {
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function() { URL.revokeObjectURL(url); }, 1500);
+    }
+    function downloadMarkdown(e, relPath, filename) {
+      if (window.location.protocol === 'file:' || !window.fetch || !window.Blob) {
+        return true;
+      }
+      if (e) e.preventDefault();
+      var btn = document.getElementById('downloadMdBtn');
+      var orig = btn ? (btn.getAttribute('data-orig') || btn.innerText) : '';
+      if (btn) {
+        btn.setAttribute('data-orig', orig);
+        btn.innerText = '正在下载...';
+      }
+      var targetUrl = relPath;
+      try { targetUrl = new URL(relPath, window.location.href).href; } catch (err) {}
+      fetch(targetUrl, { cache: 'no-cache' })
+        .then(function(resp) {
+          if (!resp.ok) throw new Error('HTTP ' + resp.status);
+          return resp.text();
+        })
+        .then(function(text) {
+          var blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
+          triggerBlobDownload(blob, filename);
+          if (btn) {
+            btn.innerText = '已下载 .md';
+            setTimeout(function() { btn.innerText = orig; }, 2000);
+          }
+        })
+        .catch(function() {
+          if (btn) btn.innerText = orig;
+          var a = document.createElement('a');
+          a.href = targetUrl;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        });
+      return false;
+    }
+    function fallbackCopy(text, onDone) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try {
+        if (document.execCommand('copy')) { onDone(); }
+      } catch (e) {}
+      document.body.removeChild(ta);
+    }
+    function copyCanonicalUrl(relPath, btnId, doneLabel) {
+      var btn = document.getElementById(btnId);
+      if (!btn) return;
+      var orig = btn.getAttribute('data-orig') || btn.innerText;
+      btn.setAttribute('data-orig', orig);
+      var targetUrl = window.location.href;
+      try {
+        targetUrl = new URL(relPath, window.location.href).href;
+      } catch (e) {}
+      var onDone = function() {
+        btn.innerText = doneLabel;
+        setTimeout(function() { btn.innerText = orig; }, 2000);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(targetUrl).then(onDone, function() { fallbackCopy(targetUrl, onDone); });
+      } else {
+        fallbackCopy(targetUrl, onDone);
+      }
+    }
+  </script>
+</body>
+</html>

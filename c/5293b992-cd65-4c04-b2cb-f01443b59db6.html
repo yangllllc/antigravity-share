@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>先读取获取约束与断点，不要复述历史。 1. 单次只读核验断点磁盘... - Antigravity Share</title>
+  <style>
+    :root {
+      --bg-main: #131314;
+      --bg-sidebar: #1e1f20;
+      --bg-active: #2b2c2f;
+      --bg-bubble-user: #2b2c2f;
+      --bg-bubble-ai: #1e1f20;
+      --text-main: #e3e3e3;
+      --text-sub: #c4c7c5;
+      --accent: #a8c7fa;
+      --border: #3c4043;
+      --code-bg: #0d0e11;
+      --badge-green: #34d399;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100vh;
+    }
+    #sidebar {
+      width: 310px;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+    .sidebar-header {
+      padding: 18px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-header h2 {
+      font-size: 16px;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sidebar-header a.home-link {
+      text-decoration: none;
+      color: inherit;
+    }
+    .sync-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--badge-green);
+      background: rgba(52, 211, 153, 0.1);
+      padding: 3px 8px;
+      border-radius: 12px;
+      margin-top: 8px;
+    }
+    .conv-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .conv-item {
+      display: block;
+      text-decoration: none;
+      padding: 11px 13px;
+      border-radius: 10px;
+      transition: background 0.15s;
+      border: 1px solid transparent;
+      color: inherit;
+    }
+    .conv-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .conv-item.active {
+      background: var(--bg-active);
+      border-color: var(--border);
+    }
+    .conv-title {
+      font-size: 14px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #fff;
+    }
+    .conv-meta {
+      font-size: 11px;
+      color: var(--text-sub);
+      margin-top: 4px;
+      display: flex;
+      justify-content: space-between;
+    }
+    #main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .main-header {
+      padding: 16px 28px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-sidebar);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .main-header h1 {
+      font-size: 17px;
+      color: #fff;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .sub-meta {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-top: 3px;
+    }
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .btn {
+      background: var(--bg-active);
+      color: var(--accent);
+      border: 1px solid var(--border);
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .btn:hover { background: #3c4043; }
+    .chat-canvas {
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 28px 24px 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .turn {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .turn.user { align-items: flex-end; }
+    .turn.assistant { align-items: flex-start; }
+    .role-tag {
+      font-size: 12px;
+      color: var(--text-sub);
+      font-weight: 600;
+      padding: 0 4px;
+    }
+    .bubble {
+      max-width: 88%;
+      padding: 16px 20px;
+      border-radius: 18px;
+      line-height: 1.7;
+      font-size: 15px;
+      word-break: break-word;
+    }
+    .turn.user .bubble {
+      background: var(--bg-bubble-user);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .turn.assistant .bubble {
+      background: var(--bg-bubble-ai);
+      color: var(--text-main);
+      border-bottom-left-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .bubble p { margin: 0 0 10px 0; }
+    .bubble p:last-child { margin-bottom: 0; }
+    .bubble h1, .bubble h2, .bubble h3, .bubble h4 {
+      margin: 14px 0 8px;
+      color: var(--accent);
+      line-height: 1.4;
+    }
+    .bubble h1 { font-size: 19px; }
+    .bubble h2 { font-size: 17px; }
+    .bubble h3 { font-size: 15.5px; }
+    .bubble ul, .bubble ol { margin: 8px 0 10px 22px; }
+    .bubble li { margin: 4px 0; }
+    .bubble blockquote {
+      border-left: 3px solid var(--accent);
+      padding-left: 12px;
+      margin: 8px 0;
+      color: var(--text-sub);
+    }
+    .bubble code {
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 5px;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 13.5px;
+    }
+    .bubble pre {
+      background: var(--code-bg);
+      padding: 14px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 10px 0;
+      border: 1px solid #2b2d31;
+    }
+    .bubble pre code {
+      background: transparent;
+      padding: 0;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .bubble a { color: var(--accent); }
+    .bubble hr {
+      border: 0;
+      border-top: 1px solid var(--border);
+      margin: 14px 0;
+    }
+    @media (max-width: 820px) {
+      body { flex-direction: column; }
+      #sidebar { width: 100%; height: auto; position: static; max-height: 280px; }
+      .main-header { flex-wrap: wrap; padding: 14px 16px; }
+      .header-actions { flex-wrap: wrap; }
+      .bubble { max-width: 96%; }
+    }
+  </style>
+</head>
+<body data-conv-id="5293b992-cd65-4c04-b2cb-f01443b59db6" data-base-prefix="./" data-turn-count="18" data-update-time="2026-11-25 12:37" data-is-index="0">
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
+      <div class="sync-badge" id="syncBadge">自动同步加载中...</div>
+    </div>
+    <nav class="conv-list" id="convList" aria-label="Conversations">
+      <noscript><div style="padding:12px;color:#c4c7c5;font-size:12px;">请启用 JavaScript 查看全部历史对话列表，或直接访问对应对话链接。</div></noscript>
+    </nav>
+  </aside>
+  <main id="main">
+    <header class="main-header">
+      <div style="min-width:0;">
+        <h1>先读取获取约束与断点，不要复述历史。 1. 单次只读核验断点磁盘...</h1>
+        <div class="sub-meta">会话 ID: 5293b992-cd65-4c04-b2cb-f01443b59db6 | 轮次: 18 | 更新于: 2026-11-25 12:37</div>
+      </div>
+      <div class="header-actions">
+        <a class="btn" id="downloadMdBtn" href="./5293b992-cd65-4c04-b2cb-f01443b59db6.md" download="先读取获取约束与断点，不要复述历史。_1._单次-5293b992.md" onclick="return downloadMarkdown(event, './5293b992-cd65-4c04-b2cb-f01443b59db6.md', '先读取获取约束与断点，不要复述历史。_1._单次-5293b992.md')">⬇️ 下载 Markdown (.md)</a>
+        <button class="btn" id="copyBtn" type="button" onclick="copyCanonicalUrl('./5293b992-cd65-4c04-b2cb-f01443b59db6.html', 'copyBtn', '已复制直链')">复制对话直链</button>
+      </div>
+    </header>
+    <section class="chat-canvas" aria-label="Conversation Content">
+      <article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>先读取@[c:\Users\&lt;USER&gt;\Desktop\memory\mem2.md] 获取约束与断点，不要复述历史。</p>
+<ul>
+<li>单次只读核验断点磁盘状态，常规只读一口气完成，勿中途请示。</li>
+<li>状态不符先汇报停手；一致则直接推进【唯一单点下一步】。</li>
+<li>严禁触碰【排雷墓碑】，覆写先确认，按【外部验证判据】自检汇报。</li>
+</ul>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>断点磁盘状态核验一致，已启动增量抽取（<code>incremental_20261121</code>，5 个会话 / 3 个批次），正等待两个只读分析子代理返回批次候选结果后完成聚合、<code>stage</code> 校验及 Automation 方案汇报。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已收到 <code>batch_03</code> 分析结果，等待 <code>batch_01–02</code> 分析子代理返回后统一汇总并执行 <code>stage</code>。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><h3>一、断点核验与外部验证自检结果</h3>
+<ul>
+<li><strong>断点磁盘状态（实测一致）</strong>：</li>
+<li>插件目录零 <code>.bak</code> / 临时文件，核心 11 文件齐全；<code>AGENTS.md</code> 为 <code>20/140</code> 行（<code>2,382 B</code>），<code>promoted_rules_active = 2</code>，<code>topics_count = 6</code>（<code>23–40/150</code> 行），<code>topic_entries_active = 18</code>，<code>watermarked_conversations = 18</code>，<code>recovered_tx = null</code>，<code>feedback_ledger_entries = 0</code>。</li>
+<li>顺带核实 <code>mem2.md</code> L9 <code>[待验证]</code> 项：磁盘上不存在 <code>memory.md</code>，当前目录仅有 <code>CONTEXT_dream_skill.md</code>、<code>mem1.md</code>、<code>mem2.md</code> 与 <code>sandbox/</code>。</li>
+<li><strong>外部验证判据自检</strong>：</li>
+<li><strong>判据 1（Automation 方案与边界）</strong>：已基于官方 <code>sidecars.md</code> 与本机 <code>config.json</code> / <code>agentapi.bat</code> / <code>extractor.py</code> / <code>redact.py</code> 实测给出方案对比、红线闸门与未验证项探针（见第二节）。</li>
+<li><strong>判据 2（新对话 <code>check-due</code>/<code>extract</code>/<code>stage</code> 与零写盘）</strong>：已完成并冻结审阅包 <code>incremental_20261121</code>；<code>stage</code> 后复核 <code>AGENTS.md</code>（<code>2,382 B</code>）、<code>INDEX.md</code>（<code>1,317 B</code>）、<code>watermark.json</code>（<code>8,876 B</code>）修改时间均停留在 <code>2026/11/21 09:19:28</code>，活跃记忆/水位/快照（18 / 18 / 4）<strong>零写盘</strong>。</li>
+</ul>
+<hr>
+<h3>二、Antigravity Automation 触发 <code>/dream</code> 评估方案与边界</h3>
+<p><strong>核心矛盾</strong>：Antigravity 原生 Automation（<code>&quot;builtin&quot;: &quot;schedule&quot;</code>）只支持 <strong>App 运行期 cron 定时</strong>（无 OS 登录事件触发、未承诺离线漏跑补发），且直接挂 <code>agentapi new-conversation</code> 到点必开新对话消耗模型额度；同时本机全局权限为 <code>TURBO</code> + <code>EAGER</code>，无人值守会话必须靠多层硬闸门锁死人工审阅边界并防待审包堆积。</p>
+<h4>1. 实测与文档确认的硬边界</h4>
+<ul>
+<li><strong>真实加载路径 [实测 + 官方 <code>sidecars.md</code>]</strong>：全局 Automation 位于 <code>C:\Users\&lt;USER&gt;\.gemini\config\sidecars\&lt;id&gt;\sidecar.json</code>（或插件内 <code>plugins/&lt;plugin&gt;/sidecars/&lt;id&gt;/sidecar.json</code>）；内置 <code>automation/SKILL.md</code> 速览第 27 行的 <code>~/.gemini/jetski/sidecars/</code> 在本机不存在。</li>
+<li><strong>启用与 <code>agentapi</code> 能力 [实测 + 文档]</strong>：</li>
+<li>须由用户在 Automations 面板（<code>sidecar://dashboard</code>）手动开启，不可由 Agent 改写 <code>config.json</code>；开启后系统自动绑定专属 <code>projectId</code>。</li>
+<li>本机 <code>C:\Users\&lt;USER&gt;\.gemini\antigravity\bin\agentapi.bat</code> 实测支持 <code>agentapi new-conversation [--model=&lt;flash_lite|flash|pro|model_id&gt;] [--title=&lt;title&gt;] [--profile=&lt;profile&gt;] &lt;prompt&gt;</code>。</li>
+<li>时区确认：本机为 <code>China Standard Time</code>（UTC+8），cron 须带 <code>CRON_TZ=Asia/Shanghai</code> 前缀且 <code>restart_policy: &quot;always&quot;</code>。</li>
+<li><strong>离线补跑 [未验证]</strong>：官方 <code>sidecars.md</code> 未承诺关机/未开 App 错过 cron 点后的 catch-up，个人电脑设单一固定时刻（如每日 09:00）大概率频繁漏跑。</li>
+<li><strong>自污染闭环 <code>代码实测 [redact.py</code> L138-145]</strong>：只要 <code>agentapi new-conversation</code> 的 <code>--title</code> 或首条 prompt 包含 <code>[DREAM_INTERNAL_RUN]</code>，即便未显式传 <code>--exclude-cid</code>，Layer B <code>is_self_polluting_session</code> 也会整会话跳过，不会形成自动触发自污染死循环。</li>
+<li><strong>两处必须补防的真实隐患 [代码与配置实测]</strong>：</li>
+<li><strong>本机 <code>TURBO</code> 权限穿透风险</strong>：实测 <code>config.json</code> 当前为 <code>permissionPreset: AGENT_PERMISSION_PRESET_TURBO</code>、<code>autoExecutionPolicy: EAGER</code>、<code>nonWorkspaceFileAccessPolicy: ALLOW</code>。Automation 继承全局权限，仅靠 <code>agent_permissions.access_grants</code> <strong>无法</strong>阻断无人值守会话误调 <code>apply</code>。守住人工审阅闸门须靠三层防线：① Prompt 硬禁生成 <code>decisions.json</code> 与调用 <code>apply</code>/<code>revert</code>/<code>rollback</code>；② <code>governance.py</code> 现有强绑定 <code>plan_hash + decisions.json</code> 契约；③ <strong>建议加固</strong>：给 <code>dream_cli.py</code> 增加环境变量硬锁（如 <code>DREAM_STAGE_ONLY=1</code> 时从代码层直接拒绝 <code>apply</code>/<code>revert</code>/<code>rollback</code>，在 sidecar <code>env</code> 中写死）。</li>
+<li><strong>待审包重复堆积缺口</strong>：实测 <code>extractor.py</code> L749 <code>check_due()</code> 仅比对 <code>watermark.json</code>，不检查 <code>state/runs/</code> 是否已有未审阅 <code>staged_plan.json</code>。若用户多日未审阅，高频定时会反复 <code>extract</code>/<code>stage</code> 堆积重复包。</li>
+</ul>
+<h4>2. 候选路线对比与放弃原因</h4>
+<p>| 路线 | 触发方式 | 0 Token 预检 &amp; 防积压 | 等效“每日登录/开 App 触发” | 结论与边界 |</p>
+<p>| :--- | :--- | :--- | :--- | :--- |</p>
+<p>| <strong>方案 A（推荐）：原生 <code>schedule</code> + 本地门控脚本 → 条件拉起 <code>agentapi</code></strong> | <code>sidecar.json</code> 用 <code>&quot;builtin&quot;: &quot;schedule&quot;</code> + <code>CRON_TZ=Asia/Shanghai 0 * * * *</code>（每小时）跑本地 Python/PS 门控脚本：依次查 ① 每日/每周冷却锁（存在 <code>ANTIGRAVITY_EXECUTABLE_DATA_DIR</code>）② <code>state/runs/</code> 无未审 <code>staged_plan.json</code> ③ <code>dream.ps1 check-due</code> 为 <code>due: true</code>，三绿才调 <code>agentapi new-conversation</code> 跑 <code>extract</code>→<code>stage</code> | <strong>有</strong>：0 模型开销预检，无待审包堆积 | <strong>近似等效</strong>：只要当天打开 Antigravity ≥1 小时即自动触发且全天最多拉起 1 次，规避固定时刻漏跑 | <strong>首选</strong>；唯一 <strong>[未验证]</strong> 点：<code>args[1]</code> 不直接写 <code>agentapi</code> 时，<code>sidecar://dashboard</code> 是否仍为该 sidecar 分配 <code>projectId</code> 并向子进程透传 <code>agentapi</code> 上下文（可用 10 秒只读探针 sidecar 实测证伪） |</p>
+<p>| <strong>方案 B（零代码保底）：纯原生 Automation 每周固定点直调 <code>agentapi</code></strong> | <code>CRON_TZ=Asia/Shanghai 0 21 * * 0</code>（每周日 21:00）直接 <code>agentapi new-conversation --model=flash --title=&quot;[DREAM_INTERNAL_RUN] 每周记忆提案&quot; -- ...</code> | 无 0 Token 预检（到点必耗 1 轮模型调 <code>check-due</code>；防积压靠 prompt 自行检查 <code>state/runs/</code>） | 不支持（若周日 21:00 未开 App 则本周漏跑） | 零脚本最稳妥；若方案 A 探针显示平台强制要求 <code>args[1]==&quot;agentapi&quot;</code> 则立即降级至此方案 |</p>
+<p>| <strong>方案 C（放弃）：Windows Task Scheduler 登录触发调 <code>agentapi.bat</code></strong> | OS 登录事件触发 PS 脚本 | 有 | 支持 OS 登录 | <strong>放弃原因</strong>：OS 登录瞬间 Antigravity 主进程与 <code>language_server</code> 尚未就绪，且脱离 sidecar 托管缺少 <code>projectId</code>/运行时环境变量，强行桥接极其脆弱 |</p>
+<p>| <strong>方案 D（备选观察）：One-shot <code>&quot;command&quot;</code> Sidecar（<code>restart_policy: &quot;never&quot;</code>）</strong> | App 启动时执行一次门控脚本 | 有 | 贴近开 App 触发 | <strong>次选原因</strong>：若 App 跨天常驻不重启不会再次触发，且切号/重开时 <code>never</code> 策略重跑行为 [未验证] |</p>
+<hr>
+<h3>三、增量 <code>check-due</code> / <code>extract</code> / <code>stage</code> 审阅包（<code>incremental_20261121</code>）</h3>
+<h4>1. 抽取与校验摘要</h4>
+<ul>
+<li><strong><code>check-due</code></strong>：<code>due: true</code>（<code>changed_conversations: 6</code>，阈值 <code>5</code>；距上次 <code>0.58</code> 天）。</li>
+<li><strong><code>extract</code></strong>：排除当前会话 <code>5293b992</code> 后实抽 <strong>5 个会话 / 28 新 turns / 3 批次</strong>，敏感信息命中 <code>0</code>，<code>retry_sessions = []</code>：</li>
+<li><code>a9fcad14</code>（DeepSeek Stack Skills Analysis）：Skill 自动发现触发率审计、Antigravity 先行精简技能池与外部冷备、固化 <code>course-ppt-lab</code> S21 → 收录 <code>OP-003</code>/<code>OP-004</code>/<code>OP-005</code>（跳过瞬时数量快照与已进原生规则的 <code>deepseek-stack</code> 方法论）。</li>
+<li><code>a0ca09c2</code>（opus 能否使用实验）：仅 1 条用户试探消息无回复 → 不收录（<code>no_memory_needed</code>）。</li>
+<li><code>d17de465</code>（AI Model Point Usage Strategy）：同济 MCP 升级与 Codex 覆盖坑排查 → 收录 <code>OP-002</code>（易变参数与流水账留课题卡 <code>Desktop\mcp\mcp.md</code>）。</li>
+<li><code>a7ae9856</code>（已过期mcp1，<code>order_uncertain: true</code>，核查 step=185/186/224 因果自洽）：备用 VPN <strong>SDKDNS</strong> 底层机制与双 TUN 互斥 → 收录 <code>OP-001</code>。</li>
+<li><code>61796df0</code>（Memory File State Verification，<code>dropped_dream_turns: 5</code>）：自身治理断点会话，余下 5 条为续接与审批短语 → 不收录（防自指污染）。</li>
+<li><strong><code>stage</code> 校验与预算预检（全绿）</strong>：</li>
+<li><code>plan_hash</code>：<code>4b4e1ca183a2bac01eee61cc6b0a16c7a748da6225e267dbbeacd1509184c598</code></li>
+<li><code>manifest_hash</code>：<code>21d698865895cf4158ae51d30bcb9b443e0eeec12d4be556a4423989b310a577</code></li>
+<li>覆盖批次：<code>[1, 2, 3]</code>；负反馈拦截：<code>0</code>；Tier 1 变更：<code>0</code>；<code>AGENTS.md</code> 仍为 <code>20/140</code> 行（<code>2,382 B</code>），4 个触达主题更新后为 <code>24–39/150</code> 行。</li>
+</ul>
+<h4>2. 待审变更清单（5 条 Tier 3 原地 <code>update</code>，无新增碎片条目）</h4>
+<p>| OP | 主题 / 条目 | 核心变更要点 |</p>
+<p>| :--- | :--- | :--- |</p>
+<p>| <strong>OP-001</strong> | <code>tongji-mcp-and-network</code> / <code>MEM-NET-001</code> | 合并补全备用 VPN <strong>SDKDNS</strong>（<code>mihomo</code>）机制：<code>adv.json</code> 在 <code>globalMode: true</code> 下仍走 <code>mode: rule</code>、仅支持 <code>DOMAIN</code>/<code>DOMAIN-SUFFIX</code>（不支持 <code>IP-CIDR</code>）、<code>advCache</code> 改后须完全退出重启，以及 SakuraCat 与 SDKDNS 严禁同时开 TUN/增强模式红线。 |</p>
+<p>| <strong>OP-002</strong> | <code>tongji-mcp-and-network</code> / <code>MEM-NET-002</code> | 补入虚拟网卡黑名单（拦截 <code>sing-tun\|tun\d*\|mihomo</code> 及 <code>172.19.*</code>）、<strong>Codex <code>.codex\AGENTS.override.md</code> 优先级高于 <code>AGENTS.md</code></strong> 同步坑、DeepSeek/Kimi 思考分工压测红线，并指向课题卡 <code>Desktop\mcp\mcp.md</code>。 |</p>
+<p>| <strong>OP-003</strong> | <code>antigravity-platform</code> / <code>MEM-AGY-002</code> | 补入 Skill 自动发现触发率规律：臃肿 frontmatter 稀释注意力致自动发现近乎 0 触发、用户反感靠背 <code>/skill-name</code> 手动触发，高价值留精简短中文描述进自动池，低频上游包由高频主技能首行指针按需拉起。 |</p>
+<p>| <strong>OP-004</strong> | <code>local-windows-env</code> / <code>MEM-ENV-002</code> | 补入 Antigravity 先行试点策略（截至 2026-11-21 其余三端暂未同步）、清理插件重复副本勿误删无插件三端副本、第三方活跃上游包严禁物理缝合魔改源码、淘汰/备份统一移至 <code>C:\Users\&lt;USER&gt;\.gemini\skills-archive\</code> 冷备观察。 |</p>
+<p>| <strong>OP-005</strong> | <code>ppt-video-workflow</code> / <code>MEM-PPT-002</code> | 标注三条避坑已在 Antigravity 端固化入 <code>course-ppt-lab v0.4.1 references/science-video.md S21</code>（其余三端待同步），修正旧溯源“尚未固化”描述。 |</p>
+<blockquote>附注：<code>topics/tongji-mcp-and-network.md</code> 的 YAML <code>summary</code>（映射至 <code>INDEX.md</code> / <code>AGENTS.md</code>）仍残留旧词 <code>SakuraCat 2.4.6 增强模式</code>，而正文已更正为 <code>Rule</code> 模式；本次 <code>stage</code> 不改既有主题元数据，后续如有需要可顺手更新。</blockquote>
+<h4>3. 人工审阅入口（三选一，批复前零写盘）</h4>
+<ul>
+<li><strong>审阅文档</strong>：<code>review_summary.md</code> ｜ <code>proposal.json</code></li>
+<li><strong>本地审阅台一键应用（请在你的独立 PowerShell 终端运行，勿由 Agent 拉起）</strong>：</li>
+</ul>
+<pre><code>   powershell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;C:\Users\&lt;USER&gt;\.gemini\config\plugins\antigravity-dream-memory\dream.ps1&quot; review-serve --run-id incremental_20261121</code></pre>
+<ul>
+<li><strong>离线 HTML 导出</strong>：双击打开 <code>review.html</code>，勾选后导出 <code>decisions.json</code>，再运行 <code>dream.ps1 apply --run-id incremental_20261121 --decisions &lt;路径&gt;</code>。</li>
+<li><strong>对话内直接批复</strong>：直接回复 <code>OP-001</code>–<code>OP-005</code> 同意/驳回决定及理由，我按当前 <code>plan_hash</code> 代写 <code>decisions.json</code> 并原子 <code>apply</code>。</li>
+</ul>
+<hr>
+<h3>四、需你拍板的 2 个边界追问</h3>
+<ul>
+<li><strong>审阅项边界（<code>OP-005</code>）</strong>：<code>MEM-PPT-002</code> 三条避坑已固化进 Antigravity 端 <code>course-ppt-lab</code> S21，但其余三端暂未同步；你倾向本次按 <code>OP-005</code> 保留指针标注，还是现在就直接 <code>deprecate</code> 以坚持单一来源？</li>
+<li><strong>Automation 落盘与 <code>TURBO</code> 硬锁</strong>：你偏好先做 <strong>方案 A（每小时 0 Token 门控脚本 + 10 秒 <code>projectId</code> 探针实测）</strong>，还是直接采用零脚本的 <strong>方案 B（每周固定点直调 <code>agentapi</code>）</strong>？另外，鉴于本机全局处于 <code>TURBO</code> 权限，是否批准在 <code>dream_cli.py</code> 补加 <code>DREAM_STAGE_ONLY=1</code> 环境变量硬锁，使无人值守进程物理无法调用 <code>apply</code>/<code>revert</code>/<code>rollback</code>？</li>
+</ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>先暂时不同步，等到这个skill非常成熟了我自己会同步的。这个我没有注意指针标注，两者有什么区别嘛，指针标注有什么特别的优点嘛？同时它相对于单一来源有什么不足或者缺点。你这样说我觉得好像开启automation感觉也没有优点，既会频繁占用对话消耗额度，又比较繁琐设置才能达到预想的效果，而且打开了这个之后提示词的设置又该如何设置呢。如果就方案而言，A的话设置成只要累计打开24小时就开启一次这样还可以</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>你的直觉很准——两件事都可以从“收益 vs 维护代价”拆透，不用为做而做。</p>
+<hr>
+<h3>一、<code>OP-005</code>（<code>MEM-PPT-002</code>）：指针标注 vs 单一来源的真实区别与取舍</h3>
+<p>先把我上一轮没拆细的地方摊开：<strong>“指针标注”其实分两种</strong>，加上“单一来源”，一共 3 种做法：</p>
+<p>| 做法 | 记忆库里留什么 | 核心优点 | 缺点 / 隐患 |</p>
+<p>| :--- | :--- | :--- | :--- |</p>
+<p>| <strong>1. 副本 + 指针</strong>（当前 <code>OP-005</code> 写法） | 保留 3 条避坑细节，顺带注明“Antigravity 端已固化进 <code>course-ppt-lab</code> S21，其余三端待同步” | 哪怕没触发 <code>course-ppt-lab</code>（如纯 Matplotlib/FFmpeg 导出），读记忆就能直接用 | <strong>双源漂移风险最大</strong>：以后 S21 更新参数，记忆副本不会自动跟着改，久了出现新旧矛盾；且占记忆体积 |</p>
+<p>| <strong>2. 纯“瘦指针”</strong> | 删掉 3 条重复细节，只留 1 句索引：“Python 嵌 PPT 视频/Matplotlib 避坑已固化进 Antigravity 端 <code>course-ppt-lab/references/science-video.md</code> S21（其余三端暂未同步），跨场景或需核对时直接读该文件” | ① <strong>不双源漂移</strong>（细节只在 S21 维护）；② <strong>跨技能不丢入口</strong>（非 PPT 任务读到主题也能顺藤摸瓜找到 S21）；③ 以后跑 <code>/dream</code> 知道已固化，不会重复提议 | 存在“路径/节号失效”小风险（若日后重命名 <code>science-video.md</code> 或删改 S21，指针会悬空）；用时多一次 <code>read_file</code> |</p>
+<p>| <strong>3. 直接 <code>deprecate</code>（严格单一来源）</strong> | 标为退役，记忆库不再维护，只留 Skill S21 一处真相 | 最干净、零维护成本、绝无漂移 | 只要任务没触发 <code>course-ppt-lab</code>（或你在未同步的另三端做同类事），这套踩坑经验就彻底检索不到 |</p>
+<p><strong>结论</strong>：既然你决定其他三端先不同步，等 Skill 成熟再同步——<strong>“纯瘦指针”比当前的“副本+指针”更合适</strong>（消除了正文漂移，又保留了跨任务索引和“暂未跨端同步”的提醒）；如果确定这 3 条只在做 PPT 时用到，直接 <code>deprecate</code> 也完全合理。</p>
+<hr>
+<h3>二、Automation 值不值得开？（先算账，再看你的“累计 24h”思路）</h3>
+<h4>1. 实话实说：当前场景下 <strong>Automation 并非刚需</strong></h4>
+<p>你的怀疑完全成立：</p>
+<ul>
+<li>因为<strong>人工审阅闸门绝不能省</strong>，Automation 唯一替你省掉的只是“隔 5–7 天手动新开对话敲一句 <code>/dream</code> + 等 1–2 分钟跑完 <code>extract</code>/<code>stage</code>”这一步。</li>
+<li>代价却是实打实的：多一个后台 sidecar 进程、Settings→Projects 多一条不可删载体记录、以及额外的配置与维护面。</li>
+<li><strong>只有当你经常连续忙 1–2 周老忘记跑 <code>/dream</code></strong>、想让它后台提前把 <code>review.html</code> 准备好放桌上时，才有净收益；如果你本来就会隔几天顺手敲一次 <code>/dream</code>，<strong>不开 Automation 反而最省额度、最干净</strong>。</li>
+</ul>
+<h4>2. 你的改进思路：“方案 A 改为累计打开 App 24 小时触发一次”</h4>
+<p>这个改法<strong>非常精准，刚好打掉了原方案“频繁占用对话烧额度”和“固定时刻漏跑”两个最大痛点</strong>：</p>
+<ul>
+<li><strong>实现原理（纯本地、0 Token 预检）</strong>：</li>
+<li><code>sidecar.json</code> 用 <code>&quot;builtin&quot;: &quot;schedule&quot;</code>（<code>CRON_TZ=Asia/Shanghai 0 * * * *</code>，每小时唤醒一次轻量 Python 脚本，耗时 &lt;0.1s、不调模型）。</li>
+<li>因为 sidecar <strong>仅在 Antigravity 打开时运行</strong>，每唤醒一次就往 <code>ANTIGRAVITY_EXECUTABLE_DATA_DIR/uptime.json</code> 给累计运行小时数 <code>+1</code>。</li>
+<li><strong>同时满足 3 个条件才调 <code>agentapi</code>（并清零计时）</strong>：</li>
+<li>累计打开时长 <code>&gt;= 24</code> 小时（挂 3 天还是 1 周都按真实使用时长算）；</li>
+<li><code>state/runs/</code> 里<strong>没有未审阅的待处理 <code>staged_plan.json</code></strong>（上次没审完绝不重复造包）；</li>
+<li><code>dream.ps1 check-due</code> 为 <code>due: true</code>（开着挂机没聊新对话，依然 0 对话、0 额度跳过）。</li>
+<li><strong>还有一个更轻的变体（彻底 0 模型额度）</strong>：满 24h 且 <code>due: true</code> 时，<strong>不自动开对话</strong>，只弹一条 Windows 桌面通知提醒你“已有 N 个新对话，可手动 <code>/dream</code>”。这样既解决健忘，又彻底规避自动耗额度与 <code>TURBO</code> 误写风险。</li>
+<li><strong>方案 A 唯一的 [未验证] 边界</strong>：<code>builtin: &quot;schedule&quot;</code> 的 <code>args[1]</code> 指向本地脚本而非直接写 <code>agentapi</code> 时，平台是否仍为其分配 <code>projectId</code> 并允许子进程调用 <code>agentapi new-conversation</code>（若决定试，先花 10 秒跑个只读探针即可证伪）。</li>
+</ul>
+<h4>3. 如果开启 Automation，提示词应该怎么写？</h4>
+<p>核心是 4 条铁律写死（防自污染、禁调外部 MCP、先判 <code>due</code>、锁死只 <code>stage</code> 不 <code>apply</code>），完整自包含提示词范本如下：</p>
+<pre><code>[DREAM_INTERNAL_RUN]
+严格按以下边界执行一次本地增量记忆巩固预审（严禁调用任何第三方 MCP，包括同济 DeepSeek MCP）：
+1. 读取 C:\Users\&lt;USER&gt;\.gemini\config\plugins\antigravity-dream-memory\skills\dream\SKILL.md。
+2. 先运行 dream.ps1 check-due：若 due 为 false，或 state/runs/ 中已存在未应用的 staged_plan.json，直接汇报原因并立即停止。
+3. 若满足条件，运行 dream.ps1 extract 生成增量批次，按 SKILL.md 路由生成紧凑 proposal.json，再运行 dream.ps1 stage 冻结审阅包。
+4. 【硬红线】本任务在 stage 完成后必须立即终止：严禁生成 decisions.json，严禁调用 apply / revert / rollback，严禁修改任何记忆文件、规则或水位线。
+5. 最终仅输出：run_id、plan_hash、各条待审操作的一句话摘要、review_summary.md / review.html 路径与 review-serve 命令，等待人工审阅。</code></pre>
+<hr>
+<h3>三、下一步交给你拍板（两件事独立决定）</h3>
+<ul>
+<li><strong>当前审阅包 <code>incremental_20261121</code></strong>：</li>
+<li><code>OP-001</code>–<code>OP-004</code> 你是否直接同意？</li>
+<li><code>OP-005</code>（<code>MEM-PPT-002</code>）你选：<strong>按现方案保留副本+指针</strong> / <strong>改为纯瘦指针（重跑 <code>stage</code>）</strong> / <strong>直接 <code>deprecate</code>（重跑 <code>stage</code>）</strong> / <strong>本次先驳回不动</strong>？</li>
+<li><strong>Automation 路线</strong>：</li>
+<li><strong>暂不开启</strong>（纯手动 <code>/dream</code>，最省心零负担）；</li>
+<li><strong>上“累计 24h + 零成本 Windows 桌面提醒”</strong>（只提醒不自动开对话）；</li>
+<li><strong>试方案 A“累计 24h 自动 <code>stage</code>”</strong>（先跑 10 秒 <code>projectId</code> 只读探针 + 确认是否加 <code>DREAM_STAGE_ONLY=1</code> 代码硬锁）。</li>
+</ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>我全部同意，然后OP-005我选择按你说的改为纯瘦指针，因为这个mem1和mem2其实都是为了开启新对话所写的交接协议，一般是不修改的。我觉得你想的桌面提醒应该是很好的方案了就按照这个来吧</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>两项均已落地并完成实测校验，未触碰 <code>mem1.md</code> / <code>mem2.md</code>，也未修改 <code>antigravity-dream-memory</code> 插件源码与 <code>config.json</code>。</p>
+<hr>
+<h3>一、增量记忆包 <code>incremental_20261121</code> 原子落盘（5/5 全通过）</h3>
+<ul>
+<li><strong><code>OP-005</code>（<code>MEM-PPT-002</code>）已按批复改为纯瘦指针</strong>并重跑 <code>stage</code>（新 <code>plan_hash</code>：<code>09b51c91ee1600a0896d10429f6b82a8f431c37f3d22ac4e356e216e5724f56f</code>），随后绑定 <code>decisions.json</code> 完成原子 <code>apply</code>：</li>
+<li>落盘变更：<code>5/5</code> 全部生效（0 驳回、0 漂移），自动生成只读快照 <code>20261121_154548_112_pre_apply_incremental_20261121</code>，完整收据见 <code>apply_receipt.json</code>。</li>
+<li>触达主题文件：<code>tongji-mcp-and-network.md</code>、<code>antigravity-platform.md</code>、<code>local-windows-env.md</code>、<code>ppt-video-workflow.md</code>（其中 <code>MEM-PPT-002</code> 仅保留指向 <code>course-ppt-lab/references/science-video.md</code> S21 的瘦指针与“其余三端暂未同步”标注）。</li>
+<li><strong>落盘后状态复核 [实测]</strong>：</li>
+<li><code>AGENTS.md</code> 保持 <code>20/140</code> 行（<code>2,382 B</code>），Tier 1 规则 <code>2</code> 条、主题 <code>6</code> 个、活跃记忆 <code>18</code> 条、已推进水位 <code>22</code> 个对话（本次推进 5 个）。</li>
+<li><code>dream.ps1 check-due</code> 已收敛为 <code>due: false</code>（<code>changed_conversations: 1</code>，仅剩当前对话）。</li>
+<li>如日后需单独撤回任意一条，随时可用：<code>dream.ps1 revert --run-id incremental_20261121 --item &lt;OP-ID&gt; --reason &quot;&lt;原因&gt;&quot;</code>。</li>
+</ul>
+<hr>
+<h3>二、累计 24 小时零开销桌面提醒（<code>Dream 记忆巩固桌面提醒</code>）</h3>
+<p>已独立创建于全局 sidecar 目录（与插件核心 11 文件物理隔离）：</p>
+<ul>
+<li>核心脚本：<code>dream_reminder.py</code>（纯 Python 3.12 stdlib）</li>
+<li>调度配置：<code>sidecar.json</code>（ID：<code>dream-memory-reminder</code>，显示名：<strong><code>Dream 记忆巩固桌面提醒</code></strong>）</li>
+</ul>
+<h4>1. 运行机制（0 对话 / 0 Token / 无黑窗）</h4>
+<ul>
+<li><strong>计时方式</strong>：通过 <code>CRON_TZ=Asia/Shanghai */15 * * * *</code> 每 15 分钟唤醒一次脚本，仅在 Antigravity 打开期间生效；每次心跳向 <code>sidecar_data\dream-memory-reminder\data\uptime_state.json</code> 原子累加 <code>15</code> 分钟（内置 5 分钟防重入抖动，休眠/关机不计时）。</li>
+<li><strong>静默复位</strong>：若你在未满 24 小时时自己手动跑过 <code>/dream</code> 并 <code>apply</code>，下一次心跳检测到 <code>last_run_at</code> 前进会自动清零计时器重新算 24 小时。</li>
+<li><strong>弹窗条件</strong>：仅在累计满 <strong>24 小时（1440 分钟）</strong> 后：</li>
+<li>若检测到 <code>state/runs/</code> 有未审阅的 <code>staged_plan.json</code> → 弹一次 <strong>“Dream 记忆提案待审阅”</strong> 通知并清零计时；</li>
+<li>否则调生产 <code>dream_cli.py check-due</code>（单一来源，无逻辑复制）：<code>due: true</code> → 弹一次 <strong>“Dream 记忆巩固提醒”</strong> 通知（附新增对话数与距上次天数）并清零计时；<code>due: false</code> → 静默保持 24h 待命，待后续真攒够新对话再提醒。</li>
+<li><strong>失败退避</strong>：若 Toast 失败不误清零，自动退避 1 小时防刷日志。</li>
+</ul>
+<h4>2. 实测验证结果</h4>
+<ul>
+<li><strong>隔离单元测试</strong>：7 个边界分支（正常累加、5 分钟防抖、手动 <code>/dream</code> 重置且拒绝旧时间戳误重置、满阈值但 <code>due=false</code> 待命、发送失败 1 小时退避、<code>due=true</code> 触发并归零、待审提案优先与收据清除）全部通过（<code>ALL_7_BRANCHES_PASSED=True</code>）。</li>
+<li><strong>真机 Toast 实测</strong>：已运行 <code>--test-notify</code>，直接通过本机注册 AUMID <strong><code>electron.app.Antigravity</code></strong> 弹出原生 Windows 通知（<code>ok: true</code>，零黑窗，你刚在屏幕右下角应已看到“Dream 记忆提醒测试成功”）。</li>
+</ul>
+<h4>3. 下一步：请你手动启用并验收</h4>
+<p>按安全规范我未修改 <code>config.json</code> 代为启用，请点击下方入口找到 <strong><code>Dream 记忆巩固桌面提醒</code></strong>（<code>dream-memory-reminder</code>）打开开关：</p>
+<p>[Open Automations Dashboard](sidecar://dashboard)</p>
+<p><strong>开启后 15 分钟验收方法</strong>（在 PowerShell 运行，看到 <code>accumulated_minutes: 15</code> 即确认 Antigravity 定时调度链路 100% 跑通）：</p>
+<pre><code>C:\Users\&lt;USER&gt;\.local\bin\python3.12.exe -X utf8 &quot;C:\Users\&lt;USER&gt;\.gemini\config\sidecars\dream-memory-reminder\dream_reminder.py&quot; --status</code></pre>
+<blockquote>留一个边界观察点：这是本机首次在全局 <code>sidecars/</code> 下挂非 <code>agentapi</code> 的纯本地 <code>schedule</code> 脚本——如果在 <code>sidecar://dashboard</code> 启用 15 分钟后 <code>--status</code> 里的 <code>accumulated_minutes</code> 仍为 <code>0</code>（说明面板可能只对含 <code>agentapi</code> 的条目放行调度），告诉我 <code>sidecar_data\dream-memory-reminder\logs\</code> 的内容即可，我们可无缝切到标准 <code>&quot;command&quot;</code> 轻量轮询模式。</blockquote>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>现在已经过去好多天了，我觉得你也可以再次实行一次了，我更改了好多的配置，你全面的检查后，进行你的操作把</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成全局健康与配置变更基线检查（顺带确认 <code>dream-memory-reminder</code> 已稳定零开销累计运行 13.25 小时），并完成增量抽取（<code>incremental_20261125</code>：15 个新增/变更会话、136 条新轮次、11 个批次）。已并行派发 6 个只读分析子代理覆盖全部 11 个批次，待它们返回后我将统一去重、交叉核验配置现状并冻结 <code>stage</code> 审阅包交你确认（批复前零写盘）。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已收到 1/6 组（<code>batch_07</code>/<code>batch_09</code>）分析结果，继续等待其余 5 个只读分析子代理返回。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已收到 2/6 组（<code>batch_06</code>、<code>batch_07</code>/<code>09</code>）分析结果，继续等待其余 4 个分析子代理返回。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已收到 3/6 组（<code>batch_01</code>/<code>02</code>、<code>batch_06</code>、<code>batch_07</code>/<code>09</code>）分析结果，继续等待其余 3 个只读分析子代理返回。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已收到 4/6 组分析结果，继续等待最后 2 个只读分析子代理（<code>batch_03</code>/<code>04</code> 与 <code>batch_05</code>/<code>08</code>）返回。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已收到 5/6 组分析结果，等待最后 1 组（<code>batch_05</code>/<code>08</code>）返回后立即汇总去重并冻结 <code>stage</code> 审阅包。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成过去 4 天的全局配置与磁盘健康检查，并走完新一轮增量 <code>check-due</code> → <code>extract</code> → 6 路并行只读分析 → 跨批次冲突裁决 → <code>stage</code> 冻结审阅包（<strong>遵守人工审阅铁律，批复前对记忆库/规则/水位零写盘</strong>）。</p>
+<hr>
+<h3>一、全面检查与配置变更核验（实测）</h3>
+<ul>
+<li><strong>24 小时桌面提醒 Sidecar 运行正常 [实测]</strong>：</li>
+<li><code>dream-memory-reminder</code> 已按每 15 分钟零开销心跳稳定运行 53 次，累计活跃 <strong><code>13.25 / 24.0</code> 小时</strong>（<code>795</code> 分钟，0 报错、0 提前弹窗、0 模型消耗）；待本次审阅包 <code>apply</code> 推进 <code>last_run_at</code> 后，下一次心跳会自动将计时器归零重计 24 小时。</li>
+<li><strong>过去 4 天磁盘配置变更与防冗余分流 [实测]</strong>：</li>
+<li><strong>已由原生全局规则 / 课题状态卡权威承载（本次不重复抄录）</strong>：新增 <code>cross-model-reviewer.md</code>、升级 <code>deepseek-subagent.md</code>（v5.4.0）与 <code>core-reasoning-protocol.md</code>（<code>blast-radius</code> 锚点）、升级 <code>debug-unstick</code>/<code>blast-radius</code>/<code>best-of-n</code> 至 v1.3、同济 MCP v5.4.0 细节（锚定 <code>Desktop\mcp\mcp.md</code>）、<code>ai-radar</code> 单项目细节（锚定 <code>Desktop\ai-radar\CONTEXT_ai_radar.md</code>）。</li>
+<li><strong>已核验磁盘终态并纳入本次记忆更新</strong>：<code>skills-meta/</code>（<code>local-runtime.md</code>、<code>local-overlay.json</code>、<code>sync_overlay.py</code> 零漂移）、<code>.workbuddy</code> 内置 Node.js v22.22.2、<code>tongji_mcp_metrics.jsonl</code>、<code>agy-capsule</code> v1.5.0、<code>antigravity-archive-manager</code> v1.1.0、<code>sidecar_sdk/preload.js</code> 主题契约、OpenBrowser 与 <code>scratch\openbrowser-vpn-launcher\</code>、以及 <code>Desktop\成像光学\AGENTS.md</code> / <code>Desktop\光路\AGENTS.md</code> 双工作区硬隔离。</li>
+<li><strong>未变动主题复核</strong>：<code>ppt-video-workflow.md</code>（<code>MEM-PPT-002</code> 纯瘦指针仍准确，其余三端确仍未同步）、<code>antigravity-share-workflow.md</code> 及 Tier 1 <code>promoted_rules.md</code>（<code>RULE-001</code> / <code>RULE-002</code>）均无需改动。</li>
+<li><strong>关键跨批次冲突裁决</strong>：</li>
+<li>会话 <code>a0ca09c2</code> 表面呈现“弃用 <code>$...$</code> LaTeX 改纯文本 Unicode 可绕过 Opus 5.5 误杀”，但 <code>85bfe033</code> 查底层数据库日志已<strong>当场证伪</strong>（实为 Antigravity 后台静默最多 4 次重试撞运气过关，11-17~23 样本 29 拦 26）；已在 <code>OP-007</code>（<code>MEM-AGY-003</code>）采用证伪后的权威结论并沉淀底层日志核验法（查 <code>step_type=17</code> / <code>stop_reason=11</code>）。</li>
+</ul>
+<hr>
+<h3>二、待审变更清单（<code>incremental_20261125</code>，共 13 条 Tier 3，0 条 Tier 1）</h3>
+<p>本次覆盖 <strong>15 个新增/变更会话、136 条新轮次、11/11 批次</strong>（敏感信息命中 <code>0</code>，<code>retry_sessions = []</code>），共提炼 <strong>10 条原地 <code>update</code> + 3 条 <code>add</code></strong>（不新增主题、不膨胀 Tier 1 规则）：</p>
+<h4>1. <code>local-windows-env</code>（39 → 55 / 150 行）</h4>
+<p>| OP | 动作 / 条目 | 核心变更要点 |</p>
+<p>| :--- | :--- | :--- |</p>
+<p>| <strong>OP-001</strong> | <code>update</code> <code>MEM-ENV-001</code> | 补齐 <code>RULE-001</code> 承诺的本机 <strong>Node.js v22.22.2</strong> 绝对路径（<code>.workbuddy\binaries\node\versions\22.22.2-6\node.exe</code>，含 <code>npm</code>/<code>npx</code>/<code>node:sqlite</code>）；并合并 PATH 无 <code>python</code> 红线、WorkBuddy 缺包清单、暂不建独立科研 venv 及 <code>uv</code> 隔离运行不继承预装包契约（指向 <code>skills-meta\local-runtime.md</code>）。 |</p>
+<p>| <strong>OP-002</strong> | <code>update</code> <code>MEM-ENV-002</code> | 补入扫描目录外的 <strong>Overlay 可选借鉴升级机制</strong>（<code>skills-meta\local-overlay.json</code> + <code>sync_overlay.py</code>：先 <code>scratch/</code> diff→勾选局部合入→<code>--apply</code> 无损重放→<code>--check</code> 验零漂移），刷新四端未同步现状核验日期至 2026-11-25。 |</p>
+<p>| <strong>OP-003</strong> | <code>add</code> <code>MEM-ENV-005</code> | <strong>Windows <code>chcp 65001</code> <code>.bat</code>/<code>.cmd</code> 防坑</strong>：必须严格 CRLF 无 BOM（严禁 Unix LF，否则 <code>cmd.exe</code> 字节偏移错位闪退），非 PATH 运行时直接用绝对路径并补非零退出留屏。 |</p>
+<p>| <strong>OP-004</strong> | <code>add</code> <code>MEM-ENV-006</code> | <strong>OpenBrowser 隔离浏览器与自建防跳区启动器</strong>：记录部署路径、位于 <code>scratch\openbrowser-vpn-launcher\</code> 的自建启动器（<strong>防清理 <code>scratch/</code> 误删</strong>）、3 套代理环境及源码避坑（仅代理模式熔断/禁 IPv6、<code>webgpu/speech/media</code> 默认 <code>real</code>、<code>portScanProtect</code> 劫持、启动页 <code>bash.ws</code> 超时假报警与缓存国家刷新；注记 Gemini <code>Something went wrong</code> 已证伪由 <code>portScanProtect</code> 引起，终因待查）。 |</p>
+<h4>2. <code>antigravity-platform</code>（37 → 48 / 150 行）</h4>
+<p>| OP | 动作 / 条目 | 核心变更要点 |</p>
+<p>| :--- | :--- | :--- |</p>
+<p>| <strong>OP-005</strong> | <code>update</code> <code>MEM-AGY-001</code> | 补入实测的 <strong>Sidecar Web UI 主题契约与防缓存坑点</strong>（<code>sidecar_sdk/preload.js</code> 内联覆盖 <code>body</code> 主题变量并派发 <code>theme-change</code>，本机已启用 <code>THEME_MODE_INHERIT</code>，禁硬编码深色模式浅色字，接口/静态资源应返回 <code>Cache-Control: no-store</code>），补全现有 sidecar 载体项目清单（含 <code>dream-memory-reminder</code>）。 |</p>
+<p>| <strong>OP-006</strong> | <code>update</code> <code>MEM-AGY-002</code> | 补入规则平台机制与多代理边界（不抄原生规则正文）：单文件 ≤24KB / 总 20K token 超额优先降级最大单文件（故拆小文件分立）；MCP 关键分流参数须设 <code>required</code> 防偷懒；<code>swarm</code> worker 继承 <code>always_on</code> 规则须显式隔离作用域、跨轮防重按“独立交付物”、旧对话规则快照不热刷新；流程纪律类 Skill 锚定规则三门槛。 |</p>
+<p>| <strong>OP-007</strong> | <code>update</code> <code>MEM-AGY-003</code> | 跨批次裁决更新 Opus 误杀样本至 <strong>29 拦 26</strong>（含 v2.34.0）；新增<strong>后台静默 4 次重试底层核验法</strong>（查 <code>.db</code> 或 <code>transcript_full.jsonl</code> 是否含 <code>step_type=17</code> / <code>stop_reason=11</code>）并记录“去 LaTeX 改纯文本 Unicode 可避坑”假说已被日志证伪。 |</p>
+<p>| <strong>OP-008</strong> | <code>update</code> <code>MEM-ANTI-001</code> | 补齐 <code>agy-capsule</code> v1.5.0+ 侧栏一键更新与 <code>manage-plugin.ps1 -Action install</code> 热重载路径、Cockpit Tools <code>extraArgs</code> 精确 SQLite 字段位置，以及 <code>enable-cdp.ps1</code> 回环地址加固边界。 |</p>
+<p>| <strong>OP-009</strong> | <code>add</code> <code>MEM-AGY-004</code> | <strong>Orchestrator 槽位限制、独立配额池与原生 <code>swarm</code> 平台边界</strong>：Neon 与 Opus 5.5 同属 Planner 不可互配、二者属独立 5h 配额池、<code>invoke_subagent</code> vs <code>swarm</code> 选模差异、<code>workspace=&quot;inherit&quot;</code> 非只读沙箱，以及 <code>schedule(TimerCondition=&quot;any&quot;)</code> 平台级边界。 |</p>
+<h4>3. <code>tongji-mcp-and-network</code>（25 → 27 / 150 行）</h4>
+<p>| OP | 动作 / 条目 | 核心变更要点 |</p>
+<p>| :--- | :--- | :--- |</p>
+<p>| <strong>OP-010</strong> | <code>update</code> <code>MEM-NET-001</code> | 补入 SakuraCat 2.4.6 已连接态连点切“增强模式”致 <code>flutter_windows.dll</code> 崩溃防避步骤、<code>tun0</code> 仅管 IPv4 漏流边界、Rule 模式跨国分流多源核验；补入 SDKDNS 切模式热重载静默回退“自动选择”与共享亚太 IP 被 Google GeoIP 归港排障。 |</p>
+<p>| <strong>OP-011</strong> | <code>update</code> <code>MEM-NET-002</code> | 补入校园网关 Kimi 并发限流 2 与 429/5xx 切备用内网 VIP 相位翻转坑、MCP 改 <code>tools/list</code>/<code>required</code> 后须重载宿主连接刷 Schema 缓存、同步 Codex 双规则须保留用户自建条款且禁泄 <code>swarm</code>，以及零隐私遥测日志 <code>tongji_mcp_metrics.jsonl</code> 复盘入口。 |</p>
+<h4>4. <code>optics-research-profile</code>（40 → 42 / 150 行）</h4>
+<p>| OP | 动作 / 条目 | 核心变更要点 |</p>
+<p>| :--- | :--- | :--- |</p>
+<p>| <strong>OP-012</strong> | <code>update</code> <code>MEM-OPT-002</code> | 补齐“不主动超纲堆高等理论，但用户主动深挖机理时禁停在类比敷衍、须从基础方程推演”的双向边界，及理论笔记“问题驱动、分层防抄书”与“先讲理解碰壁纠偏”小闭环。 |</p>
+<p>| <strong>OP-013</strong> | <code>update</code> <code>MEM-OPT-003</code> | 严格守住【已有基础】<strong>零拔高</strong>；升级为已落盘的 <code>Desktop\成像光学\</code> 与 <code>Desktop\光路\</code> 双目录硬隔离与 <code>verified!=mastered</code> / Write-Gate 门禁；补入微腔/菲涅耳在学项及单球面转主面公式、中继透镜、暂挂 <code>#14</code>（高反 DBR 外部泵浦激发）。 |</p>
+<blockquote><strong>主动过滤未收录</strong>：<code>186265ff</code>（Superpowers/Octop 纯探索未拍板）、<code>ba90bf87</code>（Google 改区一次性教程）、<code>a1521c04</code> 前半段有线耳机一次性接触排查、<code>ai-radar</code> 项目内细节、机场节点瞬态延迟与 <code>Neon</code>/<code>Carbon</code> 易变跑分对比。</blockquote>
+<hr>
+<h3>三、预算预检与零写盘自检 [实测]</h3>
+<ul>
+<li><strong><code>plan_hash</code></strong>：<code>b77a6e96a9ca7d8b7e8f7bcfaed6f9dc98a71b60194dd00770890ed185facd94</code></li>
+<li><strong><code>manifest_hash</code></strong>：<code>de9f6333420a048222ecdbd11c3ce921d873e14f96adef887bd2a712bd2d4be3</code></li>
+<li><strong>预算全绿</strong>：<code>AGENTS.md</code> 保持 <code>20/140</code> 行（<code>2,382/12,000 B</code>，溢出 <code>0</code>），<code>INDEX.md</code> <code>11</code> 行（<code>1,317 B</code>），4 个触达主题距 <code>150</code> 行上限均有 <code>95–123</code> 行余量，负反馈拦截 <code>0</code>。</li>
+<li><strong>零写盘确认</strong>：<code>AGENTS.md</code>、<code>INDEX.md</code>、<code>watermark.json</code> 均停留在 <code>2026/11/21 23:45:48</code>（活跃记忆 <code>18</code> / 水位 <code>22</code> / 快照 <code>5</code> 未变）。</li>
+</ul>
+<hr>
+<h3>四、人工审阅入口（三选一）</h3>
+<ul>
+<li><strong>审阅全文</strong>：<code>review_summary.md</code> ｜ <code>proposal.json</code></li>
+<li><strong>本地审阅台一键应用（请在你的独立 PowerShell 终端运行）</strong>：</li>
+</ul>
+<pre><code>   powershell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;C:\Users\&lt;USER&gt;\.gemini\config\plugins\antigravity-dream-memory\dream.ps1&quot; review-serve --run-id incremental_20261125</code></pre>
+<ul>
+<li><strong>离线 HTML 导出</strong>：双击 <code>review.html</code>，勾选并导出 <code>decisions.json</code> 后调用 <code>dream.ps1 apply --run-id incremental_20261125 --decisions &lt;路径&gt;</code>。</li>
+<li><strong>对话内直接批复</strong>：直接回复“全同意”或指定同意/驳回/微调的 <code>OP-ID</code> 及理由，我按当前 <code>plan_hash</code> 代写 <code>decisions.json</code> 并原子 <code>apply</code>。</li>
+</ul>
+<hr>
+<h3>五、审阅前 2 个边界追问</h3>
+<ul>
+<li><strong><code>OP-004</code>（<code>MEM-ENV-006</code> OpenBrowser 与 <code>scratch\</code> 启动器）</strong>：目前桌面快捷方式指向 <code>.gemini\antigravity\scratch\openbrowser-vpn-launcher\</code>，入记忆主要是防后续误删 <code>scratch/</code> 或换代理端口漏同步；你希望保留这条记忆，还是认为 OpenBrowser 偏临时个人工具本次先驳回？</li>
+<li><strong>主题元数据 <code>summary</code> 残留</strong>：<code>topics/tongji-mcp-and-network.md</code> 顶部的旧概要（同步显示在 <code>AGENTS.md</code> 索引表）仍写着“SakuraCat 2.4.6 增强模式”，与已更新的 Rule 模式和 SDKDNS 内容略有滞后；你希望本批 <code>apply</code> 后保持引擎原样不动，还是后续单开一次微调把该概要刷新？</li>
+</ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>全部同意。你觉得哪种好就按照你说的来吧</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成全部落盘、索引概要同步与编译自检。</p>
+<h3>一、原子落盘与概要刷新结果 [实测]</h3>
+<ul>
+<li><strong>增量包 <code>incremental_20261125</code> 原子 <code>apply</code>（13/13 全通过）</strong>：</li>
+<li><code>applied_count = 13</code>（10 条原地 <code>update</code> + 3 条新增 <code>MEM-ENV-005</code> / <code>MEM-ENV-006</code> / <code>MEM-AGY-004</code>），<code>rejected_count = 0</code>，<code>drifted_files = []</code>，全部 15 个会话水位已推进。</li>
+<li>自动生成只读快照 <code>20261125_043624_297_pre_apply_incremental_20261125</code>，收据见 <code>apply_receipt.json</code>。</li>
+<li>触达主题文件：</li>
+<li><code>local-windows-env.md</code>（55/150 行，6 条活跃）</li>
+<li><code>antigravity-platform.md</code>（48/150 行，5 条活跃）</li>
+<li><code>optics-research-profile.md</code>（42/150 行，4 条活跃）</li>
+<li><code>tongji-mcp-and-network.md</code>（27/150 行，2 条活跃）</li>
+<li><strong>主题 <code>summary</code> 同步与重编（<code>dream.ps1 compile</code>）</strong>：</li>
+<li>仅更新上述 4 个主题的 frontmatter <code>summary</code>（不改任何正文条目、不影响单条 <code>revert</code> 的 CAS 锚点，也不修改插件引擎源码），重编后 <code>AGENTS.md</code> 与 <code>INDEX.md</code> 的 6 行索引全部完整无截断，消除了 <code>SakuraCat 2.4.6 增强模式</code> 旧表述，并补齐了 <code>Node/uv</code>、<code>Skill Overlay</code>、<code>OpenBrowser</code>、<code>Sidecar</code>、<code>swarm</code> 与双目录隔离检索关键词。</li>
+</ul>
+<h3>二、最终状态复核 [实测]</h3>
+<ul>
+<li><strong><code>AGENTS.md</code></strong>：<code>20/140</code> 行，<code>2,342/12,000 B</code>（溢出 <code>0</code>），Tier 1 规则保持 <code>2</code> 条（<code>RULE-001</code> / <code>RULE-002</code>）。</li>
+<li><strong>记忆库全景</strong>：<code>6</code> 主题（<code>23–55/150</code> 行）、<code>21</code> 条活跃记忆、<code>30</code> 个已推进水位、<code>6</code> 份只读快照、<code>0</code> 挂起事务。</li>
+<li><strong>水位与提醒闭环</strong>：<code>dream.ps1 check-due</code> 已收敛为 <code>due: false</code>（<code>last_run_at: 2026-11-25T04:36:24Z</code>）；<code>dream-memory-reminder</code> 下一次 15 分钟心跳检测到 <code>last_run_at</code> 前进后，会自动将此前累计的 13.25 小时清零并重新计 24 小时。</li>
+<li><strong>事后撤回入口</strong>：如后续发现任一条需单独撤回，随时运行：</li>
+</ul>
+<pre><code>  powershell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;C:\Users\&lt;USER&gt;\.gemini\config\plugins\antigravity-dream-memory\dream.ps1&quot; revert --run-id incremental_20261125 --item &lt;OP-ID&gt; --reason &quot;&lt;撤回原因&gt;&quot;</code></pre>
+</div></article>
+
+    </section>
+  </main>
+  <script>
+    (function() {
+      var src = '../sidebar.js';
+      if (window.location.protocol !== 'file:') {
+        src += (src.indexOf('?') >= 0 ? '&' : '?') + '_t=' + Date.now();
+      }
+      var s = document.createElement('script');
+      s.src = src;
+      document.body.appendChild(s);
+    })();
+  </script>
+  <script>
+    function triggerBlobDownload(blob, filename) {
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function() { URL.revokeObjectURL(url); }, 1500);
+    }
+    function downloadMarkdown(e, relPath, filename) {
+      if (window.location.protocol === 'file:' || !window.fetch || !window.Blob) {
+        return true;
+      }
+      if (e) e.preventDefault();
+      var btn = document.getElementById('downloadMdBtn');
+      var orig = btn ? (btn.getAttribute('data-orig') || btn.innerText) : '';
+      if (btn) {
+        btn.setAttribute('data-orig', orig);
+        btn.innerText = '正在下载...';
+      }
+      var targetUrl = relPath;
+      try { targetUrl = new URL(relPath, window.location.href).href; } catch (err) {}
+      fetch(targetUrl, { cache: 'no-cache' })
+        .then(function(resp) {
+          if (!resp.ok) throw new Error('HTTP ' + resp.status);
+          return resp.text();
+        })
+        .then(function(text) {
+          var blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
+          triggerBlobDownload(blob, filename);
+          if (btn) {
+            btn.innerText = '已下载 .md';
+            setTimeout(function() { btn.innerText = orig; }, 2000);
+          }
+        })
+        .catch(function() {
+          if (btn) btn.innerText = orig;
+          var a = document.createElement('a');
+          a.href = targetUrl;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        });
+      return false;
+    }
+    function fallbackCopy(text, onDone) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try {
+        if (document.execCommand('copy')) { onDone(); }
+      } catch (e) {}
+      document.body.removeChild(ta);
+    }
+    function copyCanonicalUrl(relPath, btnId, doneLabel) {
+      var btn = document.getElementById(btnId);
+      if (!btn) return;
+      var orig = btn.getAttribute('data-orig') || btn.innerText;
+      btn.setAttribute('data-orig', orig);
+      var targetUrl = window.location.href;
+      try {
+        targetUrl = new URL(relPath, window.location.href).href;
+      } catch (e) {}
+      var onDone = function() {
+        btn.innerText = doneLabel;
+        setTimeout(function() { btn.innerText = orig; }, 2000);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(targetUrl).then(onDone, function() { fallbackCopy(targetUrl, onDone); });
+      } else {
+        fallbackCopy(targetUrl, onDone);
+      }
+    }
+  </script>
+</body>
+</html>
