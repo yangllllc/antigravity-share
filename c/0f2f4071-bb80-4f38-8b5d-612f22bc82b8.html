@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="0f2f4071-bb80-4f38-8b5d-612f22bc82b8" data-base-prefix="./" data-turn-count="17" data-update-time="2026-11-27 18:47" data-meta-ver="f2b14306" data-is-index="0">
+<body data-conv-id="0f2f4071-bb80-4f38-8b5d-612f22bc82b8" data-base-prefix="./" data-turn-count="19" data-update-time="2026-11-27 18:49" data-meta-ver="f2b14306" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="AI Usage and Monetization Ideas">AI Usage and Monetization Ideas</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="消耗额度">消耗额度</span><span>会话 ID: 0f2f4071-bb80-4f38-8b5d-612f22bc82b8 | 轮次: 17 | 更新于: 2026-11-27 18:47</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="消耗额度">消耗额度</span><span>会话 ID: 0f2f4071-bb80-4f38-8b5d-612f22bc82b8 | 轮次: 19 | 更新于: 2026-11-27 18:49</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./0f2f4071-bb80-4f38-8b5d-612f22bc82b8.md" download="AI_Usage_and_Monetization_Id-0f2f4071.md" onclick="return downloadMarkdown(event, './0f2f4071-bb80-4f38-8b5d-612f22bc82b8.md', 'AI_Usage_and_Monetization_Id-0f2f4071.md')">⬇️ 下载 Markdown (.md)</a>
@@ -859,6 +859,37 @@
 <li><strong>先暂停 <code>1B</code></strong>，你现在就拿当前 <code>zc/</code> 核心代码给 GPT 审计，或先保额度去复习六级。</li>
 </ul>
 <p>请告诉我选哪一个？</p>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>先拿核心代码给gpt把</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>很稳妥的选择——先把纯数学核心核审透再盖前端，零返工。</p>
+<p>我已把 Step 1 全部 6 个核心模块（带精确行号与物理符号约定说明）打包成<strong>单个可直接拖拽上传的附件</strong>，并同步封存了当前断点（Git 干净停在 <code>378bec7</code>，状态卡 <code>CONTEXT_ZemaxCompanion.md</code> 已标记等待 GPT 审计回传）：</p>
+<ul>
+<li><strong>待上传附件</strong>：<code>step1_gpt_audit_pack.md</code>（66 KB，含 <code>geometry.py</code> / <code>sign_bridge.py</code> / <code>surfaces.py</code> / <code>paraxial.py</code> / <code>raytrace.py</code> / <code>analysis.py</code> 全部源码及行号；已加入 <code>.gitignore</code>，不污染仓库）</li>
+</ul>
+<hr>
+<h3>直接粘贴给 GPT（ChatGPT / Codex）的红队审计提示词</h3>
+<p>把上面那个 <code>.md</code> 文件拖进 GPT 对话框，直接贴下面这段话（已专门锁死“禁客套、禁吹毛求疵代码风格、只抓可证伪的物理/数值/接口硬伤”）：</p>
+<pre><code>请以“序列光学算法与物理红队审稿人”身份，严格审计附件中的 Zemax-Companion Step 1 核心代码（Python stdlib + numpy，已通过 30 项本地单测）。
+
+请禁止泛泛夸奖、禁止讨论命名/注释/代码风格，只聚焦以下 4 类硬伤，并要求每一条都给出【文件与行号 | 可复现的反例输入(system/ray)或推导依据 | 预期物理结果 vs 代码实际行为 | 最小改法】：
+
+1. 光学符号、反射与 OPL 硬伤：
+   - 核查 `sign_bridge.py` 与 `paraxial.py` 在折射、单次反射（含 Zemax 负厚度 d&lt;0）、双次反射及混合折反系统中的符号一致性；
+   - 核查 `raytrace.py` 在 `c&lt;0` 凹面（ds&lt;0）、虚拟转移（step&lt;0）或反射面后的 OPL 正负号与物理路径是否正确。
+2. 球面求交与数值边界漏洞：
+   - 核查 `intersect_spherical_surface` 在深半球、大角度斜光线、光线起点已越过表面、`G≈0` 或 `c→0` 时的选根与退化分支；
+   - 核查 `vector_refract` / `vector_reflect` 在掠射、全反射临界角附近及法线翻转时的边界行为；
+   - 核查 `solve_thick_lens_radii_for_efl` 对负焦距、厚弯月镜或临界判别式时的解支合理性。
+3. 近轴核与分析层的隐藏假设：
+   - 核查 `system_abcd_matrix`、`compute_cardinal_points`、`analyze_spherical_aberration`、`analyze_parallel_plate_focus_shift` 在极端配置（如虚拟像面、凹面镜 LA 定义、系统含中间 DUMMY 面、非空气物方/像方介质）下是否会静默算出误导值。
+4. 面向 Step 2 / Step 3 / Zemax 对表的架构暗坑：
+   - 后续要在此核上扩展：Step 2（孔径光阑/入出瞳/渐晕/远心/艾里斑）、Step 3（Sellmeier 色散、消色差双合透镜、逐面赛德尔像差、.zmx 解析）及未来 FFT-MTF/公差分析。
+   - 当前数据结构（`Surface`、`OpticalSystem`、`Ray`、`SurfaceHit`）有哪些现在不改、后面一定会返工的设计缺陷？
+
+若某维度确实无硬伤，直接写“该维度核查通过（附你验算过的 1 个具体边界）”，严禁为了挑刺而编造问题。</code></pre>
+<hr>
+<p>等 GPT 审完后，把它的回复直接贴回来即可——我会<strong>逐条独立复算核验</strong>（真 bug 立刻修并补回归测试，误判直接列出反证驳回），闭环后再继续推进微批次 <strong><code>1B</code></strong>。</p>
 </div></article>
 
     </section>
