@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="c8d6ff90-beea-4574-83d5-9ec86f4c032c" data-base-prefix="./" data-turn-count="7" data-update-time="2026-11-27 15:46" data-meta-ver="94fddf8b" data-is-index="0">
+<body data-conv-id="c8d6ff90-beea-4574-83d5-9ec86f4c032c" data-base-prefix="./" data-turn-count="9" data-update-time="2026-11-27 18:44" data-meta-ver="94fddf8b" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="AI Radar 內容分配與審查機制">AI Radar 內容分配與審查機制</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64">【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64</span><span>会话 ID: c8d6ff90-beea-4574-83d5-9ec86f4c032c | 轮次: 7 | 更新于: 2026-11-27 15:46</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64">【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64</span><span>会话 ID: c8d6ff90-beea-4574-83d5-9ec86f4c032c | 轮次: 9 | 更新于: 2026-11-27 18:44</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./c8d6ff90-beea-4574-83d5-9ec86f4c032c.md" download="AI_Radar_內容分配與審查機制-c8d6ff90.md" onclick="return downloadMarkdown(event, './c8d6ff90-beea-4574-83d5-9ec86f4c032c.md', 'AI_Radar_內容分配與審查機制-c8d6ff90.md')">⬇️ 下载 Markdown (.md)</a>
@@ -557,6 +557,28 @@
 <li><strong>社区热议 20 条的口径确认</strong>：目前 <code>community</code> 桶（20 条/日）只收 <code>category</code> 落在 <code>models</code> 或 <code>tools</code> 的社区贴（如 V2EX/NodeLoc/Simon Willison/HN 上的 AI 工具与模型讨论），而 HN 上 <code>category=&#39;tech&#39;</code> 的泛开发贴（如字体、办公软件）因 <code>tech=0</code> 会被拦截不翻。这是否完全符合你的预期，还是你希望「社区热议」频道里排进前 12 的 HN 英文帖不管是不是 <code>tech</code> 都一起翻？</li>
 <li><strong>配额比例是否需要微调</strong>：默认已设为 <code>tools 55 / models 25 / community 20</code>（合计 100 条/日）；跑完 1–2 天后如果你在「AI 引擎」看到 <code>tools</code> 明显吃紧而 <code>community</code> 有富余（或反之），可以直接在网页里热调数字并点「保存分区配额」，立刻生效无需重打包。</li>
 </ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>@[c:\Users\&lt;USER&gt;\Desktop\gemini\接力话术.md] @[c:\Users\&lt;USER&gt;\Desktop\gemini\AI跨会话无损接力与脱水元协议.md]</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>【轨迹自检】来源：本地当前会话 | 业务轮次：约1轮 | 首轮业务：“选择方案A与半小时精选100条分区配额” | 末轮业务：“方案A落盘、分区配额改造与Opus终审加固” | 实盘核验：已核磁盘与旧卡(git 139项未提交) | 状态：完整</p>
+<h3>落盘回执与增量 Diff</h3>
+<p>已直接落盘至 <code>CONTEXT_ai_radar.md</code>（共 29 行），<strong>无需手动复制保存状态卡</strong>。</p>
+<ul>
+<li><strong>铁律保持</strong>：<code>&#167;1</code> 原有 7 条铁律原封未动，无删改与冲突。</li>
+<li><strong>新增资产与墓碑</strong>：<code>&#167;2</code> 保持 8 条（含 2 条墓碑），新增单源半小时精选与日 100 条分板块 AI 配额引擎（<code>focus-selection.ts</code>、<code>ai-focus-curator.ts</code>、<code>ai-admin.ts</code>、<code>collectors/index.ts</code>、<code>AiPanel.tsx</code>），补齐 TimSort 非传递比较器、<code>COALESCE(ai_quality,0)</code> 饿死、空 <code>titleZh</code> 扣费死循环与毒丸冷却 4 项排雷墓碑。</li>
+<li><strong>断点推进</strong>：方案 A 已写入 Windows 用户环境变量 <code>TONGJI_API_KEY</code>；单文件 <code>release/AIRadar.exe</code> 更新至 86.30 MB（21/21 单测全绿、零密钥残留、校内直连 364ms）；生产库 <code>release/data/radar.db</code>（3.42 MB + WAL 4.22 MB）无损保留。</li>
+</ul>
+<h3>&#167;3 断点速览</h3>
+<ul>
+<li><strong>当前断点</strong>：[已验证] 方案 A（Windows 用户环境变量 <code>TONGJI_API_KEY</code>）已生效；单源半小时精选 + 日 100 条分板块 AI 配额（<code>tools:55 / models:25 / community:20</code>，<code>papers/tech/politics:0</code>）及 Opus 终审 5 项边界加固均已落盘重打 <code>release/AIRadar.exe</code>（86.30 MB，21/21 单测全绿，校内直连 364ms）；<code>release/data/radar.db</code>（3.42 MB + WAL 4.22 MB）无损，工作区 139 项未提交。</li>
+<li><strong>默认下一步</strong>：用上轮提供的只读提示词在 Codex 桌面端跑一次 GPT 全景代码审查；重启本地 <code>AIRadar.exe</code> 试跑数日后，据实测在「AI 引擎」热调各区配额/预算（改代码后 <code>npm.cmd run build:exe</code> 原地更新，严守不动 <code>release/data/</code>）。</li>
+<li><strong>外部验证判据</strong>：注入本机 Node 22 后 <code>npm.cmd run build &amp;&amp; npm.cmd test</code> 全绿（21/21）；<code>AIRadar.exe</code> 零密钥残留且异地空目录自启自动识别用户级 <code>TONGJI_API_KEY</code>、默认 <code>focusBudget={100, tools:55/models:25/community:20}</code>；校内探测返回 <code>DeepSeek-V4.1-Flash</code> 非空译文。</li>
+</ul>
+<h3>一键冷启动唤醒 Prompt（本地 Agent）</h3>
+<pre><code>先读取 @C:\Users\&lt;USER&gt;\Desktop\ai-radar\CONTEXT_ai_radar.md 获取全部约束与断点，勿复述历史。
+1. 单次只读核验“当前断点”磁盘现状（含待测/未实施项），一口气完成勿中途请示；若发现未说明的磁盘差异先汇报停手。
+2. 严守【铁律】、禁碰【排雷墓碑】；若本消息下方附有我的新需求或最新实况，则优先执行我的新需求，否则直推卡内【默认下一步】。
+3. 删改已有成果前先确认；完工按【外部验证判据】或新需求标准自检汇报。</code></pre>
 </div></article>
 
     </section>
