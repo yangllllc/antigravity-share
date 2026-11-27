@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>Political PPT Outline Discussion - Antigravity Share</title>
+  <style>
+    :root {
+      --bg-main: #131314;
+      --bg-sidebar: #1e1f20;
+      --bg-active: #2b2c2f;
+      --bg-bubble-user: #2b2c2f;
+      --bg-bubble-ai: #1e1f20;
+      --text-main: #e3e3e3;
+      --text-sub: #c4c7c5;
+      --accent: #a8c7fa;
+      --border: #3c4043;
+      --code-bg: #0d0e11;
+      --badge-green: #34d399;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100vh;
+    }
+    #sidebar {
+      width: 320px;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+    .sidebar-header {
+      padding: 16px 14px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-header h2 {
+      font-size: 16px;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sidebar-header a.home-link {
+      text-decoration: none;
+      color: inherit;
+    }
+    .sync-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--badge-green);
+      background: rgba(52, 211, 153, 0.1);
+      padding: 3px 8px;
+      border-radius: 12px;
+      margin-top: 8px;
+    }
+    .sidebar-tools {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .sidebar-search {
+      width: 100%;
+      background: var(--bg-main);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 12.5px;
+      outline: none;
+    }
+    .sidebar-search:focus {
+      border-color: var(--accent);
+    }
+    .sidebar-search::placeholder {
+      color: #8e918f;
+    }
+    .view-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .view-tabs {
+      display: inline-flex;
+      background: var(--bg-main);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2px;
+      gap: 2px;
+    }
+    .view-tab {
+      background: transparent;
+      color: var(--text-sub);
+      border: none;
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 11.5px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .view-tab:hover {
+      color: #fff;
+    }
+    .view-tab.active {
+      background: var(--bg-active);
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .mini-btn {
+      background: transparent;
+      color: var(--text-sub);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .mini-btn:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #fff;
+    }
+    .conv-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .group-section {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      margin-bottom: 4px;
+    }
+    .group-header {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: var(--text-sub);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 8px;
+      border-radius: 7px;
+      cursor: pointer;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 600;
+      transition: background 0.15s, color 0.15s;
+    }
+    .group-header:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #fff;
+    }
+    .group-chevron {
+      display: inline-block;
+      width: 12px;
+      font-size: 10px;
+      text-align: center;
+      transition: transform 0.15s;
+      flex-shrink: 0;
+    }
+    .group-section.collapsed .group-chevron {
+      transform: rotate(-90deg);
+    }
+    .group-icon {
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+    .group-name {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--text-main);
+    }
+    .group-count {
+      font-size: 10.5px;
+      font-weight: 500;
+      color: var(--text-sub);
+      background: rgba(255, 255, 255, 0.08);
+      padding: 1px 6px;
+      border-radius: 10px;
+      flex-shrink: 0;
+    }
+    .group-items {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      padding-left: 8px;
+      margin-left: 9px;
+      border-left: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .group-section.collapsed .group-items {
+      display: none;
+    }
+    .conv-item {
+      display: block;
+      text-decoration: none;
+      padding: 8px 10px;
+      border-radius: 8px;
+      transition: background 0.15s;
+      border: 1px solid transparent;
+      color: inherit;
+    }
+    .conv-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .conv-item.active {
+      background: var(--bg-active);
+      border-color: var(--border);
+    }
+    .conv-title {
+      font-size: 13px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #fff;
+    }
+    .conv-meta {
+      font-size: 11px;
+      color: var(--text-sub);
+      margin-top: 3px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+    }
+    .conv-meta-left {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .proj-pill {
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 999px;
+      background: rgba(168, 199, 250, 0.13);
+      color: var(--accent);
+      max-width: 115px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .empty-hint {
+      padding: 20px 12px;
+      text-align: center;
+      color: var(--text-sub);
+      font-size: 12.5px;
+    }
+    #main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .main-header {
+      padding: 16px 28px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-sidebar);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .main-header h1 {
+      font-size: 17px;
+      color: #fff;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .sub-meta {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .header-project-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--accent);
+      background: rgba(168, 199, 250, 0.14);
+      border: 1px solid rgba(168, 199, 250, 0.25);
+      padding: 1px 8px;
+      border-radius: 999px;
+      max-width: 240px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .btn {
+      background: var(--bg-active);
+      color: var(--accent);
+      border: 1px solid var(--border);
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .btn:hover { background: #3c4043; }
+    .chat-canvas {
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 28px 24px 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .turn {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .turn.user { align-items: flex-end; }
+    .turn.assistant { align-items: flex-start; }
+    .role-tag {
+      font-size: 12px;
+      color: var(--text-sub);
+      font-weight: 600;
+      padding: 0 4px;
+    }
+    .bubble {
+      max-width: 88%;
+      padding: 16px 20px;
+      border-radius: 18px;
+      line-height: 1.7;
+      font-size: 15px;
+      word-break: break-word;
+    }
+    .turn.user .bubble {
+      background: var(--bg-bubble-user);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .turn.assistant .bubble {
+      background: var(--bg-bubble-ai);
+      color: var(--text-main);
+      border-bottom-left-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .bubble p { margin: 0 0 10px 0; }
+    .bubble p:last-child { margin-bottom: 0; }
+    .bubble h1, .bubble h2, .bubble h3, .bubble h4 {
+      margin: 14px 0 8px;
+      color: var(--accent);
+      line-height: 1.4;
+    }
+    .bubble h1 { font-size: 19px; }
+    .bubble h2 { font-size: 17px; }
+    .bubble h3 { font-size: 15.5px; }
+    .bubble ul, .bubble ol { margin: 8px 0 10px 22px; }
+    .bubble li { margin: 4px 0; }
+    .bubble blockquote {
+      border-left: 3px solid var(--accent);
+      padding-left: 12px;
+      margin: 8px 0;
+      color: var(--text-sub);
+    }
+    .bubble code {
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 5px;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 13.5px;
+    }
+    .bubble pre {
+      background: var(--code-bg);
+      padding: 14px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 10px 0;
+      border: 1px solid #2b2d31;
+    }
+    .bubble pre code {
+      background: transparent;
+      padding: 0;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .bubble a { color: var(--accent); }
+    .bubble hr {
+      border: 0;
+      border-top: 1px solid var(--border);
+      margin: 14px 0;
+    }
+    @media (max-width: 820px) {
+      body { flex-direction: column; }
+      #sidebar { width: 100%; height: auto; position: static; max-height: 360px; }
+      .main-header { flex-wrap: wrap; padding: 14px 16px; }
+      .header-actions { flex-wrap: wrap; }
+      .bubble { max-width: 96%; }
+    }
+  </style>
+</head>
+<body data-conv-id="c71eb00d-8a31-446b-9a43-0b00ced7c62c" data-base-prefix="./" data-turn-count="2" data-update-time="2026-11-27 18:33" data-meta-ver="4b388a66" data-is-index="0">
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
+      <div class="sync-badge" id="syncBadge">自动同步加载中...</div>
+      <div class="sidebar-tools">
+        <input type="search" id="convSearch" class="sidebar-search" placeholder="搜索对话标题或项目..." aria-label="搜索对话标题或项目" autocomplete="off">
+        <div class="view-bar">
+          <div class="view-tabs" role="tablist" aria-label="分类视图">
+            <button type="button" class="view-tab active" id="viewProjectBtn" data-view="project">按项目</button>
+            <button type="button" class="view-tab" id="viewTimeBtn" data-view="time">按时间</button>
+          </div>
+          <button type="button" class="mini-btn" id="toggleAllBtn" title="展开或折叠全部项目分组">全部折叠</button>
+        </div>
+      </div>
+    </div>
+    <nav class="conv-list" id="convList" aria-label="Conversations">
+      <noscript><div style="padding:12px;color:#c4c7c5;font-size:12px;">请启用 JavaScript 查看全部历史对话列表，或直接访问对应对话链接。</div></noscript>
+    </nav>
+  </aside>
+  <main id="main">
+    <header class="main-header">
+      <div style="min-width:0;">
+        <h1 title="Political PPT Outline Discussion">Political PPT Outline Discussion</h1>
+        <div class="sub-meta"><span class="header-project-badge" title="ppt">ppt</span><span>会话 ID: c71eb00d-8a31-446b-9a43-0b00ced7c62c | 轮次: 2 | 更新于: 2026-11-27 18:33</span></div>
+      </div>
+      <div class="header-actions">
+        <a class="btn" id="downloadMdBtn" href="./c71eb00d-8a31-446b-9a43-0b00ced7c62c.md" download="Political_PPT_Outline_Discus-c71eb00d.md" onclick="return downloadMarkdown(event, './c71eb00d-8a31-446b-9a43-0b00ced7c62c.md', 'Political_PPT_Outline_Discus-c71eb00d.md')">⬇️ 下载 Markdown (.md)</a>
+        <button class="btn" id="copyBtn" type="button" onclick="copyCanonicalUrl('./c71eb00d-8a31-446b-9a43-0b00ced7c62c.html', 'copyBtn', '已复制直链')">复制对话直链</button>
+      </div>
+    </header>
+    <section class="chat-canvas" aria-label="Conversation Content">
+      <article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>先读取 @C:\Users\&lt;USER&gt;\Desktop\ppt\CONTEXT_PPT项目.md 获取全部约束与断点，勿复述历史。</p>
+<ul>
+<li>单次只读核验“当前断点”磁盘现状（含待测/未实施项），一口气完成勿中途请示；若发现未说明的磁盘差异先汇报停手。</li>
+<li>严守【铁律】、禁碰【排雷墓碑】；若本消息下方附有我的新需求或最新实况，则优先执行我的新需求，否则直推卡内【默认下一步】。</li>
+<li>删改已有成果前先确认；完工按【外部验证判据】或新需求标准自检汇报。接下去是我要做的政治ppt，做成20页左右的PPT格式。主题是结合当前国际政治经济形势，论述中国是如何驾驭中国经济这艘大船？为实现中国经济高质量发展推动中国式的现代化开辟了正确的道路。你和我讨论一下该怎么制作把</li>
+</ul>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><h3>一、磁盘断点只读核验（实测）</h3>
+<p>已只读核验 <code>CONTEXT_PPT项目.md</code> 对应磁盘现状，<strong>工作目录无未说明差异</strong>：</p>
+<ul>
+<li><strong>工作区结构一致</strong>：<code>C:\Users\&lt;USER&gt;\Desktop\ppt\</code> 下 <code>_已扫描旧PPT/</code>、<code>_已扫描旧视频/</code>、<code>同济模板/</code>（含 <code>00</code>–<code>03</code> 分级子目录与 <code>README_模板选用指南.md</code>）、<code>迈克尔逊干涉仪测量光波长/</code>（完结文件齐备）均与总卡一致。</li>
+<li><strong><code>course-ppt-lab</code> 遗留尾项实测</strong>：Antigravity 副本（40 文件）<code>CHANGELOG.md</code> 标 <code>0.4.1</code>，而 <code>build_deck.py</code> 与 <code>local-environment.md</code> 仍标 <code>0.4.0</code>；<code>.dsh</code>、<code>.workbuddy</code> 停留在 <code>0.4.0</code>（38 文件）；<code>.codex</code> 下已无副本，但 <code>.gemini/skills-archive/codex-retired-2026-11-26/course-ppt-lab</code> 存在归档。本轮不动盘，按规则优先推进你的新选题。</li>
+<li><strong>规则加载自检</strong>：已实读 <code>course-ppt-lab</code> 六份基础规则（<code>content-rules.md</code>、<code>visual-rules.md</code>、<code>video-rules.md</code>、<code>page-types.md</code>、<code>design-system.md</code>、<code>text-style.md</code>）与 <code>defaults.json</code>，视觉皮肤待你确认后再按需读取 <code>theme-presets.md</code>。</li>
+</ul>
+<hr>
+<h3>二、核心思路：如何避免 20 页政治 PPT 变成“口号卡片墙”</h3>
+<p><strong>核心矛盾</strong>：这类宏观政经汇报最容易陷入两种失衡——要么堆砌抽象口号与连续同构卡片，缺乏实证抓手；要么变成纯工作报告摘抄，看不出“国际风浪”和“国内驾驭策略”之间的对应逻辑。</p>
+<p>为了兼顾<strong>课程题目的论证要求</strong>与<strong>学术可信度</strong>，建议在内容上采用<strong>多源归属、正反对照、证据驱动</strong>的写法（同时符合 <code>course-ppt-lab</code> C05/C06 与 T01/T06）：</p>
+<ul>
+<li><strong>官方政策与统计主线</strong>：归属于中央经济工作会议（2025 年 12 月部署 2026 年“稳中求进、提质增效”及八大重点任务）、“十五五”规划开局部署（2026 年）、国家统计局与海关总署公报等，清晰还原中方关于<strong>内需主导、新质生产力、绿色转型、制度型开放与防风险</strong>的政策逻辑和运行实绩（例如据检索摘要，国家统计局初步核算 2025 年 GDP 约 140.19 万亿元、同比增长 5.0%，2026 年前三季度同比增长 4.6%；*未核验原文口径，正式制稿前须逐条复核官网公报，避免二手摘要出现单位或数量级笔误*）。</li>
+<li><strong>国际机构与外部研究视角</strong>：归属于国际货币基金组织（IMF）、世界银行（*China Economic Update*）、经合组织（OECD）及彼得森国际经济研究所（PIIE）、布鲁金斯学会（Brookings）、荣鼎集团（Rhodium Group）等。这些来源指出，2026 年全球经济预计低速运行（IMF 预期约 3.0%–3.3%），地缘碎片化、关税壁垒上升与“友岸外包”带来持续逆风；同时对中国经济提出“新旧动能分化”的观察——认可高端制造、新能源与 AI 基建的支撑作用，也指出房地产调整、居民消费意愿偏弱、社会保障完善需求、地方财政与债务压力以及出口扩张引发的贸易摩擦等结构性挑战。</li>
+</ul>
+<blockquote>把“外部约束 + 内部现实挑战”写透，再去剖析中方如何通过宏观政策协同、产业升级和改革来应对，整个“驾驭大船”的论证才立得住、有思辨深度，而不是自说自话。</blockquote>
+<p><strong>考虑过但暂不建议的两种路线</strong>：</p>
+<ul>
+<li><strong>按年份线性梳理历史政策</strong> → 与题目要求的“结合当前国际政治经济形势”脱节，中后段容易流水账化；</li>
+<li><strong>直接套用花哨红金党建模板或 <code>03_B级慎用</code> 模板</strong> → 违背铁律与 G05/G11/G21（多字体、小字发糊、大面积高饱和红压迫视觉）。</li>
+</ul>
+<hr>
+<h3>三、20 页建议骨架与版式节奏（初稿供讨论）</h3>
+<p>严格按 G12（20 页配比）与 G01/G02（相邻页不重复同一版式基因、避免连续三卡片墙）规划为<strong>“看风浪 → 稳舵盘 → 换引擎 → 驶向现代化”</strong>四章闭环：</p>
+<p>| 页码 | 模块 / 页面任务 | 建议核心内容与来源归属 | 建议版式基因 / 图表 |</p>
+<p>|---|---|---|---|</p>
+<p>| <strong>P01</strong> | 封面 | 主副标题行长平衡（G16）+ 课程/汇报人/日期 | 封面（主色锚点） |</p>
+<p>| <strong>P02</strong> | 导览与论证主线 | 用“航船隐喻”锚定全篇 4 个子问题（呼应 P19 闭环） | 步骤流 / 路线图 |</p>
+<p>| <strong>P03</strong> | <strong>第一章过渡</strong> | <strong>风浪何在：当前国际政治经济变局</strong> | 章节过渡页 |</p>
+<p>| <strong>P04</strong> | 全球增长放缓的宏观底色 | 全球与主要经济体增速对比（归属：IMF 2026 展望） | 原生柱状/折线图 |</p>
+<p>| <strong>P05</strong> | 地缘碎片化与经贸壁垒 | 关税升级、供应链“去风险”与区域冲突外溢（归属：IMF / 世行 / OECD） | 因果流程 / 机制图 |</p>
+<p>| <strong>P06</strong> | 外部逆风与内部转型的叠加考题 | 左侧外部冲击 vs 右侧国内“供强需弱”与地产调整（归属：中方经济会议 + 世行/荣鼎分析） | 双栏对比 |</p>
+<p>| <strong>P07</strong> | <strong>第二章过渡</strong> | <strong>如何掌舵：宏观治理与“稳舵”机制</strong> | 章节过渡页 |</p>
+<p>| <strong>P08</strong> | 战略定力与政策总基调 | “稳中求进、提质增效”与“十五五”开局定位（严格用 G14 引文块区分文献原文） | 引文块 + 分解 |</p>
+<p>| <strong>P09</strong> | 宏观政策工具箱协同 | 财政/货币协同、“两新”促消费、“投资于物”结合“投资于人”（归属：中央经济工作会议） | 框架 / 卡片矩阵 |</p>
+<p>| <strong>P10</strong> | 守牢底线：化债、地产与再平衡讨论 | 重点领域防风险部署 vs 国际机构关于社保与消费再平衡的讨论（归属：官方部署 + IMF/世行） | 非对称分割 / 对照 |</p>
+<p>| <strong>P11</strong> | <strong>第三章过渡</strong> | <strong>何以破浪：高质量发展与新质生产力</strong> | 章节过渡页 |</p>
+<p>| <strong>P12</strong> | 结构向优的数据实证 | 2025–2026 季度 GDP、服务业与高技术制造业增速对照（归属：国家统计局，待核原始公报） | 原生复合数据图 |</p>
+<p>| <strong>P13</strong> | 科技创新与新质生产力引擎 | 高端制造、AI/数字经济、未来产业协同布局（按 G03 做好中心加重与放射对应） | 环绕 / 扇形 |</p>
+<p>| <strong>P14</strong> | 绿色低碳转型与产业新优势 | 新能源渗透率、单位 GDP 能耗降幅与新型能源体系（归属：国家统计局 / 发改委） | 非对称图文 + 大数字 |</p>
+<p>| <strong>P15</strong> | 内外联动：统一大市场与制度型开放 | 全国统一大市场 + 贸易伙伴多元化；客观附注外部对产能与贸易摩擦的关注（归属：官方 + PIIE） | 双栏对比 |</p>
+<p>| <strong>P16</strong> | <strong>第四章过渡</strong> | <strong>驶向何方：以高质量发展推进中国式现代化</strong> | 章节过渡页 |</p>
+<p>| <strong>P17</strong> | 经济路径如何对接现代化五大特征 | 将前文举措映射至人口规模、共同富裕、人与自然和谐、和平发展等维度（标明“本次整理”） | 5 要素框架图 |</p>
+<p>| <strong>P18</strong> | 深水区考题与前瞻思考 | 面向“十五五”需持续回应的 3 个现实命题（提振居民消费、科技自主协同、开放规则博弈） | 提示框 + 3 栏清单 |</p>
+<p>| <strong>P19</strong> | 结论与呼应闭环 | 显式复现 P02 航船/问题锚点逐条收束，用内容收尾不写空洞升华（G12 / T07） | 总结分割页 |</p>
+<p>| <strong>P20</strong> | 致谢与参考来源索引 | 集中列示官方公报、会议文献与 IMF/世行/智库报告口径（C05 / C08） | 清单 / 致谢 |</p>
+<blockquote><strong>深浅节奏提醒（G07）</strong>：若封面 + 4 个过渡页全用深色底，深色页占比为 5/20（25%，略高于 20% 建议值）。可选做法：封面与 4 个过渡页采用“白底 + 左侧/顶部大色块锚点”（G19），或仅封面 + 3 个大章过渡用深色底（总页数仍控在 20 页，把第四章并入第三章或压缩为收束篇）。</blockquote>
+<hr>
+<h3>四、视觉风格与技术产出方案对比</h3>
+<p>基于 <code>README_模板选用指南.md</code> 与 <code>course-ppt-lab</code> 规范，推荐两个可选皮肤方向（均锁定微软雅黑、正文 20–22.5 pt、主体全可编辑，最终过 <code>audit_pptx.py</code> v4 与 WPS 抽帧验收）：</p>
+<ul>
+<li><strong>方案 A：学院绛红政研风（<code>tongji-crimson-formal</code>）</strong></li>
+<li><strong>视觉</strong>：提纯自 S 级模板 <code>08_学院绛红</code>，主色深绛红 <code>#8C1515</code> + 暖白底 + 墨灰正文，辅以深蓝/深金区分正向数据与风险对照。</li>
+<li><strong>取舍</strong>：最贴合思政/形势与政策汇报气质且庄重不俗气；需严控红色占比（G05，主色 20–30%），避免整页沉重。</li>
+<li><strong>方案 B：同济经典蓝 / 炭灰侧栏智库风（<code>tongji-classic-blue</code> 或 G20 导航栏）</strong></li>
+<li><strong>视觉</strong>：深蓝 <code>#005A8A</code> 主色 + 顶部模块编号页眉（<code>1.1 / 2.2</code>）或左侧 16–18% 常驻炭灰章节导航栏。</li>
+<li><strong>取舍</strong>：更像宏观经济/政策研究报告，20 页长汇报结构清晰、图表蓝红语义（G18）最自然；传统政研仪式感弱于方案 A。</li>
+</ul>
+<p><strong>落地目录约定</strong>（按铁律）：确认方向后，在 <code>C:\Users\&lt;USER&gt;\Desktop\ppt\</code> 下新建独立子目录（如 <code>中国经济高质量发展与现代化/</code>）及独立状态卡 <code>CONTEXT_中国经济高质量发展与现代化.md</code>，不触碰既有项目。</p>
+<hr>
+<h3>五、需要你拍板的 4 个关键问题（定完即可开工）</h3>
+<ul>
+<li><strong>课程属性与讲演口径</strong>：这是哪门课的汇报（如“形势与政策”“习近平新时代中国特色社会主义思想概论”“当代世界经济与政治”等）？<strong>预计讲几分钟</strong>、是否需要我同步生成<strong>逐页口播讲稿（备注）</strong>，以及老师有无指定教材章节或必引文献？</li>
+<li><strong>内容侧重与视角边界</strong>：上面的 4 章结构里，你希望<strong>更偏国内政策与“十五五”高质量发展举措</strong>，还是<strong>保留较大篇幅对照国际局势与 IMF/世行等外部视角</strong>（例如增加一页中美/中欧经贸博弈或具体行业案例：新能源车/AI/低空经济等）？</li>
+<li><strong>视觉皮肤与校内元素</strong>：选 <strong>方案 A（学院绛红）</strong> 还是 <strong>方案 B（同济蓝/智库风）</strong>？是否需要放入 <code>00_校徽与校训素材/</code> 的同济校徽（仅校内汇报自用）？</li>
+<li><strong>交付要求</strong>：静态纯汇报（默认无动画）还是需要适度切换/出现动画？封面是否现在提供<strong>课程名、姓名/小组成员、学号/学院与日期</strong>（避免留占位符）？</li>
+</ul>
+</div></article>
+
+    </section>
+  </main>
+  <script>
+    (function() {
+      var src = '../sidebar.js';
+      if (window.location.protocol !== 'file:') {
+        src += (src.indexOf('?') >= 0 ? '&' : '?') + '_t=' + Date.now();
+      }
+      var s = document.createElement('script');
+      s.src = src;
+      document.body.appendChild(s);
+    })();
+  </script>
+  <script>
+    function triggerBlobDownload(blob, filename) {
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function() { URL.revokeObjectURL(url); }, 1500);
+    }
+    function downloadMarkdown(e, relPath, filename) {
+      if (window.location.protocol === 'file:' || !window.fetch || !window.Blob) {
+        return true;
+      }
+      if (e) e.preventDefault();
+      var btn = document.getElementById('downloadMdBtn');
+      var orig = btn ? (btn.getAttribute('data-orig') || btn.innerText) : '';
+      if (btn) {
+        btn.setAttribute('data-orig', orig);
+        btn.innerText = '正在下载...';
+      }
+      var targetUrl = relPath;
+      try { targetUrl = new URL(relPath, window.location.href).href; } catch (err) {}
+      fetch(targetUrl, { cache: 'no-cache' })
+        .then(function(resp) {
+          if (!resp.ok) throw new Error('HTTP ' + resp.status);
+          return resp.text();
+        })
+        .then(function(text) {
+          var blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
+          triggerBlobDownload(blob, filename);
+          if (btn) {
+            btn.innerText = '已下载 .md';
+            setTimeout(function() { btn.innerText = orig; }, 2000);
+          }
+        })
+        .catch(function() {
+          if (btn) btn.innerText = orig;
+          var a = document.createElement('a');
+          a.href = targetUrl;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        });
+      return false;
+    }
+    function fallbackCopy(text, onDone) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try {
+        if (document.execCommand('copy')) { onDone(); }
+      } catch (e) {}
+      document.body.removeChild(ta);
+    }
+    function copyCanonicalUrl(relPath, btnId, doneLabel) {
+      var btn = document.getElementById(btnId);
+      if (!btn) return;
+      var orig = btn.getAttribute('data-orig') || btn.innerText;
+      btn.setAttribute('data-orig', orig);
+      var targetUrl = window.location.href;
+      try {
+        targetUrl = new URL(relPath, window.location.href).href;
+      } catch (e) {}
+      var onDone = function() {
+        btn.innerText = doneLabel;
+        setTimeout(function() { btn.innerText = orig; }, 2000);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(targetUrl).then(onDone, function() { fallbackCopy(targetUrl, onDone); });
+      } else {
+        fallbackCopy(targetUrl, onDone);
+      }
+    }
+  </script>
+</body>
+</html>
