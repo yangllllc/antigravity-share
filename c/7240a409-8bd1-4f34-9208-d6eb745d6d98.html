@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>AI 雷达 P0-P2 问题修复 - Antigravity Share</title>
+  <style>
+    :root {
+      --bg-main: #131314;
+      --bg-sidebar: #1e1f20;
+      --bg-active: #2b2c2f;
+      --bg-bubble-user: #2b2c2f;
+      --bg-bubble-ai: #1e1f20;
+      --text-main: #e3e3e3;
+      --text-sub: #c4c7c5;
+      --accent: #a8c7fa;
+      --border: #3c4043;
+      --code-bg: #0d0e11;
+      --badge-green: #34d399;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100vh;
+    }
+    #sidebar {
+      width: 320px;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+    .sidebar-header {
+      padding: 16px 14px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-header h2 {
+      font-size: 16px;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sidebar-header a.home-link {
+      text-decoration: none;
+      color: inherit;
+    }
+    .sync-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--badge-green);
+      background: rgba(52, 211, 153, 0.1);
+      padding: 3px 8px;
+      border-radius: 12px;
+      margin-top: 8px;
+    }
+    .sidebar-tools {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .sidebar-search {
+      width: 100%;
+      background: var(--bg-main);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 12.5px;
+      outline: none;
+    }
+    .sidebar-search:focus {
+      border-color: var(--accent);
+    }
+    .sidebar-search::placeholder {
+      color: #8e918f;
+    }
+    .view-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .view-tabs {
+      display: inline-flex;
+      background: var(--bg-main);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2px;
+      gap: 2px;
+    }
+    .view-tab {
+      background: transparent;
+      color: var(--text-sub);
+      border: none;
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 11.5px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .view-tab:hover {
+      color: #fff;
+    }
+    .view-tab.active {
+      background: var(--bg-active);
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .mini-btn {
+      background: transparent;
+      color: var(--text-sub);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .mini-btn:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #fff;
+    }
+    .conv-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .group-section {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      margin-bottom: 4px;
+    }
+    .group-header {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: var(--text-sub);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 8px;
+      border-radius: 7px;
+      cursor: pointer;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 600;
+      transition: background 0.15s, color 0.15s;
+    }
+    .group-header:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #fff;
+    }
+    .group-chevron {
+      display: inline-block;
+      width: 12px;
+      font-size: 10px;
+      text-align: center;
+      transition: transform 0.15s;
+      flex-shrink: 0;
+    }
+    .group-section.collapsed .group-chevron {
+      transform: rotate(-90deg);
+    }
+    .group-icon {
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+    .group-name {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--text-main);
+    }
+    .group-count {
+      font-size: 10.5px;
+      font-weight: 500;
+      color: var(--text-sub);
+      background: rgba(255, 255, 255, 0.08);
+      padding: 1px 6px;
+      border-radius: 10px;
+      flex-shrink: 0;
+    }
+    .group-items {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      padding-left: 8px;
+      margin-left: 9px;
+      border-left: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .group-section.collapsed .group-items {
+      display: none;
+    }
+    .conv-item {
+      display: block;
+      text-decoration: none;
+      padding: 8px 10px;
+      border-radius: 8px;
+      transition: background 0.15s;
+      border: 1px solid transparent;
+      color: inherit;
+    }
+    .conv-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .conv-item.active {
+      background: var(--bg-active);
+      border-color: var(--border);
+    }
+    .conv-title {
+      font-size: 13px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #fff;
+    }
+    .conv-meta {
+      font-size: 11px;
+      color: var(--text-sub);
+      margin-top: 3px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+    }
+    .conv-meta-left {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .proj-pill {
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 999px;
+      background: rgba(168, 199, 250, 0.13);
+      color: var(--accent);
+      max-width: 115px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .empty-hint {
+      padding: 20px 12px;
+      text-align: center;
+      color: var(--text-sub);
+      font-size: 12.5px;
+    }
+    #main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .main-header {
+      padding: 16px 28px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-sidebar);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .main-header h1 {
+      font-size: 17px;
+      color: #fff;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .sub-meta {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .header-project-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--accent);
+      background: rgba(168, 199, 250, 0.14);
+      border: 1px solid rgba(168, 199, 250, 0.25);
+      padding: 1px 8px;
+      border-radius: 999px;
+      max-width: 240px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .btn {
+      background: var(--bg-active);
+      color: var(--accent);
+      border: 1px solid var(--border);
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .btn:hover { background: #3c4043; }
+    .chat-canvas {
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 28px 24px 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .turn {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .turn.user { align-items: flex-end; }
+    .turn.assistant { align-items: flex-start; }
+    .role-tag {
+      font-size: 12px;
+      color: var(--text-sub);
+      font-weight: 600;
+      padding: 0 4px;
+    }
+    .bubble {
+      max-width: 88%;
+      padding: 16px 20px;
+      border-radius: 18px;
+      line-height: 1.7;
+      font-size: 15px;
+      word-break: break-word;
+    }
+    .turn.user .bubble {
+      background: var(--bg-bubble-user);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .turn.assistant .bubble {
+      background: var(--bg-bubble-ai);
+      color: var(--text-main);
+      border-bottom-left-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .bubble p { margin: 0 0 10px 0; }
+    .bubble p:last-child { margin-bottom: 0; }
+    .bubble h1, .bubble h2, .bubble h3, .bubble h4 {
+      margin: 14px 0 8px;
+      color: var(--accent);
+      line-height: 1.4;
+    }
+    .bubble h1 { font-size: 19px; }
+    .bubble h2 { font-size: 17px; }
+    .bubble h3 { font-size: 15.5px; }
+    .bubble ul, .bubble ol { margin: 8px 0 10px 22px; }
+    .bubble li { margin: 4px 0; }
+    .bubble blockquote {
+      border-left: 3px solid var(--accent);
+      padding-left: 12px;
+      margin: 8px 0;
+      color: var(--text-sub);
+    }
+    .bubble code {
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 5px;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 13.5px;
+    }
+    .bubble pre {
+      background: var(--code-bg);
+      padding: 14px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 10px 0;
+      border: 1px solid #2b2d31;
+    }
+    .bubble pre code {
+      background: transparent;
+      padding: 0;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .bubble a { color: var(--accent); }
+    .bubble hr {
+      border: 0;
+      border-top: 1px solid var(--border);
+      margin: 14px 0;
+    }
+    @media (max-width: 820px) {
+      body { flex-direction: column; }
+      #sidebar { width: 100%; height: auto; position: static; max-height: 360px; }
+      .main-header { flex-wrap: wrap; padding: 14px 16px; }
+      .header-actions { flex-wrap: wrap; }
+      .bubble { max-width: 96%; }
+    }
+  </style>
+</head>
+<body data-conv-id="7240a409-8bd1-4f34-9208-d6eb745d6d98" data-base-prefix="./" data-turn-count="1" data-update-time="2026-11-27 18:47" data-meta-ver="5b2cb61f" data-is-index="0">
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
+      <div class="sync-badge" id="syncBadge">自动同步加载中...</div>
+      <div class="sidebar-tools">
+        <input type="search" id="convSearch" class="sidebar-search" placeholder="搜索对话标题或项目..." aria-label="搜索对话标题或项目" autocomplete="off">
+        <div class="view-bar">
+          <div class="view-tabs" role="tablist" aria-label="分类视图">
+            <button type="button" class="view-tab active" id="viewProjectBtn" data-view="project">按项目</button>
+            <button type="button" class="view-tab" id="viewTimeBtn" data-view="time">按时间</button>
+          </div>
+          <button type="button" class="mini-btn" id="toggleAllBtn" title="展开或折叠全部项目分组">全部折叠</button>
+        </div>
+      </div>
+    </div>
+    <nav class="conv-list" id="convList" aria-label="Conversations">
+      <noscript><div style="padding:12px;color:#c4c7c5;font-size:12px;">请启用 JavaScript 查看全部历史对话列表，或直接访问对应对话链接。</div></noscript>
+    </nav>
+  </aside>
+  <main id="main">
+    <header class="main-header">
+      <div style="min-width:0;">
+        <h1 title="AI 雷达 P0-P2 问题修复">AI 雷达 P0-P2 问题修复</h1>
+        <div class="sub-meta"><span class="header-project-badge" title="【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64">【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64</span><span>会话 ID: 7240a409-8bd1-4f34-9208-d6eb745d6d98 | 轮次: 1 | 更新于: 2026-11-27 18:47</span></div>
+      </div>
+      <div class="header-actions">
+        <a class="btn" id="downloadMdBtn" href="./7240a409-8bd1-4f34-9208-d6eb745d6d98.md" download="AI_雷达_P0-P2_问题修复-7240a409.md" onclick="return downloadMarkdown(event, './7240a409-8bd1-4f34-9208-d6eb745d6d98.md', 'AI_雷达_P0-P2_问题修复-7240a409.md')">⬇️ 下载 Markdown (.md)</a>
+        <button class="btn" id="copyBtn" type="button" onclick="copyCanonicalUrl('./7240a409-8bd1-4f34-9208-d6eb745d6d98.html', 'copyBtn', '已复制直链')">复制对话直链</button>
+      </div>
+    </header>
+    <section class="chat-canvas" aria-label="Conversation Content">
+      <article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>先读取 @C:\Users\&lt;USER&gt;\Desktop\ai-radar\CONTEXT_ai_radar.md 获取全部约束与断点，勿复述历史。</p>
+<ul>
+<li>单次只读核验“当前断点”磁盘现状（含待测/未实施项），一口气完成勿中途请示；若发现未说明的磁盘差异先汇报停手。</li>
+<li>严守【铁律】、禁碰【排雷墓碑】；若本消息下方附有我的新需求或最新实况，则优先执行我的新需求，否则直推卡内【默认下一步】。</li>
+<li>删改已有成果前先确认；完工按【外部验证判据】或新需求标准自检汇报。<strong>当前版本有可复现的 P0 问题。</strong> 我用 Node 22.22.2、内存 SQLite 和模拟模型响应复跑了现有测试，<strong>21/21 通过</strong>。追加反例仍复现了同济日计数从 <strong>96 增至 103</strong>、自动条目总额设为 <strong>0 仍送审</strong>、以及零配额 HN 科技帖进入模型请求。另已静态核对，当前 <code>AIRadar.exe</code> 内含所审构建包。全程未修改文件、未打开 <code>release/data/radar.db</code>、未请求真实模型，也未输出 API Key 明文。</li>
+</ul>
+<h3>P0 &#183; 密钥、访问控制与额度</h3>
+<p>| 文件路径与行号 | 具体反例或触发事件序列 | 最小修复方案 |</p>
+<p>|---|---|---|</p>
+<p>| [mobile-access.ts:235](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/mobile-access.ts:235)、[mobile-access.ts:336](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/mobile-access.ts:336)、[auth.ts:148](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/auth.ts:148) | <strong>手机 PIN 的信任边界进入了发布版。</strong> EXE 含测试用来源覆盖逻辑，且默认启动未强制生产环境。此时门禁可优先采用请求携带的测试来源。即使在生产环境，取不到连接地址也直接放行。默认单机模式又把通过门禁的访问者视为管理员。 | 发布入口只信底层 socket 对端；非测试实例遇到未知地址时拒绝。把测试来源改为构造守卫时注入，移出发布请求路径。 |</p>
+<p>| [ai-settings.ts:210](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/enrich/ai-settings.ts:210)、[ai-settings.ts:585](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/enrich/ai-settings.ts:585)、[ai-router.ts:429](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/enrich/ai-router.ts:429) | <strong>更换备用服务商会沿用旧 Key。</strong> 已配智谱，面板一键切换另一家预设并留空 Key，点“测试”就会把旧凭据用于新地址，无需先保存。内存复核确认，更换域名后保存的凭据仍等于旧值。另一路去重会把上游错误正文原样写入日志和面板；上游回显凭据时会再次泄露。[ai-dedup.ts:150](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/enrich/ai-dedup.ts:150)、[ai-dedup.ts:175](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/enrich/ai-dedup.ts:175) | 把凭据绑定到服务商 origin；跨 origin 测试或保存时清空旧凭据。去重错误先脱敏再截断，日志和面板共用同一份安全文本。 |</p>
+<p>| [ai-router.ts:530](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/enrich/ai-router.ts:530)、[ai-router.ts:537](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/enrich/ai-router.ts:537)、[ai-router.ts:678](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/enrich/ai-router.ts:678) | <strong>同济日 100 次可以突破。</strong> 无备用通道、当日已用 96 次，7 个请求同时进入；等待槽位的请求醒来后不复查预算，实测落账 <strong>103</strong>。随后关闭同济再点探测，仍发出请求，计数变为 <strong>104</strong>。探测也未占用并发槽。 | 普通请求和探测共用一个发送入口，取得槽位后在 SQLite 事务内检查并预占日、周请求额度。探测可单独解除冷却，但仍须遵守开关和额度。 |</p>
+<p>| [collectors/index.ts:647](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/collectors/index.ts:647)、[collectors/index.ts:669](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/collectors/index.ts:669)、[ai-admin.ts:740](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/ai-admin.ts:740) | <strong>两条旧后台路径绕过条目配额。</strong> ① 保留推送通道配置和 <code>wait_ai</code>，精选开启、日总额设为 0，一条不在三天窗口内的工具帖仍被送审，实测调用 1 次、条目账本仍为 0。② 关闭“仅审译半小时精选”后，旧预译在日总额 0 时仍更新了 1 条；采集队列还会直接使用 <code>nonNoise</code>，连零配额分区也不再过滤。 | 采集、推送前审核、启动预译统一走同一条目预算入口。“仅精选”开关只改变候选范围，总额与零配额分区始终生效；旧队列出队时也复查。 |</p>
+<p>| [ai-focus-curator.ts:539](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/enrich/ai-focus-curator.ts:539)、[ai-focus-curator.ts:646](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/enrich/ai-focus-curator.ts:646)、[ai-focus-curator.ts:733](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/enrich/ai-focus-curator.ts:733) | <strong>精选主管家自身也缺少持久预占。</strong> 事务只读余量，网络调用和结果写入后才整批记账。用两个独立执行器模拟两个实例共享同库，限额 1 时两者都处理了同一条，最终计数 <strong>2</strong>。另行注入账本写失败，两轮各成功更新 1 条，用量始终为 <strong>0</strong>，因为记账异常被吞掉。[ai-focus-curator.ts:236](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/enrich/ai-focus-curator.ts:236) | 按“日期、桶、条目”持久预占，在同一事务中核对总额和桶额；结果写入与结算原子提交。记账不可用时暂停派单，并恢复中断的预占。 |</p>
+<p>| [tongji-transport.ts:319](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/enrich/tongji-transport.ts:319)、[tongji-transport.ts:480](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/enrich/tongji-transport.ts:480)、[ai-router.ts:559](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/enrich/ai-router.ts:559) | <strong>请求体已发送、响应中途超时也按零次处理。</strong> 模拟两次已连接且收到首字节后超时，得到同济尝试 <strong>2</strong>、备用调用 <strong>2</strong>、同济本地计数 <strong>0</strong>。同一批可能已在两侧执行；学校是否实际扣费，客户端无法判定。 | 请求体发出即占用请求次数。只有能证明请求体未发出的建连失败才释放；响应丢失保留“结果未知”，再独立决定是否回退。 |</p>
+<h3>P1 &#183; 业务边界、竞态与数据一致性</h3>
+<p>| 文件路径与行号 | 具体反例或触发事件序列 | 最小修复方案 |</p>
+<p>|---|---|---|</p>
+<p>| [ItemView.tsx:794](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/web/src/components/ItemView.tsx:794)、[ItemView.tsx:835](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/web/src/components/ItemView.tsx:835)、[ai-admin.ts:605](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/ai-admin.ts:605) | <strong>打开抽屉就能触发零配额分区翻译。</strong> 默认开启自动翻译时，从全部收录点开无完整译文的外文论文或 HN 科技帖，无须点击“翻译”，前端就调用手动单条接口；服务端不查分区、精选或条目日额度。 | 仅让明确点击使用手动豁免。抽屉自动请求标记为自动来源，服务端执行相同门禁；不符合条件时保留手动按钮。 |</p>
+<p>| [ai-dedup.ts:244](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/enrich/ai-dedup.ts:244)、[ai-settings.ts:337](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/enrich/ai-settings.ts:337)、[ai-settings.ts:397](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/enrich/ai-settings.ts:397) | <strong>零配额内容仍会作为模型上下文发送。</strong> 三条合规社区帖触发自动去重时，实测一条 <code>tech/community</code> 已保留帖的标题和摘要进入备用模型的 <code>anchors</code>。默认启用偏好学习时，收藏的零配额时政帖标题也进入了另一条工具帖的审核提示词。两者都不会体现在该分区的条目计数里。 | 在构造去重基准和反馈样本时，同样应用自动 AI 的分区、精选及屏蔽策略；测试断言完整请求体里的条目来源。 |</p>
+<p>| [ai-dedup.ts:104](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/enrich/ai-dedup.ts:104)、[ai-dedup.ts:132](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/enrich/ai-dedup.ts:132)、[ai-settings.ts:283](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/enrich/ai-settings.ts:283) | <strong>去重绕开了同济路由器，但没有保证目的地隔离。</strong> 实测同济端点填作备用地址时，<code>fallbackAiReady</code> 返回真；若该配置带有效校内凭据，去重会直发该端点，同济账本不可见。另一个反例是智谱填了地址和模型、Key 为空，也被判定为可回退。 | 对已知服务商校验目的地和必需凭据，去重明确排除同济域名及已知 VIP。需要支持免密本地模型时，单独标记该类型。 |</p>
+<p>| [ai-focus-curator.ts:510](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/enrich/ai-focus-curator.ts:510)、[ai-settings.ts:308](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/enrich/ai-settings.ts:308)、[ai-settings.ts:319](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/enrich/ai-settings.ts:319) | <strong>面板的信源排除和审核噪音词在精选主管家失效。</strong> 把一个源设为排除，同时给其标题配置自定义噪音词；该帖进入精选后，实测仍到达审核函数。采集入口的同名检查保护不了后续从数据库重新选取的候选。 | 在主管家的最终候选过滤中复用 <code>shouldPassSourceToAi</code> 和 <code>matchesEntryNoise</code>，待审计数复用同一谓词。 |</p>
+<p>| [routes.ts:599](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/routes.ts:599)、[routes.ts:691](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/routes.ts:691)、[focus-selection.ts:428](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/focus-selection.ts:428) | <strong>前后台只共享排序与切片，候选集有漂移。</strong> 实测裸 <code>GET /api/items?focus=1</code> 能列出 <code>ai_keep=0</code>，加 <code>preset=all</code> 才隐藏。另放入 240 条高分论文和第 241 位的工具帖：默认 API 首页没有该工具，<code>limit=100</code> 的首页和后台首页都有。分页参数改变了精选成员。 | 将缺省 preset 规范为 <code>all</code>；前后台调用同一个完整候选查询，固定精选候选上限，选完之后再分页。 |</p>
+<p>| [routes.ts:493](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/routes.ts:493)、[collectors/index.ts:1011](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/collectors/index.ts:1011)、[focus-selection.ts:377](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/focus-selection.ts:377) | <strong>原地更新文章后，正则屏蔽在两端得出相反结果。</strong> 先访问列表建立缓存，再将同一条目的摘要更新为命中屏蔽词。活跃数和最大 ID 不变，实测 API 继续展示、后台立即排除。普通列表的 10 秒缓存到期也不能修复内层缓存键。 | 让正则命中缓存包含内容修订号；先复用已有 <code>dbRevision()</code> 即可，并让前后台共用命中结果。 |</p>
+<p>| [ai-focus-curator.ts:243](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/enrich/ai-focus-curator.ts:243)、[ai-admin.ts:618](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/ai-admin.ts:618)、[focus-selection.ts:39](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/focus-selection.ts:39) | <strong><code>ai_quality=NULL</code> 仍有两种饿死边界。</strong> ① 未审帖先做单条翻译，实测 <code>ai_keep</code>、<code>ai_quality</code> 均为 NULL，但 <code>needsFocusAiWork</code> 返回无任务。② 同为未读、同一 NEW 层级时，18 条已审工具帖 <code>85分/5星</code> 排在 <code>90分/NULL</code> 前；实测后者连精选并集都进不去，即使当天还有工具配额。 | 用审核状态或 <code>ai_reviewed_at</code> 区分“已翻译”和“已审核”。若要求高分未审帖获得机会，在前后台共用的精选切片中留出未审席位。 |</p>
+<p>| [tongji-transport.ts:553](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/enrich/tongji-transport.ts:553)、[tongji-transport.ts:568](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/enrich/tongji-transport.ts:568)、[ai-router.ts:551](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/enrich/ai-router.ts:551) | <strong>HTTP 200、正文为合法 JSON <code>null</code> 时，透明回退失效。</strong> 实测抛出 <code>TypeError</code>，备用调用 <strong>0</strong>、同济记账 <strong>0</strong>；并发槽已释放。仅检查 JSON 能否解析，未验证顶层是否为对象。 | 读取 <code>usage</code> 前校验响应结构，把异常结构归入已发送的无效响应；路由层同时捕获 transport 拒绝并进入备用分支。 |</p>
+<p>| [retention.ts:193](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/retention.ts:193)、[routes.ts:855](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/routes.ts:855) | <strong>浏览历史有两条意外丢失路径。</strong> ① 70 天前发布、今天刚浏览、随后点“不想看”的未收藏帖，在默认清理中被整条删除，绕过 30 天保护。② 清历史传入 <code>olderThanDays=-1</code>，实测返回 200 并清空全部历史；损坏 JSON 也会落入全清分支。 | <code>ignored</code> 删除条件也检查 <code>last_viewed_at</code>。全清使用显式操作；非法 JSON、负值和非正整数返回 400。 |</p>
+<p>| [db.ts:540](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/db.ts:540)、[db.ts:582](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/db.ts:582) | <strong>v33 迁移中断后无法自行重启。</strong> 加列和写 <code>user_version</code> 分开提交。内存复原“列已存在、版本仍为 32”的断点后，再次迁移稳定报 <code>duplicate column name: last_viewed_at</code>，版本停在 32。 | 每版迁移和版本号放在同一事务；对已经卡在 v32 的库先检查两列及索引，补齐缺项后再升版。 |</p>
+<p>| [mobile-access.ts:221](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/mobile-access.ts:221)、[server/index.ts:275](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/index.ts:275)、[server/index.ts:288](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/index.ts:288) | <strong>手机同步热切换会丢失最后一次操作。</strong> 开启后在延迟重绑窗口内立即关闭，第二次操作保存了“关”，却因 <code>rebinding</code> 提前返回；第一次回调仍绑定 <code>0.0.0.0</code>。此时 PIN 守卫仍会按关闭状态挡住正常远端请求，但实际监听地址与设置分离。 | 串行处理重绑并保留最后目标；在 <code>listening</code> 成功后更新展示态，失败时恢复旧监听并返回错误。 |</p>
+<p>| [启动AI情报雷达.bat:4](C:/Users/&lt;USER&gt;/Desktop/ai-radar/启动AI情报雷达.bat:4)、[runtime.ts:24](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/runtime.ts:24)、[build-sea.mjs:164](C:/Users/&lt;USER&gt;/Desktop/ai-radar/scripts/build-sea.mjs:164) | <strong>两个启动入口默认使用不同数据库，升级 EXE 也不原子。</strong> 在当前默认配置下，根目录 BAT 启动源码、打开根 <code>data/</code>；EXE 打开 <code>release/data/</code>。交替启动会看到两套收藏与历史。另在重打包时，脚本先覆盖正式 EXE 再注入；注入失败会失去上一版可运行程序。脚本本身没有复制或覆盖 <code>release/data/</code>。 | 日用 BAT 优先启动发布 EXE；保留源码入口时明确其数据目录。新 EXE 在同目录临时文件中注入并验证成功后，再替换正式文件。 |</p>
+<h3>P2 &#183; 去重、排序与维护</h3>
+<p>| 文件路径与行号 | 具体反例或触发事件序列 | 最小修复方案 |</p>
+<p>|---|---|---|</p>
+<p>| [ai-dedup.ts:76](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/enrich/ai-dedup.ts:76)、[ai-dedup.ts:81](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/enrich/ai-dedup.ts:81) | <strong>合并已有重复簇会留下半个旧簇。</strong> 先将 3、4 归入根 2，再将 3 与根 1 合并。实测 ID 1–4 的根为 <code>[1,2,1,2]</code>，同一组仍显示成两个簇。 | 在事务内按 <code>rootSelf</code>、<code>rootTarget</code> 更新双方全部成员；增加从非根成员发起合并的断言。 |</p>
+<p>| [channel-query.ts:19](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/shared/channel-query.ts:19)、[routes.ts:662](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/routes.ts:662) | <strong>历史接口未采用自己的默认排序。</strong> 构造发布时间和浏览时间顺序相反的两帖，<code>preset=history</code> 实测返回 <code>[2,3]</code>，显式加 <code>sort=viewed</code> 才返回 <code>[3,2]</code>。当前网页已补参数，直接 API 调用仍错。 | 路由从规范化后的查询读取 <code>sort</code>；回归测试覆盖仅传 <code>preset=history</code>。 |</p>
+<p>| [retention.ts:209](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/retention.ts:209)、[retention.ts:133](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/retention.ts:133)、[db.ts:561](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/db.ts:561) | <strong>瘦身预览会重复计数，WAL 忙时会阻塞服务。</strong> 同一旧帖同时满足普通和 ignored 条件，实测预览两栏都计入，执行只删一次。另有长期读快照时，主线程会连续执行最多三次同步 <code>TRUNCATE</code>，每次连接忙等待配置为 20 秒。 | 预览按实际删除顺序划成互斥集合；checkpoint 遇 busy 后返回状态并延后重试，避免在处理 API 的线程上连续等待。 |</p>
+<p>| [tongji-transport.ts:135](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/enrich/tongji-transport.ts:135)、[tongji-transport.ts:466](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/enrich/tongji-transport.ts:466) | <strong>双 VIP 无法补救选错物理网卡。</strong> 同时存在先枚举的非校园以太网和能访问校内的 WLAN 时，选择器返回第一张以太网，两个 VIP 均绑定该地址；若该出口不通，就会回退并进入离校冷却。 | 保留全部合格物理 IPv4，在现有建连总时限内尝试不同出口，缓存最近成功的网卡；只在尚未写出请求体时切换。 |</p>
+<p><strong>总评：当前不宜在开启手机同步和自动 AI 的状态下放心长期日用；优先修复发布版 PIN 的来源信任边界，以及所有模型发送入口共用的凭据隔离与原子配额门禁。</strong></p>
+</div></article>
+
+    </section>
+  </main>
+  <script>
+    (function() {
+      var src = '../sidebar.js';
+      if (window.location.protocol !== 'file:') {
+        src += (src.indexOf('?') >= 0 ? '&' : '?') + '_t=' + Date.now();
+      }
+      var s = document.createElement('script');
+      s.src = src;
+      document.body.appendChild(s);
+    })();
+  </script>
+  <script>
+    function triggerBlobDownload(blob, filename) {
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function() { URL.revokeObjectURL(url); }, 1500);
+    }
+    function downloadMarkdown(e, relPath, filename) {
+      if (window.location.protocol === 'file:' || !window.fetch || !window.Blob) {
+        return true;
+      }
+      if (e) e.preventDefault();
+      var btn = document.getElementById('downloadMdBtn');
+      var orig = btn ? (btn.getAttribute('data-orig') || btn.innerText) : '';
+      if (btn) {
+        btn.setAttribute('data-orig', orig);
+        btn.innerText = '正在下载...';
+      }
+      var targetUrl = relPath;
+      try { targetUrl = new URL(relPath, window.location.href).href; } catch (err) {}
+      fetch(targetUrl, { cache: 'no-cache' })
+        .then(function(resp) {
+          if (!resp.ok) throw new Error('HTTP ' + resp.status);
+          return resp.text();
+        })
+        .then(function(text) {
+          var blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
+          triggerBlobDownload(blob, filename);
+          if (btn) {
+            btn.innerText = '已下载 .md';
+            setTimeout(function() { btn.innerText = orig; }, 2000);
+          }
+        })
+        .catch(function() {
+          if (btn) btn.innerText = orig;
+          var a = document.createElement('a');
+          a.href = targetUrl;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        });
+      return false;
+    }
+    function fallbackCopy(text, onDone) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try {
+        if (document.execCommand('copy')) { onDone(); }
+      } catch (e) {}
+      document.body.removeChild(ta);
+    }
+    function copyCanonicalUrl(relPath, btnId, doneLabel) {
+      var btn = document.getElementById(btnId);
+      if (!btn) return;
+      var orig = btn.getAttribute('data-orig') || btn.innerText;
+      btn.setAttribute('data-orig', orig);
+      var targetUrl = window.location.href;
+      try {
+        targetUrl = new URL(relPath, window.location.href).href;
+      } catch (e) {}
+      var onDone = function() {
+        btn.innerText = doneLabel;
+        setTimeout(function() { btn.innerText = orig; }, 2000);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(targetUrl).then(onDone, function() { fallbackCopy(targetUrl, onDone); });
+      } else {
+        fallbackCopy(targetUrl, onDone);
+      }
+    }
+  </script>
+</body>
+</html>
