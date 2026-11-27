@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="899d8b5c-f2ce-45ce-b9ac-dbb1208223d1" data-base-prefix="./" data-turn-count="6" data-update-time="2026-11-27 11:47" data-meta-ver="adc068c5" data-is-index="0">
+<body data-conv-id="899d8b5c-f2ce-45ce-b9ac-dbb1208223d1" data-base-prefix="./" data-turn-count="7" data-update-time="2026-11-27 11:49" data-meta-ver="adc068c5" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="Markdown File Verification And Prompt Check">Markdown File Verification And Prompt Check</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="skills">skills</span><span>会话 ID: 899d8b5c-f2ce-45ce-b9ac-dbb1208223d1 | 轮次: 6 | 更新于: 2026-11-27 11:47</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="skills">skills</span><span>会话 ID: 899d8b5c-f2ce-45ce-b9ac-dbb1208223d1 | 轮次: 7 | 更新于: 2026-11-27 11:49</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./899d8b5c-f2ce-45ce-b9ac-dbb1208223d1.md" download="Markdown_File_Verification_A-899d8b5c.md" onclick="return downloadMarkdown(event, './899d8b5c-f2ce-45ce-b9ac-dbb1208223d1.md', 'Markdown_File_Verification_A-899d8b5c.md')">⬇️ 下载 Markdown (.md)</a>
@@ -525,6 +525,87 @@
 </ul>
 </div></article>
 <article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>我打错了没有第六个仓库。关于同济mcp的你可以告诉我提示词，告诉我该怎么说怎么做，我在mcp项目新开一个对话进行聊天修改吧。其他的内容有需要借鉴的，我觉得需要进行二次的审查，究竟是否需要这个还是很重要的，直接舍弃的就不管它了。你说的痛点A我不太清楚有什么区别，你告诉我原理，他们各有什么优缺点，适不适合我们的运行，我们讨论一下</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>这次二次审查非常值——我刚直接翻读了 <code>tongji_mcp_metrics.jsonl</code> 的<strong>全部 28 条原始逐行记录</strong>、<code>mcp.md</code>、<code>diagnose.py</code> 以及 Antigravity 官方内置的 <code>hooks.md</code>，结果<strong>推翻了一个差点过度设计的假设</strong>，也摸清了痛点 A 的底层原理。</p>
+<p>下面分三块汇报并和你讨论定案（本轮仍严格只读，未改任何本地文件）：</p>
+<hr>
+<h3>一、对所有“潜在可借鉴项”的二次审查（实测祛魅）</h3>
+<p>| 候选借鉴项（来源） | 二次实测核查结果 <code>[实测]</code> | 究竟需不需要？ |</p>
+<p>| :--- | :--- | :--- |</p>
+<p>| <strong>1. 两级熔断 + 阶梯冷却</strong>（<code>Pojun/llmpool</code> → 同济 MCP） | 逐行核对 <code>tongji_mcp_metrics.jsonl</code> 全部 28 条时间戳：<strong>过去 7 天 Kimi 从未出现过连续 3 次失败</strong>！它的 6 次超时全是<strong>零星孤立长尾</strong>（例如 L20 与 L21 隔了 14 小时，L23 前 45 秒刚成功，L25 前后 20 分钟均成功）。<strong>照搬 <code>softTripAfter=3</code> 熔断器，过去一周触发次数 = <code>0/28</code></strong>！反倒意外揪出 2 个真实根因：① <code>draft_struct</code> 3 次超时全精准卡死在 <code>48.6s–48.7s</code>（配置 <code>MaxTimeSec=48</code> 紧贴长尾），<code>deep_panel</code> 卡在 <code>42.6s</code>（<code>MaxTimeSec=42</code>）；② <strong>脚本真实调度缺陷</strong>——L6 <code>code_audit</code> 时 Kimi 在 <strong><code>110 ms</code> 就报 <code>HTTP 429</code></strong>，本应立刻切备 VIP 重试，但 <code>tongji_deepseek_mcp.ps1</code> 死等慢队友 DeepSeek 跑完 <code>34 s</code> 才判重试，结果剩 <code>3.9 s &lt; MinRetryMs(15 s)</code> 直接错失重试窗口！ | <strong>熔断器降级为“暂不急上/仅作可选防御”</strong>（且需落盘状态，与 MCP 零状态红线有张力）；<strong>真正值得改的是「早失败单路立即重试」+「满周微调 Wave 1 超时」</strong>。 |</p>
+<p>| <strong>2. 单一权威健康裁决文件</strong>（<code>sutando/design-core-health-verdict.md</code>） | <code>sutando</code> 有 6 个独立常驻监控进程互抢重启才需要它；本机定时 sidecar 只有极简只读的 <code>skill-update-checker</code> 和 <code>dream-memory-reminder</code>，无多消费者竞争。 | <strong>不需要，直接划掉。</strong> |</p>
+<p>| <strong>3. 生态雷达书签与调研小纪律</strong>（<code>awesome-deepseek-harness</code>） | 本地已有 <code>paper-lookup</code> / <code>literature-review</code> / <code>core-reasoning-protocol</code>。 | <strong>不入库、不改规则，零成本。</strong> |</p>
+<p>| <strong>4. 事前确定性写保护守卫</strong>（<code>sutando/hooks/memory-index-guard.py</code> → 痛点 A） | Antigravity 2.0 原生支持 <code>hooks.json</code>（见下文详拆），并非不能做，但<strong>是否值得为当前低频风险承担同步开销与误拦摩擦</strong>需要权衡。 | <strong>待下方讨论定案（偏向先观察到 11/30 再定）。</strong> |</p>
+<hr>
+<h3>二、同济 MCP 改造：操作步骤与可直接复制的提示词</h3>
+<h4>你在 <code>mcp</code> 项目怎么操作</h4>
+<ul>
+<li>在 <code>c:\Users\&lt;USER&gt;\Desktop\mcp</code> 工作区<strong>新开一个对话</strong>（保持项目隔离，不混在 <code>skills</code> 项目里改）。</li>
+<li><strong>时机建议</strong>：<code>mcp.md</code> 原定 <strong>11/30 跑满一周</strong>一起收口微调；如果你现在就想先审方案或先修 L6 那个“110ms 早 429 被慢队友拖死”的调度缺陷，现在直接发下面这段提示词也完全可以——它已内置“先拿数据论证、经你确认后再改代码”的闸门。</li>
+<li><strong>注意事项</strong>：改动涉及 <code>tongji_deepseek_mcp.ps1</code>（双端同步）与可能触发的 <code>tools/list</code> 描述更新，提示词已写明先跑 <code>blast-radius</code>、改完守双端 SHA-256 一致与独立 stdio E2E，如果动了 <code>tools/list</code> 描述（如 <code>delegate_to_deepseek.json</code>）会提醒你重载 MCP 连接。</li>
+</ul>
+<h4>可直接复制发给 <code>mcp</code> 新对话的提示词</h4>
+<pre><code>先只读读取 @mcp.md 和 @CONTEXT_agent_arch.md 获取铁律与当前断点（勿复述历史），然后一口气完成以下只读核查与方案评估，**先给方案等我确认，本轮不要修改任何文件**：
+
+1. **跑最新遥测并逐条看失败形态**：
+   - 用 `session-diagnose` 跑 `mcp-report --days 7`（或全量 `--days 0`），并读取 `C:\Users\&lt;USER&gt;\.gemini\config\tongji_mcp_metrics.jsonl` 原始逐条记录。
+   - 核实 Kimi-K3.1-Pro 的失败究竟是“孤立长尾撞超时墙”，还是“短时间内连续故障”。
+
+2. **重点核查并对比 3 个候选优化项的真实性价比**（均对照 `C:\Users\&lt;USER&gt;\.gemini\config\tongji_deepseek_mcp.ps1` 源码实测，严守零状态自包含、145s 总预算、UTF-8 BOM、双端同步等铁律）：
+   - **候选 A（高优先怀疑点）**：检查 `Invoke-Probes` / `Wait-CampusJobBatch`——之前 L6 (`code_audit`) 实测 Kimi 在 110ms 就返回 `HTTP 429`，却因死等 DeepSeek 跑完 34s 才判重试导致剩余预算 `&lt; MinRetryMs(15s)` 错失切备 VIP 重试。评估改成“单路早失败（429/5xx/传输错）在主循环中不傻等慢队友、直接带短退避切备 VIP 发起单路重试”的实现复杂度与风险。
+   - **候选 B（既定满周待办）**：按实测耗时分布，评估是否微调 `draft_struct`（当前 48s 撞墙 3 次）与 `deep_panel`（当前 42s 撞墙 2 次）的 Kimi `MaxTimeSec` / 输出控长，以及顺手补齐 `delegate_to_deepseek.json` 缺失的“编排子工位免调”微措辞。
+   - **候选 C（外部借鉴二次证伪，借鉴自 Pojun `llmpool`）**：冷静评估是否真的需要跨调用熔断冷却（硬失败 401/402/403 首次熔断 / 软失败 429&#183;5xx 连败 N 次短冷却）。若真实遥测中连续失败次数极低，或因 `-Worker` 短进程必须落盘状态文件与“零状态自包含”铁律冲突、得不偿失，请直接建议放弃或仅做极简版，不要为了做而做。
+
+3. **输出与闸门**：
+   - 给出 A/B/C 三项的「实测依据 / 预期收益 / 破坏面与代价 / 建议取舍（做还是不做）」对比表。
+   - 明确待我拍板后再正式进入修改流程（修改前必先只读执行 `blast-radius`，改后按 `mcp.md` 跑 AST 0 错、UTF-8 BOM、`.gemini\config` 与 `D:\tongji_plugin` 双端 SHA-256 一致、以及独立 stdio E2E 验收）。</code></pre>
+<hr>
+<h3>三、痛点 A 深度拆解：两种机制的原理、优缺点与本机适配性</h3>
+<h4>1. 先对齐：痛点 A 到底是什么？</h4>
+<p>我们在 <code>core-reasoning-protocol.md</code> 定了铁律：改全局 <code>rules/*.md</code>、插件后端、<code>tongji_deepseek_mcp.ps1</code>、<code>.codex/AGENTS*.md</code> 等高危共享层前，<strong>必须先只读走一遍 <code>blast-radius</code></strong>（核查扩散面与跑 L4 探针）。</p>
+<p>但模型执行规则本质上是“概率性记忆”——长对话一上头，强模型容易自信跳过这步直接改文件。近 7 天 <code>session-diagnose</code> 查到：<strong>5 场改了高危共享层的会话里，3 场合规、2 场漏读 <code>blast-radius</code> 就直接改了规则文件</strong>（其中最早 2 场发生在 11/25 加硬锚点前后，较近的 3 场已 3/3 通过）。</p>
+<h4>2. 两条路线的底层原理区别（用“摄像头 vs 闸机”来理解）</h4>
+<ul>
+<li><strong>路线一（现状）：常驻文字锚点 + <code>session-diagnose</code> 事后复盘 =「事后摄像头」</strong></li>
+<li><strong>原理</strong>：</li>
+<li>事前只靠 <code>core-reasoning-protocol.md</code> 里的文字提醒让模型自觉；</li>
+<li>事后你手动跑 <code>diagnose.py</code>，脚本离线翻看 <code>transcript.jsonl</code>，检查“第一次改高危路径的 step 之前，有没有出现过 <code>read_file(.../blast-radius/SKILL.md)</code>”，没有就标 <code>[FLAGGED]</code>。</li>
+<li><strong>关键特征</strong>：<strong>完全不介入运行链路</strong>，改文件时零额外动作，但也<strong>无法在犯错那一刻拦住它</strong>。</li>
+</ul>
+<ul>
+<li><strong>路线二（借鉴 <code>sutando</code>）：Antigravity 原生 <code>hooks.json</code> 的 <code>PreToolUse</code> 守卫 =「事前门禁闸机」</strong></li>
+<li><strong>原理（经官方 <code>hooks.md</code> 核实）</strong>：</li>
+<li>先澄清一点：<strong>它和【排雷墓碑】里的 <code>claude-octopus</code> / <code>hol-guard</code> 不是一回事</strong>。那俩是给 Linux/macOS Claude Code 写的 <code>.sh</code> 钩子，搬到 Windows 失效；而 <strong>Antigravity 2.0 桌面端原生支持 <code>hooks.json</code></strong>（你的 <code>antigravity-share-hub/hooks.json</code> 已经在 Windows 上跑通了 <code>Stop</code> 钩子）。</li>
+<li>工作流程：在 <code>C:\Users\&lt;USER&gt;\.gemini\config\hooks.json</code> 配置一个 <code>PreToolUse</code> 钩子，用 <code>matcher</code> 只绑定改文件工具（如 <code>edit_file|write_file</code>，确切内部工具名需 1 次最小实测确认 <code>[未验证]</code>）。</li>
+<li>每当模型准备调用改文件工具时，<strong>宿主会先暂停工具执行</strong>，通过 <code>cmd /c</code> 调一个本地轻量 Python 3.12 脚本，把本次 <code>toolCall.args</code>（目标路径）和 <code>transcriptPath</code>（当前会话日志路径）经 <code>stdin</code> 传给脚本：</li>
+<li>目标路径不是高危共享文件 → 立刻输出 <code>{&quot;decision&quot;: &quot;allow&quot;}</code> 放行；</li>
+<li>命中高危共享文件 → 查一下 <code>transcriptPath</code> 本会话是否已读过 <code>blast-radius/SKILL.md</code>：</li>
+<li>已读过 → <code>allow</code> 放行；</li>
+<li>没读过 → 输出 <code>{&quot;decision&quot;: &quot;deny&quot;, &quot;reason&quot;: &quot;...&quot;}</code>（<strong>硬挡回</strong>，逼模型先去读 <code>blast-radius</code>）或 <code>{&quot;decision&quot;: &quot;ask&quot;, &quot;reason&quot;: &quot;...&quot;}</code>（<strong>弹窗让你一键拍板</strong>要不要放行）；</li>
+<li>脚本若遇到任何解析异常 → 遵循 <code>sutando</code> 的 <strong>fail-open</strong> 原则返回 <code>allow</code>，绝不把你正常干活卡死。</li>
+</ul>
+<h4>3. 两者优缺点对比与“适不适合我们的运行环境”</h4>
+<p>| 维度 | 路线一：文字锚点 + 事后 <code>session-diagnose</code>（现状） | 路线二：本地 <code>PreToolUse</code> Hook 事前守卫 |</p>
+<p>| :--- | :--- | :--- |</p>
+<p>| <strong>防漏效果</strong> | 软约束；强模型加了锚点后近 3 场已 3/3 合规，但理论上仍有小概率跳过 | <strong>确定性拦截</strong>，对经 <code>edit_file</code>/<code>write_file</code> 修改高危层的漏触接近 0%（但拦不住用 <code>run_command</code> 写文件的绕过路径） |</p>
+<p>| <strong>日常性能影响</strong> | <strong>0 ms 开销</strong> | <code>[实测文档约束]</code> <code>hooks.md</code> 明确 <strong>Hook 同步阻塞循环</strong>。哪怕改普通代码/Markdown，每次 <code>edit_file</code> 都要经 <code>cmd /c</code> 冷启一次 Python 3.12，增加约 <strong>50–150 ms/次</strong> 延迟 <code>[推断]</code> |</p>
+<p>| <strong>豁免灵活性（最大坑点）</strong> | 模型能读懂语义，改错别字/纯排版注释时自然豁免，零摩擦 | <strong>静态脚本只认路径不认语义</strong>：如果你只是改 <code>rules/*.md</code> 里两个错别字（规则本应豁免 <code>blast-radius</code>），设 <code>deny</code> 会强行误拦逼模型瞎读一遍；设 <code>ask</code> 则会多弹一次确认框打断你 |</p>
+<p>| <strong>隐蔽工程风险</strong> | 几乎为零 | ① <strong><code>transcriptPath</code> 刷盘时序 <code>[未验证]</code></strong>：模型刚读完 <code>blast-radius</code> 下一步立刻改文件时，若宿主还没把上一步 flush 到磁盘，Hook 会假阳性误拦；② Antigravity 升级若改动内部工具名或 payload 格式需跟着维护 |</p>
+<p>| <strong>与本机环境契合度</strong> | 极高（顺应你反臃肿、反过度微操、已有 <code>TURBO</code> 流畅体验的定位） | 中等偏低——更适合多人团队/无人值守长跑仓库，对单人高频交互且已在场把关的场景偏重 |</p>
+<h4>4. 我的倾向与建议（供讨论）</h4>
+<ul>
+<li><strong>现阶段我倾向选「路线一：维持现状，先观察到 11/30 跑 14 天全量 <code>session-diagnose</code>」</strong>：</li>
+<li>理由很直接：你 11/25 刚把 <code>blast-radius</code> 锚点加固进 <code>always_on</code> 规则，之后的 3 场高危改动会话已经是 <strong>3/3 全通过</strong>，目前<strong>尚未实证“加固后依然高频漏触”</strong>；按 <code>CONTEXT_skills.md</code>「反盲目加轮子，先用数据证伪痛点」的铁律，现在为了尚未复发的隐患引入同步阻塞 Hook 和误拦摩擦，收益可能小于维护/体验成本。</li>
+<li><strong>清晰的切换阈值</strong>：11/30（与 <code>CONTEXT_agent_arch.md</code> 的 14 天自诊同步）如果查出 <strong>11/25 之后仍出现 ≥2 次真正漏读 <code>blast-radius</code></strong>，那时再上极简 <code>PreToolUse</code> Hook，而且策略选 <strong><code>&quot;decision&quot;: &quot;ask&quot;</code>（弹窗提醒确认，而非硬 <code>deny</code> 卡死）</strong>——这样改错别字时你点一下放行，真漏了高危审查时也能把你叫醒！</li>
+</ul>
+<hr>
+<h3>四、想听你的看法（2 个收口决定）</h3>
+<ul>
+<li><strong>痛点 A 你更偏向哪种？</strong></li>
+<li><strong>A（推荐）</strong>：暂不加 Hook，保持现状观察到 11/30 跑 14 天 <code>session-diagnose</code>，若 11/25 后仍复发 ≥2 次再上轻量 <code>ask</code> 版 <code>PreToolUse</code> Hook；</li>
+<li><strong>B</strong>：现在就想先做一个 3 分钟的只读验证（测通 Antigravity <code>PreToolUse</code> 的 <code>edit_file</code> 真实 <code>matcher</code> 名与 <code>transcriptPath</code> 是否实时落盘），看清手感后再决定上不上。</li>
+<li><strong>更新状态卡确认</strong>：确认没有第 6 个仓库后，是否同意我现在把本次 5 仓终审结论（0 装包、保留 <code>skill-update-checker</code> <code>[已验证]</code>、记下同济 MCP 调度优化移交 <code>Desktop\mcp</code> 与痛点 A 观察决议）写回 <code>CONTEXT_skills.md</code>（以及是否顺手同步 <code>11.27.md</code>）？</li>
+</ul>
 </div></article>
 
     </section>
