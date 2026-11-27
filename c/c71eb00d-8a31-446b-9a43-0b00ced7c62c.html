@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="c71eb00d-8a31-446b-9a43-0b00ced7c62c" data-base-prefix="./" data-turn-count="30" data-update-time="2026-11-27 19:40" data-meta-ver="4b388a66" data-is-index="0">
+<body data-conv-id="c71eb00d-8a31-446b-9a43-0b00ced7c62c" data-base-prefix="./" data-turn-count="34" data-update-time="2026-11-27 19:50" data-meta-ver="4b388a66" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="Political PPT Outline Discussion">Political PPT Outline Discussion</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="ppt">ppt</span><span>会话 ID: c71eb00d-8a31-446b-9a43-0b00ced7c62c | 轮次: 30 | 更新于: 2026-11-27 19:40</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="ppt">ppt</span><span>会话 ID: c71eb00d-8a31-446b-9a43-0b00ced7c62c | 轮次: 34 | 更新于: 2026-11-27 19:50</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./c71eb00d-8a31-446b-9a43-0b00ced7c62c.md" download="Political_PPT_Outline_Discus-c71eb00d.md" onclick="return downloadMarkdown(event, './c71eb00d-8a31-446b-9a43-0b00ced7c62c.md', 'Political_PPT_Outline_Discus-c71eb00d.md')">⬇️ 下载 Markdown (.md)</a>
@@ -707,6 +707,58 @@
 <p>[Open the Swarm UI](sidecar://swarm/swarm_board/?auto_open=false)</p>
 </div></article>
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>正在等待 Claude Opus 5.5 (High) 复审回执（急用可回复“跳过”）。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成 <strong>Claude Opus 5.5 (High)</strong> 独立复审回执的逐条裁决并回收审稿工位。Opus 抓出了多处避免规则膨胀、过度推广或接口漂移的关键细节（如私有 <code>_styled_omml</code> 版本保护、Morph 旋转的精确边界、学术表格与 KPI 卡片负号分界、去重单一信源、<code>native_helpers.py</code> 复用 <code>build_deck.py</code> 解析器防漂移等），现整理成带 <code>blast-radius</code> 实证依据的待批复方案呈报你审阅。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成 <code>blast-radius</code> 只读影响面排查（实测达 <strong>L4</strong>）与 <strong>Claude Opus 5.5 (High)</strong> 对升级草案的独立盲审，<strong>目前未改写 <code>course-ppt-lab</code> 内任何文件</strong>，现将审核后的完整方案呈报你拍板。</p>
+<hr>
+<h3>一、<code>blast-radius</code> 只读影响面报告（L4 实测举证）</h3>
+<ul>
+<li><strong>三端副本与上游实测状态</strong>：</li>
+<li><code>.gemini\config\skills\course-ppt-lab</code>：38 文件，<code>CHANGELOG.md</code> 标 <code>0.4.1</code>，但 <code>build_deck.py</code>、<code>README.md</code> 与 <code>local-environment.md</code> 仍标 <code>0.4.0</code>（存在版本漂移）；同端 <code>ppt-master</code> 为 <strong><code>v6.10.0</code></strong>，<code>check_upstream.py</code> 实测 <code>401/401</code> 通过，<code>unittest</code> 基线 <code>2/2</code> 全绿。</li>
+<li><code>.dsh</code> 与 <code>.workbuddy</code>：两处 <code>course-ppt-lab</code> 均停留在 <code>0.4.0</code>（仅 6 个文件与 <code>.gemini</code> 不同）；<strong>检出真实破坏面</strong>：两处 <code>ppt-master</code> 仍停留在 <strong><code>v6.9.0</code></strong>，用 <code>.gemini</code> 的 <code>upstream-lock.json</code> 校验均报 <code>exit=1</code>（<code>matches_validated_snapshot: false</code>）。若单向拷贝新版 <code>course-ppt-lab</code> 而不联升两端 <code>ppt-master</code>，两端 <code>check_upstream.py</code> 与 <code>build_deck.py</code> 将直接报错失效。</li>
+<li><code>.codex</code>：已不存在，旧副本归档于 <code>.gemini/skills-archive/codex-retired-2026-11-26/course-ppt-lab</code>。</li>
+<li><strong>安全前提与扫描边界（L4 实测通过）</strong>：</li>
+<li>三端同级扫描目录无残留 <code>_backup</code> 目录；</li>
+<li><code>requirements.txt</code> 已固定 <code>Pillow==12.3.0</code>、<code>python-pptx==1.0.2</code>、<code>XlsxWriter==3.2.9</code>，升级无需新增第三方依赖；</li>
+<li>既有外部契约（<code>build_deck.py</code> / <code>audit_pptx.py</code> v4 / <code>check_upstream.py</code> / <code>render_wps.ps1</code> CLI 与输出 JSON schema）保持 <strong>100% 向后兼容</strong>；新增规则 ID 严格符合 <code>build_deck.py:212</code> 正则 <code>^- ((?:C|D|V|A|G|T|S)\d{2})[：: ]</code>。</li>
+</ul>
+<hr>
+<h3>二、两套 PPT 增量经验 + Opus 复审裁决后的精炼升级草案（<code>0.5.0</code>）</h3>
+<p>按 <code>maintenance.md</code> 的<strong>“去重、修订优先、不把单次项目偏好硬塞成通用铁律”</strong>原则，经 Opus 复审把关，剔除了 3 处重复表述与过度推广，保留 <strong>6 处高价值精准改动</strong>：</p>
+<p>| 目标文件 | 改动内容（标注来源项目 + Opus 复审校准） |</p>
+<p>|---|---|</p>
+<p>| <code>references/science-video.md</code>&lt;br&gt;（修订 <code>S11</code>、<code>S21</code>） | <strong>来自《迈克尔逊干涉仪》（补齐 <code>0.4.1</code> 漏项，不重复已有 <code>S21</code>）</strong>：&lt;br&gt;① <code>S11</code> 补充：优先经版本检查（<code>ppt-master ≥ 6.9.0/6.10.0</code>，签名变化时提供回退）调用 <code>ppt-master</code> 公式编译接口生成原生 <code>m:oMath</code>，并注明“用 <code>\vec</code> 替代 <code>\boldsymbol</code>”属该解析器边界而非 LaTeX 通用禁令；Matplotlib 中文环境禁用 Unicode 角标（<code>₁/₀</code> 易出缺字框），改用 mathtext（<code>$M_1$</code>）。&lt;br&gt;② <code>S21</code> 补充：<code>python-pptx</code> <code>add_movie()</code> 默认单击导致 <code>CreateVideo</code> 冻结，须注入 <code>mainSeq + withEffect + cmd=&quot;playFrom(0.0)&quot; + mute=&quot;1&quot;</code>；遇转场累加漂移时，静默字幕对齐可选仅匹配静态顶部标题区（避开动态视频区，去除单项目具体秒数）。 |</p>
+<p>| <code>references/animation-engineering.md</code>&lt;br&gt;（修订 <code>E06</code>、<code>E12</code>） | <strong>来自两套 PPT 联合实测（经 Opus 修正精确边界）</strong>：&lt;br&gt;① <code>E12</code> 精确表述：Morph 两端按直线插值，<strong>圆弧/轨道路径会被拉成弦线</strong>（须用中间关键帧、路径动画或 Python 渲染替代），不笼统宣称“Morph 不能旋转”；原位旋转须在目标软件实播核验。&lt;br&gt;② <code>E06</code> 补充：汇报单击轨与转场优先调用 PPTMaster <code>pptx_animations.py</code> / <code>pptx_transitions.py</code> 直接生成并校验标准 OOXML，保留 COM 作为备用路线（不与既有 COM 条款冲突）。 |</p>
+<p>| <code>references/content-rules.md</code>&lt;br&gt;（新增 <code>C14</code>） | <strong>来自《新时代中国经济》汇报（唯一信源，不跨文件重复）</strong>：&lt;br&gt;① 严禁将<strong>非可比时间口径</strong>（如全年与前三季度）做成等大并列主数字卡，阶段进度须独立降级标注；&lt;br&gt;② 画面与口播同步区分<strong>强度指标与总量指标</strong>（如“单位 GDP 二氧化碳排放”与“碳排放总量”）；&lt;br&gt;③ <strong>仅限 KPI/英雄数字卡与摘要高亮</strong>（学术数据表/回归表保留符号惯例）：凡“下降即利好”的指标（能耗、碳排强度、误差率），避免巨型 <code>-X%</code> 与警示红，改用 <code>下降 X% ↓</code> + 领域/正向色。 |</p>
+<p>| <code>references/design-system.md</code>&lt;br&gt;（修订 <code>G18</code> 与坑表） | <strong>来自《新时代中国经济》汇报（经 Opus 去重收紧）</strong>：&lt;br&gt;① <code>G18</code> 增补：单焦点柱图用主色高亮目标项、同级参照项弱化为中性灰；截断纵轴折线图须在图题明示起点并配数据标签/基准虚线；长汇报总结页可按需使用跨页回链徽章（标注为可选项）。&lt;br&gt;② 常见坑速查表仅以 1 行交叉引用指向 <code>C14</code>（正向降幅语义）与 <code>validation.md</code>（圆标竖排）。 |</p>
+<p>| <code>references/validation.md</code>&lt;br&gt;（新增实测小节） | <strong>来自《新时代中国经济》实渲与讲稿校准</strong>：&lt;br&gt;① 新增 <strong><code>python-pptx</code> + WPS 实渲四项必查</strong>：<code>&lt;a:effectLst/&gt;</code> 去默认投影、圆标清零边距+禁换行防 <code>01</code> 竖排、补写 <code>&lt;a:ea&gt;</code> 与图表 <code>txPr/defRPr</code> 防中文字体回退、多系列折线图逐系列显式设 <code>series.data_labels.show_value=True</code> 防 WPS 吞标签（注明实测 WPS 版本边界）；&lt;br&gt;② 增补中文课堂讲稿校准方法（测字数→对照 <code>195–230 字/分钟 + 1–1.5 分钟停顿</code> 经验参考范围，明确标 <code>n=1 经验值、非真人计时替代</code>）与 Windows 文件被占用时的独立版本命名防覆写纪律。 |</p>
+<p>| <strong>新增 <code>scripts/native_helpers.py</code> + <code>tests/test_native_helpers.py</code></strong>&lt;br&gt;及入口/文档版本对齐（<code>SKILL.md</code> / <code>build_deck.py</code> / <code>deck-format.md</code> / <code>README.md</code> / <code>CHANGELOG.md</code> / <code>local-environment.md</code>） | <strong>解决你上一轮点出的核心痛点（双引擎共享防线，经 Opus 加固 3 处工程防线）</strong>：&lt;br&gt;① 保留 <code>build_deck.py</code> 现有 5 布局 SVG 管线 100% 不变，新增可复用的 <code>scripts/native_helpers.py</code> 供复杂 <code>python-pptx</code> 汇报/科普脚本调用：提供 <strong>PIL 字体溢流/孤字预检</strong>（字体路径可配置、无字体时测试自动 <code>skip</code>）、<strong>复用 <code>build_deck.py</code> 的规则哈希与 ID 解析器</strong>生成标准 <code>run-manifest.json</code>（不另写一套防漂移）、以及 <code>strip_shadow</code> / <code>set_cjk_font</code> / <code>add_badge_oval</code> / <code>set_movie_autoplay</code> / 懒加载 PPTMaster 动画封装（显式传参 <code>ppt_master_dir</code>，缺失时清晰报错）；&lt;br&gt;② 同步对齐版本 <code>0.5.0</code>，不改动 <code>audit_pptx.py</code> v4 schema。 |</p>
+<hr>
+<h3>三、写盘前后安全与验收门禁（确认后执行）</h3>
+<ul>
+<li><strong>写前备份</strong>：将当前 <code>.gemini\config\skills\course-ppt-lab</code> 完整备份至扫描目录之外的 <code>C:\Users\&lt;USER&gt;\.gemini\skills-archive\course-ppt-lab-pre-0.5.0-2026-11-27\</code>。</li>
+<li><strong>写后四项实测验证</strong>：</li>
+<li><code>python -m unittest discover -s tests -v</code>（既有 2 个测试 + 新增 <code>test_native_helpers.py</code> 全绿）；</li>
+<li><code>build_deck.py</code> 用 <code>examples/course-chinese.json</code> 与 <code>two-combinations.json</code> 冒烟，验证零回归且自动识别 <code>C14</code>；</li>
+<li><code>check_upstream.py</code> 复核 <code>.gemini</code> 端 <code>ppt-master</code> 401 文件全绿；</li>
+<li><code>audit_pptx.py</code> v4 回扫两套成品 PPTX（《迈克尔逊干涉仪》22 页 + 《新时代中国经济》20 页 <code>v2优化版</code>）确认输出与零告警完全一致。</li>
+</ul>
+<hr>
+<h3>四、写盘前请你确认的 2 个拍板点</h3>
+<ul>
+<li><strong>跨端同步范围</strong>：</li>
+<li><strong>A（推荐，影响面最小）</strong>：本次先升级 <strong>Antigravity（<code>.gemini</code>）</strong> 至 <code>0.5.0</code> 并完整跑通四项门禁，在 <code>local-environment.md</code> 如实登记 <code>.dsh</code>/<code>.workbuddy</code> 暂缓同步状态（不动已退役的 <code>.codex</code>）；</li>
+<li><strong>B（三端全同步）</strong>：同步升级 <code>.gemini</code>、<code>.dsh</code>、<code>.workbuddy</code> 三端的 <code>course-ppt-lab</code> 至 <code>0.5.0</code>，<strong>并同步把 <code>.dsh</code>/<code>.workbuddy</code> 的 <code>ppt-master</code> 从 <code>v6.9.0</code> 增量升级至 <code>v6.10.0</code></strong> 以消除 <code>upstream-lock.json</code> 冲突。</li>
+<li><strong>是否一并新增 <code>scripts/native_helpers.py</code></strong>：</li>
+<li><strong>1（推荐，升级 <code>0.5.0</code>）</strong>：规则文档 + <code>native_helpers.py</code> 公共代码层 + 单元测试一并落地，以后做富版式/原生图表 PPT 直接复用 PIL 字宽预检与标准 <code>run-manifest</code>；</li>
+<li><strong>2（纯文档，升级 <code>0.4.2</code>）</strong>：只更新规则文档与版本号对齐，不新增脚本文件。</li>
+</ul>
+<p>回复类似 <strong>“A1，直接落盘”</strong>（或你对某条经验的增删意见），我就按上述门禁执行并汇报全部实测结果。</p>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>1.A。2.A，直接落盘</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>收到，按 <strong>1.A + 2.A</strong> 执行 <code>course-ppt-lab</code> <code>0.5.0</code> 升级（仅升级 <code>.gemini</code> 端并在 <code>local-environment.md</code> 如实记录 <code>.dsh</code>/<code>.workbuddy</code> 暂缓，不动已退役 <code>.codex</code>）。第一步先将现有副本完整备份至扫描路径之外的归档目录。</p>
 </div></article>
 
     </section>
