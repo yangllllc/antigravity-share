@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="dafb4c69-8fb7-4a24-a654-c746689fcdc4" data-base-prefix="./c/" data-turn-count="15" data-update-time="2026-11-27 09:07" data-meta-ver="e41ecb8f" data-is-index="1">
+<body data-conv-id="dafb4c69-8fb7-4a24-a654-c746689fcdc4" data-base-prefix="./c/" data-turn-count="16" data-update-time="2026-11-27 09:09" data-meta-ver="e41ecb8f" data-is-index="1">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="./index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="Codex Recovery And Skill Optimization">Codex Recovery And Skill Optimization</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="skills">skills</span><span>会话 ID: dafb4c69-8fb7-4a24-a654-c746689fcdc4 | 轮次: 15 | 更新于: 2026-11-27 09:07</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="skills">skills</span><span>会话 ID: dafb4c69-8fb7-4a24-a654-c746689fcdc4 | 轮次: 16 | 更新于: 2026-11-27 09:09</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./c/dafb4c69-8fb7-4a24-a654-c746689fcdc4.md" download="Codex_Recovery_And_Skill_Opt-dafb4c69.md" onclick="return downloadMarkdown(event, './c/dafb4c69-8fb7-4a24-a654-c746689fcdc4.md', 'Codex_Recovery_And_Skill_Opt-dafb4c69.md')">⬇️ 下载 Markdown (.md)</a>
@@ -623,6 +623,40 @@
 <article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>今天打开codex怎么又出问题了，你检查一下看看能不能修复</p>
 </div></article>
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已定位到精确崩溃源码，备份状态库并将首页默认模式 <code>home-composer-mode-v1</code> 从 <code>&quot;work&quot;</code> 切回 <code>&quot;chat&quot;</code>，正在重启 Codex 桌面端并收集 L5 启动遥测验证是否零崩溃。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p><strong>已定位到精确源码根因并完成本地无损修复，Codex 桌面端现已重新拉起且启动遥测 0 崩溃</strong>（请切过去确认窗口是否已恢复正常）。</p>
+<hr>
+<h3>一、精确根因（反编译 <code>app.asar</code> L2/L5 实证，与昨日改配置/技能无关）</h3>
+<ul>
+<li><strong>版本核实</strong>：Microsoft Store 线上最新仍是 <code>OpenAI.Codex 26.1120.6357.0</code>（<code>windows-store-update.json</code> 实测无新版）。</li>
+<li><strong>崩溃调用链（实测）</strong>：今早 <code>09:02:06–09:02:27</code> 连续 6 次在请求 <code>GET /backend-api/beacons/home?product=work_tab...</code> 返回 <code>200</code> 的同一秒触发 <code>Error: Missing scope instance</code> 并掉进 ErrorBoundary。直接反编译 <code>app.asar</code> 定位到精确代码行：</li>
+<li><code>webview/assets/async/19090.212868ea77.js:1:46521</code>：</li>
+</ul>
+<pre><code>    let ts = eN?.placement === &quot;work_tab_home&quot; &amp;&amp; (0, b.w)(ta, eF); // eF 匹配 action.id === &quot;work_home_enable_fast_mode&quot;
+    let tr = (0, s.Ul)(ti || ts ? ew.K7 : null);</code></pre>
+<ul>
+<li>当首页持久化模式为 <code>work</code>（<code>.codex-global-state.sqlite</code> 中 <code>home-composer-mode-v1 = &quot;work&quot;</code>）且 <code>service_tier = &quot;default&quot;</code> 时，客户端向服务端声明 <code>work_fast_mode_selectable</code>（模块 <code>nVns</code>）；服务端一旦下发「开启 Fast Mode」促销横幅，上述 <code>ts</code> 变为 <code>true</code>，立刻去读绑定在 <code>Sd8U.PR</code> 作用域上的 atom <code>ew.K7</code>（模块 <code>VET8</code>）。</li>
+<li><strong>OpenAI 该版本的源码缺陷</strong>：<code>work_tab_home</code>（<code>&quot;/&quot;</code>）组件树未挂载 <code>Sd8U.PR</code> Scope Provider，因此 <code>366996.9782070574.js:16:120845</code> 必抛 <code>Error(&quot;Missing scope instance&quot;)</code> 把整页打白。</li>
+<li>这与昨日改 <code>config.toml</code>（<code>gpt-6.2-astra / ultra</code>）或技能无关（昨日 <code>14:11</code> 在改动前就已触发同一调用栈）。</li>
+</ul>
+<hr>
+<h3>二、已执行的本地无损修复与 L5 验证</h3>
+<ul>
+<li><strong>安全退出 + 备份</strong>：优雅关闭原 <code>ChatGPT</code> / <code>codex</code> 进程，备份 <code>.codex-global-state.sqlite</code> 至 <code>codex-global-state.backup-20261127.sqlite</code>（<strong>未触碰 <code>Local Storage</code>、登录态、历史对话、项目列表、规则或技能</strong>）。</li>
+<li><strong>单键绕开崩溃路径</strong>：仅将 <code>`.codex-global-state.sqlite`</code> 中 1 条原厂首页模式键 <code>home-composer-mode-v1</code> 从 <code>&quot;work&quot;</code> 改回默认值 <code>&quot;chat&quot;</code>（<code>PRAGMA quick_check = ok</code>）。在 <code>&quot;chat&quot;</code> 模式下首页 <code>placement === &quot;homepage&quot;</code>，<code>ti</code> 与 <code>ts</code> 恒为 <code>false</code>，<code>s.Ul(null)</code> 永不触发缺 Scope 崩溃。</li>
+<li><strong>重启 L5 遥测实测（<code>09:07:29–09:08:38</code>）</strong>：</li>
+<li><code>ChatGPT</code> / <code>codex</code> 主进程与渲染进程正常常驻；</li>
+<li><code>sentry/scope_v3.json</code> 共 106 条启动轨迹，成功加载 <code>zh-CN</code> 语言包并持续上报 <code>app_state_snapshot</code> / <code>renderer_workload_snapshot</code>；</li>
+<li><strong><code>Error: Missing scope instance</code> = 0 次，ErrorBoundary 崩溃 = 0 次</strong>（唯一日志错误是本机未装 WSL 的常规 <code>[wsl] wsl.exe --status</code> exit 50，无害）。</li>
+</ul>
+<hr>
+<h3>三、防复发避坑提醒（重要）</h3>
+<ul>
+<li>在 OpenAI 推送高于 <code>26.1120.6357.0</code> 的新版前：</li>
+<li><strong>请直接从左侧边栏点进你的本地项目 / Codex 线程干活</strong>，<strong>暂时不要在空白首页把模式切回 <code>Work</code> 首页标签</strong>——只要处于 <code>service_tier = &quot;default&quot;</code> 且服务端仍在推 Fast Mode 促销横幅，切到 <code>Work</code> 空白首页就会再次撞 <code>Missing scope instance</code>。</li>
+<li>如果不小心误点又白屏，无需重装也无需清 <code>Local Storage</code>，直接让我把 <code>home-composer-mode-v1</code> 重置回 <code>&quot;chat&quot;</code>（1 秒可逆）即可恢复；如果你需要，我也可以把这条一键恢复命令存成一个小脚本放进桌面 <code>skills</code> 目录备查。</li>
+</ul>
+<p>请看一眼当前打开的 Codex 窗口，确认界面、左侧项目与模型档位是否都显示正常？</p>
 </div></article>
 
     </section>
