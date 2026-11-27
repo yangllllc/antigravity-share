@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="7240a409-8bd1-4f34-9208-d6eb745d6d98" data-base-prefix="./" data-turn-count="1" data-update-time="2026-11-27 19:07" data-meta-ver="5b2cb61f" data-is-index="0">
+<body data-conv-id="7240a409-8bd1-4f34-9208-d6eb745d6d98" data-base-prefix="./" data-turn-count="7" data-update-time="2026-11-27 19:26" data-meta-ver="5b2cb61f" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="AI 雷达 P0-P2 问题修复">AI 雷达 P0-P2 问题修复</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64">【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64</span><span>会话 ID: 7240a409-8bd1-4f34-9208-d6eb745d6d98 | 轮次: 1 | 更新于: 2026-11-27 19:07</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64">【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64</span><span>会话 ID: 7240a409-8bd1-4f34-9208-d6eb745d6d98 | 轮次: 7 | 更新于: 2026-11-27 19:26</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./7240a409-8bd1-4f34-9208-d6eb745d6d98.md" download="AI_雷达_P0-P2_问题修复-7240a409.md" onclick="return downloadMarkdown(event, './7240a409-8bd1-4f34-9208-d6eb745d6d98.md', 'AI_雷达_P0-P2_问题修复-7240a409.md')">⬇️ 下载 Markdown (.md)</a>
@@ -497,6 +497,79 @@
 <p>| [retention.ts:209](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/retention.ts:209)、[retention.ts:133](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/retention.ts:133)、[db.ts:561](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/db.ts:561) | <strong>瘦身预览会重复计数，WAL 忙时会阻塞服务。</strong> 同一旧帖同时满足普通和 ignored 条件，实测预览两栏都计入，执行只删一次。另有长期读快照时，主线程会连续执行最多三次同步 <code>TRUNCATE</code>，每次连接忙等待配置为 20 秒。 | 预览按实际删除顺序划成互斥集合；checkpoint 遇 busy 后返回状态并延后重试，避免在处理 API 的线程上连续等待。 |</p>
 <p>| [tongji-transport.ts:135](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/enrich/tongji-transport.ts:135)、[tongji-transport.ts:466](C:/Users/&lt;USER&gt;/Desktop/ai-radar/src/server/enrich/tongji-transport.ts:466) | <strong>双 VIP 无法补救选错物理网卡。</strong> 同时存在先枚举的非校园以太网和能访问校内的 WLAN 时，选择器返回第一张以太网，两个 VIP 均绑定该地址；若该出口不通，就会回退并进入离校冷却。 | 保留全部合格物理 IPv4，在现有建连总时限内尝试不同出口，缓存最近成功的网卡；只在尚未写出请求体时切换。 |</p>
 <p><strong>总评：当前不宜在开启手机同步和自动 AI 的状态下放心长期日用；优先修复发布版 PIN 的来源信任边界，以及所有模型发送入口共用的凭据隔离与原子配额门禁。</strong></p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>正在执行全量 TypeScript 类型检查、Vite 构建与 22 项修复回归测试，等待结果返回。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已补齐 <code>clusterIndexCache</code> 的 <code>dbRevision()</code> 自动失效并修正测试样本标题重复问题，正在复跑全量构建与 28 项测试。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>22 项 P0/P1/P2 修复与 28/28 回归测试已全绿，正在等待 Claude Opus 5.5 (High) 完成跨模型盲审复核（急用可回复“跳过”直接打包交付）。</p>
+<p>[Open the Swarm UI](sidecar://swarm/swarm_board/?auto_open=false)</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>正在执行完整构建（<code>tsc --noEmit &amp;&amp; vite build</code>）、29 项回归测试与 <code>AIRadar.exe</code> 原子重打包，完成后将继续隔离目录实机冒烟验收并更新状态锚点。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>静态检查已通过（<code>.bat</code> 为无 BOM UTF-8 CRLF、<code>AIRadar.exe</code> 零密钥残留且无 <code>x-ai-radar-test-ip</code> 测试头残留），正在等待隔离目录实机 HTTP 冒烟与同济通道探测返回。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已按 <code>CONTEXT_ai_radar.md</code> 完成磁盘断点核验，将审计报告中的 <strong>22 项 P0/P1/P2 缺陷</strong> 与跨模型终审新增的 <strong>6 项边界隐患</strong> 全部闭环修复、补齐回归测试、原子重打包 <code>AIRadar.exe</code>，并已更新状态锚点。全程未触碰 <code>release/data/radar.db</code>，未输出任何 API Key 明文。</p>
+<hr>
+<h3>一、关键架构取舍（先说明放弃的方案）</h3>
+<ul>
+<li><strong>未在 <code>AIRadar.exe</code> 强设 <code>NODE_ENV=production</code></strong>：<code>config.ts</code> 在无 <code>ADMIN_TOKEN</code> 且 <code>NODE_ENV=production</code> 时会锁定本地管理（违背单机免密工作台铁律）。改为从发布路径彻底移除 <code>x-ai-radar-test-ip</code>，仅信底层 <code>socket.remoteAddress</code>、未知对端 fail-closed 返回 <code>403</code>、校验 loopback <code>Host</code> 防 DNS 重绑定，测试专用来源改为构造守卫时显式 DI 注入（<code>registerMobileAccessGuard(app, { resolveRemoteIp })</code>）。</li>
+<li><strong>条目额度采用 SQLite v34 持久预占而非纯内存锁</strong>：进程多开或重启时内存锁会失效，因此新增 <code>ai_item_budget_reservations(day_key, item_id PK, bucket, owner, created_at, expires_at)</code> 与 <code>ai-budget-policy.ts</code>，在发模型请求前于 <code>BEGIN IMMEDIATE</code> 事务内校验账本可写并写预占行，结果写入与扣账单事务原子提交。</li>
+</ul>
+<hr>
+<h3>二、修复清单摘要</h3>
+<h4>P0（6 项：密钥、门禁与额度）</h4>
+<ul>
+<li><strong>手机 PIN 信任边界</strong>：<code>mobile-access.ts</code>、<code>security.ts</code> — 发布路径移除 <code>x-ai-radar-test-ip</code>；未知对端直接 <code>403</code>；生产/SEA 运行时禁用 Vite 开发 CORS 源；本机回环强制校对 <code>Host</code> 防 DNS 重绑定。</li>
+<li><strong>跨源 Key 沿用与错误脱敏</strong>：<code>ai-settings.ts</code>、<code>ai-dedup.ts</code>、<code>ai-router.ts</code> → <code>ai-router.ts</code>、<code>AiPanel.tsx</code> — 新增 <code>apiKeyOrigin</code> 绑定，切换预设或跨 origin 测试/保存清空旧凭据；新增 <code>safeErrorExcerpt</code> <strong>先脱敏再截断</strong>（覆盖 Bearer、URL 编码与智谱点分 Key），日志与面板共用同一脱敏文本。</li>
+<li><strong>同济日 100 次上限与探测门禁</strong>：<code>ai-router.ts</code> — 普通请求与探测统一走 <code>dispatchTongjiRequest</code>，占并发槽（≤2）后再在 SQLite <code>txImmediate</code> 内原子检查并预占日/周请求与 token 额度；探测可解冷却但严守开关、槽位与配额。</li>
+<li><strong>统一自动 AI 条目门禁</strong>：<code>collectors/index.ts</code>、<code>ai-queue.ts</code>、<code>ai-admin.ts</code> — 采集入队、<code>wait_ai</code>、队列出队、<code>runAutoPreTranslate</code> 与精选主管家全部走同一条目预算与零配额/信源/噪音过滤；关闭「仅精选」仅扩大候选集，总额与零配额分区始终生效。</li>
+<li><strong>精选主管家持久预占与原子结算</strong>：<code>ai-budget-policy.ts</code>、<code>db.ts</code>（v34）、<code>ai-focus-curator.ts</code> — 预占前零增量探测账本可写性；写帖 + 删预占 + 扣账单事务原子提交，账本异常不再吞掉而是整笔回滚并停派。</li>
+<li><strong>请求体已发送超时记账</strong>：<code>tongji-transport.ts</code>、<code>ai-router.ts</code> — 记录 <code>bodySent</code>，仅可证实未发出的建连失败才释放计数；发出后超时/断流保留计数并标记 <code>outcomeUnknown</code>（计数入 <code>metrics.tongjiOutcomeUnknown</code>），由 <code>fallbackOnUnknownOutcome</code> 独立控制是否回退。</li>
+</ul>
+<h4>P1（12 项：边界、竞态与一致性）</h4>
+<ul>
+<li><strong>抽屉自动翻译门禁</strong>：<code>ItemView.tsx</code>、<code>App.tsx</code>、<code>routes.ts</code>、<code>ai-admin.ts</code> — 自动触发带 <code>trigger: &quot;auto&quot;</code>，服务端执行完整自动门禁与预占（不符返回 <code>403 skippedByPolicy</code>），仅显式点击带 <code>trigger: &quot;manual&quot;</code> 豁免。</li>
+<li><strong>零配额上下文隔离 &amp; 备用目的地校验</strong>：<code>ai-dedup.ts</code>、<code>ai-settings.ts</code>、<code>tongji-transport.ts</code> — 去重 <code>anchors</code> 与偏好反馈样本过滤零配额分区、排除信源与噪音词；<code>isTongjiEndpointUrl</code> 禁用同济域名及 VIP（<code>10.67.0.251/252</code>、<code>202.120.188.251</code>）作为备用通道，校验必需 Key，本机免密模型需显式 <code>allowNoAuthLocal</code>。</li>
+<li><strong>精选同源、缓存失效与饿死修复</strong>：<code>focus-selection.ts</code>、<code>routes.ts</code>、<code>ai-focus-curator.ts</code> — 精选主管家复用 <code>shouldPassSourceToAi</code> / <code>matchesEntryNoise</code> 并按过滤签名刷新待审缓存；裸 <code>GET /api/items?focus=1</code> 规范化 <code>preset=all</code>，固定 <code>FOCUS_CANDIDATE_LIMIT=300</code> 先算精选再分页；正则屏蔽缓存与顺带发现的 <code>clusterIndexCache</code> 全部绑定 <code>dbRevision()</code>；保留 <code>ai_quality=NULL</code> 未审席位且补译不丢失摘要。</li>
+<li><strong>解析容错、历史保护、原子迁移、热切串行与原子打包</strong>：<code>tongji-transport.ts</code>（拒 JSON <code>null</code> 与 transport throw 兜底）、<code>retention.ts</code>（<code>ignored</code> 清理尊重 30 天浏览保护）、<code>routes.ts</code>（<code>POST /api/history/clear</code> 拒绝坏 JSON/<code>{}</code>/非正整数，全清需显式 <code>{ all: true }</code>）、<code>db.ts</code>（每步迁移+<code>user_version</code> 原子提交，v33 列存在幂等恢复）、<code>mobile-access.ts</code> + <code>index.ts</code> + <code>MobileSyncCard.tsx</code>（串行合并热切并失败回滚）、<code>启动AI情报雷达.bat</code>（优先启 EXE、源码回退指同库、无 BOM UTF-8 CRLF）、<code>build-sea.mjs</code>（同目录 <code>.staging-*.tmp</code> 剥离签名→注入→校验 PE 与 SEA fuse <code>:1</code> 后原子 <code>renameSync</code>）。</li>
+</ul>
+<h4>P2（4 项）</h4>
+<ul>
+<li><code>ai-dedup.ts</code>：<code>linkCanonicalCluster</code> 在事务内完整合并两簇所有成员；</li>
+<li><code>routes.ts</code>：<code>preset=history</code> 列表与导出默认 <code>sort=viewed</code>；</li>
+<li><code>retention.ts</code>：清理预览互斥计数对齐执行顺序，<code>wal_checkpoint(TRUNCATE)</code> 降 <code>busy_timeout=100ms</code> 非阻塞尝试并在忙碌时退避重试；</li>
+<li><code>tongji-transport.ts</code>：多物理 NIC &#215; 双 VIP 故障切换（仅限 <code>!bodySent</code>）并缓存上次可用本机 IP。</li>
+</ul>
+<h4>跨模型终审（Claude Opus 5.5 High）新增 6 项边界加固</h4>
+<p>经 <code>claude-opus-5-5-high</code> 独立复审，发现并已全部修复以下 6 处隐蔽竞态：</p>
+<ul>
+<li>预占过期被回收后的超发防护（<code>ai-budget-policy.ts</code>：默认租约提升至 15m，提交时若 <code>DELETE</code> 命中 0 行则在同事务内重核实时余量，不足则拒写）；</li>
+<li>同济并发槽等待者醒来后复查 <code>cooldownUntilMs</code> / <code>probeInFlight</code>（<code>ai-router.ts</code>，防 401 后排队的请求继续发坏 Key）；</li>
+<li>翻译写回在 <code>txImmediate</code> 内重读最新 <code>items.ai</code> 与审核列再合并（<code>ai-admin.ts</code>、<code>ai-focus-curator.ts</code>，防覆盖并发审核结论）；</li>
+<li>本机回环 <code>Host</code> 校验防 DNS 重绑定（<code>mobile-access.ts</code>）；</li>
+<li>过期 <code>cooldownUntilMs</code> 在探测结束后清零，避免卡死在单并发探测态（<code>ai-router.ts</code>）；</li>
+<li>翻译进行中条目被删时 <code>translateItemById</code> 返回 <code>ok: false</code> 而非假成功（<code>ai-admin.ts</code>）。</li>
+</ul>
+<hr>
+<h3>三、实测验证结果（均已实测通过）</h3>
+<ul>
+<li><strong>类型检查与前端构建</strong>：<code>npm.cmd run build</code>（<code>tsc --noEmit &amp;&amp; vite build</code>）0 错误通过。</li>
+<li><strong>自动化回归测试</strong>：<code>ai-radar.test.ts</code> 扩充至 <strong>29/29 全绿</strong>（0 失败，1.78s），覆盖全部 22 项 P0–P2 反例、v32→v34 迁移恢复与 Opus 6 项并发边界。</li>
+<li><strong>原子重打包与静态扫描</strong>：<code>npm.cmd run build:exe</code> 输出 <code>AIRadar.exe</code>（<strong>86.36 MB</strong> / <code>90,551,808 B</code>，内嵌 23 个前端资源，无残留 <code>.tmp</code>）；静态扫描确认 <code>keyLeaked=false</code>（零 <code>TONGJI_API_KEY</code> 残留）、<code>testIpHeaderPresent=false</code>（无 <code>x-ai-radar-test-ip</code>）；<code>启动AI情报雷达.bat</code> 实测 <code>1700 B</code>、<code>hasBom=false</code>、<code>hasBareLf=false</code>。</li>
+<li><strong>异地隔离空目录实机冒烟</strong>（复制 EXE 至临时目录、空 CWD、端口 <code>18788</code>/<code>18792</code>，不碰 <code>release/data/</code>）：</li>
+<li><code>GET /health</code> → <code>200</code>，数据库落于临时 EXE 同级 <code>data/</code>（异地空 CWD 无污染）；</li>
+<li><code>GET /api/ai/live</code> → 自动识别用户级环境变量 <code>TONGJI_API_KEY</code>（<code>hasKey: true, keySource: &quot;env&quot;, model: &quot;DeepSeek-V4.1-Flash&quot;</code>），默认 <code>focusBudget</code> 为 <code>tools: 55 / models: 25 / community: 20 / papers: 0 / tech: 0 / politics: 0</code>；</li>
+<li><code>GET /api/ai</code> 伪造 <code>Host: evil.example.com:18788</code> → <strong><code>403</code></strong>；<code>POST /api/history/clear</code> 传 <code>{}</code> / <code>{ olderThanDays: -1 }</code> → <strong><code>400</code></strong>；裸 <code>GET /api/items?focus=1</code> → <strong><code>200</code></strong>；</li>
+<li><code>POST /api/ai/tongji/probe</code> → <strong><code>200</code></strong>，<code>ok: true</code>，<code>model: &quot;DeepSeek-V4.1-Flash&quot;</code>，返回非空中文译文（<code>&quot;快速本地AI新闻雷达。&quot;</code>）。</li>
+<li><strong>生产库与进程状态</strong>：<code>radar.db</code>（<code>3,588,096 B</code>，<code>2026/11/27 15:05:13</code>）及 <code>radar.db-wal</code>（<code>4,420,792 B</code>，<code>2026/11/27 15:05:49</code>）字节数与修改时间 100% 未动；已无后台 <code>AIRadar.exe</code> 进程残留；<code>CONTEXT_ai_radar.md</code> 已同步至最新断点。</li>
+</ul>
+<hr>
+<h3>四、值得确认的 2 个边界问题</h3>
+<ul>
+<li><strong><code>outcomeUnknown</code> 的回退开关默认值</strong>：当前在同济请求体已发出但中途超时的情况下，我们按「扣 1 次同济请求数，并默认 <code>fallbackOnUnknownOutcome=true</code> 切智谱兜底」处理，以保证前台译文不断档；如果你更看重「绝不同批双端重复执行」，是否需要把该默认值改为 <code>false</code>（宁可延后到下一轮也不并发补发给智谱）？</li>
+<li><strong>手机同步时的本机回环 <code>Host</code> 放行范围</strong>：目前对本机回环连接仅放行 <code>127.0.0.1</code> / <code>localhost</code> / <code>[::1]</code> 的 <code>Host</code> 头（局域网 IP 访问仍走 PIN/Cookie 鉴权）；如果你未来打算通过本机自定义域名（如 <code>radar.local</code> 绑定 <code>127.0.0.1</code> 的 hosts 或本地反代）免密访问，需要显式加入本机 <code>Host</code> 白名单，否则会被 <code>403</code> 拦截。</li>
+</ul>
 </div></article>
 
     </section>
