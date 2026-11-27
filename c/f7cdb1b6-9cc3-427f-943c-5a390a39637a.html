@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="f7cdb1b6-9cc3-427f-943c-5a390a39637a" data-base-prefix="./" data-turn-count="1" data-update-time="2026-11-27 20:04" data-meta-ver="3c640b89" data-is-index="0">
+<body data-conv-id="f7cdb1b6-9cc3-427f-943c-5a390a39637a" data-base-prefix="./" data-turn-count="7" data-update-time="2026-11-27 20:09" data-meta-ver="3c640b89" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="AI Radar Context Review">AI Radar Context Review</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64">【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64</span><span>会话 ID: f7cdb1b6-9cc3-427f-943c-5a390a39637a | 轮次: 1 | 更新于: 2026-11-27 20:04</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64">【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64</span><span>会话 ID: f7cdb1b6-9cc3-427f-943c-5a390a39637a | 轮次: 7 | 更新于: 2026-11-27 20:09</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./f7cdb1b6-9cc3-427f-943c-5a390a39637a.md" download="AI_Radar_Context_Review-f7cdb1b6.md" onclick="return downloadMarkdown(event, './f7cdb1b6-9cc3-427f-943c-5a390a39637a.md', 'AI_Radar_Context_Review-f7cdb1b6.md')">⬇️ 下载 Markdown (.md)</a>
@@ -465,6 +465,42 @@
 <li>严守【铁律】、禁碰【排雷墓碑】；若本消息附有新需求或最新实况则优先执行，否则按【默认下一步】推进。</li>
 <li>涉及不可逆删改或修改共享规则/脚本前先确认（只读评估与方案讨论直接推进）；完工按【外部验证判据】或新需求标准自检。</li>
 </ul>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成对 <code>CONTEXT_ai_radar.md</code> 与当前工作区的全量只读核盘（未改动任何文件、未触碰 <code>release/data/</code>、未重启运行中进程）。</p>
+<h3>1. 只读核盘结论（均为实测）</h3>
+<p>| 核对项 | 状态卡基线 | 当前实测 | 结论 |</p>
+<p>| :--- | :--- | :--- | :--- |</p>
+<p>| 发布包 <code>AIRadar.exe</code> | 86.36 MB，内嵌 23 前端资源，零密钥/测试头残留 | <code>90,551,808 B</code>（86.36 MB，<code>19:22:17</code> 晚于最新源码 <code>19:20:06</code>）；<code>web-assets.json</code> 确为 <code>23</code> 项；静态扫描 <code>x-ai-radar-test-ip</code> = <code>False</code>、长 <code>sk-</code> 命中 <code>0</code> | 吻合 |</p>
+<p>| 启动脚本 <code>启动AI情报雷达.bat</code> | 无 BOM、纯 CRLF | <code>BOM=False</code>，<code>CRLF=52 / BareLF=0</code>，<code>1700 B</code> | 吻合 |</p>
+<p>| 类型检查与单测 <code>ai-radar.test.ts</code> | 注入 Node 22 后 29/29 全绿 | Node <code>v22.22.2</code> 下 <code>npx.cmd tsc --noEmit</code> 退出码 <code>0</code>；隔离运行 <code>npm.cmd test</code>（全 <code>:memory:</code>/<code>tmpdir</code>）<code>29/29 pass, 0 fail</code>（1.73s） | 吻合（本轮未跑会覆写 <code>dist/web/</code> 的 <code>vite build</code>） |</p>
+<p>| Git 工作区 | 140 项未提交 | <code>git status --porcelain</code> 确为 <code>140</code> 项未提交 | 吻合 |</p>
+<p>| 数据库 <code>radar.db</code> | <code>3.42 MB + WAL 4.22 MB</code> | <strong><code>3.59 MB</code>（<code>3,764,224 B</code>，<code>19:52:26</code>）+ <code>WAL 4.01 MB</code>（<code>4,202,432 B</code>，<code>19:52:30</code>）+ <code>SHM 32 KB</code>，合计 <code>7.63 MB</code></strong> | <strong>存在轻微磁盘变动，已查明为实机正常写入（见下）</strong> |</p>
+<h3>2. 磁盘变动与实机运行态说明（实测）</h3>
+<ul>
+<li><strong>变动原因</strong>：<code>AIRadar.exe</code>（PID <code>21516</code>）已于 <code>2026-11-27 19:51:46</code> 启动并持续监听 <code>0.0.0.0:8788</code>（手机同步已启用），正好在状态卡落盘前后（<code>19:51:48–19:52:30</code>）执行了首轮启动采集与精选审译，引发正常 WAL 写入与部分回写，并非外部误改。本轮核盘前后文件大小与时间戳零变化。</li>
+<li><strong>实机只读接口实测（<code>127.0.0.1:8788</code>）</strong>：</li>
+<li><strong>采集与库况</strong>：<code>30/30</code> 信源全部成功（0 失败、0 降级、本轮新增 <code>92</code> 条），库内共 <code>1804</code> 条（活跃 <code>1800</code> / 收藏 <code>4</code> / 未读 <code>828</code> / 语义去重合并 <code>30</code> 条成 <code>18</code> 簇）。</li>
+<li><strong>同济优先通道</strong>：自动读取环境变量 <code>TONGJI_API_KEY</code>（<code>keySource: env</code>, <code>••••dadf</code>），<code>DeepSeek-V4.1-Flash</code>（VIP <code>10.67.0.252</code>）实测命中 <code>9/9</code>（<code>0</code> 错误、<code>0</code> 回退，消耗 <code>18,731</code> tokens，冷却未触发）。</li>
+<li><strong>v34 精选预算</strong>：今日总计已用 <code>44/100</code>（<code>tools: 21/55</code>、<code>models: 7/25</code>、<code>community: 16/20</code>、<code>papers/tech/politics: 0/0</code>），剩余待审译精选 <code>pendingInFocusTotal = 7</code>（<code>tools: 1</code>、<code>models: 1</code>、<code>community: 5</code>），当前空闲（<code>preTranslate.running = false</code>）。</li>
+<li><strong>安全门禁</strong>：向 <code>127.0.0.1:8788/api/stats</code> 发送伪造 <code>Host: evil.example.com:8788</code> 实测返回 <code>403</code>。</li>
+<li><strong>注</strong>：未对实机发送 <code>history/clear</code> 坏参写入类测试（单测套件内已覆盖，实机保持严格零写）。</li>
+</ul>
+<h3>3. 停手确认与两个边界问题</h3>
+<p>当前 <code>AIRadar.exe</code> 已经处于【默认下一步】的试跑观察状态，且代码与打包产物均无阻断性缺陷，故先停手待您定夺下一步（如继续试跑观察、整理 git 提交，或处理新需求）。请一并确认以下两处边界：</p>
+<ul>
+<li><strong>Git 整理与忽略规则</strong>：当前 140 项未提交中包含整个未忽略的 <code>release/</code> 目录（<code>.gitignore</code> 仅忽略了 <code>data/</code> 与 <code>dist/</code>）。如果要整理 git 提交，是否先把 <code>release/</code>（或 <code>release/AIRadar.exe</code> 与 <code>release/data/</code>）加入 <code>.gitignore</code> 再按模块分批提交，还是现在先不动 git、纯试跑观察？</li>
+<li><strong>首轮预译残余与 <code>community</code> 配额</strong>：首轮启动采集后已用 <code>44/100</code>，<code>tools/models/community</code> 均有剩余配额但仍留下 <code>7</code> 条 <code>pendingInFocus</code>（其中 <code>community</code> 待译 <code>5</code> 条而余量仅剩 <code>4</code>，且 <code>runAutoPreTranslate</code> 单轮默认上限 <code>25</code> 未继续补扫）。您打算保持 <code>55/25/20</code> 观察几天再看，还是需要现在只读排查这 <code>7</code> 条停滞原因并评估是否微调分桶配额？</li>
+</ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>全部按照你来吧，配额的话先不调整，过几天再看看把</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成 Git 配置与待提交清单审计：确认远端仍指向原上游仓库（本次仅本地整理、绝不推送），除 <code>tests/ai-radar.test.ts</code> 中发现 1 处疑似智谱 Key 前缀样本需先脱敏为纯合成占位符外，其余文件无密钥泄露。接下来将屏蔽 <code>release/</code> 目录、脱敏该测试占位符并按模块分批提交。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已将 <code>release/</code> 加入 <code>.gitignore</code>、脱敏 <code>tests/ai-radar.test.ts</code> 占位符，并按模块完成 4 笔本地提交（<code>9ae8017</code> → <code>d8e1824</code> → <code>f2aa5f0</code> → <code>651c41d</code>）。接下来验证全量构建、29 项回归测试、启动脚本编码以及运行中实例与 <code>release/data/</code> 无损。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>正在等待构建与 29 项回归测试后台核验完成，完成后立即更新 <code>CONTEXT_ai_radar.md</code> 并收尾。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>全量构建（<code>tsc --noEmit &amp;&amp; vite build</code>）、29/29 回归测试、Git 卫生审计（<code>release/</code> 已完全排除、<code>LICENSE</code> 保留、脱敏零残留）、<code>启动AI情报雷达.bat</code> 编码以及运行中实例与 <code>release/data/</code> 均已核验通过。接下来更新 <code>CONTEXT_ai_radar.md</code> 并完成最后一笔本地提交。</p>
 </div></article>
 
     </section>
