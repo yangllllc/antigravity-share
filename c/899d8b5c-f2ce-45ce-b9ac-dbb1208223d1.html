@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="899d8b5c-f2ce-45ce-b9ac-dbb1208223d1" data-base-prefix="./" data-turn-count="17" data-update-time="2026-11-27 12:24" data-meta-ver="adc068c5" data-is-index="0">
+<body data-conv-id="899d8b5c-f2ce-45ce-b9ac-dbb1208223d1" data-base-prefix="./" data-turn-count="20" data-update-time="2026-11-27 18:37" data-meta-ver="adc068c5" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="Markdown File Verification And Prompt Check">Markdown File Verification And Prompt Check</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="skills">skills</span><span>会话 ID: 899d8b5c-f2ce-45ce-b9ac-dbb1208223d1 | 轮次: 17 | 更新于: 2026-11-27 12:24</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="skills">skills</span><span>会话 ID: 899d8b5c-f2ce-45ce-b9ac-dbb1208223d1 | 轮次: 20 | 更新于: 2026-11-27 18:37</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./899d8b5c-f2ce-45ce-b9ac-dbb1208223d1.md" download="Markdown_File_Verification_A-899d8b5c.md" onclick="return downloadMarkdown(event, './899d8b5c-f2ce-45ce-b9ac-dbb1208223d1.md', 'Markdown_File_Verification_A-899d8b5c.md')">⬇️ 下载 Markdown (.md)</a>
@@ -688,6 +688,37 @@
 <li><code>11.27.md</code>：<code>UNCHANGED: True</code>（SHA-256 与初始基线完全一致）。</li>
 </ul>
 <p>接下来可直接去 <code>Desktop\mcp</code> 新开对话，贴上前面的同济 MCP 提示词推进即可。</p>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>https://github.com/zou172866/Antigravity-agy-dart  。https://github.com/zou172866/agy-ignore  。这两个项目你看一看</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>正在并发拉取 <code>Antigravity-agy-dart</code> 与 <code>agy-ignore</code> 的目录树与核心源码，拉取完成后立即展开源码审查。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已拉取并精读这两个仓库的核心源码（同作者 <code>zou172866</code>，MIT 协议），并对照你本机的已装插件、运行时环境、桌面目录体量及 Antigravity 底层日志做了实测核验（本轮严格只读，零改动）。</p>
+<hr>
+<h3>一、两个仓库的实测对比总览</h3>
+<p>| 仓库 | 体量 / 活跃度 <code>[实测]</code> | 源码本质 <code>[实测]</code> | 与本机环境/现有体系的重叠与冲突 <code>[实测]</code> | 裁决 |</p>
+<p>| :--- | :--- | :--- | :--- | :--- |</p>
+<p>| <strong><code>zou172866/Antigravity-agy-dart</code></strong> | <code>v1.9.0</code> &#183; 222⭐ &#183; 143 文件 &#183; JS (Node 22.16+/24+) &#183; <code>2026-11-27</code> 活跃 | <strong>巨型全栈侵入式优化插件</strong>：把 <code>agy-fast</code>（<code>fast/mcp-server.mjs</code> 5,467 行）+ SQLite FTS5 上下文沙盒（<code>context/server.js</code>）+ <strong>5 个全生命周期 Hooks</strong>（<code>SessionStart</code>/<code>PreToolUse</code>/<code>PostToolUse</code>/<code>PreInvocation</code>/<code>Stop</code>，仅 <code>pre-tool-use.mjs</code> 就 128 KB）+ <strong>1 份常驻规则</strong> <code>rules/AGENTS.md</code> + <strong>1 个 Skill</strong> + <strong>1 个右侧 Sidecar</strong>（<code>server.mjs</code> 4,013 行 + <code>watchdog.js</code> 5,644 行）+ <code>safety-monitor-audit.js</code> 打包在一起 | 1. <strong>撞破规则封顶</strong>：自带 <code>rules/AGENTS.md</code> 会把常驻规则从 4 份满额顶到 5 份，且 4 个 <code>eager: true</code> MCP 工具与现有路由竞争；&lt;br&gt;2. <strong>撞进【排雷墓碑】</strong>：本质是 <code>CONTEXT_agent_arch.md</code> 已排除的 <code>agy-fast</code>/<code>tokless</code> 超级合体版（你的长会话缓存命中率实测已 89.2%–94.1%，无大文件盲读痛点）；&lt;br&gt;3. <strong>与已装插件重叠</strong>：实时上下文/压缩监控已被 <code>agy-capsule v1.5.2</code> 覆盖，离线诊断已被 <code>session-diagnose</code> 覆盖；&lt;br&gt;4. <strong>本机 PATH 无全局 <code>node</code></strong>：<code>install.ps1</code>、<code>hooks.json</code>、<code>mcp_config.json</code>、<code>sidecar.json</code> 全部硬编码裸 <code>node</code>，本机直装跑不起来；&lt;br&gt;5. <strong>侵入面过重</strong>：在每次 <code>read_file</code>/<code>run_command</code>/<code>PreInvocation</code> 都同步挂 Hook 并用 <code>PreToolUse.overwrite</code> 改写命令包壳，结合刚测出的 Antigravity Hook 同步阻塞与 Fail-Closed 特性，维护风险高 | <strong>不装整包（0 装包）</strong>；仅其 <code>safety-monitor-audit.js</code>（只读查后台安全审查偷烧）可作未来按需参考 |</p>
+<p>| <strong><code>zou172866/agy-ignore</code></strong> | <code>v1.2.2</code> &#183; 0⭐ &#183; 17 文件 &#183; 零依赖 Node 18+ &#183; <code>2026-11-26</code> | <strong>极简只读体检 + 三层防噪工具</strong>：<code>audit_workspace.mjs</code>（746 行）扫描工作区大目录、敏感文件（区分公开 CA <code>.pem</code> 与私钥、放行 <code>.env.example</code> 和无密钥超参 <code>config.json</code>）、多仓库 <code>.gitignore</code> 漏配，增量生成 <code>.antigravityignore</code> 并 <code>--verify</code> 验真；支持“0 常驻 Prompt Token”纯 CLI 模式 | 1. <strong>无现有重叠且边界克制</strong>：绝不自动改 <code>config.json</code>，区分 L1 <code>permissions.deny</code> / L2 <code>.gitignore</code> / L3 <code>.antigravityignore</code>；&lt;br&gt;2. <strong>但日常痛点有限</strong>：实扫桌面主力项目 <code>skills</code>(30)、<code>mcp</code>(2)、<code>memory</code>(35)、<code>ppt</code>(203)、<code>光路</code>(7) 都很轻，仅 <code>ai-radar</code>(7,883 文件) 与 <code>成像光学</code>(5,222 文件) 偏大；&lt;br&gt;3. <strong>本机 PATH 无全局 <code>node</code></strong>：其 <code>windows/agy-ignore.bat</code> 写死 <code>where node</code>，不适配本机，须用 WorkBuddy <code>node.exe</code> 调脚本 | <strong>不装成 Skill、不装右键菜单</strong>；当前需求低可直接不装，若后续大仓增多，只当离线单文件工具放 <code>.gemini/tools/</code> 按需手跑即可 |</p>
+<hr>
+<h3>二、两个值得特别点出的本机实测细节</h3>
+<ul>
+<li><strong>为什么 <code>Antigravity-agy-dart</code> 工程写得很扎实，我仍然强烈建议不装？</strong></li>
+<li>它的工程完成度确实高（MIT 零第三方依赖、对 Antigravity 底层 bug 如 <code>ScrubInternalFields</code> panic 和 Issue #1886 了如指掌），但它的目标用户是<strong>在超大型工程代码库里高强度跑长程编码、经常爆上下文和盲读大日志的开发者</strong>。</li>
+<li>对你的体系来说，它相当于在“4 份精简规则 + <code>agy-capsule</code> + <code>session-diagnose</code> + <code>debug-unstick</code>”旁边<strong>再叠一整套平行的重型底层代理系统</strong>（多 1 份常驻规则、多 2 个 MCP Server、多 1 个常驻 Sidecar、多 5 个每次读写都介入的同步 Hook），属于典型的“为解决低频痛点引入高倍复杂度”。</li>
+<li><strong>顺手测出一个真实信号 <code>[实测]</code></strong>：检查你本机 <code>C:\Users\&lt;USER&gt;\AppData\Roaming\Antigravity\logs\language_server.log</code>（当前 &lt;1 MB），里面确实已经记录了 <strong><code>sir_flash_lite</code> 69 次、<code>severe_internal_risks_agy</code> 58 次</strong>（即 <code>agy-dart</code> 重点监控的 Antigravity 后台云端安全审查）。如果你以后感觉 5 小时配额掉得莫名其妙，<strong>完全没必要装整套 <code>agy-dart</code></strong>——把它的 <code>safety-monitor-audit.js</code> 里的日志正则统计逻辑（~50 行纯只读 Python）并进你现有的 <code>diagnose.py</code> 就够了，零常驻开销。</li>
+</ul>
+<ul>
+<li><strong>关于 <code>agy-ignore</code>：它是个“好工具”，但不是“必装 Skill”</strong></li>
+<li>相比前几个花哨仓库，<code>agy-ignore</code> 的代码质量与防误伤意识（不盲屏蔽 <code>*.png</code>/<code>*.json</code>/<code>*.md</code>、含代码的 <code>data/</code>/<code>models/</code> 保护、<code>--verify</code> 隔离验真零源码误伤）非常干净，而且作者专门提醒<strong>不要把它这种低频工具常驻进系统提示词</strong>。</li>
+<li>实扫你桌面目前所有项目目录：<code>.antigravityignore</code> 全为 <code>False</code>，不过除了 <code>ai-radar</code>（7,883 文件，且已有 <code>.gitignore</code>）和 <code>成像光学</code>（5,222 文件，多半是课件/资料）外，日常工作区都在 30–200 文件以内，<strong>并没有因为搜索噪音导致上下文爆炸的实测痛点</strong>。</li>
+</ul>
+<hr>
+<h3>三、两个收口确认</h3>
+<ul>
+<li><strong>是否需要把 <code>language_server.log</code> 安全审查计数（<code>sir_flash_lite</code> / <code>severe_internal_risks_agy</code> / <code>429</code>）顺手补进 <code>session-diagnose</code>？</strong>（属于纯只读增强，零常驻开销；不急的话也可以暂缓，等 11/30 跑 14 天自诊时再决定。）</li>
+<li><strong>是否顺手把这两个仓库的“0 装包”评估结论补记进 <code>CONTEXT_skills.md</code>？</strong>（或仅口头了解即可、不改状态卡？）</li>
+</ul>
 </div></article>
 
     </section>
