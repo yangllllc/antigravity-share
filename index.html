@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="1cfc570f-8c6d-4080-b1b1-4e7216676be9" data-base-prefix="./c/" data-turn-count="4" data-update-time="2026-11-27 13:06" data-meta-ver="3c64fb87" data-is-index="1">
+<body data-conv-id="1cfc570f-8c6d-4080-b1b1-4e7216676be9" data-base-prefix="./c/" data-turn-count="6" data-update-time="2026-11-27 13:10" data-meta-ver="3c64fb87" data-is-index="1">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="./index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="MCP 遥测核查与优化方案评估">MCP 遥测核查与优化方案评估</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="mcp">mcp</span><span>会话 ID: 1cfc570f-8c6d-4080-b1b1-4e7216676be9 | 轮次: 4 | 更新于: 2026-11-27 13:06</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="mcp">mcp</span><span>会话 ID: 1cfc570f-8c6d-4080-b1b1-4e7216676be9 | 轮次: 6 | 更新于: 2026-11-27 13:10</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./c/1cfc570f-8c6d-4080-b1b1-4e7216676be9.md" download="MCP_遥测核查与优化方案评估-1cfc570f.md" onclick="return downloadMarkdown(event, './c/1cfc570f-8c6d-4080-b1b1-4e7216676be9.md', 'MCP_遥测核查与优化方案评估-1cfc570f.md')">⬇️ 下载 Markdown (.md)</a>
@@ -594,6 +594,83 @@
 <article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>我觉得你的思路想的很好，确实可以将1000积分这样使用，mcp就正常使用把，能用多少就用多少，只要达到效果正向优秀即可。然后剩余的积分就用在airadar上，你可以发给我提示词，教我在资源雷达这个项目，我会先使用ai接力协议上传两个附件将原对话提炼，新开一段对话输入提示词。然后是你说的ABC，其实我不太了解，但是按照你说的难道是分立的嘛，三选一，然后也说明现在的mcp出现了问题，B确实要做，不过其他AC也可以适当进行呀。或者有没有其他的地方需要修改，有其他的思路呢，所以我希望你能进行深度的检查，然后更加严格的审视思考，然后进行修改</p>
 </div></article>
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成 <code>blast-radius</code> 只读核查、同济双核审计、<code>v5.4.1</code> 改动双端同步、AST 0 错与 8 组离线对抗 Mock 测试（全部通过），正在等待独立 stdio E2E 实机验收完成。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p><code>v5.4.1</code> 改动与 E2E 实机验收已全部通过，正由 Claude Opus 5.5 (High) 进行只读盲审复核（如急用可回复“跳过”直接输出最终报告与 AIRadar 提示词）。</p>
+<p>[Open the Swarm UI](sidecar://swarm/swarm_board/?auto_open=false)</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>先澄清一下你关心的核心疑问：<strong>A、B、C 并不是“三选一”</strong>，而是三个互相独立的模块，可以自由组合。</p>
+<p>经过对 <code>tongji_deepseek_mcp.ps1</code> 全文 1036 行做深度审计、<code>blast-radius</code> L4 只读举证、同济双核前置审计，以及 Claude Opus 5.5 盲审，我最终为你<strong>一次性组合落地了「A + B + 深度审计新挖出的 4 项隐蔽修复」（升级至 <code>v5.4.1</code>）</strong>，并已双端同步、全部验收通过；对 <strong>C</strong> 则只保留了它合理的“单次调用内硬错（401/402/403/404）绝不重试”原则，<strong>明确放弃跨调用写磁盘状态文件的熔断器</strong>（实测连续故障为 0、把长尾超时算进熔断会误杀下一条健康请求，且违背零状态自包含铁律）。</p>
+<hr>
+<h2>一、<code>v5.4.1</code> 深度检查与修改摘要</h2>
+<h3>1. 改前 <code>blast-radius</code> 影响面举证（L4 实测）</h3>
+<ul>
+<li><strong>引用面</strong>：仅涉及 Antigravity（<code>mcp_config.json</code>）与 Codex（<code>config.toml</code>）两处宿主配置、<code>tongji_deepseek_mcp.ps1</code> 与 <code>D:\tongji_plugin\tongji_deepseek_mcp.ps1</code> 双端副本，以及 <code>diagnose.py</code>。<strong>未改动任何 <code>always_on</code> 全局规则与 Codex <code>AGENTS*.md</code></strong>（所有工具名、模式名、145s 预算与字符上限契约 100% 兼容）。</li>
+<li><strong>L4 实证</strong>：本机物理出口 <code>WLAN (100.73.189.227, Preferred, Dhcp)</code> 正常命中；<code>diagnose.py</code> 对新增的 <code>r_from</code> 遥测字段 100% 向后兼容（实测 <code>COMPAT_OK: 1/1 1/2</code>）。</li>
+</ul>
+<h3>2. 本次实际落盘的 6 项升级（全部在 <code>tongji_deepseek_mcp.ps1</code> 并字节同步至 <code>D:\tongji_plugin\tongji_deepseek_mcp.ps1</code>）</h3>
+<ul>
+<li><strong>【候选 A】单路早失败非阻塞重试状态机</strong>（<code>Invoke-Probes</code> / <code>Wait-CampusJobBatch</code>，<code>L154-L180</code>、<code>L608-L741</code>）：</li>
+<li>彻底消除原“等慢队友全跑完才判重试”的屏障：任一探针一旦在 <code>110ms</code> 遇 <code>HTTP 408/429/5xx</code> 或连接/TLS/传输错，立刻释放已退出的 <code>curl.exe</code> 句柄，进入非阻塞 <code>Backoff</code>（429 抖动退避 <code>2.2–3.0s</code>，其余 <code>0.4–0.8s</code>，不阻塞 25ms 主轮询），到点切备用内网 VIP 并把重试 <code>--max-time</code> 钳制在 <code>min(原超时, remSec-1)</code> 内并行恢复；若退避到期时剩余 <code>&lt;8s</code> 则放弃重启并保留原始错误（不虚报 <code>retried</code>）。</li>
+<li>单路硬封顶重试 1 次；硬错（<code>401/402/403/404</code>）、<code>timeout</code>、<code>content limit</code>、<code>thinking limit</code> 严禁重试。</li>
+<li><strong>【候选 B】超时与输出配额校准 + <code>delegate</code> 措辞补齐</strong>（<code>L27-L41</code>、<code>L253-L280</code>）：</li>
+<li><code>draft_struct</code>：Wave 1 <code>52s → 70s</code>，Kimi <code>MaxTokens 1700 → 1400</code>、<code>MaxTimeSec 48s → 65s</code>；</li>
+<li><code>deep_panel</code>：Wave 1 <code>52s → 66s</code>，Kimi <code>MaxTokens 2000 → 1400</code>、<code>MaxTimeSec 42s → 60s</code>；</li>
+<li><code>code_audit</code>：Wave 1 <code>38s → 48s</code>，DeepSeek <code>MaxTimeSec 35s → 45s</code>（严守铁律不盲提思考 token 上限）；</li>
+<li>最坏 <code>W1 70s + W2 33s = 103s &lt;&lt; 145s</code>，裕度充足；同步补齐 <code>$SERVER_INSTRUCTIONS</code> 与 <code>$TOOL_DELEGATE_SCHEMA</code> 中“编排子工位免调”措辞，并将版本升至 <code>5.4.1</code> 便于前后对比遥测。</li>
+<li><strong>【深度审计新发现 #1】跨 Worker 轮询双内网 VIP（零磁盘状态）</strong>（<code>L776-L781</code>、<code>L928-L936</code>）：</li>
+<li>原来每次 <code>tools/call</code> 拉起新 <code>-Worker</code> 进程时 <code>$script:CampusTargetIndex</code> 都归零，导致并发 <code>draft_struct</code>/<code>deep_panel</code> 时 <strong>100% 的 Kimi 请求全挤向 <code>10.67.0.251</code></strong>，<code>.252</code> 完全闲置。现由常驻父调度进程用纯内存计数器 <code>rpcPinSeed</code> 交替传 <code>0/1</code> 给 <code>-Worker</code>（独立启动回落 <code>$PID % 2</code>），把并发压力均摊到双 VIP。</li>
+<li><strong>【深度审计新发现 #2】重试原因可观测性 <code>r_from</code></strong>（<code>L384-L390</code>）：</li>
+<li>仅当 <code>r=true</code> 时在 <code>tongji_mcp_metrics.jsonl</code> 的探针项中写入 <code>r_from</code>（如 <code>&quot;HTTP 429&quot;</code>），不再因重试覆写而丢失首次失败原因，零隐私且完全兼容 <code>diagnose.py</code>。</li>
+<li><strong>【深度审计新发现 #3】<code>send failed</code> / <code>startup failed</code> 补齐 <code>ElapsedMs</code> 与即时句柄释放</strong>（<code>L553-L556</code>、<code>L669-L689</code>），同时修复 <code>Complete-RpcWorkers</code> 中 <code>$job.FlushTask</code> 的判空（<code>L957</code>）。</li>
+<li><strong>【深度审计新发现 #4】物理网卡筛选优先 <code>Preferred</code> 状态</strong>（<code>L434-L450</code>），降低插拔网线时选中无效接口的概率。</li>
+</ul>
+<h3>3. 验收结果（全部实测通过）</h3>
+<ul>
+<li><strong>语法与双端一致性</strong>：PS 5.1 AST <code>0</code> 错（双端）、UTF-8 BOM <code>True</code>（双端）、SHA-256 一致（<code>53C3B01D0DCAA585</code>）。</li>
+<li><strong>8 组离线对抗 Mock 单元测试</strong>：全部 <code>PASS</code>（包括 <code>T1</code> 模拟 60ms 429 在 900ms 慢队友完成前切 AltPin 自愈，总墙钟仅 <code>1022ms</code>；<code>T2</code> 6 种硬错/非瞬态错 0 重试；<code>T3</code> 连遇 502 封顶 2 次启动；<code>T4/T5</code> 预算不足与退避跨 8s 边界安全放弃；<code>T6</code> <code>startup/send failed</code> 闭句柄；<code>T7/T8</code> Wave 2 单探针数组防拆包与 0 预算安全）。</li>
+<li><strong>独立 stdio E2E 实机验收</strong>：<code>initialize</code>（<code>ver=5.4.1</code>、含“编排子工位”）、<code>tools/list</code>、<code>fast_dual</code>（<code>7.0s</code> 双路 OK）、<code>draft_struct</code>（<code>18.8s</code> 双路 OK、<code>1336</code> 字未降级）、<code>stderr=0</code>、<code>diagnose.py mcp-report</code> <code>malformed=0</code>。</li>
+<li><strong>Claude Opus 5.5 盲审复核</strong>：核心预算算术与状态机逻辑给出 <code>PASS</code>，并为下方 <code>AIRadar</code> 提示词抓出了 4 项高价值硬约束（已全部吸收）；状态卡 <code>mcp.md</code> 已同步更新。</li>
+</ul>
+<blockquote><strong>唯一需你手动点一下的操作</strong>：在 Antigravity MCP 面板<strong>重载 1 次 <code>tongji-deepseek-subagent</code></strong>，使本地缓存的 <code>delegate_to_deepseek.json</code> 与 <code>instructions.md</code> 刷新为 <code>v5.4.1</code>（脚本逻辑本身已热生效）。</blockquote>
+<hr>
+<h2>二、给 <code>AIRadar</code> 新对话的接力提示词（直接复制使用）</h2>
+<p>你在新开 <code>AIRadar</code> 对话、先按接力协议上传原对话附件完成上下文恢复后，把下面整段提示词发给新对话即可（已内置同济内网直连铁律与 Opus 盲审补全的 4 项防踩坑约束）：</p>
+<pre><code>先完成接力恢复后，不要直接改代码——先只读检查当前 AIRadar 仓库里的配置模块、翻译/摘要队列模块、HTTP 客户端/代理模块和单文件 exe 打包脚本，然后给出一份最小改动方案等我确认后再实施。
+
+### 核心目标
+我想把学校每周赠送且当前有大量富余的同济免费 API 额度（1000 积分/周，与我本机同济 MCP 共用同一密钥与周额度池），接入 AIRadar 作为**优先的批量翻译/摘要通道**；同时保证**离校、校园网不可达、限流或额度到达自设上限时，能无缝、不卡顿地自动回退到现有的智谱 `glm-4-flash`**，不破坏现有单文件 `AIRadar.exe` 打包与稳定运行。
+
+### 必须严守的硬约束（逐条落进设计与验收）
+1. **同济通道协议与模型约束**：
+   - 接口地址：`https://agi.tongji.edu.cn/v1/chat/completions`（标准 OpenAI 兼容格式，严禁走 `/messages`）。
+   - 仅使用高吞吐模型 `DeepSeek-V4.1-Flash`（严禁把慢吞吐 `Kimi-K3.1-Pro` 用于批量翻译）。
+   - **强制关闭思考**：请求体必须同时传 `chat_template_kwargs: { enable_thinking: false, thinking: false }`（漏传 `thinking: false` 会导致 DeepSeek 返回空 `content`）。
+2. **校园网直连穿透（极关键，否则必报 HTTP 403）**：
+   - 本机装有代理软件（SakuraCat `tun0` / SDKDNS `mihomo`），Node 22 若走全局代理或公网 VIP（`202.120.188.251`）访问同济必报 `403`。
+   - 同济请求**必须使用独立的、仅限本次请求使用的 HTTP 客户端/dispatcher**（例如 per-request `undici.Agent` 或独立 `https.Agent`，绝不走 `HTTP_PROXY`/`HTTPS_PROXY`/`ALL_PROXY` 或全局 `ProxyAgent`）：
+     - 自定义 DNS `lookup`：强制轮询解析到校内内网 VIP `10.67.0.251` / `10.67.0.252`；
+     - 保留 TLS SNI 与证书校验：`servername: &#39;agi.tongji.edu.cn&#39;`；
+     - 绑定物理校园 IPv4 出口网卡（`localAddress`）：匹配 `WLAN|Wi-Fi|以太网|Ethernet|本地连接`，并显式黑名单排除 `Meta|wintun|TAP|VPN|vEthernet|Loopback|sing-tun|mihomo|\btun\d*\b` 以及 `169.254.*`、`198.18.*`、`172.19.*`、`127.0.0.1`。
+3. **回退通道 `glm-4-flash` 严格隔离**：
+   - 原有 `glm-4-flash` 必须保持其独立的公网 Base URL、独立的 API Key 配置项与普通网络路由，**绝对不可复用同济的 VIP lookup、物理网卡绑定或 `servername: &#39;agi.tongji.edu.cn&#39;`**。
+4. **防卡死超时、快速回退与离校冷却**：
+   - 同济请求必须同时设**连接超时（≤5s）**与 **总请求超时（`AbortSignal`，如 25–30s）**，避免 TLS 建连后响应挂死。
+   - 遇 `401/402/403/429/5xx`、连接失败、超时或返回空 `content` 时，当次任务立刻透明回退到 `glm-4-flash` 完成，不影响入库与前端展示。
+   - 遇 `401/402/403` 或物理网卡/内网 VIP 不可达（典型离校场景）时，启用**进程内短冷却**（例如 5–10 分钟内直接走 `glm-4-flash`，避免每条新闻白等 5 秒；支持手动刷新或冷却到期后自动重新探测）。
+5. **与本机 MCP 共享周额度的防饿死闸门**：
+   - 同济通道并发数严格限制在 `≤2`（避免冲击校内网关限流并撞车本机 MCP）。
+   - 在 AIRadar 本地状态（如现有 SQLite）中增加一个**可配置的同济日/周预算软上限**（例如按请求数或 token 估算封顶，默认给本机 MCP 预留充足裕度，触顶后自动切回 `glm-4-flash`），并在状态接口/日志里可观测同济与智谱的命中与回退计数。
+6. **密钥安全与验收门槛**：
+   - `TONGJI_API_KEY` 只能从环境变量或未纳入 Git 的本地配置文件读取，严禁写入代码或打进 `AIRadar.exe`，未配置密钥时静默跳过同济通道直接走 `glm-4-flash`。
+   - 实现完成后必须通过：① 离线 Mock 测试（覆盖 403 离校冷却、连接超时/总超时回退、空 `content` 回退、预算封顶切换、不影响 `glm-4-flash` 路由）；② 校内真实直连冒烟（验证 `DeepSeek-V4.1-Flash` 正常返回非空译文）；③ 单文件 `AIRadar.exe` 打包回归验证。
+
+请先读完现有相关源码，给出：模块改动清单、拟用的 Node 22 直连实现方式、预算上限默认值建议、以及回滚方案，待我确认后再动手改。</code></pre>
+<hr>
+<h3>两个供你留意的小边界</h3>
+<ul>
+<li><strong>重载 MCP 后首次观察</strong>：重载后下一次 <code>draft_struct</code> 或 <code>deep_panel</code> 出现时，可以顺手跑一次 <code>diagnose.py mcp-report --days 7</code> 确认 <code>ver</code> 已出现 <code>5.4.1</code> 且 Kimi 超时降级率是否明显下降。</li>
+<li><strong>AIRadar 预算阈值怎么定更合适</strong>：你每周大约会用 <code>AIRadar</code> 刷多少条新资讯？如果日均几百条，给同济侧设一个保守起步上限（比如每天最多 200–300 次翻译调用、其余回退 <code>glm-4-flash</code>），跑 1 周看同济后台实际扣了多少积分再往上放开，是最不会误把 MCP 额度烧干的办法。</li>
+</ul>
 </div></article>
 
     </section>
