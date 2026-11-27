@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="fd33272e-8930-42b9-92fb-918cf01554ca" data-base-prefix="./c/" data-turn-count="8" data-update-time="2026-11-26 21:14" data-meta-ver="0a031d9e" data-is-index="1">
+<body data-conv-id="fd33272e-8930-42b9-92fb-918cf01554ca" data-base-prefix="./c/" data-turn-count="10" data-update-time="2026-11-27 08:45" data-meta-ver="0a031d9e" data-is-index="1">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="./index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="OpenGym And AI Prompts Analysis">OpenGym And AI Prompts Analysis</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="skills">skills</span><span>会话 ID: fd33272e-8930-42b9-92fb-918cf01554ca | 轮次: 8 | 更新于: 2026-11-26 21:14</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="skills">skills</span><span>会话 ID: fd33272e-8930-42b9-92fb-918cf01554ca | 轮次: 10 | 更新于: 2026-11-27 08:45</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./c/fd33272e-8930-42b9-92fb-918cf01554ca.md" download="OpenGym_And_AI_Prompts_Analy-fd33272e.md" onclick="return downloadMarkdown(event, './c/fd33272e-8930-42b9-92fb-918cf01554ca.md', 'OpenGym_And_AI_Prompts_Analy-fd33272e.md')">⬇️ 下载 Markdown (.md)</a>
@@ -724,6 +724,51 @@
 </ul>
 </div></article>
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>（后台全盘 Node 扫描已完成确认：本机除 WorkBuddy 内置的 <code>v22.22.2</code> 外仅有 Adobe 旧版 <code>v8.11.4</code>，结论不变——等你确认上面 2 个问题即可按需动手。）</p>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>你做的很好，看来这个确实是需要的内容，但是落地签还是需要一次更严格的审查，检验确认是否需要等要求，成功通过后就直接落地把。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>落地前的 <strong>4 道硬审查全部实测通过</strong>，我已按本地化方案直接完成部署并跑通了 L5 离线闭环验真（全程零改动全局 <code>rules/*.md</code>，零改业务代码）。</p>
+<hr>
+<h3>一、落地前 4 道严格审查实测结果（[实测]）</h3>
+<p>| 审查门禁 | 实测方式与关键数据 | 裁决 |</p>
+<p>| :--- | :--- | :---: |</p>
+<p>| <strong>1. 真实需求核验（挤干“假痛点”）</strong> | 扫描全部 <strong>76 场</strong>历史 Antigravity 会话日志与磁盘修改时间：<code>ai-radar</code> React+TSX 前端在昨天（<code>2026-11-26 13:40</code>）仍有实改，横跨 <code>6522a974</code>（56 处引用）/<code>c111f64e</code>（78 处）/<code>fa66a2bf</code>（42 处）3 场重度开发会话；另含 <code>antigravity-archive-manager</code> / <code>agy-capsule</code> Sidecar、<code>antigravity-share-hub</code> 与光学交互 HTML（<code>two_mirror_alignment.html</code>、<code>tangent_ray_trace.html</code> 等 + 6 场 <code>generative_ui</code>）——属高频真实需求，非假痛点 | <strong>✅ 通过</strong> |</p>
+<p>| <strong>2. 体积、耗时与注意力预算</strong> | 在 <code>scratch/</code> 沙箱实测 npm 包：仅 <strong>16 MB</strong>、<strong>0 传递依赖</strong>（1 个独立包）；离线 <code>search</code> <strong>318 ms</strong>、<code>retrieve</code> <strong>111 ms</strong>、<code>legacy-scan</code> <strong>1.0–2.0 s</strong>；剔除 <code>chrome-extensions</code>，仅向活跃技能池新增 1 条 ~78 字中文 <code>description</code>（全局 <code>always_on</code> 规则 0 增量） | <strong>✅ 通过</strong> |</p>
+<p>| <strong>3. 遥测隐私源码审查</strong> | 直接审读 <code>modern-web.mjs</code> L711–744 <code>ClearcutLogger</code>：确认 <code>DISABLE_TELEMETRY=1</code> 时构造函数直接 <code>return</code>，<strong>不实例化 <code>WatchdogClient</code>、零网络外联</strong>；且用 3 行本地入口脚本 <code>mwg.mjs</code> <strong>在代码层硬锁 <code>process.env.DISABLE_TELEMETRY = &#39;1&#39;</code></strong>（即使后续 Agent 忘设环境变量也绝不漏遥测） | <strong>✅ 通过</strong> |</p>
+<p>| <strong>4. <code>sync_overlay.py</code> 影响面与幂等核验</strong> | 源码核查 <code>sync_overlay.py</code>：其顶部清理逻辑严格按 <code>MANAGED_BANNER_PREFIXES</code>（<code>&gt; **本机运行契约**</code>）前缀匹配；据此规范全部本地 Banner 前缀，无需修改 <code>sync_overlay.py</code> 本体即可实现完全幂等 | <strong>✅ 通过</strong> |</p>
+<hr>
+<h3>二、本次落地清单与 L5 验收证据</h3>
+<ul>
+<li><strong>隔离离线运行时（扫描目录外，Antigravity 不扫描 <code>node_modules</code>）</strong>：</li>
+<li>工具目录：<code>C:\Users\&lt;USER&gt;\.gemini\tools\modern-web-guidance\</code>（已安装 <code>modern-web-guidance@1.0.2</code>，<code>skill-version=2026_11_16-268fb9ea</code>）</li>
+<li>硬锁零遥测入口：<code>mwg.mjs</code>（3 行纯 ESM 包装，先写 <code>process.env.DISABLE_TELEMETRY = &#39;1&#39;</code> 再加载内置引擎）</li>
+<li><strong>仅落地主 Skill（已彻底剔除 <code>chrome-extensions</code>）</strong>：</li>
+<li><code>modern-web-guidance/SKILL.md</code>（90 行，10,360 B，无 BOM UTF-8，SHA-256 = <code>9F07151D7BDA4AEDE7F78535CE06E5EB3B0CF4F7F87160419D0E9718B9BD8D74</code>；核验 <code>chrome-extensions-exists=False</code>）</li>
+<li>已登记至 <code>local-overlay.json</code>，收窄中文触发描述并固化：① WorkBuddy <code>Node v22.22.2</code> + <code>mwg.mjs</code> 绝对路径离线调用；② Sidecar/<code>generative_ui</code>/OpenBrowser 走现代 Chromium 基线、禁覆写 <code>:root</code> 宿主主题变量，公开网页再补 Baseline Fallback；③ 取消原版 Step 4 强制英文引文附言。</li>
+<li><strong>L5 回归与幂等验真（[实测]）</strong>：</li>
+<li><code>sync_overlay.py --apply</code> 连续执行两轮（首轮 <code>APPLIED</code>，次轮 <code>OK</code> 无重复插入）+ <code>sync_overlay.py --check</code> 输出 <strong><code>ALL OVERLAY CHECKS PASSED (0 drifts)</code></strong>（退出码 <code>0</code>）。</li>
+<li>在<strong>主动清除终端 <code>DISABLE_TELEMETRY</code> 环境变量</strong>且位于无关工作目录的条件下直跑 <code>mwg.mjs</code>：</li>
+<li><code>search &quot;light dismiss dialog&quot;</code> → <code>exit=0</code>（318 ms，返回 10 条精准指南）；</li>
+<li><code>retrieve &quot;dark-mode&quot;</code> → <code>exit=0</code>（111 ms，大指南 17.1 KB / 352 行自动落临时文件防截断，正常可读）。</li>
+</ul>
+<p>*(注：按 Antigravity 平台机制，新技能将在你<strong>新开对话</strong>时自动进入技能发现池。未来如需升级谷歌新版指南，只需在工具目录跑一次 <code>npm update</code>、拷新 <code>SKILL.md</code> 再跑 <code>sync_overlay.py --apply</code> 即可无损同步。)*</p>
+<hr>
+<h3>三、首战实测体检报告（<code>legacy-scan</code> 只读扫描，未改动业务代码）</h3>
+<p>装完顺手对你的两个现役 Web 项目跑了只读扫描，<strong>立刻挖出了高信噪比真实隐患</strong>：</p>
+<ul>
+<li><strong><code>ai-radar/src/web</code>（耗时 1,983 ms，共命中 5 处）</strong>：</li>
+<li><strong><code>ime-safe-enter-submit</code>（&#215;4，高价值中文实用 Bug 候选）</strong>：</li>
+<li>位置：<code>src/App.tsx:1219</code>、<code>src/components/AuthModal.tsx:139</code>、<code>src/components/PushPanel.tsx:128</code>、<code>src/components/RulesPanel.tsx:79</code></li>
+<li>问题：输入框/文本域监听 <code>keydown</code> 的 <code>Enter</code> 键触发提交/操作时，疑似未判断 <code>event.isComposing</code>（或 <code>keyCode === 229</code>），<strong>中文拼音输入法按回车选字/上屏英文时容易误触发表单提交</strong>。</li>
+<li><strong><code>js/copying-array-methods</code>（&#215;1）</strong>：<code>src/App.tsx:1653</code>（浅拷贝后排序/反转可改用 ES2023 <code>toSorted()</code> / <code>toReversed()</code>）。</li>
+<li><strong><code>antigravity-archive-manager/sidecars</code>（耗时 1,005 ms，共命中 1 处）</strong>：</li>
+<li><strong><code>js/abort-signal-timeout</code>（&#215;1）</strong>：<code>archive_manager/store.mjs:523</code>（手工 <code>AbortController + setTimeout</code> 脚手架，若无外部手动取消需求，可简化为原生 <code>AbortSignal.timeout(ms)</code>）。</li>
+</ul>
+<hr>
+<h3>一个收口追问</h3>
+<ul>
+<li><code>ai-radar/src/web</code> 扫出来的那 4 处中文输入法回车误提交候选（<code>ime-safe-enter-submit</code>）属于真能改善中文体验的小修，你要现在让我只读核实源码并顺手修掉，还是先放着等你下次打开 <code>ai-radar</code> 项目时再一并处理？</li>
+</ul>
 </div></article>
 
     </section>
