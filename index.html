@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="899d8b5c-f2ce-45ce-b9ac-dbb1208223d1" data-base-prefix="./c/" data-turn-count="10" data-update-time="2026-11-27 12:09" data-meta-ver="adc068c5" data-is-index="1">
+<body data-conv-id="899d8b5c-f2ce-45ce-b9ac-dbb1208223d1" data-base-prefix="./c/" data-turn-count="13" data-update-time="2026-11-27 12:11" data-meta-ver="adc068c5" data-is-index="1">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="./index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="Markdown File Verification And Prompt Check">Markdown File Verification And Prompt Check</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="skills">skills</span><span>会话 ID: 899d8b5c-f2ce-45ce-b9ac-dbb1208223d1 | 轮次: 10 | 更新于: 2026-11-27 12:09</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="skills">skills</span><span>会话 ID: 899d8b5c-f2ce-45ce-b9ac-dbb1208223d1 | 轮次: 13 | 更新于: 2026-11-27 12:11</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./c/899d8b5c-f2ce-45ce-b9ac-dbb1208223d1.md" download="Markdown_File_Verification_A-899d8b5c.md" onclick="return downloadMarkdown(event, './c/899d8b5c-f2ce-45ce-b9ac-dbb1208223d1.md', 'Markdown_File_Verification_A-899d8b5c.md')">⬇️ 下载 Markdown (.md)</a>
@@ -612,6 +612,61 @@
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成临时隔离探针搭建与状态卡基线备份。接下来实机触发写文件与拦截探针，验证 <code>PreToolUse</code> 在当前会话的生效方式、工具名及拦截至效。</p>
 </div></article>
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已在新会话子代理中启动 <code>PreToolUse</code> 隔离探针（顺序执行拦截测试、读取 <code>blast-radius</code> 与紧接着的编辑测试），等待探针回报。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>新会话探针实测通过：第 1 轮成功触发 <code>PreToolUse</code> 硬拦截（<code>tool call denied by pre-tool hook</code>），第 2/3 轮正常放行。接下来读取完整探针日志（检查真实工具名与 <code>transcriptPath</code> 刷盘时序）、立即删除临时 <code>.agents</code> 目录并实测冷启动延迟。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>临时 <code>.agents</code> 目录已清理，并拿到完整 L5 实机探针数据（<code>PreToolUse</code> 热生效、硬拦截、<code>transcript_full.jsonl</code> 同步落盘及 ~96–167 ms 冷启动实测）。接下来将 5 仓终审与探针结论写回 <code>CONTEXT_skills.md</code>（不动 <code>11.27.md</code>）。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><h3>一、<code>PreToolUse</code> Hook L5 实机探针结果（含 3 个关键实测排雷！）</h3>
+<p>本次隔离测试（临时建于 <code>Desktop\skills\.agents\hooks.json</code>，零触碰全局配置）<strong>一次性测穿了 Antigravity 2.0 Windows 原生 Hook 的全部核心特性，也当场抓出了一个极具价值的致命坑点</strong>：</p>
+<h4>1. 实测验证通过的能力 <code>[实测]</code></h4>
+<ul>
+<li><strong>精确工具名与参数结构</strong>：<code>toolCall.name</code> 为 <code>&quot;write_file&quot;</code> / <code>&quot;edit_file&quot;</code> / <code>&quot;read_file&quot;</code>（参数键直接是 <code>Path</code>、<code>Target</code>、<code>Replacement</code> 等，不是旧文档示例里的 <code>view_file</code>）。未来若要启用，精确正则应为 <strong><code>&quot;matcher&quot;: &quot;edit_file|write_file&quot;</code></strong>。</li>
+<li><strong>硬拦截真实生效</strong>：子代理第 1 轮尝试写入虚拟目标 <code>hook_probe_deny_test.txt</code> 时，在落盘前被真实拦截，返回：</li>
+</ul>
+<p>  <code>tool call denied by pre-tool hook: [HOOK_PROBE_OK] Blocked synthetic target hook_probe_deny_test.txt</code></p>
+<ul>
+<li><strong><code>transcriptPath</code> 刷盘零竞态</strong>：宿主传入的是 <strong><code>transcript_full.jsonl</code></strong>，且在下一步 <code>PreToolUse</code> 触发前已同步落盘（实测 <code>stepIdx: 7</code> 执行 <code>edit_file</code> 时，<code>step_index: 4, 5, 6</code> 均已在磁盘可读）。</li>
+<li><strong>Windows 冷启动耗时</strong>：<code>cmd /c</code> + <code>python3.12.exe</code> 10 次实测 <strong>P50 <code>95.8 ms</code> / 均值 <code>98.7 ms</code> / 最大 <code>123.5 ms</code></strong>；实际宿主相邻工具间隔（804 KB 会话日志）约 <strong><code>159–167 ms</code></strong>。若只绑定 <code>edit_file|write_file</code>，读文件/跑命令完全零开销，单次改文件延迟体感极轻。</li>
+</ul>
+<h4>2. 实机踩出的 3 个隐蔽坑点 <code>[实测]</code></h4>
+<ul>
+<li><strong>坑点 1（最关键：会话内删除 Hook 目录会 Fail-Closed 锁死当前会话工具调用）</strong>：</li>
+<li>Antigravity 会把已加载的 <code>hooks.json</code> 及<strong>其所在工作目录</strong>缓存在当前会话内存中；刚刚我们删除临时 <code>.agents/</code> 目录清场后，当前会话内存里的 <code>matcher: &quot;*&quot;</code> 钩子并未热卸载，导致随后执行 <code>edit_file</code> 更新 <code>CONTEXT_skills.md</code> 时，宿主报 <code>fork/exec cmd.exe: The directory name is invalid</code> 并 <strong>Fail-Closed 阻断了本会话后续全部工具调用</strong>。</li>
+<li><strong>安全结论与防呆铁律</strong>：</li>
+<li>磁盘上的 <code>Desktop\skills\.agents</code> <strong>已经彻底删除</strong>（<code>AGENTS_EXISTS_AFTER_CLEANUP: False</code>），<strong>新开任何对话都 100% 干净、完全不受影响</strong>；</li>
+<li>未来如果真的要上生产 Hook，<strong>绝不可用 <code>&quot;matcher&quot;: &quot;*&quot;</code></strong>（必须锁死 <code>&quot;edit_file|write_file&quot;</code>），且<strong>停用时必须先改 <code>&quot;enabled&quot;: false</code> 而不是直接删目录</strong>！</li>
+<li><strong>坑点 2（纯文本匹配 <code>blast-radius</code> 会被假阴性绕过）</strong>：</li>
+<li>实测子代理 <code>stepIdx: 2</code>（尚未调用 <code>read_file</code>）时，<code>transcript_full.jsonl</code> 里仅因 prompt 提到了 <code>blast-radius</code> 字样就命中了子串检测。真正的守卫必须像 <code>diagnose.py</code> 一样解析 JSONL 中 <code>PLANNER_RESPONSE.tool_calls</code> 的真实 <code>read_file</code> 调用。</li>
+<li><strong>坑点 3（文档小偏差）</strong>：</li>
+<li>官方 <code>hooks.md</code> 写 <code>&quot;matcher&quot;: &quot;&quot;</code> 可匹配全部工具，实测未触发；改为显式 <code>&quot;*&quot;</code> 才立即生效。</li>
+</ul>
+<hr>
+<h3>二、综合判断与当前磁盘现场状态</h3>
+<ul>
+<li><strong>对痛点 A 的最终定案</strong>：本次实机测试证明 <strong>Antigravity 原生 <code>PreToolUse</code> 技术上完全可行、延迟可控（~100–160 ms）、无 <code>transcript</code> 刷盘竞态</strong>；但同时暴露了 <strong>Fail-Closed 锁死风险</strong>（运维不当会卡死工具链）。因此你拍板的 <strong>「维持方案 A 观察到 11/30 + 保留方案 B 的实测蓝图按需启用」</strong> 是最优解——如果 11/30 14 天自诊确实复发 ≥2 次漏触，我们已经有了零踩坑的精确落地方案（全局 <code>hooks.json</code>、仅 <code>matcher: &quot;edit_file|write_file&quot;</code>、<code>decision: &quot;ask&quot;</code>、JSONL <code>tool_calls</code> 精确判定、永不直接删目录）。</li>
+<li><strong>磁盘现场核对 <code>[实测]</code></strong>：</li>
+<li><code>c:\Users\&lt;USER&gt;\Desktop\skills\.agents</code>：<strong>已彻底删除</strong>，工作区干净；</li>
+<li><code>11.27.md</code>：<strong>原封未动</strong>（SHA-256 未变）；</li>
+<li><code>CONTEXT_skills.md</code>：<strong>未被破坏</strong>（SHA-256 未变），仅因上述坑点 1，<strong>最后一步写回 <code>CONTEXT_skills.md</code> 未能在本会话落盘</strong>。</li>
+</ul>
+<hr>
+<h3>三、待落盘的 <code>CONTEXT_skills.md</code> 更新内容</h3>
+<p>因为当前这个会话的内存钩子已被已删除的 <code>.agents/</code> 锁死（新开对话即自动解除），你可以直接将下面更新后的 <code>## 2</code> 尾部与 <code>## 3</code> 替换进 <code>CONTEXT_skills.md</code>（或新开一个 <code>skills</code> 对话直接贴给我落盘；<code>## 1. 底层约束与铁律</code> 保持原样不动）：</p>
+<pre><code>- [已验证] 零额度每周更新巡检落地：单源读取 `local-overlay.json` 跑 `check_updates.py`（7 天冷却+桌面提醒），2026-11-27 09:03 首巡 6 源全最新，且 `config.json` 中 `skill-update-checker` 已 `&quot;enabled&quot;: true`、`sidecar.log` 11:00:25 正常启动调度（指针：`skills-meta/check_updates.py`、`last_update_report.md`）。
+- [已验证] Codex 桌面端 `26.1120.6357.0` 白屏崩溃定案并修复：系 `work_tab_home` 缺 `Sd8U.PR` Scope Provider 抛 `Error: Missing scope instance`，重置 `.codex-global-state.sqlite` 中 `home-composer-mode-v1=&quot;chat&quot;` 后 0 崩溃。
+- [已验证] 5 仓库源码评估与二次实测审查定案（`awesome-deepseek-harness`、`prompt-in-context-learning`、`sutando`、`Pojun`、`f/prompts.chat`）：全量 **0 装包**；`EgoAlpha` 与 `f/prompts.chat` 舍弃（后者远程 MCP 自动装 Skill 冲突铁律）；`awesome-deepseek-harness` 仅作只读雷达书签；`Pojun`（AGPL-3.0 禁抄）`llmpool` 熔断经 `tongji_mcp_metrics.jsonl` 28 条原始时间戳证伪（近 7 天 Kimi 无连败 3 次，真根因为 48s/42s 超时紧贴长尾及 L6 110ms 早 429 被慢队友拖死未重试），优化移交 `Desktop\mcp` 另案处理。
+- [已验证] Antigravity 2.0 Windows 原生 `PreToolUse` Hook L5 隔离探针定案：实测支持会话内热生效、精确 `matcher: &quot;edit_file|write_file&quot;`、`decision: &quot;deny&quot;` 真实拦截、`transcriptPath`（指向 `transcript_full.jsonl`）同步落盘零竞态、冷启动 P50 95.8 ms（端到端 ~160 ms）；同时实测排雷：① 禁删活跃 Hook 所在目录（宿主内存残留 cwd 会 Fail-Closed 锁死当前会话，停用须改 `&quot;enabled&quot;: false` 且禁挂 `&quot;*&quot;`）；② 禁纯文本子串查 `blast-radius`（须解析 `PLANNER_RESPONSE.tool_calls` 真实 `read_file`）。因 11/25 加固锚点后近 3 场高危改动 3/3 合规，暂维持方案 A 观察至 11/30（临时 `.agents` 已清场）。
+- [排雷墓碑] 整包引入 `nyldn/claude-octopus`、`hol-guard`、`DuarteSantos8/openGym` 或物理合并第三方活跃 Skill —— 根因：Windows Hook 失效或降级 `observe_only`、与现有体系重叠、私有 fork 阻碍上游升级（仅微创吸收 2 处至 `best-of-n`/`debug-unstick`）。
+- [排雷墓碑] 在 Codex `26.1120.6357.0` 空白首页切回 `Work` 标签，或用 `git rev-parse --is-inside-work-tree` 判工作区干净 —— 根因：前者触发缺 Scope 白屏；后者对脏树仍返 `true` 致误覆盖。
+- [排雷墓碑] 对 &lt;500 字短段盲调 `lieflat-less-ai-tone` 或用 `import` 模块名（如 `PIL`/`fitz`）直接传 `uv --with` —— 根因：短段消融负增益；模块名非 PyPI 发行包名导致安装报错。
+- [排雷墓碑] 在活跃 Antigravity 会话中直接删除已加载的 `hooks.json` 所在目录，或在 `PreToolUse` 里挂 `&quot;matcher&quot;: &quot;*&quot;` —— 根因：宿主内存保留原 cwd，目录消失后 `fork/exec cmd.exe` 报 `The directory name is invalid` 并 Fail-Closed 锁死当前会话工具调用（停用须先设 `&quot;enabled&quot;: false`）。
+
+## 3. 当前进度与下一步
+- **当前断点**：`sync_overlay.py --check` 零漂移、6 源巡检全最新、`skill-update-checker` 已开启调度、5 仓库源码评估（0 装包）及 `PreToolUse` Hook L5 探针均已完结且临时探针已清场 [已验证]。
+- **唯一单点下一步**：① 在 `Desktop\mcp` 新开对话按 28 条真实遥测推进同济 MCP 调度/超时优化评估；② 11/30 同步 `CONTEXT_agent_arch.md` 跑 `session-diagnose` 14 天全量自诊，依据 11/25 后 `blast_radius` 实测漏触数决定是否落地轻量 `ask` 版 `PreToolUse` Hook。
+- **外部验证判据**：`sync_overlay.py --check` 零漂移、`Desktop\skills` 无残留 `.agents/`、11/30 `diagnose.py session --days 14` 零错输出 `blast_radius_before_shared_edit` 实测分母。</code></pre>
+<blockquote>建议直接关闭本对话，然后：① 把上面那段粘进 <code>CONTEXT_skills.md</code>（或新开对话让我代写）；② 去 <code>Desktop\mcp</code> 项目新开对话贴上上一轮的同济 MCP 提示词推进即可。</blockquote>
 </div></article>
 
     </section>
