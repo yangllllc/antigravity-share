@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="b43f0290-8a39-4036-9faf-617f5ba27088" data-base-prefix="./" data-turn-count="2" data-update-time="2026-11-27 13:53" data-meta-ver="0e67e3a5" data-is-index="0">
+<body data-conv-id="b43f0290-8a39-4036-9faf-617f5ba27088" data-base-prefix="./" data-turn-count="3" data-update-time="2026-11-27 13:55" data-meta-ver="0e67e3a5" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="AIRadar Tongji API Integration">AIRadar Tongji API Integration</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64">【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64</span><span>会话 ID: b43f0290-8a39-4036-9faf-617f5ba27088 | 轮次: 2 | 更新于: 2026-11-27 13:53</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64">【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64</span><span>会话 ID: b43f0290-8a39-4036-9faf-617f5ba27088 | 轮次: 3 | 更新于: 2026-11-27 13:55</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./b43f0290-8a39-4036-9faf-617f5ba27088.md" download="AIRadar_Tongji_API_Integrati-b43f0290.md" onclick="return downloadMarkdown(event, './b43f0290-8a39-4036-9faf-617f5ba27088.md', 'AIRadar_Tongji_API_Integrati-b43f0290.md')">⬇️ 下载 Markdown (.md)</a>
@@ -495,6 +495,123 @@
 <p>请先读完现有相关源码，给出：模块改动清单、拟用的 Node 22 直连实现方式、预算上限默认值建议、以及回滚方案，待我确认后再动手改。然后我还有一些自己的想法，因为我点击了一些链接后，最初看没有想法，后面一想感觉很好，但是没加载出来手快又关闭窗口，导致没有历史，再加上已读后的东西太多，一下子就找不到了。所以我希望能够添加一个我点击打开了这个窗口后，就是看概要的窗口后可以记录一下我打开的帖子，做成历史记录这种的功能。不过随着收录的越来越多，会不会占用的地方也变多，所以是否应该有一个清理的功能</p>
 </div></article>
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成 AIRadar 只读盘点与最小改动方案起草，正在由 Claude Opus 5.5 (High) 做异步架构盲审（预计 1–2 分钟内完成；如急用可直接回复「跳过」立即输出当前已核实方案）。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成 <code>CONTEXT_ai_radar.md</code> 读取与仓库只读核验，<strong>当前未改动任何代码或数据文件</strong>。以下是盘点结果、同济优先通道最小改动方案，以及您补充的「浏览历史与清理」评估设计，待您拍板后动手。</p>
+<hr>
+<h3>一、断点磁盘核验与两处前置说明（实测）</h3>
+<p>| 核验项 | <code>CONTEXT</code> 断点记录 | 磁盘实测结果 | 状态 |</p>
+<p>| :--- | :--- | :--- | :---: |</p>
+<p>| 单文件成品 | <code>release/AIRadar.exe</code> 86.21 MB | <code>90,395,648 B</code>（86.21 MB，2026-11-26 13:42） | 一致 |</p>
+<p>| 生产库 | <code>release/data/radar.db</code> 3.23 MB + WAL 4.19 MB | <code>3,383,296 B</code>（3.23 MB）+ WAL <code>4,396,072 B</code>（4.19 MB），<code>user_version=32</code>，<strong>1,650 条</strong>（活跃 1,647 / 已读 973 / 收藏 4 / 已有 AI 999），近 4 日日均收录 <strong>~412 条/天</strong> | 一致 |</p>
+<p>| 当前 AI 配置 | 智谱 <code>glm-4-flash</code> | <code>baseUrl=https://open.bigmodel.cn/api/paas/v4</code>，<code>model=glm-4-flash</code>，<code>hasKey=true</code>，<code>batchSize=5</code>，<code>concurrency=2</code>，<code>timeoutSec=30</code> | 一致 |</p>
+<p>| Git 工作区 | 134 项二开未提交 | <code>git status --short</code> 实测 <strong>134 项</strong> | 一致 |</p>
+<p>| 本机运行环境 | Node 22 / 代理网卡 / 密钥 | Node v22.22.2 在位；当前网卡实测 <code>tun0 =&gt; 172.19.0.1</code>、<code>WLAN =&gt; 100.78.136.128</code>；环境变量 <code>TONGJI_API_KEY</code> 当前为 <code>False</code>，<code>release/</code> 下尚无 <code>.env</code>/<code>.env.local</code> | 已核实 |</p>
+<p><strong>需先汇报的两处差异/前提：</strong></p>
+<ul>
+<li><strong>未说明的根目录临时文件</strong>：工作区根目录下有一个未在 <code>CONTEXT</code> 中说明的未跟踪文件 <code>-</code>（14,312 B，2026-11-26 13:42，内容是 QR 矩阵校验 JSON，已计入 134 项内），本次只读未删；若无需保留可在实施时一并清除。</li>
+<li><strong>与【铁律】第一节的衔接</strong>：<code>CONTEXT</code> 第一节写明「AI 零成本红线：绝不依赖学校付费/限额 API；支持无 Key 纯规则运行并保留 3 家免费预设」。本次接入严格做成<strong>可选优先加速通道、绝不强制依赖</strong>（无 <code>TONGJI_API_KEY</code>/离校/限流/触顶均无缝退回 <code>glm-4-flash</code>，无任何 Key 仍纯规则运行），与原铁律精神不冲突；动手前需请您确认是否允许在第一节追加一条补充注记。</li>
+</ul>
+<hr>
+<h3>二、相关源码只读盘点</h3>
+<ul>
+<li><strong>配置与运行目录</strong>：<code>config.ts</code> 启动时已通过 <code>runtime.ts</code> 的 <code>runtimeBaseDir()</code> 自动加载 <code>.env.local</code> / <code>.env</code>（SEA 单文件模式下锁定 <code>AIRadar.exe</code> 同级目录）；<code>.gitignore</code> 已忽略 <code>.env</code> 与 <code>.env.local</code>（包含子目录 <code>release/.env.local</code>）。</li>
+<li><strong>翻译/摘要调用点</strong>：全库仅 4 处直调全局 <code>fetch(s.baseUrl + &quot;/chat/completions&quot;)</code>：</li>
+<li><code>ai-settings.ts</code> 的 <code>callOnce()</code>（批量审核 + 英文标题翻译 + 要点，供 <code>ai-queue.ts</code> 与 <code>ai-admin.ts</code> 补审使用）；</li>
+<li><code>ai-settings.ts</code> 的 <code>translateSingleItem()</code>（详情抽屉按需深度翻译）；</li>
+<li><code>ai-settings.ts</code> 的 <code>translateBatchForList()</code>（后台自动预译列表外文标题+要点）；</li>
+<li><code>ai-dedup.ts</code> 的 <code>findSemanticDuplicatesWithAi()</code>（AI 语义去重）。</li>
+<li><strong>范围裁剪决策</strong>：按您「作为优先的批量翻译/摘要通道」且防饿死本机 MCP 的要求，<strong>仅将前 3 处（翻译/审核/摘要）接入同济优先路由，<code>ai-dedup.ts</code> 保持只走智谱零改动</strong>，避免语义聚类白烧每周 1000 积分池。</li>
+<li><strong>HTTP/代理与 SEA 打包</strong>：<code>http.ts</code> 与 <code>network-settings.ts</code> 服务于信源抓取（curl 优先 + <code>undici.ProxyAgent</code>），与 AI 通道解耦；<code>build-sea.mjs</code> 仅用 <code>esbuild</code> 打包 <code>src/server/index.ts</code> 与 <code>dist/web</code>，绝不读入 <code>.env*</code>。<strong>因此 <code>http.ts</code>、<code>network-settings.ts</code>、<code>build-sea.mjs</code> 均无需修改</strong>。</li>
+</ul>
+<hr>
+<h3>三、同济优先 + 智谱回退：最小改动方案</h3>
+<h4>1. 核心矛盾与 Node 22 直连选型</h4>
+<p>核心矛盾是：<strong>在 SakuraCat（<code>tun0 172.19.0.1</code>）/ SDKDNS（<code>mihomo 198.18.*</code>）并存且可能开启系统代理的 Windows 环境下，既要强制同济流量绑定物理校园网卡直打内网 VIP <code>10.67.0.251/252</code> 防 403，又要保证现有 <code>glm-4-flash</code> 的公网普通路由与 Node SEA 单文件打包完全不受污染。</strong></p>
+<ul>
+<li><strong>拟采用方案：Node 22 原生 <code>node:https</code>（每请求 <code>agent: false</code> 独立短连接）</strong></li>
+<li><strong>为何放弃 <code>undici.Agent</code></strong>：仓库已有前车之鉴（见 <code>http.ts#L200-L202</code> 与 <code>telegram.ts</code>），Node 22 内置 <code>undici</code> v7 与 <code>node_modules/undici</code> v8 混用会抛 <code>InvalidArgumentError: invalid onRequestStart method</code>，且在 SEA 单文件 <code>esbuild</code> CJS 打包中额外引入版本兼容风险。原生 <code>node:https</code> 零第三方依赖、完全忽略 <code>HTTP_PROXY</code>/<code>HTTPS_PROXY</code>/<code>ALL_PROXY</code> 和全局 <code>ProxyAgent</code>，且能精确分离建连/TLS 握手与响应体读取超时。</li>
+<li><strong>直连穿透关键实现细节</strong>（新建 <code>src/server/enrich/tongji-transport.ts</code>）：</li>
+<li><strong>固定协议与关思考</strong>：固定打 <code>https://agi.tongji.edu.cn/v1/chat/completions</code>，强制 <code>model: &quot;DeepSeek-V4.1-Flash&quot;</code>，请求体必带 <code>chat_template_kwargs: { enable_thinking: false, thinking: false }</code>。</li>
+<li><strong>物理校园 IPv4 出口绑定</strong>：每次请求前实时枚举 <code>os.networkInterfaces()</code> 的非内部 IPv4：</li>
+<li>名称白名单匹配：<code>/WLAN|Wi-Fi|以太网|Ethernet|本地连接/i</code>；</li>
+<li>名称黑名单排除：<code>/Meta|wintun|TAP|VPN|vEthernet|Loopback|sing-tun|mihomo|Tailscale|WireGuard|ZeroTier|\btun\d*\b/i</code>；</li>
+<li>IPv4 黑名单排除：<code>169.254.*</code>、<code>198.18.*</code>、<code>172.19.*</code>、<code>127.0.0.1</code>（保留 <code>100.64.0.0/10</code>，因本机实测校园 <code>WLAN</code> 即为 <code>100.78.136.128</code>，而 Tailscale 由网卡名黑名单拦截）。</li>
+<li><strong>应用层双 VIP 轮询与 ≤5s 建连硬顶</strong>：</li>
+<li>绕坑说明：Node 22 在 <code>autoSelectFamily: false</code> 下，单个 <code>https.request</code> 的 <code>lookup</code> 即使返回多地址也只会连第一个。因此改为<strong>应用层明确最多 2 次独立 <code>https.request</code> 建连尝试</strong>（按轮询游标依次尝试 <code>10.67.0.251</code> / <code>10.67.0.252</code>，每次建连+TLS 握手定时 <code>≤2.5s</code>，总建连严格 <code>≤5s</code>）；</li>
+<li>自定义 <code>lookup</code> 同时兼容 <code>options?.all === true</code>（返回 <code>[{ address: vip, family: 4 }]</code>）与单地址回调，强制 <code>family: 4, autoSelectFamily: false</code>，保留 <code>servername: &quot;agi.tongji.edu.cn&quot;</code> 与 <code>rejectUnauthorized: true</code>；</li>
+<li><strong>防双扣铁律</strong>：仅在 <code>secureConnect</code> 完成前（尚未发送任何请求字节）建连失败时才切换备用 VIP；一旦 TLS 建连成功并写出请求体，严禁换 VIP 重试。</li>
+<li><strong>总超时与句柄回收</strong>：独立 <code>AbortController</code> 控制总请求超时 <strong>28s</strong>（25–30s 可配），覆盖建连、响应头与完整 JSON 响应体读取；<code>finally</code> 必清理 <code>connectTimer</code>、<code>totalTimer</code> 并销毁异常响应流。</li>
+</ul>
+<h4>2. 路由、回退、冷却与隔离设计（新建 <code>src/server/enrich/ai-router.ts</code>）</h4>
+<ul>
+<li><strong>严格隔离</strong>：<code>glm-4-flash</code> 继续走 <code>settings.key = &#39;ai&#39;</code> 的独立 <code>baseUrl / apiKey / model</code> 与普通 <code>fetch</code>，绝不经过 <code>tongji-transport.ts</code>；<code>POST /api/ai/test</code>（草稿连通测试）显式传 <code>skipTongji: true</code> 保证只测表单里的智谱/备用草稿；另增 <code>POST /api/ai/tongji/probe</code> 供手动清冷却并单次实测同济。</li>
+<li><strong>即时透明回退</strong>：同济返回 <code>401/402/403/429/5xx</code>、无物理网卡、建连/总超时、网络错、非法响应或空 <code>content</code>（含仅有 <code>reasoning_content</code> 而无 <code>content</code>）时，本次调用立即透明回退至 <code>glm-4-flash</code>；<code>reviewItems</code> 外层重试（<code>attempt === 1</code>）显式传 <code>skipTongji: true</code>，避免坏 JSON 重复打同济。</li>
+<li><strong>分级冷却与退避</strong>：</li>
+<li>遇 <code>401/402/403</code>、无可用物理 IPv4 网卡、或双 VIP 均建连不可达（离校典型特征）→ 触发进程内长冷却（默认 <strong>8 分钟</strong>，5–10 分钟可配），期间零等待直走 <code>glm-4-flash</code>；支持手动重探清除，或到期后由单飞行锁放行 1 次自动重探。</li>
+<li>遇 <code>429</code> / <code>5xx</code> → 触发短退避（优先遵从 <code>Retry-After</code> 响应头并钳位在 15–120s，否则默认 60s），期间直接走 <code>glm-4-flash</code>，不连续撞限流墙。</li>
+<li><strong>非阻塞并发闸门（<code>≤2</code>）</strong>：进程全局维护同济并发计数器（上限 2），使用非阻塞 <code>tryAcquire()</code>——若已有 2 路同济在跑且 <code>glm-4-flash</code> 就绪，第 3 路直接溢出走 <code>glm-4-flash</code>（零排队等待，仅无备用通道时短暂排队），<code>finally</code> 保证所有异常/中止路径释放槽位。</li>
+<li><strong>单通道就绪态处理</strong>：<code>aiReady(s)</code> 仍尊重主开关 <code>s.enabled</code>；开启时只要「智谱就绪 <strong>或</strong> 同济有 Key 且未冷却未超预算」即返回 <code>true</code>。若仅配同济无智谱且恰遇离校，路由器返回明确类型 <code>unavailable</code>，不误标条目永久失败，待回校后自动恢复补译。</li>
+</ul>
+<h4>3. 共享周额度（1000 积分/周）预算软上限建议</h4>
+<ul>
+<li><strong>口径说明（实测 vs 未验证）</strong>：</li>
+<li>实测 <code>release/data/radar.db</code> 近 4 日日均新增 <strong>~412 条/天</strong>，<code>batchSize=5</code>；外文预译 + 审核 + 单条深度译日常大约 <strong>40–90 次请求/天</strong>，单批估算约 <strong>1,500–2,500 tokens/次</strong>（推断）。</li>
+<li>同济平台 <code>DeepSeek-V4.1-Flash</code> 的精确「token ↔ 积分」扣减费率当前<strong>未验证</strong>，因此<strong>不强行假设 1 请求 = 1 积分</strong>，而是同时记录精确的 <code>req_count</code> 与 <code>token_est</code>（优先取接口返回的 <code>usage.prompt_tokens + usage.completion_tokens</code>，缺省按 <code>Math.ceil((inChars + outChars) / 2)</code> 估算），以本地周一 00:00 为周重置锚点持久化到 SQLite。</li>
+<li><strong>保守默认值建议（均支持网页与 <code>.env</code> 热调）</strong>：</li>
+<li><strong>日请求软上限</strong>：<code>100 次/天</code></li>
+<li><strong>周请求软上限</strong>：<code>450 次/周</code></li>
+<li><strong>周 Token 软上限</strong>：<code>1,200,000 tokens/周</code>（任一达标即自动无缝切回 <code>glm-4-flash</code>，给本机同济 MCP 留出充足周裕度；跑一两天后可对照学校控制台实际积分消耗一键调大/调小）</li>
+<li><strong>扣费时机防双扣</strong>：仅当同济实际返回 HTTP 200（服务端确已执行推理，包括空 <code>content</code> / 仅 <code>reasoning_content</code>）时，通过 <code>BEGIN IMMEDIATE</code> 原子累加 SQLite 计数；403/离校/建连超时/并发溢出直切智谱时<strong>不扣</strong>同济预算。</li>
+</ul>
+<h4>4. 模块改动清单（最小改动）</h4>
+<p>| 操作 | 文件路径 | 改动要点 |</p>
+<p>| :---: | :--- | :--- |</p>
+<p>| 新增 | <code>src/server/enrich/tongji-transport.ts</code> | 物理 IPv4 筛选、双 VIP 应用层串行建连（≤5s）、<code>node:https</code> <code>agent:false</code>、SNI/证书校验、关思考请求体、28s 总超时、日志脱敏（严禁打印 <code>Authorization</code>） |</p>
+<p>| 新增 | <code>src/server/enrich/ai-router.ts</code> | 统一 <code>chatCompletion()</code> 入口、并发≤2 非阻塞信号量、长冷却/短退避状态机、SQLite 预算读写、同济/智谱命中与回退计数遥测 |</p>
+<p>| 微调 | <code>config.ts</code> | 仅从环境变量（含 <code>runtimeBaseDir()/.env.local</code>）读 <code>TONGJI_API_KEY</code> 及可选默认上限/冷却 env；不写代码、不进前端 |</p>
+<p>| 微调 | <code>db.ts</code> | Migration v33 新增轻表 <code>ai_channel_usage(period_type, period_key, req_count, token_est, updated_at)</code> |</p>
+<p>| 微调 | <code>ai-settings.ts</code> | <code>callOnce</code>、<code>translateSingleItem</code>、<code>translateBatchForList</code> 3 处改为调 <code>ai-router</code>；<code>testAiConnection</code> 保持 <code>skipTongji: true</code> 隔离；更新 <code>aiReady()</code> |</p>
+<p>| 微调 | <code>ai-admin.ts</code> &amp; <code>routes.ts</code> | 在 <code>/api/ai</code>、<code>/api/ai/live</code>、<code>/api/collect/status</code> 暴露同济状态与计数（脱敏无 Key）；新增 <code>PATCH /api/ai/tongji</code> 与 <code>POST /api/ai/tongji/probe</code> |</p>
+<p>| 微调 | <code>AiPanel.tsx</code> &amp; <code>types.ts</code> | 新增精简「同济校园优先通道」状态卡（启用开关、已用日/周预算与可调上限、同济/智谱命中与回退计数、冷却倒计时与「重新探测」按钮） |</p>
+<p>| 微调 | <code>.env.example</code> &amp; <code>ai-radar.test.ts</code> | 补 <code>TONGJI_API_KEY=</code> 空白占位说明；补齐离线 Mock 回归测试套件（含 API JSON 禁泄露密钥断言） |</p>
+<p>| <strong>不动</strong> | <code>http.ts</code>、<code>network-settings.ts</code>、<code>ai-dedup.ts</code>、<code>build-sea.mjs</code> | 保持信源代理、语义去重、SEA 打包脚手架零侵入 |</p>
+<h4>5. 回滚方案与验收判据</h4>
+<ul>
+<li><strong>秒级软回滚（零代码改动）</strong>：删掉 <code>.env.local</code> 中的 <code>TONGJI_API_KEY</code> 或在网页关闭「同济优先通道」开关，立即 100% 退回现有纯 <code>glm-4-flash</code>。</li>
+<li><strong>完整硬回滚</strong>：删除 <code>tongji-transport.ts</code> / <code>ai-router.ts</code>，还原 <code>ai-settings.ts</code> 中 3 处 <code>fetch</code> 调用并重跑 <code>npm.cmd run build:exe</code> 覆写 <code>release/AIRadar.exe</code>；<code>release/data/radar.db</code> 新增的 <code>ai_channel_usage</code> 表与 <code>settings.key=&#39;ai_tongji&#39;</code> 对旧版完全无害，无需回滚数据库。</li>
+<li><strong>三步硬验收</strong>：</li>
+<li><strong>离线 Mock 单测</strong>：原 13 项 + 新增 Mock 套件全绿（覆盖 403 离校冷却、双 VIP 建连超时≤5s、28s 总超时回退、空 <code>content</code>/仅 <code>reasoning_content</code> 回退且计预算、429/5xx 短退避、并发≤2 溢出直切智谱、日/周预算封顶切换、智谱公网路由零污染、接口返回不含密钥明文）；</li>
+<li><strong>校内真实直连冒烟</strong>：通过外部临时注入环境变量跑 1 次真实请求（绕过 <code>tun0</code>，绑定 <code>WLAN 100.78.136.128</code> 连内网 VIP），验证 <code>DeepSeek-V4.1-Flash</code> 返回非空流畅中文译文与实际耗时；</li>
+<li><strong>SEA 打包与密钥安全回归</strong>：<code>npm.cmd run build:exe</code> 原地更新 <code>release/AIRadar.exe</code>（严守不动 <code>release/data/</code>），对 <code>AIRadar.exe</code> 扫描确认不含密钥字串，并在独立空目录异地 CWD 实机拉起 <code>8788</code> 验收通过。</li>
+</ul>
+<hr>
+<h3>四、关于您的新想法：「点开概要即记浏览历史」与「存储增长/清理」</h3>
+<h4>1. 先算空间账（基于 <code>release/data/radar.db</code> 实测）</h4>
+<ul>
+<li>当前 1,650 条情报（含 973 条已读），<strong>单条标题+摘要+正文+AI JSON 实测平均仅 <code>599 字节</code></strong>，全部正文数据总计仅 <strong>0.94 MB</strong>；主库 <code>radar.db</code> 3.23 MB（含索引），而 <code>radar.db-wal</code> 有 <strong>4.19 MB</strong>（WAL 日志尚未 checkpoint 回收）。</li>
+<li>按目前 ~412 条/天推算，每月新增约 <strong>~25–35 MB</strong>（含索引）；半年不清理约 <strong>~150–200 MB</strong>（主要影响不是硬盘容量，而是旧库膨胀后列表检索变慢）。</li>
+<li><strong>关键结论</strong>：「浏览历史」<strong>本身几乎零空间开销</strong>——因为帖子已经在 <code>items</code> 表里，只需在 <code>items</code> 表加 <code>last_viewed_at TEXT</code> 和 <code>view_count INTEGER DEFAULT 0</code>（加 1 个索引），<strong>不复制正文</strong>，就算点开 10,000 次历史也只多占 <strong>~300 KB</strong>。真正需要优化的是<strong>过期旧帖保留期与清理后的 WAL/磁盘空间回收</strong>。</li>
+</ul>
+<h4>2. 最小改动设计建议</h4>
+<ul>
+<li><strong>秒记历史（彻底解决「没加载完手快关窗也找不回」）</strong>：</li>
+<li>在 <code>App.tsx</code> 的 <code>openDetail(item)</code> 点击瞬间（不等详情正文返回、不等 4 秒自动已读、<strong>不改 <code>read_at</code>、不动 <code>visit_watermark</code></strong>），使用独立且不挂抽屉 <code>AbortController</code> 的 <code>fetch(&quot;/api/items/:id/view&quot;, { method: &quot;POST&quot;, keepalive: true })</code> 写入 <code>last_viewed_at</code> 与 <code>view_count + 1</code>；</li>
+<li>点击行内/卡片右上角「新标签打开原帖」时也顺手记入历史；因落在 <code>release/data/radar.db</code>，电脑与手机 PWA 天然共享浏览历史。</li>
+<li><strong>「最近浏览」入口</strong>：</li>
+<li>在左侧「我的收藏 / 已忽略」旁新增 <strong>「最近浏览」</strong>（<code>preset = &quot;history&quot;</code>），按 <code>last_viewed_at DESC</code> 倒序展示（刚点过的永远在最顶上），显示「看过时间 / 次数」，支持顶部搜索框直接搜历史；</li>
+<li>视图顶部提供「清空全部记录」与「清除 30 天前记录」按钮（<strong>仅清空 <code>last_viewed_at</code>，不删帖子本体也不影响收藏</strong>）。</li>
+<li><strong>补强现有自动清理（仓库已有 <code>retention.ts</code> 与「信源与代理 → 数据保留与清理」面板）</strong>：</li>
+<li>现有默认保留期为普通 60 天 / AI 有效 180 天 / 已忽略 14 天（收藏永不删），每天自动跑 2 次，但有两个小缺口：① <code>dbSizeMb()</code> 目前写死返回 <code>0</code>，界面看不到库大小；② <code>runCleanup()</code> 只 <code>DELETE</code> 不做 WAL 截断，磁盘不会马上变小。</li>
+<li><strong>增强点</strong>：补实 <code>radar.db + WAL</code> 实时 MB 体积显示；清理后执行 <code>PRAGMA wal_checkpoint(TRUNCATE)</code>（检查返回的 <code>busy</code> 标志，忙则短重试或提示，避免静默失败）并提供手动「压缩瘦身 (<code>VACUUM</code>)」按钮；同时在自动清理时，为近期看过（如最近 30 天内 <code>last_viewed_at</code> 非空）的帖子提供保护选项，避免想回头找的记录被过期规则静默清掉。</li>
+</ul>
+<hr>
+<h3>五、需要您确认的 3 个边界问题（确认后立即开干）</h3>
+<ul>
+<li><strong>分期节奏</strong>：建议<strong>先实施并三步验收完「同济 API 优先通道 + 智谱回退」</strong>，再紧接着实施「最近浏览历史 + 清理增强」；还是希望<strong>两者一次合并实施，只打 1 次 <code>AIRadar.exe</code></strong>？</li>
+<li><strong>同济 Key 存放位置与预算阈值</strong>：实施校内冒烟测试时，您希望把 <code>TONGJI_API_KEY</code> 放在 <code>release/.env.local</code>（单文件 exe 同级，已在 <code>.gitignore</code>）还是系统用户环境变量？预算默认先用 <strong>日 100 次 / 周 450 次 / 周 120 万 Token</strong>（以及 8 分钟离校冷却）是否合适？</li>
+<li><strong>两处小确认</strong>：① 是否同意在 <code>CONTEXT_ai_radar.md</code> 第一节追加一条「允许可选接入同济免费周额度作为无依赖优先通道」的澄清注记？② 根目录遗留的未跟踪临时文件 <code>-</code>（14 KB QR 测试输出）是否顺手删掉？</li>
+</ul>
+<blockquote>*注：本最小改动架构方案已经过 Claude Opus 5.5 (High) 独立盲审，已采纳其关于剔除 <code>ai-dedup</code> 省周额度、应用层双 VIP 串行建连防 <code>autoSelectFamily:false</code> 陷阱、并发满非阻塞溢出切智谱、429/5xx 短退避及 <code>keepalive: true</code> 记录浏览历史等关键修正。*</blockquote>
 </div></article>
 
     </section>
