@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="899d8b5c-f2ce-45ce-b9ac-dbb1208223d1" data-base-prefix="./" data-turn-count="4" data-update-time="2026-11-27 11:37" data-meta-ver="adc068c5" data-is-index="0">
+<body data-conv-id="899d8b5c-f2ce-45ce-b9ac-dbb1208223d1" data-base-prefix="./" data-turn-count="5" data-update-time="2026-11-27 11:38" data-meta-ver="adc068c5" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="Markdown File Verification And Prompt Check">Markdown File Verification And Prompt Check</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="skills">skills</span><span>会话 ID: 899d8b5c-f2ce-45ce-b9ac-dbb1208223d1 | 轮次: 4 | 更新于: 2026-11-27 11:37</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="skills">skills</span><span>会话 ID: 899d8b5c-f2ce-45ce-b9ac-dbb1208223d1 | 轮次: 5 | 更新于: 2026-11-27 11:38</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./899d8b5c-f2ce-45ce-b9ac-dbb1208223d1.md" download="Markdown_File_Verification_A-899d8b5c.md" onclick="return downloadMarkdown(event, './899d8b5c-f2ce-45ce-b9ac-dbb1208223d1.md', 'Markdown_File_Verification_A-899d8b5c.md')">⬇️ 下载 Markdown (.md)</a>
@@ -471,6 +471,58 @@
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成 5 个目标仓库共 86 个核心源码与架构文档的只读拉取（零失败），并提取了近 7 天 <code>session-diagnose</code> 与同济 MCP 遥测基线数据。接下来将逐一精读源码并对照本地 4 规则 / 18 自动 Skill 与实测痛点做重叠与借鉴分析。</p>
 </div></article>
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成 5 个仓库的源码精读、本地 4 规则 / 18 自动 Skill 重叠映射及近 7 天 <code>session-diagnose</code> 痛点核验，并完成全部对比表与裁决自检。即将输出最终评估报告。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><blockquote><strong>提示</strong>：你的消息末尾停在「<code>然后再加上查看(https://github.com/f/prompts.chat) 和</code>」，疑似还有一个未贴出的第 6 个仓库链接。本轮已先完成 <code>CONTEXT_skills.md</code> 断点核验及这 <strong>5 个仓库</strong> 的真实源码评估（全程严格只读，<strong>零装包、零改本地文件</strong>）；若后面还有第 6 个链接，直接发来即可续评。</blockquote>
+<hr>
+<h3>一、断点与本地痛点基线核验 <code>[实测]</code></h3>
+<ul>
+<li><strong>当前断点一致，确认推进</strong>：</li>
+<li><code>sync_overlay.py</code> <code>--check</code>：<code>ALL OVERLAY CHECKS PASSED (0 drifts)</code>（退出码 <code>0</code>）；</li>
+<li><code>last_update_report.md</code>：2026-11-27 09:03 巡检 6 源全最新（有更新 <code>0</code>、异常 <code>0</code>）；</li>
+<li><strong><code>[待验证]</code> 项已转 <code>[已验证]</code></strong>：<code>config.json</code> 中 <code>skill-update-checker</code> 已 <code>&quot;enabled&quot;: true</code>，且 <code>sidecar.log</code> 显示已于 <code>2026-11-27T11:00:25+08:00</code> 正常启动调度（<code>CRON_TZ=Asia/Shanghai 20 */4 * * *</code>）。</li>
+<li><strong>本地规则 / Skill 体量基线</strong>：</li>
+<li><strong>4 份 <code>always_on</code> 规则</strong>（满额）：<code>core-reasoning-protocol.md</code>、<code>cross-model-reviewer.md</code>、<code>deepseek-subagent.md</code>、<code>AGENTS.md</code>；</li>
+<li><strong>18 个全局自动 Skill + 5 个后台联动 Skill（<code>disable_auto: true</code>）+ 5 个插件</strong>（见 <code>local-overlay.json</code>）。</li>
+<li><strong>近 7 天 <code>session-diagnose</code> 真实痛点数据</strong>（审计 10 场会话 / 27 次同济 MCP 调用）：</li>
+<li><strong>已健康项</strong>：长会话缓存命中率 <code>89.2%–94.1%</code>；改后验证 <code>verification_after_code_edit</code> <code>7/7 OK</code>。</li>
+<li><strong>真实痛点 A（规则偶发漏触）</strong>：<code>blast_radius_before_shared_edit</code> <code>2/5 FLAGGED</code>（改全局规则前偶漏先读 <code>blast-radius/SKILL.md</code>）。</li>
+<li><strong>真实痛点 B（同济 MCP 降级率偏高）</strong>：调用级 <code>ok=27/27</code>，但 <strong><code>degraded=10/27 (37.0%)</code></strong>，集中于 <code>Kimi-K3.1-Pro</code>（仅 <code>19/27 OK</code>：<code>timeout</code> 6 次、<code>content limit</code> 1 次、<code>HTTP 429</code> 1 次，<code>code_audit</code> <code>3/3</code> 全降级）。实查 <code>tongji_deepseek_mcp.ps1</code>（50,901 B）：<code>circuit</code> / <code>breaker</code> / <code>cooldown</code> 计数均为 <strong>0</strong>，目前缺乏跨调用熔断冷却机制。</li>
+</ul>
+<hr>
+<h3>二、5 仓库真实源码对比总表</h3>
+<blockquote>下表除明确标 <code>[推断]</code> 的条目外，其余文件数、代码路径、协议与机制均基于 GitHub API 目录树 + 86 份原始源码直读 <strong><code>[实测]</code></strong>。</blockquote>
+<p>| 仓库 | 真实体量 / 协议 / 活跃度 <code>[实测]</code> | 源码核心本质 <code>[实测]</code> | 与本地 4 规则 / 18 自动 Skill 的重叠与冲突 | 可借鉴局部设计（不装包） | 最终裁决 |</p>
+<p>| :--- | :--- | :--- | :--- | :--- | :--- |</p>
+<p>| <strong><code>Dominic789654/awesome-deepseek-harness</code></strong> | 442⭐ &#183; TS &#183; 52 文件 &#183; 无标准 SPDX &#183; <code>2026-11-27</code> 活跃（含自动扫 <code>#dsh</code> 追加 PR） | <strong>DSH 生态大目录</strong>（<code>README.md</code> 1.99 MB / <code>README.zh-CN.md</code> 1.32 MB，标 5,649 条）+ 4 个 <code>v0.1.0</code> Cordis 示范插件（<code>dsh-code-review</code>/<code>dsh-research-loop</code>/<code>dsh-slides</code>/<code>dsh-viz</code>） | 运行时强绑定 <code>@deepseek-ai/cordis</code>（与 Antigravity/Codex 不兼容）；<code>dsh-slides</code>（CDN <code>reveal.js</code>）/ <code>dsh-viz</code>（CDN <code>echarts</code>）远弱于本地 <code>course-ppt-lab</code>+<code>ppt-master</code>、<code>scientific-visualization</code>+<code>generative_ui</code>；<code>dsh-code-review</code> / <code>auto-research-loop</code> 与 <code>cross-model-reviewer</code>、<code>blast-radius</code>、<code>literature-review</code> 重叠 | 仅留作<strong>只读生态雷达书签</strong>（盯 <code>docs/official-picks.md</code> 及偶现科研/PPT 新项目如 <code>pptwise</code>/<code>dsh-scholar</code>）；其“禁凭截断 diff 断言无问题”“调研冲突并列来源不静默择一”可口头吸收，无需改规则 | <strong>0 装包，仅作书签雷达</strong> |</p>
+<p>| <strong><code>EgoAlpha/prompt-in-context-learning</code></strong> | 2,252⭐ &#183; Notebook &#183; MIT &#183; 153 文件（81 张图）&#183; <code>2026-11-27</code>（实查近 3 commit 全为自动 <code>Hot AI Papers Update</code>） | <strong>科普与教程合集</strong>（0 生产级 Agent 代码）：① 15 份静态论文表（<code>PaperList/AgentList.md</code> 等顶部仍停在 2024.06–07）；② 2023 风格提示词基础五要素文章；③ 15 篇 LangChain <code>1.0.5~1.2.0</code> / <code>deepagents 0.3.x</code> 入门笔记（示例工具甚至裸用 <code>eval()</code>） | 论文检索被 <code>paper-lookup</code>（18 学术库实查）+ <code>citation-management</code> + <code>literature-review</code> 降维替代；提示词入门与 <code>core-reasoning-protocol</code> 重复且过浅；本机无 LangChain 业务痛点 | 无（0 增量工程价值） | <strong>直接舍弃（0 装包、0 借鉴）</strong> |</p>
+<p>| <strong><code>sonichi/sutando</code></strong> | 412⭐ &#183; Py/TS/Swift &#183; MIT &#183; <strong>3,673 文件</strong>（<code>tests</code> 2,038 / <code>skills</code> 583 含 102 目录 / <code>hooks</code> 21）&#183; <code>2026-11-27</code> 活跃 | <strong>macOS 常驻多模态语音 Stand 系统</strong>（<code>main.swift</code> + s.space + Discord/Gmail/Twilio）；含早期 <code>src/agent/agy/</code> 脚手架（<code>tmux</code> 包 <code>agy</code>，官方明注未接核心调度/无 cron/无健康检查，且非 Windows）；<code>hooks/</code> 有 21 个高工程度 Claude Code 守卫脚本 | 整体形态为 macOS 重型常驻框架，102 个 Skill 严重冲破本地 ~20 软上限；<code>REVIEW.md</code> 与 <code>blast-radius</code>+<code>cross-model-reviewer</code> 重叠；<code>detect-learned-skills.py</code> 仅做英文前 5 词频次统计，明显弱于本地 <code>/dream</code>；其 Claude Code <code>.py</code> Hook 不能直接用于 Windows Antigravity（踩中【排雷墓碑】Windows Hook 坑） | <strong>吸收 2 条纯设计模式</strong>：① <code>hooks/memory-index-guard.py</code> / <code>review-authority-guard.py</code> 的「<strong>靠记忆遵守的门禁必失守，能下沉为确定性拦截+不确定时 fail-open</strong>」（呼应痛点 A）；② <code>design-core-health-verdict.md</code> 的「单一权威状态文件 + 独立双信号佐证防误杀」 | <strong>严禁装包/引入子技能（0 装包）；仅记 2 条架构原则</strong> |</p>
+<p>| <strong><code>chu0119/Pojun</code></strong> | 581⭐ &#183; Go/Next.js/PG &#183; <strong>AGPL-3.0</strong> &#183; 1,276 文件（<code>agent</code> 179 / <code>skills</code> 25 个渗透技能 / <code>eval</code> 20 个靶场）&#183; <code>2026-11-26</code> 活跃 | <strong>AI 自主渗透/红队作战平台</strong>（Go 单体 + PG + Docker），但底层 <code>agent/</code>、<code>llmpool/</code>、<code>sidequestion/</code>、<code>eval/</code> 是极高水准的<strong>实测数据驱动长任务 Harness</strong> | 业务域完全无关（安全渗透/C2）且 <strong>AGPL-3.0 禁抄源码</strong>；其中三层态势防折叠（<code>blackboard.go</code>）↔ <code>CONTEXT_*.md</code>+墓碑、只读并行单线程写（<code>docs/AI渗透Agent调研</code>）↔ <code>best-of-n</code>/<code>subagent-pipeline</code>、反口头过关（<code>goal_gate.go</code>）↔ <code>debug-unstick</code>/<code>blast-radius</code>、输入分块防撞思考上限（<code>compaction.go</code>）↔ <code>deepseek-subagent.md</code> 均已高度印证本地体系 | <strong>本次 5 仓最高价值局部借鉴（直击实测痛点 B）</strong>：<code>llmpool/health.go</code> + <code>pool.go</code> 的<strong>两级熔断（硬失败 401–404 首次熔断 / 软失败 429&#183;5xx&#183;超时连败 3 次熔断）+ 阶梯冷却 <code>1m→5m→30m</code> + 跨调用持久化 + 提交前安全窗口</strong>，高度契合 <code>tongji_deepseek_mcp.ps1</code> 的 Kimi 高频超时降级问题（留给 <code>Desktop\mcp</code> 另案处理） | <strong>0 装包、禁抄 AGPL 代码；记下 <code>llmpool</code> 熔断冷却模式供 <code>Desktop\mcp</code> 按需借鉴</strong> |</p>
+<p>| <strong><code>f/prompts.chat</code></strong> | 178,608⭐ &#183; Next.js 16 + Prisma &#183; 1,890 文件（<code>src</code> 1,583 / <code>prompts.csv</code> 220,217 行 12 MB）&#183; <code>2026-11-27</code> 活跃 | <strong>开源社区 Prompt 托管站点</strong>（原 Awesome ChatGPT Prompts）+ 消费级角色扮演 CSV 库 + <code>packages/prompts.chat</code>（TS Builder DSL &amp; 英文正则 <code>quality.check</code>）+ 远程 MCP 插件 <code>plugins/claude/prompts.chat</code>（直连 <code>prompts.chat/api/mcp</code>） | 远程 MCP 的 <code>skill-lookup</code> 鼓励先搜社区并直接落盘安装到 <code>.claude/skills/</code>，<code>prompt-lookup</code> 要求“先搜库再自己写”，与本地「反盲目加轮子 + 20 软上限 + Overlay 先 diff 再装」铁律<strong>正面冲突</strong>；<code>quality.check</code> 靠英文元音/辅音比与 <code>act as</code> 正则打分，对中文科研/工程无意义；<code>.windsurf/skills/</code> 仅服务其自家电子书翻译与站内组件 | 无（0 本地痛点匹配；若偶发查文生图/视频提示灵感，直接网页浏览 <code>prompts.chat</code> 即可，绝不接入本地 MCP 或 Skill 池） | <strong>直接舍弃（0 装包、禁接其远程 MCP）</strong> |</p>
+<hr>
+<h3>三、关键推理与排斥原因摘要</h3>
+<ul>
+<li><strong>为什么 5 仓全部维持「0 装包」</strong>：</li>
+<li><code>session-diagnose</code> 实测证明当前 4 规则 + 18 自动 Skill + 5 后台联动体系在缓存命中（~90%）、改后自验（100%）与主流程闭环上已很稳健；5 个外部仓库里，<strong>没有任何一个打包组件</strong>能在不引入跨平台兼容负债（macOS/Swift/tmux、DSH Cordis、Docker+PG+AGPL、远程不受控社区 MCP）的前提下解决本机实测痛点。</li>
+<li><strong>为什么选 <code>Pojun</code> 的 <code>llmpool</code> 熔断模式作为唯一高优先级借鉴（且本轮不动手改）</strong>：</li>
+<li>相比泛泛的“加个新 Skill”，<code>mcp-report --days 7</code> 实测到 <code>Kimi-K3.1-Pro</code> 在 27 次调用里触发 6 次超时 + 1 次 429、<code>code_audit</code> 100% 降级，而 <code>tongji_deepseek_mcp.ps1</code> 当前完全没有状态冷却；按 <code>CONTEXT_skills.md</code> 的隔离铁律，MCP 脚本改造归属 <code>Desktop\mcp\CONTEXT_agent_arch.md</code> 且修改共享 MCP 前必须走 <code>blast-radius</code>，因此本轮严守只读边界不越界修改。</li>
+<li><strong><code>sutando</code> 与 <code>Pojun</code> 对现有体系的“反向印证”</strong> <code>[实测]</code>：</li>
+<li><code>Pojun</code> 的 <code>agent/compaction.go</code> 实测“26 节点给 65K 预算仍思考耗尽、切 6 节点 124s 收尾”直接验证了本地 <code>deepseek-subagent.md</code> 的多子题拆包原则；</li>
+<li><code>Pojun</code> 的 <code>agent/blackboard.go</code> 将 <code>hints</code> 与失败方向锁在永不折叠的 Index 层，与本地 <code>CONTEXT_*.md</code> 铁律 + <code>[排雷墓碑]</code> 完全同构；</li>
+<li><code>sutando</code> 的 <code>hooks/memory-index-guard.py</code> 与 <code>REVIEW.md</code>（检查被 diff 新激活的未改动路径）印证了本地 <code>debug-unstick</code>「硬约束替代文字规则」与 <code>blast-radius</code> 的方向。</li>
+</ul>
+<hr>
+<h3>四、外部验证判据自检</h3>
+<ul>
+<li>[x] <strong>覆盖范围</strong>：原定 4 仓库 + 追加的 <code>f/prompts.chat</code> 共 5 仓库均完成真实目录树与核心源码拉读（86 文件，0 拉取失败）。</li>
+<li>[x] <strong>证据标注</strong>：核心事实、本地基线与痛点数据均带 <code>[实测]</code> 依据与精确路径/数值，无编造。</li>
+<li>[x] <strong>重叠分析与红线</strong>：已对照本地 4 规则 / 18 自动 Skill / 5 联动 Skill 及近 7 天 <code>session-diagnose</code> 数据证伪痛点，<strong>0 装包、未触碰任何【排雷墓碑】、未擅自修改 <code>CONTEXT_skills.md</code></strong>。</li>
+</ul>
+<hr>
+<h3>五、需要你确认的 2 个边界问题</h3>
+<ul>
+<li><strong>缺失的第 6 个仓库</strong>：你的消息末尾停在 <code>...prompts.chat) 和</code>，是否还有第 6 个待评仓库？若要补评，请直接发链接；若无，请确认是否将本次 5 仓裁决（含更新 <code>skill-update-checker</code> 为 <code>[已验证]</code>、新增 5 仓评估结论与 <code>Pojun</code> 熔断借鉴指针）写回 <code>CONTEXT_skills.md</code>（以及同步 <code>11.27.md</code>？）。</li>
+<li><strong>痛点 A（改全局规则偶漏读 <code>blast-radius</code>）的边界</strong>：Antigravity 本地自定义 Hooks 在 Windows 下的可用性与之前 <code>claude-octopus</code> 踩过的坑相关 <code>[未验证现状]</code>——你是否希望保持现状靠 <code>session-diagnose</code> 事后复盘，还是值得另开一小步核实新版 Antigravity 是否支持轻量本地 <code>PreToolUse</code> 文件路径守卫？</li>
+</ul>
 </div></article>
 
     </section>
