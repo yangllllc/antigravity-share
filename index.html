@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex">
-  <title>MCP 遥测核查与优化方案评估 - Antigravity Share</title>
+  <title>AI Radar Project Checkpoint Validation - Antigravity Share</title>
   <style>
     :root {
       --bg-main: #131314;
@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="1cfc570f-8c6d-4080-b1b1-4e7216676be9" data-base-prefix="./c/" data-turn-count="6" data-update-time="2026-11-27 13:10" data-meta-ver="3c64fb87" data-is-index="1">
+<body data-conv-id="fa66a2bf-30cd-4788-97c4-7a7e22db9f66" data-base-prefix="./c/" data-turn-count="11" data-update-time="2026-11-27 13:29" data-meta-ver="407d6bef" data-is-index="1">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="./index.html">Antigravity 对话分享</a></h2>
@@ -450,227 +450,178 @@
   <main id="main">
     <header class="main-header">
       <div style="min-width:0;">
-        <h1 title="MCP 遥测核查与优化方案评估">MCP 遥测核查与优化方案评估</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="mcp">mcp</span><span>会话 ID: 1cfc570f-8c6d-4080-b1b1-4e7216676be9 | 轮次: 6 | 更新于: 2026-11-27 13:10</span></div>
+        <h1 title="AI Radar Project Checkpoint Validation">AI Radar Project Checkpoint Validation</h1>
+        <div class="sub-meta"><span class="header-project-badge" title="【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64">【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64</span><span>会话 ID: fa66a2bf-30cd-4788-97c4-7a7e22db9f66 | 轮次: 11 | 更新于: 2026-11-27 13:29</span></div>
       </div>
       <div class="header-actions">
-        <a class="btn" id="downloadMdBtn" href="./c/1cfc570f-8c6d-4080-b1b1-4e7216676be9.md" download="MCP_遥测核查与优化方案评估-1cfc570f.md" onclick="return downloadMarkdown(event, './c/1cfc570f-8c6d-4080-b1b1-4e7216676be9.md', 'MCP_遥测核查与优化方案评估-1cfc570f.md')">⬇️ 下载 Markdown (.md)</a>
-        <button class="btn" id="copyBtn" type="button" onclick="copyCanonicalUrl('./c/1cfc570f-8c6d-4080-b1b1-4e7216676be9.html', 'copyBtn', '已复制直链')">复制对话直链</button>
+        <a class="btn" id="downloadMdBtn" href="./c/fa66a2bf-30cd-4788-97c4-7a7e22db9f66.md" download="AI_Radar_Project_Checkpoint-fa66a2bf.md" onclick="return downloadMarkdown(event, './c/fa66a2bf-30cd-4788-97c4-7a7e22db9f66.md', 'AI_Radar_Project_Checkpoint-fa66a2bf.md')">⬇️ 下载 Markdown (.md)</a>
+        <button class="btn" id="copyBtn" type="button" onclick="copyCanonicalUrl('./c/fa66a2bf-30cd-4788-97c4-7a7e22db9f66.html', 'copyBtn', '已复制直链')">复制对话直链</button>
       </div>
     </header>
     <section class="chat-canvas" aria-label="Conversation Content">
-      <article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>先只读读取 @mcp.md 和 @CONTEXT_agent_arch.md 获取铁律与当前断点（勿复述历史），然后一口气完成以下只读核查与方案评估，<strong>先给方案等我确认，本轮不要修改任何文件</strong>：</p>
+      <article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>@[c:\Users\&lt;USER&gt;\Desktop\markdown\2026-10-18 - 副本 (3).md] 先读取 @C:\Users\&lt;USER&gt;\Desktop\ai-radar\CONTEXT_ai_radar.md 获取全部约束与断点，不要复述历史。</p>
 <ul>
-<li><strong>跑最新遥测并逐条看失败形态</strong>：</li>
-<li>用 <code>session-diagnose</code> 跑 <code>mcp-report --days 7</code>（或全量 <code>--days 0</code>），并读取 <code>C:\Users\&lt;USER&gt;\.gemini\config\tongji_mcp_metrics.jsonl</code> 原始逐条记录。</li>
-<li>核实 Kimi-K3.1-Pro 的失败究竟是“孤立长尾撞超时墙”，还是“短时间内连续故障”。</li>
-<li><strong>重点核查并对比 3 个候选优化项的真实性价比</strong>（均对照 <code>C:\Users\&lt;USER&gt;\.gemini\config\tongji_deepseek_mcp.ps1</code> 源码实测，严守零状态自包含、145s 总预算、UTF-8 BOM、双端同步等铁律）：</li>
-<li><strong>候选 A（高优先怀疑点）</strong>：检查 <code>Invoke-Probes</code> / <code>Wait-CampusJobBatch</code>——之前 L6 (<code>code_audit</code>) 实测 Kimi 在 110ms 就返回 <code>HTTP 429</code>，却因死等 DeepSeek 跑完 34s 才判重试导致剩余预算 <code>&lt; MinRetryMs(15s)</code> 错失切备 VIP 重试。评估改成“单路早失败（429/5xx/传输错）在主循环中不傻等慢队友、直接带短退避切备 VIP 发起单路重试”的实现复杂度与风险。</li>
-<li><strong>候选 B（既定满周待办）</strong>：按实测耗时分布，评估是否微调 <code>draft_struct</code>（当前 48s 撞墙 3 次）与 <code>deep_panel</code>（当前 42s 撞墙 2 次）的 Kimi <code>MaxTimeSec</code> / 输出控长，以及顺手补齐 <code>delegate_to_deepseek.json</code> 缺失的“编排子工位免调”微措辞。</li>
-<li><strong>候选 C（外部借鉴二次证伪，借鉴自 Pojun <code>llmpool</code>）</strong>：冷静评估是否真的需要跨调用熔断冷却（硬失败 401/402/403 首次熔断 / 软失败 429&#183;5xx 连败 N 次短冷却）。若真实遥测中连续失败次数极低，或因 <code>-Worker</code> 短进程必须落盘状态文件与“零状态自包含”铁律冲突、得不偿失，请直接建议放弃或仅做极简版，不要为了做而做。</li>
-<li><strong>输出与闸门</strong>：</li>
-<li>给出 A/B/C 三项的「实测依据 / 预期收益 / 破坏面与代价 / 建议取舍（做还是不做）」对比表。</li>
-<li>明确待我拍板后再正式进入修改流程（修改前必先只读执行 <code>blast-radius</code>，改后按 <code>mcp.md</code> 跑 AST 0 错、UTF-8 BOM、<code>.gemini\config</code> 与 <code>D:\tongji_plugin</code> 双端 SHA-256 一致、以及独立 stdio E2E 验收）。。。在这些之后，我发现最近的额度消耗还是不够多，是不是出了什么问题，或者说额度的消耗只能到这里了，真的有确切的提升效果吗</li>
+<li>单次只读核验“当前断点”磁盘现状，勿中途请示。</li>
+<li>与 [待验证] 不符则报差异停手；一致则按我新需求推进【唯一单点下一步】。</li>
+<li>禁碰【排雷墓碑】，删改先确认，按【外部验证判据】自检汇报。</li>
 </ul>
 </div></article>
-<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成只读核查（本轮未修改任何文件，也未触发会向遥测日志追加记录的同济 MCP 调用；双端脚本当前 SHA-256 一致且均带 UTF-8 BOM：<code>9fba9a737c5ab2ef</code>，<code>58587</code> 字节）。</p>
-<p><strong>一句话核心矛盾</strong>：当前生产体验受损的根因<strong>不是</strong>节点连续故障，而是 <code>Kimi-K3.1-Pro</code> 在 <code>draft_struct</code>/<code>deep_panel</code> 中“输出 token 配额过宽 &#215; 超时墙过紧”导致 <strong>44% 的近期生产调用白等 43–49s 后空手降级</strong>；同时，低消耗是“真实日均调用量低 + Opus 接管终审 + 无状态短回包上限”叠加的结构性结果，并非脚本故障。</p>
-<hr>
-<h2>一、最新遥测实测与 Kimi 失败形态逐条拆解</h2>
-<p>运行 <code>diagnose.py</code> <code>mcp-report --days 7</code>（与 <code>--days 0</code> 全量完全一致，覆盖 <code>2026-11-23 16:37</code> – <code>2026-11-27 11:41</code>，共 <strong>28 条</strong>，<code>malformed=0</code>），并逐行核对 <code>tongji_mcp_metrics.jsonl</code>：</p>
-<h3>1. 总体与“测试 vs 真实生产”拆账（实测）</h3>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已读取 <code>CONTEXT_ai_radar.md</code> 与 <code>2026-10-18 - 副本 (3).md</code>.md)，并完成单次只读磁盘核验（未做任何写入或删改）。</p>
+<h3>1. 当前断点核验结果（实测）</h3>
+<p>与 <code>[待验证]</code> 核心状态<strong>一致</strong>：</p>
 <ul>
-<li><strong>全量 28 条口径</strong>：调用级 <code>ok=28/28</code>、<code>err=0/28</code>、单路降级 <code>10/28 (35.7%)</code>、Wave 2 触发 <code>15/28</code>、<strong>重试触发 <code>0/28 (0/56 探针)</code></strong>、<code>trunc=0/28</code>、<code>P50=29.9s</code>、<code>P95=74.2s</code>。</li>
-<li><strong>分模型（N=28/模型）</strong>：</li>
-<li><code>DeepSeek-V4.1-Flash</code>：<code>ok=26/28 (92.9%)</code>，<code>P50=7.4s</code>，仅在 11/23 <code>code_audit</code> 出现 1 次 <code>timeout</code>（35.6s）和 1 次 <code>thinking limit</code>（28.2s）；在 <code>draft_struct</code> 10/10 全胜且耗时仅 <strong>1.2s–3.2s</strong>。</li>
-<li><code>Kimi-K3.1-Pro</code>：<code>ok=20/28 (71.4%)</code>，<code>P50=19.4s</code>，非 OK 共 <strong>8/28</strong>（<code>timeout</code> 6 次、<code>content limit</code> 1 次、<code>HTTP 429</code> 1 次）。</li>
-<li><strong>容易被总量掩盖的真相（测试与生产拆开看）</strong>：</li>
-<li><code>L01–L10</code>（11/23 16:37–16:47，10 条）：<code>v5.4.0</code> 上线 E2E 压测批（同题 <code>in_chars</code> 重复两轮，唯一一次 <code>HTTP 429</code> 出在这里）。</li>
-<li><code>L13–L18</code>（11/23 19:49–19:55，6 条）：Codex 单场验收会话（全站仅有的 3 次 <code>delegate_to_deepseek</code> 全在这里）。</li>
-<li><strong>真正日常生产调用仅 12 条</strong>（<code>L11, L12, L19</code> + <code>L20–L28</code>），其中 <strong>11/24–11/27 四个自然日仅 9 条（日均 2.25 次）</strong>：7 次 <code>draft_struct</code> + 2 次 <code>deep_panel</code>，<strong>0 次 <code>delegate</code> / <code>math_check</code> / <code>code_audit</code> / <code>test_forge</code></strong>；且这 9 条里有 <strong>4/9 (44.4%) 发生单路降级</strong>，<strong>4 次全都是 Kimi 撞超时墙</strong>。</li>
+<li><strong>发布产物在位</strong>：<code>AIRadar.exe</code> 实测 <code>86.13 MB</code>（<code>90,310,656 B</code>，<code>2026/11/25 12:51:54</code>），同级 <code>release/LICENSE</code> 与 <code>使用说明.txt</code> 完整。</li>
+<li><strong>迁移库在位且有今日活跃数据</strong>：<code>release/data/radar.db</code> 为 <code>2.07 MB</code>（<code>2026/11/26 12:46:48</code>），伴随未合并的 <code>radar.db-wal</code>（<code>4.09 MB</code>，<code>12:47:45</code>）和 <code>radar.db-shm</code>（<code>32 KB</code>），<strong>明显新于</strong>根目录开发库 <code>data/radar.db</code>（<code>2026/11/25 12:27:05</code>）。</li>
+<li><strong>旧整合包已移除</strong>：桌面匹配项仅剩 <code>ai-radar</code> 目录与 <code>AIRadar - 快捷方式.lnk</code>，<code>【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64</code> 已不存在。</li>
+<li><strong>源码与运行态</strong>：全部 17 处文档指针文件（含 <code>package.json</code>、<code>LICENSE</code>、<code>scripts/build-sea.mjs</code>、<code>tests/ai-radar.test.ts</code> 等）均在位；当前无 <code>AIRadar</code> 进程，<code>8788</code> 端口空闲。</li>
 </ul>
-<h3>2. Kimi-K3.1-Pro 全部 8 次非 OK 逐条时间轴（实测）</h3>
-<p>| 行号 | 时间 | 模式 | 状态 | 耗时 | 与相邻调用间隔 / 结果 | 归因判定 |</p>
-<p>| :--- | :--- | :--- | :--- | ---: | :--- | :--- |</p>
-<p>| L01 | 11-23 16:37:25 | <code>deep_panel</code> | <code>content limit</code> | 41.6s | 22s 后 L02 <code>ok</code> (8.8s) | 单次吐满 2000 tok（有正文，进 W2） |</p>
-<p>| L06 | 11-23 16:38:34 | <code>code_audit</code> | <code>HTTP 429</code> | <strong>110ms</strong> | 前 16s L05 <code>ok</code>；1 分钟连发 6 路压测 | 网关并发限流（实测上限 2），<strong>全量唯一瞬时错</strong> |</p>
-<p>| L07 | 11-23 16:47:03 | <code>deep_panel</code> | <code>timeout</code> | 42.7s | 距 L06 隔 <strong>8.5 分钟</strong>；11s 后 L08 <code>ok</code> (4.0s) | 撞 <code>42s</code> 墙（与 L01 同题 <code>in=194</code>） |</p>
-<p>| L16 | 11-23 19:52:50 | <code>delegate</code> | <code>timeout</code> | 100.8s | 前 3 分钟 L15 <code>ok</code>；90s 后 L17 <code>ok</code> (82.6s) | 撞 <code>100s</code> 墙（开思考慢吞吐长尾） |</p>
-<p>| L20 | 11-24 22:15:35 | <code>draft_struct</code> | <code>timeout</code> | 48.6s | 距 L19 隔 <strong>25.9 小时</strong> | 撞 <code>48s</code> 墙，丢骨架仅剩 405 字校验 |</p>
-<p>| L21 | 11-25 12:06:23 | <code>draft_struct</code> | <code>timeout</code> | 48.6s | 距 L20 隔 <strong>13.8 小时</strong>（非短时连败） | 撞 <code>48s</code> 墙，丢骨架仅剩 252 字校验 |</p>
-<p>| L23 | 11-25 17:25:00 | <code>deep_panel</code> | <code>timeout</code> | 42.6s | 与 L22（20.9s <code>ok</code>）同秒并发 2 路 <code>deep_panel</code> | 撞 <code>42s</code> 墙（双路并发排队尾延迟） |</p>
-<p>| L25 | 11-26 12:21:57 | <code>draft_struct</code> | <code>timeout</code> | 48.7s | 前 18m L24 <code>ok</code> (30.6s)；后 45m L26 <code>ok</code> (26.8s) | 撞 <code>48s</code> 墙，丢骨架仅剩 235 字校验 |</p>
-<p><strong>实测结论</strong>：Kimi 失败 <strong>100% 属于“孤立长尾撞 <code>MaxTimeSec</code> 超时墙”</strong>，<strong>不存在短时间连续故障</strong>：</p>
+<h3>2. 需提前留意的差异与未验证项</h3>
 <ul>
-<li><code>HTTP 401/402/403/5xx</code>、连接失败、TLS 失败全部为 <strong>0/56</strong>；</li>
-<li>看似相邻的 <code>L20→L21</code> 实隔 13.8 小时、<code>L06→L07</code> 实隔 8.5 分钟，<strong>5 分钟窗口内连续失败次数 = 0</strong>；</li>
-<li>每次超时后紧邻的下一条（最短仅隔 11s）均立刻正常返回。</li>
+<li><strong>默认终端无 <code>node</code>（实测）</strong>：本轮单次脚本内 <code>node:sqlite</code> 库内条数统计未能执行，库内记录数与 <code>npm run build &amp;&amp; npm test</code> 现状属于<strong>未验证</strong>；已查得本机内置 <code>Node.js v22.22.2</code> 路径为 <code>C:\Users\&lt;USER&gt;\.workbuddy\binaries\node\versions\22.22.2-6\node.exe</code>，后续开发与验收将直接注入该路径执行。</li>
+<li><strong>两份锚点第 1 节有两处未同步（未擅改）</strong>：<code>CONTEXT_ai_radar.md</code> 仍保留“保留原目录不动”与“6 大主题分类”原措辞，而 <code>2026-10-18 - 副本 (3).md</code>.md#L5-L12) 已将这两处标为“待确认修订”（旧整合包已清空移除、商业 <code>industry</code> 板块已关闭）。</li>
 </ul>
-<hr>
-<h2>二、候选 A / B / C 源码实测审计与对比</h2>
-<p>对照 <code>tongji_deepseek_mcp.ps1</code> 源码逐项核验：</p>
-<h3>关键源码发现（决定取舍的推理依据）</h3>
+<h3>3. 等待你的新需求与两点确认</h3>
+<p>断点核验已就绪，请直接发本次要推进的新需求（功能、信源、过滤规则或界面调整）；同时确认两个边界问题：</p>
 <ul>
-<li><strong>候选 A 确有结构性 Bug，且和“3 路并发”规则直接耦合</strong>：</li>
-<li>在 <code>tongji_deepseek_mcp.ps1</code>（<code>Invoke-Probes</code>）与 <code>tongji_deepseek_mcp.ps1</code>（<code>Wait-CampusJobBatch</code>）中，现有重试设在<strong>整批等待屏障之后</strong>（L167→L172）。</li>
-<li>L06（<code>code_audit</code>，<code>$wave1Ms=38000</code>，<code>$MinRetryMs=15000</code>）中 Kimi 在 <code>110ms</code> 报 <code>HTTP 429</code>，但主循环傻等 DeepSeek 跑完 <code>33985ms</code>，醒来时只剩 <code>3937ms &lt; 15000ms</code>，直接放弃重试。按当前各模式实测耗时，只要另一路跑到 <code>23–38s</code>，现有重试几乎恒为死代码（实测 <code>retried=0/56</code>）。</li>
-<li>虽然全量仅出现 1 次 429（0 次在近期生产），但 <code>deepseek-subagent.md</code> 鼓励最多 3 路并发，而实测校园网关对 Kimi 的并发限流为 2——一旦真的触发 3 路并发，第 3 路几乎必然撞 429，不修 A 则切备 VIP 重试仍会哑火。</li>
-<li><strong>实现关键约束</strong>：不能在轮询循环内同步 <code>Start-Sleep 2500</code>（会阻塞慢队友读取与 deadline 判定），须改用<strong>非阻塞槽位状态机</strong>（<code>Running</code> → 立即 <code>Close-CampusJob</code> 释放句柄 → <code>Backoff</code> 记 <code>RetryAfterMs</code> + 500ms 随机抖动防双路齐撞 → 到点切 <code>AltPin</code> 重启单路 <code>curl.exe</code>），总改动 ~45–60 行，完全局部化在两函数内，保持零状态与原 JSONL 指标结构。</li>
-</ul>
-<ul>
-<li><strong>候选 B 抓住了真正的头号矛盾——<code>MaxTokens</code> 过宽与 <code>MaxTimeSec</code> 过紧自相矛盾</strong>：</li>
-<li><strong>算账揭露根因</strong>：</li>
-<li><code>deep_panel</code> Kimi（<code>tongji_deepseek_mcp.ps1</code>）：Prompt 要求“控制在 650 字符以内”，却给了 <strong><code>MaxTokens=2000</code>、<code>MaxTimeSec=42</code></strong>。L01 实测 Kimi 跑满 2000 tok 用了 <code>41.57s</code>（约 48 tok/s），只要校园 vLLM 排队多 3 秒或吞吐降 15%，必在 42s 被 <code>curl exit 28</code> 强杀丢弃全部已生成文本——L07（与 L01 同题 <code>in=194</code>）和 L23 正是这么死的。</li>
-<li><code>draft_struct</code> Kimi（<code>tongji_deepseek_mcp.ps1</code>）：要求“800 字符以内”，给了 <strong><code>MaxTokens=1700</code>、<code>MaxTimeSec=48</code></strong>。如果排队 8–10s 且吞吐 30 tok/s，48s 最多只能吐 ~1140 tok，Kimi 话稍微多写一点就直接撞 48s 空回（3/10 次发生，生产占 3/7）。</li>
-<li><strong>顺带发现的 <code>code_audit</code> 悬崖（<code>tongji_deepseek_mcp.ps1</code>）</strong>：<code>code_audit</code> 3/3 全部降级，DeepSeek 给 <code>35s</code>，实测 OK 那次是 <code>34.0s</code>、超时那次是 <code>35.6s</code>，恰卡在悬崖边。</li>
-<li><strong>预算安全裕度极充裕</strong>：总预算 <code>145s</code>（<code>$plannedDeadline=143.8s</code>），全量 15 次 Wave 2 实测耗时仅 <strong>1.0s–5.0s</strong>（即便按最坏 <code>30s+3s</code> 预留，Wave 1 仍有 <code>110s</code> 空间）。将：</li>
-<li><code>draft_struct</code>：<code>$wave1Ms: 52000 → 70000</code>，Kimi <code>MaxTimeSec: 48 → 65</code>、<code>MaxTokens: 1700 → 1400</code>；</li>
-<li><code>deep_panel</code>：<code>$wave1Ms: 52000 → 66000</code>，Kimi <code>MaxTimeSec: 42 → 60</code>、<code>MaxTokens: 2000 → 1400</code>；</li>
-<li>（可选顺手修）<code>code_audit</code>：<code>$wave1Ms: 38000 → 48000</code>，DeepSeek <code>MaxTimeSec: 35 → 45</code>；</li>
-<li>最坏总耗时 <code>70s + 33s = 103s &lt;&lt; 143.8s</code>，留足 &gt;40s 缓冲；即便 Kimi 话多触顶 <code>1400 tok</code>，也会返回 <code>content limit</code> 带着完整正文进入 Wave 2 压缩，而不是 <code>curl</code> 超时空包白等。</li>
-<li><strong><code>delegate_to_deepseek.json</code> 措辞同步注意</strong>：<code>delegate_to_deepseek.json</code> 是 Antigravity 缓存 <code>tools/list</code> 生成的副本，真源在 <code>tongji_deepseek_mcp.ps1</code>（<code>$SERVER_INSTRUCTIONS</code>）和 <code>tongji_deepseek_mcp.ps1</code>（<code>$TOOL_DELEGATE_SCHEMA</code>），须改脚本真源并重载 MCP 连接刷新缓存（不要只手改缓存 JSON）。</li>
-</ul>
-<ul>
-<li><strong>候选 C（跨调用熔断冷却）被实测数据与架构铁律双重证伪</strong>：</li>
-<li><strong>0 实测痛点</strong>：401/402/403/5xx/传输错 0 次，短窗口连续故障 0 次。</li>
-<li><strong>把超时纳入熔断会起反作用</strong>：Kimi 超时是单次长尾（L07 超时后 11s 的 L08 4s 成功），若触发冷却反而误杀后续健康调用。</li>
-<li><strong>违背铁律</strong>：每次 <code>tools/call</code> 拉起短生命周期 <code>-Worker</code> 进程（<code>tongji_deepseek_mcp.ps1</code>）。落盘状态文件直接违背 <code>mcp.md</code>“零状态自包含”铁律且引入跨宿主锁竞态；放父调度进程内存则打破 <code>-Worker</code> 纯结果契约（<code>tongji_deepseek_mcp.ps1</code>）且跨 Codex/Antigravity 无法共享。按 <code>CONTEXT_agent_arch.md</code>“0 实测痛点直接划走”铁律，应直接放弃。</li>
-</ul>
-<h3>A / B / C 综合对比表</h3>
-<p>| 候选优化项 | 实测依据 | 预期收益 | 破坏面与代价 | 建议取舍 |</p>
-<p>| :--- | :--- | :--- | :--- | :--- |</p>
-<p>| <strong>A：单路早失败非阻塞重试</strong> | L06 <code>110ms</code> 报 429 却死等 DeepSeek <code>34s</code> 致错失 <code>MinRetryMs(15s)</code>；现重试实测 <code>0/56</code> 几乎成死代码；网关 Kimi 并发上限 2 | <strong>中（防患型）</strong>：修复既有重试死代码，让 3 路并发撞 429 时能在不拖长 Wave 1 的前提下于 3s 内切备 VIP 自愈 | <strong>中低</strong>：改 <code>Invoke-Probes</code>/<code>Wait-CampusJobBatch</code> ~50 行；须严防句柄泄漏、同步 sleep 阻塞队友、deadline 越界与双路同步重试风暴；无外部协议破坏 | <strong>建议做（次高于 B，可与 B 一次打包落地）</strong> |</p>
-<p>| <strong>B：微调 <code>draft_struct</code> / <code>deep_panel</code> 超时与控长 + 补 <code>delegate</code> 措辞</strong> | 近 4 日生产降级 <code>4/9 (44.4%)</code> 全为 Kimi 撞 48s/42s 墙；<code>MaxTokens</code> 1700/2000 相对 650–800 字目标严重过宽；<code>code_audit</code> DeepSeek 卡 35s 崖 | <strong>高（立竿见影）</strong>：把近期 44% 生产超时腰斩掉，消除“白等 48s 只拿 250 字残包”的最大痛点；补齐与规则卡的最后 1 处微滞后 | <strong>极低</strong>：仅调参数表与两处 schema 文案（~10 行）；仍在 <code>103s &lt;&lt; 145s</code> 安全预算内；改 schema 后需重载 1 次 Antigravity MCP 连接 | <strong>强烈建议做（最高优先级）</strong> |</p>
-<p>| <strong>C：跨调用熔断冷却（借鉴 <code>llmpool</code>）</strong> | 401/402/403/5xx 全为 <code>0/56</code>，短窗口连续故障 <code>0</code> 次；Kimi 失败后 11s–90s 即恢复 | <strong>近零（若含超时则为负收益）</strong>：当前几乎永不触发，误熔断超时反降双路命中率 | <strong>高</strong>：违背“零状态自包含”铁律（短 <code>-Worker</code> 需落盘锁文件或破坏父子结果契约），增加维护与锁损坏风险 | <strong>建议放弃（不做）</strong> |</p>
-<hr>
-<h2>三、关于“额度消耗不够多”与“到底有没有确切提升效果”的实证回答</h2>
-<p>把 11/23 16:30 至今全部 <strong>29 场 Antigravity 主会话</strong>（经 <code>diagnose.py</code> 审计逻辑全量跑通）和全部 12 次生产调用逐条摊开看，答案非常清晰、不兜圈子：</p>
-<h3>1. 为什么额度消耗还是这么少？是不是出了问题？</h3>
-<p><strong>结论：不是脚本坏了，而是“3 个结构性上限”叠在一起，其中只有第 2 条存在可补齐的漏触发。</strong></p>
-<ul>
-<li><strong>真实调用频次远低于体感（实测）</strong>：</li>
-<li>日志里 28 条有 <strong>16 条是 11/23 测试批</strong>；<strong>11/24–11/27 这 4 天真实只调用了 9 次（日均 2.25 次）</strong>，Codex 侧在 11/23 验收后 <strong>0 次生产调用</strong>。</li>
-<li>同期 Antigravity 29 场主会话消耗了 Gemini <strong>320.5 万 output tokens / 163.7 万字符思考链 / 2695 万 uncached input tokens</strong>；而同济 MCP 同期 12 次生产调用总入参仅 <code>14,282</code> 字、总回包 <code>8,255</code> 字——体量本来就不在一个数量级。</li>
-<li><strong>最耗积分的 <code>delegate_to_deepseek</code> 在 Antigravity 侧已归零，且存在约 4 场真实漏触发（实测）</strong>：</li>
-<li>引入 <code>cross-model-reviewer.md</code> 后，11/23 晚至今 <code>swarm(add)</code> 派审 <strong>7 次</strong>，按互斥铁律，最烧同济双思考积分的 <code>delegate_to_deepseek</code> 在 Antigravity 侧变成 <strong>0 次</strong>。</li>
-<li>29 场会话里 <code>session-diagnose</code> 标了 11 场高思考量 0 调用（<code>FLAGGED</code>）：其中约 6 场属合理豁免（修 SakuraCat/音频/报错/OpenBrowser 安装/磁盘与 Dream），但有 <strong>4 场明显漏触发或偏保守</strong>（如 <code>88ca9805</code> Supermemory 原理分析与课程学习建议、<code>dafb4c69</code> 消融报告分析、<code>fd33272e</code> 项目原理拆解、<code>6522a974</code> 代码架构任务）；另外像 <code>fa66a2bf</code> 重构 AIRadar 仅在开头调了 1 次 <code>draft_struct</code>，写完代码后 <strong>0 次调 <code>code_audit</code> / <code>test_forge</code></strong>。</li>
-<li><strong>单次调用的“内重外轻”设计决定了天然消耗天花板（推断，因后台单价未落本地日志，以你此前历史观测 <code>30→100</code> 积分反推）</strong>：</li>
-<li>近期 7/9 (78%) 的生产调用都是<strong>双路全关思考</strong>的 <code>draft_struct</code>，单次双模型+Wave 2 总计仅约 3000–5000 tokens；4 天 9 次大约只消耗 <strong>10–25 积分（周额度的 1%–3%）</strong>。</li>
-<li>只要守住“无状态（不传大文件）+ 回包 ≤1800 字 + 强主模型主导”，<strong>单靠 Antigravity 日常交互前置外调，正常周消耗上限大概率就落在 50–150 积分</strong>——它天生不可能、也不应该硬凑到 1000 积分。</li>
-</ul>
-<h3>2. 真的有确切的提升效果吗？（逐条复盘 12 次生产调用，实测不吹不黑）</h3>
-<p>必须把<strong>“省 Gemini 额度”</strong>和<strong>“降盲区/提质量”</strong>彻底分开看：</p>
-<ul>
-<li><strong>对“省 Gemini 额度”：基本没有确切效果（实测）</strong>。</li>
-<li>调完同济 MCP 的下一步，Gemini 依然产出 <code>3,400–11,300 output tokens</code>（整场仍耗 6.6 万–34 万 output tokens），因为主模型拿到 500–1500 字骨架后仍要自己读本地源码、推细节、写完整代码或讲义。真正替你省 Gemini 额度的是当前 <strong>85%–94% 的高缓存命中率</strong>，不是同济 MCP。</li>
-<li><strong>对“质量与防盲区”：在“双路完整返回”时有确切增量，但近 4 天有一半被 Kimi 超时毁掉了（实测）</strong>：</li>
-<li><strong>确切正向案例（5–6/12 次）</strong>：</li>
-<li><code>e6d7cdfe</code>（<code>code_audit</code>）：直接抓出 <code>pbtxt</code> 正则误改嵌套块、恢复非原子致 FTS 重复 2 个 P0 真 Bug；</li>
-<li><code>a9fcad14</code>（<code>fast_dual</code>）：Gemini 思考链明确记录推翻了原假设，修正了 <code>blast-radius</code> 触发条件与 <code>uv run --with</code> 离线风险；</li>
-<li><code>fc732d35</code>（<code>draft_struct</code>，18.2s 双路 OK，返回 1542 字）：直接给出四元组缓存键、Windows 保留名/NFC 边界与降级不清空旧数据等可直接落地的防御设计；</li>
-<li><code>49f340ef</code>（<code>deep_panel</code>，L22 双路 OK）：给出薄透镜二次相位与微棱镜双图像骨架，且主模型在复核时抓出一处符号瑕疵形成真正的双脑交叉校验。</li>
-<li><strong>负体验/无效案例（4/12 次，占近 4 日生产的 44.4%）</strong>：</li>
-<li><code>L20</code>/<code>L21</code>/<code>L23</code>/<code>L25</code> 全部死于 Kimi 撞超时墙——白等 <strong>43–49 秒</strong>，最核心的 Kimi 骨架整路丢弃，只退回 DeepSeek 的 235–405 字泛泛条目，Gemini 只能自己从头再想一遍。</li>
-</ul>
-<p><strong>直白定位建议</strong>：</p>
-<ul>
-<li><strong>在 Antigravity 交互工作流里</strong>，把同济 MCP 定位为<strong>“免费的异构防盲区安全网”</strong>，而非“必须刷满 1000 分的省额度引擎”——先用 <strong>候选 B（+ A）</strong> 把 44% 的超时降级压下去，质量体感立刻会实打实上升；同时写完非平凡代码后多用 <code>code_audit</code> / <code>test_forge</code>（抓 Bug 性价比远高于泛泛做 <code>draft_struct</code>）。</li>
-<li><strong>如果真的想高 ROI 吃掉每周富余的 800+ 免费积分（且真正替你省主模型或替代弱免费模型）</strong>：走<strong>独立离线/后台脚本直连同济 API</strong>（绕开交互等待与主上下文限制），例如把 <code>AIRadar</code> 里的批量摘要/翻译从 <code>glm-4-flash</code> 切一部分给极快的校内 <code>DeepSeek-V4.1-Flash</code>（实测 1–3s），或用独立脚本批量预读/提炼整章论文与光学讲义 PDF（<strong>未验证</strong>：需确认同济 API 后台限流策略与你的实际离线需求，不替你提前定死）。</li>
-</ul>
-<hr>
-<h2>四、待你拍板的决策与修改闸门</h2>
-<p>请你确认以下两项后再进入修改流程：</p>
-<ul>
-<li><strong>代码修改范围</strong>：采用 <strong>方案 B + 方案 A（放弃 C）</strong>，还是 <strong>仅做最稳妥的方案 B</strong>？若做 B，是否一并把 <code>code_audit</code> 的 DeepSeek <code>MaxTimeSec</code> 从 <code>35s</code> 放宽至 <code>45s</code>（<code>$wave1Ms: 38s → 48s</code>）？</li>
-<li><strong>1000 积分定位</strong>：你更倾向于<strong>接受 MCP 作为低频高质安全网（周耗 50–150 分顺其自然）</strong>，还是希望后续把富余免费额度<strong>引流到离线批处理任务（如 AIRadar/文献预读）</strong>？</li>
-</ul>
-<p><strong>拍板后的正式执行闸门（本轮未动任何文件）</strong>：</p>
-<ul>
-<li>先严格只读触发 <code>blast-radius</code> 评估影响面；</li>
-<li>修改 <code>tongji_deepseek_mcp.ps1</code> 并同步至 <code>D:\tongji_plugin\tongji_deepseek_mcp.ps1</code>；</li>
-<li>按 <code>mcp.md</code> 依次跑完：PowerShell AST 0 错检查 → UTF-8 BOM 校验 → 双端 SHA-256 一致校验 → 独立 stdio E2E 验收（并提醒你重载 1 次 Antigravity MCP 连接以刷新 <code>delegate_to_deepseek.json</code> 缓存）→ 原地更新 <code>mcp.md</code>。</li>
+<li><strong>底层约束同步</strong>：是否顺手把上述第 1 节两处“待确认修订”正式写回 <code>CONTEXT_ai_radar.md</code>？</li>
+<li><strong>数据与发版口径</strong>：改动完成后，是否直接走完 <code>npm run build &amp;&amp; npm test</code> 并重打 <code>release/AIRadar.exe</code>（严格保留当前 <code>release/data/radar.db</code> 及 WAL 不被旧 <code>data/</code> 覆盖），还是先只验证开发版再决定是否打包？</li>
 </ul>
 </div></article>
-<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>我觉得你的思路想的很好，确实可以将1000积分这样使用，mcp就正常使用把，能用多少就用多少，只要达到效果正向优秀即可。然后剩余的积分就用在airadar上，你可以发给我提示词，教我在资源雷达这个项目，我会先使用ai接力协议上传两个附件将原对话提炼，新开一段对话输入提示词。然后是你说的ABC，其实我不太了解，但是按照你说的难道是分立的嘛，三选一，然后也说明现在的mcp出现了问题，B确实要做，不过其他AC也可以适当进行呀。或者有没有其他的地方需要修改，有其他的思路呢，所以我希望你能进行深度的检查，然后更加严格的审视思考，然后进行修改</p>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>我体验下来有一些不满意的点，比如收录的话需要我打开后点击手动收录，然后等待好几分钟才能够进到新的东西。再就是新的东西和以前的不好区分，因为我点开才能让ai翻译成中文，但是这样区分不开已读和未读。再就是我可能也需要手机安卓版的，你看看能不能实现。</p>
 </div></article>
-<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成 <code>blast-radius</code> 只读核查、同济双核审计、<code>v5.4.1</code> 改动双端同步、AST 0 错与 8 组离线对抗 Mock 测试（全部通过），正在等待独立 stdio E2E 实机验收完成。</p>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>我直接查了源码和 <code>release/data/radar.db</code> 的真实运行日志，这三个痛点的根因都很明确。</p>
+<p><strong>一句话核心矛盾</strong>：前两个卡点都源于原项目为「Telegram 推送防误推」留下的<strong>同步串行等 AI</strong>与<strong>点开即标已读</strong>耦合；安卓端能否落地则取决于你更看重<strong>双端同步</strong>还是<strong>脱离电脑独立看</strong>。</p>
+<hr>
+<h3>痛点 1：打开要手点抓取，且等好几分钟才进新东西</h3>
+<h4>实测根因（来自 <code>collectors/index.ts</code> 与库内 <code>runs</code> 记录）</h4>
+<ul>
+<li><strong>最大元凶：采集过程被 AI 同步阻塞</strong>。单机版虽然不用推送，但默认仍走了 <code>pushTiming = &quot;wait_ai&quot;</code>（<code>collectors/index.ts</code>）——每抓完 1 个源，都要原地死等智谱 <code>glm-4-flash</code> 同步审完并跑完语义去重，才肯去抓下一个源。库内实测铁证：</li>
+<li><code>rss-qbitai</code> 无新增时仅 <code>0.2s</code>，<strong>新增 1 条耗时直接飙到 <code>22.1s</code></strong>；</li>
+<li><code>github-ai-trending</code>（+11 条）卡了 <code>43.3s</code>、<code>github-mcp-tools</code>（+10 条）卡 <code>36.2s</code>、<code>cctv-news</code>（+9 条）卡 <code>31.3s</code>。</li>
+<li><strong>30 个启用源全串行 + 90 秒纯空等 + 失败源双倍超时</strong>：</li>
+<li><code>runAll()</code> 逐个串行跑 30 源，且每源之间硬等 <code>sourceGapMs = 3000ms</code>（<code>collectors/index.ts</code>），光空等就白费 <strong>90 秒</strong>；</li>
+<li>库内 <code>settings</code> 尚未保存代理配置，<code>v2ex-share</code>、<code>hf-daily-papers</code>、<code>rss-bbc-zh</code>、<code>rss-deepmind-blog</code>、<code>rss-google-ai-blog</code>、<code>rss-hf-blog</code> 6 个海外源连续失败，而 <code>http.ts</code> 在 <code>curl</code> 超时 <code>7s</code> 后又自动回退 <code>fetch</code> 再等 <code>7s</code>（实测 <code>v2ex-share</code> 每次精准卡死 <code>14.0s</code>）；<code>github-deepseek-releases</code> 因无 Token 触发 GitHub 匿名限流 <code>HTTP 403</code>。</li>
+<li><strong>打开网页无自动快刷与进度反馈</strong>：</li>
+<li>启动时 <code>startIntervalScheduler()</code> 虽然会跑到期源，但很多源间隔是 2–6 小时（未到期不跑），一旦排在前面的慢源/失败源卡住，打开前几分钟完全看不到新内容；</li>
+<li>点「立即抓取」后前端只在 4 秒后盲刷一次列表（<code>App.tsx</code>），没有进度条也不会边抓边自动刷出新条目。</li>
+</ul>
+<h4>改造方案（目标：全量刷新压到 <strong>15–30 秒</strong>，打开即自动流式出新）</h4>
+<ul>
+<li><strong>采集与 AI 彻底解耦</strong>：采集管道只做「抓取 → 规则粗滤 → 立即落库可见」，AI 审核/翻译/去重全部改走后台异步队列，单源耗时回到 0.3–2 秒级。</li>
+<li><strong>双轨受控并发 + 去掉双倍超时</strong>：国内源与海外源分池并发（如总并发 5–6，同域名串行 + 短间隔，GitHub 单独限速防 403），取消 3 秒全局源间死等；修复 <code>http.ts</code> 超时失败后不再二次重复超时。</li>
+<li><strong>打开即静默增量刷新 + 实时进度条</strong>：启动时若距上次抓取超过阈值（如 15 分钟）自动触发一轮并发快刷；顶栏实时显示 <code>正在抓取 14/30 &#183; 新增 +9 条</code>，每完成几批就自动热更新列表，不再干等。</li>
+</ul>
+<hr>
+<h3>痛点 2：新旧内容分不开 + 点开看中文翻译就误标已读</h3>
+<h4>实测根因</h4>
+<ul>
+<li><strong>外文列表预翻译覆盖率极低</strong>：库内 <code>1145</code> 条有效条目里，仅 <code>52</code> 条有中文标题（<code>titleZh</code>）、<code>28</code> 条有中文正文（<code>summaryZh</code>），绝大多数外文只能靠点开详情触发单条翻译。</li>
+<li><strong>点开看译文与标已读强绑定</strong>：<code>App.tsx</code> 的 <code>openDetail()</code> 在打开详情抽屉的瞬间无条件写入 <code>read = true</code>，结果只是想看懂一条英文讲什么，就被标成已读。</li>
+<li><strong>精选排序让旧帖常驻顶部，缺乏「本次新收录」标记</strong>：默认「半小时精选」按 <code>ai_quality DESC, score DESC</code> 排（<code>routes.ts</code>），三天前高分老帖霸顶、刚收录的新条目混在中间，且列表只显示原帖发布时间，看不出哪批是刚抓进来的。</li>
+</ul>
+<h4>改造方案（把「新旧 / 中文翻译 / 已读状态」三件事拆干净）</h4>
+<ul>
+<li><strong>后台自动预翻译列表（免点开直接看中文）</strong>：</li>
+<li>只要配了智谱免费 Key，后台异步队列<strong>优先给首页精选池和最新未读外文</strong>批量补齐 <code>titleZh</code>（中文标题）+ <code>takeaway</code>（1–2 句中文大白话要点），写库缓存。</li>
+<li>列表直接展示中文标题与要点，扫一眼就知道值不值得点开，无需为了看懂而点进详情；点进详情再按需补全长文 <code>summaryZh</code>。</li>
+<li><strong>「看翻译」与「标已读」解耦（提供 2 个交互口径供你选）</strong>：</li>
+<li><strong>方案 2A（推荐）</strong>：列表直接出中文；点开详情抽屉<strong>不再秒标已读</strong>，改为「点击去原文链接 / 手动点底部『已读并下一条』 / 或停留超过 4 秒」才标已读，抽屉与列表行均支持一键切换已读/未读。</li>
+<li><strong>方案 2B</strong>：列表同样后台自动出中文，保留「点开详情即已读」，但把已读条目明显沉底/淡化，并在顶部给一个显眼的「只看未读」主切钮。</li>
+<li><strong>「新收录」水位线与视觉分层</strong>：</li>
+<li>记录你的<strong>上次访问水位线</strong>（<code>last_visit_at</code>）：比上次打开更新入库（<code>first_seen_at &gt; 水位线</code>）的条目挂醒目 <code>NEW</code> 徽标，支持顶部一键切「本次新增 / 未读」，并提供「将当前已看内容归档（推进水位线）」按钮；</li>
+<li>半小时精选默认<strong>未读优先、已读自动沉底</strong>，不再让看过的老高分帖一直占在最前面。</li>
+</ul>
+<hr>
+<h3>痛点 3：手机安卓版能不能实现？</h3>
+<p><strong>可以，而且现有前端已内置移动端响应式布局</strong>（<code>App.tsx</code>、<code>ItemView.tsx</code> 均已适配手机窄屏与抽屉）。真正决定方案的是<strong>「采集程序和数据库跑在哪」</strong>，有 3 条务实路线（先不替你定死）：</p>
+<p>| 路线 | 实现方式 | 体验与优势 | 代价 / 限制 |</p>
+<p>| :--- | :--- | :--- | :--- |</p>
+<p>| <strong>路线 A：电脑后端 + 手机 PWA 桌面图标（最快、零成本、双端实时同步）</strong> | 给 <code>AIRadar.exe</code> 加「手机局域网/远程访问」开关（监听 <code>0.0.0.0:8788</code> + 非本机访问强制 PIN 口令防校园网旁人误连 + 网页展示扫码二维码），前端补齐 PWA <code>manifest</code> 图标；安卓浏览器扫码打开 →「添加到主屏幕」，全屏无地址栏运行 | <strong>最快今天就能用</strong>；手机和电脑<strong>共用同一份 <code>radar.db</code></strong>（已读/收藏/翻译缓存实时同步）；手机零耗电、不用在手机折腾代理 | 依赖电脑开机运行 <code>AIRadar.exe</code>（可顺带做后台静默托盘/开机自启）；离开同一 Wi-Fi 在外访问需在电脑和手机装免费 Tailscale 组网（且 Tailscale 可自动给 HTTPS） |</p>
+<p>| <strong>路线 B：免费云端托管版（电脑关机手机也能随时看）</strong> | <strong>B1 纯免费静态版</strong>：GitHub Actions 每 1–2 小时自动抓取+调智谱翻译生成静态 PWA 部署到 GitHub Pages；&lt;br&gt;<strong>B2 云主机动态版</strong>：把现成 Node + SQLite 部署到一台常驻小 VPS / 免费云容器 | <strong>电脑关机也能随时刷</strong>，海外源天然直连不用代理，手机同样可添加到主屏幕当 App 用 | <strong>B1</strong> 零费用，但手机/电脑的已读与收藏各自存本地不互通、不能随时手点实时抓取；<strong>B2</strong> 体验最完整且双端同步，但需要一台常驻服务器（或学生免费云主机） |</p>
+<p>| <strong>路线 C：真正独立的 <code>.apk</code> 安卓安装包</strong> | <strong>C1 轻量套壳 APK（Capacitor）</strong>：把现有前端直接打成 <code>.apk</code>，后端仍连路线 A（电脑）或路线 B（云端）；&lt;br&gt;<strong>C2 纯手机离线独立 APK</strong>：在手机端重做抓取引擎 + 本地 SQLite + 直调智谱 | 真 <code>.apk</code> 可安装；<strong>C2</strong> 可完全脱离电脑和服务器独立运行 | <strong>C1</strong> 只是给 PWA 换了个 <code>.apk</code> 壳，体验几乎相同但要引入 Android SDK 构建链；<strong>C2</strong> 相当于重写一套安卓客户端，手机抓海外源仍需手机开代理，且<strong>电脑和手机数据完全不互通</strong>，后续改信源要维护两套代码 |</p>
+<blockquote><strong>安全提醒（针对路线 A）</strong>：如果你在校园网或公共 Wi-Fi 下开局域网访问，绝不能裸监听 <code>0.0.0.0:8788</code>（否则同网段别人能直接改你的配置或消耗 AI Key），必须加一道「仅限非本机 IP 校验的访问口令 / 扫码 Cookie 授权」。</blockquote>
+<hr>
+<h3>请你拍板这 3 件事，我直接按你选的开工</h3>
+<ul>
+<li><strong>痛点 1 + 2（桌面端体验大改）</strong>：</li>
+<li>是否立即按上面方案推进（并发解耦提速 + 启动自动快刷与进度条 + 后台自动预翻列表中文 + <code>NEW</code> 新旧水位线）？</li>
+<li>标已读交互你选 <strong>方案 2A（点开不秒标已读，点原文/停留 4 秒/手动才标已读）</strong> 还是 <strong>方案 2B（列表已有中文，点开即标已读 + 已读自动沉底）</strong>？</li>
+<li><strong>海外源代理顺手修不修</strong>：库内目前 <code>v2ex</code>、<code>hf-daily-papers</code>、<code>deepmind</code>、<code>google-ai</code>、<code>bbc</code>、<code>hf-blog</code> 6 个源因未在设置里填代理全超时失败，要不要顺手在代理设置里加一个<strong>「自动读取 Windows 系统代理」</strong>选项（开着梯子就能自动生效，不用手填端口）？</li>
+<li><strong>痛点 3（安卓手机版路线）</strong>：你平时是<strong>电脑常开想和手机同步（选 A）</strong>、<strong>希望电脑关机也能在外随时刷（选 B1 免费静态 / B2 云服务器）</strong>，还是<strong>必须独立 <code>.apk</code>（选 C1 / C2）</strong>？</li>
+</ul>
+<p>   *(另：上轮确认的 <code>CONTEXT_ai_radar.md</code> 第 1 节两处“待确认修订”是否也一并同步？)*</p>
 </div></article>
-<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p><code>v5.4.1</code> 改动与 E2E 实机验收已全部通过，正由 Claude Opus 5.5 (High) 进行只读盲审复核（如急用可回复“跳过”直接输出最终报告与 AIRadar 提示词）。</p>
-<p>[Open the Swarm UI](sidecar://swarm/swarm_board/?auto_open=false)</p>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>都按照你说的来。选择2A把，修一下吧，我更希望的是同步，这样两边不会出现内容上的差错</p>
 </div></article>
-<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>先澄清一下你关心的核心疑问：<strong>A、B、C 并不是“三选一”</strong>，而是三个互相独立的模块，可以自由组合。</p>
-<p>经过对 <code>tongji_deepseek_mcp.ps1</code> 全文 1036 行做深度审计、<code>blast-radius</code> L4 只读举证、同济双核前置审计，以及 Claude Opus 5.5 盲审，我最终为你<strong>一次性组合落地了「A + B + 深度审计新挖出的 4 项隐蔽修复」（升级至 <code>v5.4.1</code>）</strong>，并已双端同步、全部验收通过；对 <strong>C</strong> 则只保留了它合理的“单次调用内硬错（401/402/403/404）绝不重试”原则，<strong>明确放弃跨调用写磁盘状态文件的熔断器</strong>（实测连续故障为 0、把长尾超时算进熔断会误杀下一条健康请求，且违背零状态自包含铁律）。</p>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>正在等待类型检查、前端构建与单元测试完成…</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>独立目录实机验收 <code>AIRadar.exe</code> 正在运行中（已自动识别本机 Windows 系统代理 <code>http://127.0.0.1:12450</code>，启动 3 秒即完成 10/30 个信源并入库 143 条），等待完整自检结束…</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>正在等待独立目录 <code>AIRadar.exe</code> 跑完 30 源完整并发验收…</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>三项改造已全部落地、通过测试与独立目录实机验收，并已原地重打包最新的 <code>AIRadar.exe</code>（<code>86.21 MB</code>，<strong>原有 <code>release/data/radar.db</code> 及 WAL 全程无损保留</strong>），同时已同步更新 <code>CONTEXT_ai_radar.md</code>。</p>
 <hr>
-<h2>一、<code>v5.4.1</code> 深度检查与修改摘要</h2>
-<h3>1. 改前 <code>blast-radius</code> 影响面举证（L4 实测）</h3>
+<h3>本次完成的 4 块改造</h3>
 <ul>
-<li><strong>引用面</strong>：仅涉及 Antigravity（<code>mcp_config.json</code>）与 Codex（<code>config.toml</code>）两处宿主配置、<code>tongji_deepseek_mcp.ps1</code> 与 <code>D:\tongji_plugin\tongji_deepseek_mcp.ps1</code> 双端副本，以及 <code>diagnose.py</code>。<strong>未改动任何 <code>always_on</code> 全局规则与 Codex <code>AGENTS*.md</code></strong>（所有工具名、模式名、145s 预算与字符上限契约 100% 兼容）。</li>
-<li><strong>L4 实证</strong>：本机物理出口 <code>WLAN (100.73.189.227, Preferred, Dhcp)</code> 正常命中；<code>diagnose.py</code> 对新增的 <code>r_from</code> 遥测字段 100% 向后兼容（实测 <code>COMPAT_OK: 1/1 1/2</code>）。</li>
+<li><strong>极速并发采集 + 自动系统代理 + 打开即快刷</strong></li>
+<li><strong>解除采集期 AI 阻塞</strong>：<code>collectors/index.ts</code> 单机无推送模式下不再同步死等 AI 审核与语义去重，抓完即刻入库可见，AI 全部转入后台异步队列。</li>
+<li><strong>受控并发池 &amp; 修复双倍超时</strong>：30 个信源改为 6 并发分泳道调度（国内直连源优先出新，同域名/GitHub 独立限速并在遇 GitHub 403 时本轮快速降级跳过）；<code>http.ts</code> 修复 <code>curl</code> 超时后二次回退 <code>fetch</code> 导致的双倍超时。</li>
+<li><strong>自动读取 Windows 系统代理</strong>：<code>network-settings.ts</code> 默认开启自动检测 Windows 注册表系统代理（并在 <code>NetworkProxyCard.tsx</code> 实时显示识别结果），国内源仍坚持永远直连。</li>
+<li><strong>打开自动快刷 + 实时进度条</strong>：<code>index.ts</code> 启动检测距上次抓取超过 15 分钟即后台并发快刷；<code>App.tsx</code> 桌面与手机顶栏均显示实时抓取进度（如 <code>抓取 14/30 &#183; +8</code>），每有新增或后台预译完成自动静默刷新列表。</li>
 </ul>
-<h3>2. 本次实际落盘的 6 项升级（全部在 <code>tongji_deepseek_mcp.ps1</code> 并字节同步至 <code>D:\tongji_plugin\tongji_deepseek_mcp.ps1</code>）</h3>
 <ul>
-<li><strong>【候选 A】单路早失败非阻塞重试状态机</strong>（<code>Invoke-Probes</code> / <code>Wait-CampusJobBatch</code>，<code>L154-L180</code>、<code>L608-L741</code>）：</li>
-<li>彻底消除原“等慢队友全跑完才判重试”的屏障：任一探针一旦在 <code>110ms</code> 遇 <code>HTTP 408/429/5xx</code> 或连接/TLS/传输错，立刻释放已退出的 <code>curl.exe</code> 句柄，进入非阻塞 <code>Backoff</code>（429 抖动退避 <code>2.2–3.0s</code>，其余 <code>0.4–0.8s</code>，不阻塞 25ms 主轮询），到点切备用内网 VIP 并把重试 <code>--max-time</code> 钳制在 <code>min(原超时, remSec-1)</code> 内并行恢复；若退避到期时剩余 <code>&lt;8s</code> 则放弃重启并保留原始错误（不虚报 <code>retried</code>）。</li>
-<li>单路硬封顶重试 1 次；硬错（<code>401/402/403/404</code>）、<code>timeout</code>、<code>content limit</code>、<code>thinking limit</code> 严禁重试。</li>
-<li><strong>【候选 B】超时与输出配额校准 + <code>delegate</code> 措辞补齐</strong>（<code>L27-L41</code>、<code>L253-L280</code>）：</li>
-<li><code>draft_struct</code>：Wave 1 <code>52s → 70s</code>，Kimi <code>MaxTokens 1700 → 1400</code>、<code>MaxTimeSec 48s → 65s</code>；</li>
-<li><code>deep_panel</code>：Wave 1 <code>52s → 66s</code>，Kimi <code>MaxTokens 2000 → 1400</code>、<code>MaxTimeSec 42s → 60s</code>；</li>
-<li><code>code_audit</code>：Wave 1 <code>38s → 48s</code>，DeepSeek <code>MaxTimeSec 35s → 45s</code>（严守铁律不盲提思考 token 上限）；</li>
-<li>最坏 <code>W1 70s + W2 33s = 103s &lt;&lt; 145s</code>，裕度充足；同步补齐 <code>$SERVER_INSTRUCTIONS</code> 与 <code>$TOOL_DELEGATE_SCHEMA</code> 中“编排子工位免调”措辞，并将版本升至 <code>5.4.1</code> 便于前后对比遥测。</li>
-<li><strong>【深度审计新发现 #1】跨 Worker 轮询双内网 VIP（零磁盘状态）</strong>（<code>L776-L781</code>、<code>L928-L936</code>）：</li>
-<li>原来每次 <code>tools/call</code> 拉起新 <code>-Worker</code> 进程时 <code>$script:CampusTargetIndex</code> 都归零，导致并发 <code>draft_struct</code>/<code>deep_panel</code> 时 <strong>100% 的 Kimi 请求全挤向 <code>10.67.0.251</code></strong>，<code>.252</code> 完全闲置。现由常驻父调度进程用纯内存计数器 <code>rpcPinSeed</code> 交替传 <code>0/1</code> 给 <code>-Worker</code>（独立启动回落 <code>$PID % 2</code>），把并发压力均摊到双 VIP。</li>
-<li><strong>【深度审计新发现 #2】重试原因可观测性 <code>r_from</code></strong>（<code>L384-L390</code>）：</li>
-<li>仅当 <code>r=true</code> 时在 <code>tongji_mcp_metrics.jsonl</code> 的探针项中写入 <code>r_from</code>（如 <code>&quot;HTTP 429&quot;</code>），不再因重试覆写而丢失首次失败原因，零隐私且完全兼容 <code>diagnose.py</code>。</li>
-<li><strong>【深度审计新发现 #3】<code>send failed</code> / <code>startup failed</code> 补齐 <code>ElapsedMs</code> 与即时句柄释放</strong>（<code>L553-L556</code>、<code>L669-L689</code>），同时修复 <code>Complete-RpcWorkers</code> 中 <code>$job.FlushTask</code> 的判空（<code>L957</code>）。</li>
-<li><strong>【深度审计新发现 #4】物理网卡筛选优先 <code>Preferred</code> 状态</strong>（<code>L434-L450</code>），降低插拔网线时选中无效接口的概率。</li>
+<li><strong>后台自动预译中文 + 方案 2A 翻译与已读解耦 + <code>NEW</code> 新旧水位线</strong></li>
+<li><strong>后台轻量预翻译外文列表</strong>：<code>ai-settings.ts</code> 与 <code>ai-admin.ts</code> 新增后台自动预译（遵循 <code>temperature=0.01</code> 与局部索引护栏），启动后及采集完成后自动为首页与未读外文批量补齐中文标题 <code>titleZh</code> 与核心要点 <code>takeaway</code>。</li>
+<li><strong>方案 2A 已读解耦（<code>ItemView.tsx</code>、<code>App.tsx</code>）</strong>：</li>
+<li>列表行支持点击 <strong><code>原地译</code></strong> 按钮直接原地出中文（不打开抽屉、不标已读），点左侧小圆点可直接切换已读/未读；</li>
+<li>点开详情抽屉<strong>不再第 0 秒标已读</strong>，改为「点击查看原文链接 / 点击底部 <strong><code>已读并下一条</code></strong> / 或真实停留满 4 秒（等待自动翻译期间暂停计时）」才标已读，自动标读后顶栏带 <strong><code>已读 &#183; 撤销</code></strong> 一键撤回；</li>
+<li><strong>新旧一目了然（<code>routes.ts</code>）</strong>：新增持久化访问水位线 <code>visit_watermark</code>，比水位线更新的未读条目挂醒目 <strong><code>NEW</code></strong> 徽标；「半小时精选」默认<strong>未读与新收录优先浮顶、已读自动沉底</strong>；频道栏直接提供 <strong><code>本次新增 (+N)</code></strong>、<strong><code>仅看未读</code></strong>、<strong><code>全部已看</code></strong> 三个快捷按钮。</li>
 </ul>
-<h3>3. 验收结果（全部实测通过）</h3>
 <ul>
-<li><strong>语法与双端一致性</strong>：PS 5.1 AST <code>0</code> 错（双端）、UTF-8 BOM <code>True</code>（双端）、SHA-256 一致（<code>53C3B01D0DCAA585</code>）。</li>
-<li><strong>8 组离线对抗 Mock 单元测试</strong>：全部 <code>PASS</code>（包括 <code>T1</code> 模拟 60ms 429 在 900ms 慢队友完成前切 AltPin 自愈，总墙钟仅 <code>1022ms</code>；<code>T2</code> 6 种硬错/非瞬态错 0 重试；<code>T3</code> 连遇 502 封顶 2 次启动；<code>T4/T5</code> 预算不足与退避跨 8s 边界安全放弃；<code>T6</code> <code>startup/send failed</code> 闭句柄；<code>T7/T8</code> Wave 2 单探针数组防拆包与 0 预算安全）。</li>
-<li><strong>独立 stdio E2E 实机验收</strong>：<code>initialize</code>（<code>ver=5.4.1</code>、含“编排子工位”）、<code>tools/list</code>、<code>fast_dual</code>（<code>7.0s</code> 双路 OK）、<code>draft_struct</code>（<code>18.8s</code> 双路 OK、<code>1336</code> 字未降级）、<code>stderr=0</code>、<code>diagnose.py mcp-report</code> <code>malformed=0</code>。</li>
-<li><strong>Claude Opus 5.5 盲审复核</strong>：核心预算算术与状态机逻辑给出 <code>PASS</code>，并为下方 <code>AIRadar</code> 提示词抓出了 4 项高价值硬约束（已全部吸收）；状态卡 <code>mcp.md</code> 已同步更新。</li>
+<li><strong>安卓手机实时同步（PWA + 安全 PIN 门禁 + 离线本地二维码）</strong></li>
+<li><strong>安全门禁与热切换（<code>mobile-access.ts</code>）</strong>：默认仅监听 <code>127.0.0.1</code>；在顶栏「<strong>手机同步</strong>」或「信源与代理」一键开启后热切换至 <code>0.0.0.0:8788</code>（无需重启程序）。电脑本机永远免密，非本机设备一律强制校验 6 位口令或扫码 <code>?pair=PIN</code> 颁布 30 天 HttpOnly Cookie；重置口令可立即踢出所有旧设备。</li>
+<li><strong>本地零外链二维码 &amp; PWA 桌面图标</strong>：内置纯本地 ISO 18004 QR 生成器（<code>qrcode.ts</code>、<code>MobileSyncCard.tsx</code>）与 <code>manifest.webmanifest</code> / PNG 图标，安卓浏览器扫码进入后点「添加到主屏幕」即可像原生 App 一样全屏运行，与电脑实时读写同一份 <code>release/data/radar.db</code>。</li>
 </ul>
-<blockquote><strong>唯一需你手动点一下的操作</strong>：在 Antigravity MCP 面板<strong>重载 1 次 <code>tongji-deepseek-subagent</code></strong>，使本地缓存的 <code>delegate_to_deepseek.json</code> 与 <code>instructions.md</code> 刷新为 <code>v5.4.1</code>（脚本逻辑本身已热生效）。</blockquote>
 <hr>
-<h2>二、给 <code>AIRadar</code> 新对话的接力提示词（直接复制使用）</h2>
-<p>你在新开 <code>AIRadar</code> 对话、先按接力协议上传原对话附件完成上下文恢复后，把下面整段提示词发给新对话即可（已内置同济内网直连铁律与 Opus 盲审补全的 4 项防踩坑约束）：</p>
-<pre><code>先完成接力恢复后，不要直接改代码——先只读检查当前 AIRadar 仓库里的配置模块、翻译/摘要队列模块、HTTP 客户端/代理模块和单文件 exe 打包脚本，然后给出一份最小改动方案等我确认后再实施。
-
-### 核心目标
-我想把学校每周赠送且当前有大量富余的同济免费 API 额度（1000 积分/周，与我本机同济 MCP 共用同一密钥与周额度池），接入 AIRadar 作为**优先的批量翻译/摘要通道**；同时保证**离校、校园网不可达、限流或额度到达自设上限时，能无缝、不卡顿地自动回退到现有的智谱 `glm-4-flash`**，不破坏现有单文件 `AIRadar.exe` 打包与稳定运行。
-
-### 必须严守的硬约束（逐条落进设计与验收）
-1. **同济通道协议与模型约束**：
-   - 接口地址：`https://agi.tongji.edu.cn/v1/chat/completions`（标准 OpenAI 兼容格式，严禁走 `/messages`）。
-   - 仅使用高吞吐模型 `DeepSeek-V4.1-Flash`（严禁把慢吞吐 `Kimi-K3.1-Pro` 用于批量翻译）。
-   - **强制关闭思考**：请求体必须同时传 `chat_template_kwargs: { enable_thinking: false, thinking: false }`（漏传 `thinking: false` 会导致 DeepSeek 返回空 `content`）。
-2. **校园网直连穿透（极关键，否则必报 HTTP 403）**：
-   - 本机装有代理软件（SakuraCat `tun0` / SDKDNS `mihomo`），Node 22 若走全局代理或公网 VIP（`202.120.188.251`）访问同济必报 `403`。
-   - 同济请求**必须使用独立的、仅限本次请求使用的 HTTP 客户端/dispatcher**（例如 per-request `undici.Agent` 或独立 `https.Agent`，绝不走 `HTTP_PROXY`/`HTTPS_PROXY`/`ALL_PROXY` 或全局 `ProxyAgent`）：
-     - 自定义 DNS `lookup`：强制轮询解析到校内内网 VIP `10.67.0.251` / `10.67.0.252`；
-     - 保留 TLS SNI 与证书校验：`servername: &#39;agi.tongji.edu.cn&#39;`；
-     - 绑定物理校园 IPv4 出口网卡（`localAddress`）：匹配 `WLAN|Wi-Fi|以太网|Ethernet|本地连接`，并显式黑名单排除 `Meta|wintun|TAP|VPN|vEthernet|Loopback|sing-tun|mihomo|\btun\d*\b` 以及 `169.254.*`、`198.18.*`、`172.19.*`、`127.0.0.1`。
-3. **回退通道 `glm-4-flash` 严格隔离**：
-   - 原有 `glm-4-flash` 必须保持其独立的公网 Base URL、独立的 API Key 配置项与普通网络路由，**绝对不可复用同济的 VIP lookup、物理网卡绑定或 `servername: &#39;agi.tongji.edu.cn&#39;`**。
-4. **防卡死超时、快速回退与离校冷却**：
-   - 同济请求必须同时设**连接超时（≤5s）**与 **总请求超时（`AbortSignal`，如 25–30s）**，避免 TLS 建连后响应挂死。
-   - 遇 `401/402/403/429/5xx`、连接失败、超时或返回空 `content` 时，当次任务立刻透明回退到 `glm-4-flash` 完成，不影响入库与前端展示。
-   - 遇 `401/402/403` 或物理网卡/内网 VIP 不可达（典型离校场景）时，启用**进程内短冷却**（例如 5–10 分钟内直接走 `glm-4-flash`，避免每条新闻白等 5 秒；支持手动刷新或冷却到期后自动重新探测）。
-5. **与本机 MCP 共享周额度的防饿死闸门**：
-   - 同济通道并发数严格限制在 `≤2`（避免冲击校内网关限流并撞车本机 MCP）。
-   - 在 AIRadar 本地状态（如现有 SQLite）中增加一个**可配置的同济日/周预算软上限**（例如按请求数或 token 估算封顶，默认给本机 MCP 预留充足裕度，触顶后自动切回 `glm-4-flash`），并在状态接口/日志里可观测同济与智谱的命中与回退计数。
-6. **密钥安全与验收门槛**：
-   - `TONGJI_API_KEY` 只能从环境变量或未纳入 Git 的本地配置文件读取，严禁写入代码或打进 `AIRadar.exe`，未配置密钥时静默跳过同济通道直接走 `glm-4-flash`。
-   - 实现完成后必须通过：① 离线 Mock 测试（覆盖 403 离校冷却、连接超时/总超时回退、空 `content` 回退、预算封顶切换、不影响 `glm-4-flash` 路由）；② 校内真实直连冒烟（验证 `DeepSeek-V4.1-Flash` 正常返回非空译文）；③ 单文件 `AIRadar.exe` 打包回归验证。
-
-请先读完现有相关源码，给出：模块改动清单、拟用的 Node 22 直连实现方式、预算上限默认值建议、以及回滚方案，待我确认后再动手改。</code></pre>
-<hr>
-<h3>两个供你留意的小边界</h3>
+<h3>外部验证与实机自检结果（全部实测）</h3>
 <ul>
-<li><strong>重载 MCP 后首次观察</strong>：重载后下一次 <code>draft_struct</code> 或 <code>deep_panel</code> 出现时，可以顺手跑一次 <code>diagnose.py mcp-report --days 7</code> 确认 <code>ver</code> 已出现 <code>5.4.1</code> 且 Kimi 超时降级率是否明显下降。</li>
-<li><strong>AIRadar 预算阈值怎么定更合适</strong>：你每周大约会用 <code>AIRadar</code> 刷多少条新资讯？如果日均几百条，给同济侧设一个保守起步上限（比如每天最多 200–300 次翻译调用、其余回退 <code>glm-4-flash</code>），跑 1 周看同济后台实际扣了多少积分再往上放开，是最不会误把 MCP 额度烧干的办法。</li>
+<li><strong>类型检查与前端构建</strong>：<code>npm run build</code> 通过（<code>4.17s</code>，0 报错，内嵌 23 个前端资源含 PWA manifest 与 PNG 图标）。</li>
+<li><strong>单元测试</strong>：<code>npm test</code> <strong>13/13 全绿</strong>（覆盖原 9 项 + 系统代理注册表解析、水位线筛选参数、QR 矩阵、手机同步 PIN 门禁与口令重置即时吊销）。</li>
+<li><strong>二维码实测解码</strong>：使用 <code>zxing-cpp</code> 对 V3 / V5 多组局域网与 Tailscale 配对链接生成的图像实测解码，<strong>4/4 100% 原样还原</strong>。</li>
+<li><strong>单文件 EXE 独立目录 + 异地 CWD 实机验收</strong>：</li>
+<li>自动识别到你本机正在运行的 Windows 系统代理 <strong><code>http://127.0.0.1:12450</code></strong>（<code>proxySource: &quot;system&quot;</code>）；</li>
+<li>30 个信源全量并发首轮仅耗时 <strong>12.1 秒</strong>（启动 2 秒即完成 10 源入库 143 条；最终 <code>26 ok / 4 degraded / 0 failed</code>，入库 <code>359</code> 条，对比原先 3–6 分钟大幅提速）；</li>
+<li>手机同步开关 <code>127.0.0.1</code> ↔ <code>0.0.0.0</code> 热重绑存活验证通过；<code>/manifest.webmanifest</code>（<code>200</code>）与 <code>/icon-192.png</code>（<code>200</code>）正常响应；</li>
+<li>数据库严格落在 <code>AIRadar.exe</code> 同级 <code>data/</code>，异地 CWD 零散落；真实 <code>release/data/radar.db</code>（<code>2.07 MB</code>）及 <code>radar.db-wal</code>（<code>4.09 MB</code>）无损在位。</li>
 </ul>
+<hr>
+<h3>两个实用边界提示（方便你上手直接用）</h3>
+<ul>
+<li><strong>手机首次连不上怎么办</strong>：双击桌面快捷方式打开新版 <code>AIRadar.exe</code> 后，点右上角「<strong>手机同步</strong>」开启并扫码；若同一 Wi-Fi 下手机打不开，通常是 Windows 防火墙拦了 <code>8788</code> 端口（弹窗内已提供一键复制放行命令），或校园网开启了客户端隔离——如果校园网隔离或你出门在外也想看，在电脑和手机各装免费 <strong>Tailscale</strong> 并登录同账号，直接扫弹窗里的 <code>100.x.x.x</code> 远程地址即可。</li>
+<li><strong>关于 GitHub 403 限流</strong>：实测里那 4 个 <code>degraded</code> 源都是 GitHub 未登录 API 的每小时 60 次匿名限流（现已自动快速跳过、不拖慢抓取）。如果你希望 GitHub 热门工具每小时都满额抓取，后续可以在 <code>release/.env</code> 里配一行免费的个人只读 <code>GITHUB_TOKEN=...</code>（不配也完全不影响正常使用）。</li>
+</ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>@[c:\Users\&lt;USER&gt;\Desktop\gemini\AI跨会话无损接力与脱水元协议.md] @[c:\Users\&lt;USER&gt;\Desktop\gemini\接力话术.md]</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>【轨迹自检】来源：本地当前会话 | 业务轮次：约3轮 | 首轮业务：“先读取旧卡核验当前断点磁盘现状” | 末轮业务：“都按照你说的来。选择2A把，修一下” | 实盘核验：已核磁盘与旧卡(git main: M48/D68/??18) | 状态：完整</p>
+<h3>落盘回执与增量 Diff</h3>
+<p>已直接更新落盘至 <code>CONTEXT_ai_radar.md</code>（共 27 行），<strong>已直接落盘，无需手动复制保存状态卡</strong>。</p>
+<ul>
+<li><strong>新增铁律</strong>：<code>## 1</code> 末尾追加「手机同步安全与数据单源铁律」（既有 6 条铁律原文未动）。</li>
+<li><strong>新增资产与墓碑</strong>：<code>## 2</code> 合并压缩至 7 条（符合 ≤8 条上限），更新并发采集 12.1s、Windows 系统代理自动识别、2A 翻译/已读解耦与安卓 PWA 同步实测成果；无损合并全部旧墓碑并新增 <code>wait_ai</code>/双倍超时与 CSP 禁内联 JS 墓碑。</li>
+<li><strong>断点推进</strong>：<code>## 3</code> 刷新至 2026-11-27 实盘状态（<code>release/AIRadar.exe</code> 86.21 MB、<code>release/data/radar.db</code> 3.23 MB + WAL 4.19 MB 活跃无损、8788 端口空闲、工作区 134 项二开未提交）。</li>
+</ul>
+<h3>&#167;3 断点速览</h3>
+<ul>
+<li><strong>当前断点</strong>：[已验证] 极速并发采集、自动系统代理、2A 翻译/已读解耦与安卓 PWA 同步已全部落盘并重打 <code>release/AIRadar.exe</code>（86.21 MB）；<code>release/data/radar.db</code> 活跃无损（11-27 实盘 3.23 MB + WAL 4.19 MB），工作区 134 项二开未提交。</li>
+<li><strong>默认下一步</strong>：按用户后续使用反馈微调功能/信源/UI，改动后执行 <code>npm.cmd run build:exe</code> 原地更新 <code>release/AIRadar.exe</code>（严守不动 <code>release/data/</code>）。</li>
+<li><strong>外部验证判据</strong>：注入本机 Node 22 后 <code>npm.cmd run build &amp;&amp; npm.cmd test</code> 全绿（13/13）；独立空目录异地 CWD 运行 <code>AIRadar.exe</code> 自启 <code>8788</code> 且数据落同级 <code>data/</code>。</li>
+</ul>
+<h3>一键冷启动唤醒 Prompt（本地 Agent）</h3>
+<pre><code>先读取 @C:\Users\&lt;USER&gt;\Desktop\ai-radar\CONTEXT_ai_radar.md 获取全部约束与断点，勿复述历史。
+1. 单次只读核验“当前断点”磁盘现状（含待测/未实施项），一口气完成勿中途请示；若发现未说明的磁盘差异先汇报停手。
+2. 严守【铁律】、禁碰【排雷墓碑】；若本消息下方附有我的新需求或最新实况，则优先执行我的新需求，否则直推卡内【默认下一步】。
+3. 删改已有成果前先确认；完工按【外部验证判据】或新需求标准自检汇报。</code></pre>
 </div></article>
 
     </section>
