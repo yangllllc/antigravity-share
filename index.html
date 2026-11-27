@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="9a71371f-2e80-4938-8494-2423dedc6a4b" data-base-prefix="./c/" data-turn-count="2" data-update-time="2026-11-27 11:44" data-meta-ver="10a2380a" data-is-index="1">
+<body data-conv-id="9a71371f-2e80-4938-8494-2423dedc6a4b" data-base-prefix="./c/" data-turn-count="3" data-update-time="2026-11-27 11:47" data-meta-ver="10a2380a" data-is-index="1">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="./index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="AI Cross-Session Protocol Optimization">AI Cross-Session Protocol Optimization</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="独立对话">独立对话</span><span>会话 ID: 9a71371f-2e80-4938-8494-2423dedc6a4b | 轮次: 2 | 更新于: 2026-11-27 11:44</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="独立对话">独立对话</span><span>会话 ID: 9a71371f-2e80-4938-8494-2423dedc6a4b | 轮次: 3 | 更新于: 2026-11-27 11:47</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./c/9a71371f-2e80-4938-8494-2423dedc6a4b.md" download="AI_Cross-Session_Protocol_Op-9a71371f.md" onclick="return downloadMarkdown(event, './c/9a71371f-2e80-4938-8494-2423dedc6a4b.md', 'AI_Cross-Session_Protocol_Op-9a71371f.md')">⬇️ 下载 Markdown (.md)</a>
@@ -463,6 +463,61 @@
 </div></article>
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成历史轨迹审计与 v4.0 修订草案，正在由 <strong>Claude Opus 5.5 (High)</strong> 进行跨模型只读盲审，审毕即自动落盘更新并交付（急用可直接回复“跳过”）。</p>
 <p>[Open the Swarm UI](sidecar://swarm/swarm_board/?auto_open=false)</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>我调取了你近期实际跑过这套协议的 4 场交接记录（<code>a9fcad14</code>、<code>9770547f</code>、<code>8e491cda</code>、<code>6522a974</code>）、2 场接力新会话（<code>899d8b5c</code>、<code>fa66a2bf</code>）以及 4 张真实生成的 <code>CONTEXT_*.md</code> 状态卡做了实测复盘，并已完成两份文件的 v4.0 修订与落盘：</p>
+<ul>
+<li><code>AI跨会话无损接力与脱水元协议.md</code>（v3.1 → <strong>v4.0</strong>，<code>105</code> 行）</li>
+<li><code>接力话术.md</code>（升级为 3 档免占位符模板，<code>47</code> 行）</li>
+</ul>
+<p>*(注：修订草案已先经同济外脑推演骨架，再经 Claude Opus 5.5 (High) 只读盲审，7 项边界缺陷均已核实采纳后落盘。)*</p>
+<hr>
+<h3>一、实测验证出的 4 个核心优点（已完整保留）</h3>
+<ul>
+<li><strong>SSOT 三段式 + <code>[排雷墓碑]</code> 防复发效果极好</strong>：实测新对话（<code>899d8b5c</code>、<code>fa66a2bf</code>）接手后零历史复述，直接跳过已证伪死胡同；<code>## 1</code> 只增不减 + 变更显式挂 <code>⚠️ 待确认铁律变更</code> 在 <code>6522a974</code> 和 <code>9770547f</code> 中都真正拦住了静默篡改旧约束。</li>
+<li><strong>信息准入负清单保持了高信噪比</strong>：只存文件路径/符号指针与选型结论、不塞代码体和日志流水，让状态卡真正充当“索引锚点”而非日志倾倒场。</li>
+<li><strong>“单次只读核盘 → 不符停手 → 一致直推单点下一步”冷启动范式</strong>：比泛泛的“继续干活”更可控，避免新模型按过期记忆盲改文件。</li>
+<li><strong>首行轨迹自检锚点</strong>：在外部网页/长附件中转时能有效拦截半截脑补。</li>
+</ul>
+<hr>
+<h3>二、从近几次实测中定位到的核心不足</h3>
+<p>| 序号 | 问题归类 | 实测证据（来自近期真实会话与磁盘状态卡） |</p>
+<p>| :--- | :--- | :--- |</p>
+<p>| 1 | <strong>范式错位：仍按“无写盘权限的云端中转”编写</strong> | 交给本地 Antigravity 当前会话后，4 场实测出现 <strong>4 种分裂行为</strong>：<code>a9fcad14</code> 直接新建文件、<code>6522a974</code> 只改了 &#167;2–&#167;3、<code>8e491cda</code> 完全没写盘、<code>9770547f</code> 因担心覆写旧卡停下多聊了一轮。 |</p>
+<p>| 2 | <strong>落盘后仍全文打印状态卡，诱发二次手动另存与双倍读卡</strong> | <code>a9fcad14</code> 明明已写入 <code>CONTEXT_skills.md</code>，却又在聊天框全文复读了一遍；结果你又手动另存了 <code>11.27.md</code>，导致新会话 <code>899d8b5c</code> 第一步把一模一样的卡读了 <strong>两遍</strong>（<code>fa66a2bf</code> 同样出现）。 |</p>
+<p>| 3 | <strong>信源规则与当前分享插件现状冲突</strong> | 原协议推荐投喂 <code>antigravity-share/c/&lt;id&gt;.md</code> 直链，但实测 GitHub Pages 返回 <code>text/markdown</code> 会触发 Gemini <code>URL_FETCH_STATUS_MISC_ERROR</code>；且导出的 <code>.md</code> 实为 <strong>顶部断点 + 倒序正文（<code>Reverse-Transcript</code>）</strong>，未声明易致首/末轮锚点颠倒；同时把 <code>conversation://</code> 一刀切禁掉，未区分本地可用与云端禁用。 |</p>
+<p>| 4 | <strong>篇幅上限全面失真，反逼模型揉出超长句</strong> | 原红线要求整卡 500–800 字、<code>&#167;3 ≤ 150</code> 字；实测 4 张近期卡全部 <strong>2574–4261 字符</strong>（<code>&#167;3</code> 占 284–621 字），100% 超标，且模型为了表面满足“单条≤1行”把 3–4 件事用分号硬揉进单条。 |</p>
+<p>| 5 | <strong>缺“下一棒新需求 / 最新实况”与“多对话合龙”槽位</strong> | <code>a9fcad14</code> 里你被迫把 4 个新仓库 URL 硬塞进“下一棒环境”字段；<code>9770547f</code> 做完脱水后还得再追问一轮“新实况要不要融进冷启动”；多对话项目合龙也缺跨会话冲突裁决与磁盘实态优先规则。 |</p>
+<p>| 6 | <strong><code>【轨迹自检】</code> 锚点误吞话术模板，且漏掉本地压缩场景</strong> | <code>9770547f</code> 的自检把话术模板尾部的 <code>CONTEXT_xxx.md&gt;</code> 截成了“尾轮业务”；另外若本地会话曾被压缩，原规则仍会误报“完整”。 |</p>
+<p>| 7 | <strong>唤醒词相对路径易失焦 + 未声明免重型外调</strong> | 跨空白窗口贴 <code>@CONTEXT_skills.md</code> 相对路径易失焦（绝对路径可一步命中）；此外协议未声明“脱水封存免调 Swarm/重型外脑”，有误触 150s 外部审稿的风险。 |</p>
+<p>| 8 | <strong>《接力话术.md》模板摩擦高</strong> | 存在漏右尖括号语法错（<code>&lt;模式 A</code>）、默认信源仍是“我上传的附件”、每次都要手删 <code>&lt;占位符&gt;</code>（4 场实测无一次删干净），且版本号写死 <code>v3.1</code>。 |</p>
+<hr>
+<h3>三、本次已落盘的 v4.0 关键修改</h3>
+<ul>
+<li><strong>一等公民适配“本地当前会话原地换血 + 多对话合龙”，同时向下兼容云端网页端</strong></li>
+<li>在 <code>AI跨会话无损接力与脱水元协议.md</code> 中新增<strong>自动信源分流</strong>（本地当前会话默认先做 1 次只读盘检 / 本机多对话合龙按“最新时间+磁盘实态优先”裁决 / Antigravity 内部允许 <code>conversation://</code> / 云端仅推 <code>.md</code> 附件或 <code>.html</code> 短直链，废除报错的 <code>.md</code> 远程直链，并显式处理 <code>Reverse-Transcript</code> 倒序布局）。</li>
+<li>明确<strong>免重型外调纪律</strong>：本地执行模式 A 封存时免调 Swarm 审稿与重型外脑 MCP。</li>
+<li><strong>固化“本地 Agent 落盘权责状态机”与防二次另存铁律</strong></li>
+<li>严格限定自动匹配目标为根目录 <code>CONTEXT_*.md</code>（不猜测覆写无关 <code>.md</code>，如 <code>mcp.md</code> 需显式点名）。</li>
+<li>首次建卡或无旧铁律删改 → 直接安全落盘更新 <code>## 2</code>/<code>## 3</code> 及追加 <code>## 1</code>；遇旧铁律冲突（未获显式授权）→ 磁盘旧 <code>## 1</code> 原文不动，仅安全更新 <code>## 2</code>/<code>## 3</code> 并在 Diff 挂 <code>⚠️ 待确认铁律变更</code>；明确枚举 5 种“降级不写盘”条件（云端/目录不明/多卡歧义/仅预览/写盘失败）。</li>
+<li><strong>已落盘时严禁聊天框全文复读状态卡</strong>：只输出 <code>【轨迹自检】</code> + <code>已落盘回执（含绝对路径链接与“无需手动另存”提示）+ Diff</code> + <code>&#167;3 3行断点速览</code> + <code>单分支唤醒 Prompt</code>；仅未落盘时才全文打印 1 次。</li>
+<li><strong>重校篇幅预算与加固 4 处边界漏洞（含 Opus 盲审补洞）</strong></li>
+<li>预算改为自洽口径：整卡软目标 <code>≤ 35 行</code>、<code>## 2 + ## 3 ≤ 1800</code> 字符（<code>## 1</code> 只增不减豁免总字数上限，整卡常规 1500–3500 字符）；<strong><code>[排雷墓碑]</code> 严禁因 <code>## 2</code> 满 8 条被静默删掉</strong>，超限时须无损归并为 <code>墓碑汇总</code>。</li>
+<li>补齐<strong>本地会话已压缩 / 正序缺头 / 倒序缺底</strong>三种 <code>⚠️ 早期历史截断</code> 处理，并明确排除元协议与话术模板文字不计入“末轮业务”。</li>
+<li>新增<strong>下一棒新需求 / 最新实况直接合入 <code>## 3</code></strong> 规则，消灭先空跑旧断点的浪费。</li>
+<li>唤醒词分支 1：本地已落盘填完整绝对路径；若由云端中转且未知本地路径，强制输出醒目占位 <code>@&lt;请替换为你保存后的状态卡绝对路径...&gt;</code>，不再给相对路径。</li>
+<li><strong>重写 <code>接力话术.md</code> 为 3 档即发模板（零尖括号残留）</strong></li>
+<li><strong>零复制用法</strong>：在 Antigravity 当前会话直接 <code>@AI跨会话无损接力与脱水元协议.md</code> + <code>@接力话术.md</code>（不写多余字）即自动按<strong>模板 1</strong>原地换血落盘；</li>
+<li>另备 <strong>模板 2（多对话合龙 / 带新需求）</strong> 与 <strong>模板 3（云端网页端传 <code>.md</code> 附件）</strong>，所有默认值本身就是合法指令，忘记编辑也不会出现残缺占位符。</li>
+</ul>
+<p>*(小提示：如果只是同一会话里稍微瘦身上下文、不打算开新窗口，也可以直接用 Antigravity 内置的 <code>/compact</code>；需要彻底换干净窗口、落盘持久化 <code>CONTEXT_*.md</code> 或合龙多场对话时，用这套 v4.0 协议。)*</p>
+<hr>
+<h3>四、验证方式与 2 个边界确认</h3>
+<ul>
+<li><strong>实测验证（下一次换血 10 秒验收）</strong>：在任意有 <code>CONTEXT_*.md</code> 的项目长对话里，直接发送 <code>@AI跨会话无损接力与脱水元协议.md @接力话术.md</code>；预期只做 1 次只读核盘后直接落盘更新文件、聊天框不整块复读状态卡、首行末轮锚点不含模板文字，且唤醒 Prompt 内给出完整绝对路径。</li>
+<li><strong>2 个边界追问供你拍板</strong>：</li>
+<li>你在 <code>Desktop\mcp\mcp.md</code> 有一张沿用旧命名的状态卡（未以 <code>CONTEXT_</code> 开头）。v4.0 为防误覆无关 <code>.md</code> 文档，规定只有显式指定路径才会动非 <code>CONTEXT_*.md</code> 文件——你希望保持“仅显式指定才读写 <code>mcp.md</code>”，还是后续把它统一改名为 <code>CONTEXT_tongji_mcp.md</code>？</li>
+<li>本地已落盘时，现在默认<strong>不再在聊天框打印状态卡全文</strong>（只留可点击文件链接 + Diff + &#167;3 三行速览，彻底消除你之前重复另存一份 <code>.md</code> 的问题）。你习惯这种极简回执，还是更希望保留一个“顺便在折叠/原文里看全文”的习惯？</li>
+</ul>
 </div></article>
 
     </section>
