@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="b43f0290-8a39-4036-9faf-617f5ba27088" data-base-prefix="./" data-turn-count="7" data-update-time="2026-11-27 14:28" data-meta-ver="0e67e3a5" data-is-index="0">
+<body data-conv-id="b43f0290-8a39-4036-9faf-617f5ba27088" data-base-prefix="./" data-turn-count="8" data-update-time="2026-11-27 14:29" data-meta-ver="0e67e3a5" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="AIRadar Tongji API Integration">AIRadar Tongji API Integration</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64">【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64</span><span>会话 ID: b43f0290-8a39-4036-9faf-617f5ba27088 | 轮次: 7 | 更新于: 2026-11-27 14:28</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64">【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64</span><span>会话 ID: b43f0290-8a39-4036-9faf-617f5ba27088 | 轮次: 8 | 更新于: 2026-11-27 14:29</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./b43f0290-8a39-4036-9faf-617f5ba27088.md" download="AIRadar_Tongji_API_Integrati-b43f0290.md" onclick="return downloadMarkdown(event, './b43f0290-8a39-4036-9faf-617f5ba27088.md', 'AIRadar_Tongji_API_Integrati-b43f0290.md')">⬇️ 下载 Markdown (.md)</a>
@@ -620,6 +620,57 @@
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已修复两处 TypeScript 类型标注并清理根目录临时文件 <code>-</code>，正在重新运行 <code>npm run build</code> 与单元测试套件。</p>
 </div></article>
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>单元测试 17/17 全部通过，正在执行 <code>npm run build:exe</code> 打包单文件 <code>release/AIRadar.exe</code>，并将自动完成空目录异地 CWD 实机回归、exe 密钥零残留核验与校内直连冒烟测试。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成<strong>二次代码级深度审查</strong>，并一次性落盘「<strong>同济校园网免费优先通道 + 智谱无缝回退</strong>」与「<strong>点开即记浏览历史 + 数据保留与 WAL 瘦身</strong>」全部功能、删掉根目录遗留文件 <code>-</code>、更新 <code>CONTEXT_ai_radar.md</code>，且已重打并通过单文件 <code>release/AIRadar.exe</code> 实机与校内直连全链路验收。</p>
+<hr>
+<h3>一、二次深度审查揪出并已提前修正的 5 处真实坑点</h3>
+<p>动手前逐行核对 <code>security.ts</code>、<code>feedQuery.ts</code>、<code>App.tsx</code> 与 <code>ai-settings.ts</code> 时，发现 5 个若按初版直接写会导致功能失灵的隐蔽问题，已在本次实现中全部封死：</p>
+<ul>
+<li><strong>浏览器 10 秒公有缓存会吞掉刚点开的历史</strong>：<code>security.ts</code> 原对未带 Cookie 的 <code>GET /api/items</code> 下发 <code>Cache-Control: public, max-age=10</code>。如果刚点开帖子立刻切去「最近浏览」，浏览器会返回 10 秒前的旧缓存导致新记录“消失”。已对 <code>preset=history</code> / <code>history=1</code> 豁免公有缓存，强制 <code>private, no-store</code>。</li>
+<li><strong>默认 <code>sort=newest</code> 会覆盖历史倒序</strong>：<code>feedQuery.ts</code> 原总是携带 <code>sort=newest</code>，会导致服务端 <code>applyChannelQuery</code> 里 <code>history</code> 的默认 <code>sort: &quot;viewed&quot;</code> 不生效（历史按发布时间而不是打开时间排）。已改为切换「最近浏览」自动切 <code>sort=viewed</code>，且关闭跨源 <code>merge</code> 与 3 天 <code>focus</code> 截断。</li>
+<li><strong>非情报流页签下「最近浏览」入口会消失 &amp; 键盘翻页触发 429</strong>：<code>App.tsx</code> 在非 <code>feed</code> 页签硬编码只显示 <code>starred</code>/<code>hidden</code>，已补齐 <code>history</code>；同时 <code>security.ts</code> 原把所有 POST 归入 60 次/分钟写限流桶，快速按 <code>↓</code> 浏览会挤占收藏/已读配额，已把 <code>/view</code> 单独归入 240 次/分钟读桶并加前端 2s 去重。</li>
+<li><strong>单配同济无智谱 Key 时单条翻译会被拦死</strong>：<code>ai-settings.ts</code> 的 <code>translateSingleItem</code> 原先硬判 <code>!s.baseUrl || !s.model || !s.apiKey</code> 直接报错，未给同济放行；且 <code>config.ts</code> 静态读取 <code>TONGJI_API_KEY</code> 会妨碍运行时隔离测试。已改为动态读取 <code>getTongjiApiKey()</code>，并在 <code>aiReady()</code> 与 <code>translateSingleItem()</code> 同时识别同济与备用通道（同时严格尊重主开关 <code>s.enabled</code>）。</li>
+<li><strong>同济双 VIP 切换绝不在发出请求体后重试</strong>：<code>tongji-transport.ts</code> 在原生 <code>node:https</code> 上严格等 <code>TLSSocket</code> 的 <code>secureConnect</code> 完成后才执行 <code>req.write/end</code>，确保首 VIP 建连前失败切换备用 VIP（总建连 <code>≤5s</code>）绝不会造成一次请求重复计费。</li>
+</ul>
+<hr>
+<h3>二、<code>TONGJI_API_KEY</code> 存放位置有什么区别？怎么选？</h3>
+<p>当前 <code>config.ts</code> 已原生支持两类位置，读取优先级为：<strong>系统环境变量 <code>TONGJI_API_KEY</code> &gt; 同级 <code>.env.local</code> &gt; 同级 <code>.env</code></strong>（Node 22 的 <code>process.loadEnvFile</code> 不会覆盖已存在的环境变量）：</p>
+<p>| 存放方式 | 具体位置 | 优点 | 注意点 / 风险 | 适合场景 |</p>
+<p>| :--- | :--- | :--- | :--- | :--- |</p>
+<p>| <strong>A. Windows 用户环境变量（推荐）</strong> | 系统「环境变量 → 用户变量」新建 <code>TONGJI_API_KEY</code> | ① <code>release/AIRadar.exe</code> 与源码开发模式（<code>npm start</code>）<strong>同时自动生效</strong>；② 以后打包分享或云盘备份整个 <code>release/</code> 目录时，<strong>绝不会顺手把你的学校密钥发出去</strong>；③ 把 exe 挪到桌面或 D 盘照样自动认 | 设置后需重启一次 <code>AIRadar.exe</code>（从资源管理器新开窗口）生效；若换另一台电脑需重新配置（对个人校园 Key 反而是安全优势） | <strong>仅在自己这台电脑用，追求零泄露与一劳永逸（首选）</strong> |</p>
+<p>| <strong>B. exe 同级 <code>.env.local</code></strong> | <code>release/.env.local</code> 中写一行 <code>TONGJI_API_KEY=你的密钥</code> | ① 仅对这一个 <code>AIRadar.exe</code> 生效，不影响系统里其他程序；② 想临时软回滚直接把文件改名/删掉即可；③ <code>.gitignore</code> 已全局忽略 <code>.env.local</code> | 若以后直接压缩整个 <code>release/</code> 发给别人，须记得排除 <code>.env.local</code>；且源码根目录运行 <code>npm start</code> 时不会读 <code>release/.env.local</code> | <strong>希望按目录隔离、随时记事本开关</strong> |</p>
+<blockquote><strong>如何立刻启用（任选其一，无需重打 exe）</strong>：</blockquote>
+<blockquote>- 选 A：在 PowerShell 运行 <code>[Environment]::SetEnvironmentVariable(&quot;TONGJI_API_KEY&quot;, &quot;你的密钥&quot;, &quot;User&quot;)</code>，然后重新双击 <code>release\AIRadar.exe</code>；</blockquote>
+<blockquote>- 选 B：在 <code>C:\Users\&lt;USER&gt;\Desktop\ai-radar\release\</code> 下新建纯文本 <code>.env.local</code>，写 <code>TONGJI_API_KEY=你的密钥</code>，再重启 <code>AIRadar.exe</code>。</blockquote>
+<blockquote>- 启用后打开网页左侧 <strong>「AI 引擎」→「同济校园网免费优先通道」</strong> 卡片，点一下 <strong>「重新探测」</strong> 即可直观看到校内直连延迟、命中/回退计数与今日 <code>0 / 100</code> 消耗进度。</blockquote>
+<hr>
+<h3>三、本次合并改动摘要</h3>
+<ul>
+<li><strong>同济校园网免费优先通道 + 智谱回退</strong>：</li>
+<li>新增 <code>tongji-transport.ts</code>：原生 <code>node:https</code>（<code>agent: false</code> 绕开系统代理与全局 <code>ProxyAgent</code>）、物理 IPv4 筛选（自动排除 <code>tun0</code>/<code>mihomo</code>/<code>Tailscale</code>/<code>172.19.*</code>/<code>198.18.*</code>/<code>169.254.*</code>/<code>127.0.0.1</code>，保留校园 <code>WLAN 100.78.*</code>）、双 VIP <code>10.67.0.251/252</code> 应用层串行≤5s 建连、28s 总超时、强制 <code>DeepSeek-V4.1-Flash</code> 与 <code>chat_template_kwargs: { enable_thinking: false, thinking: false }</code>、日志/错误严格脱敏。</li>
+<li>新增 <code>ai-router.ts</code>：统一路由 <code>ai-settings.ts</code> 中 3 处翻译/摘要/审核调用（<code>ai-dedup.ts</code> 保持只走智谱省周额度），并发≤2 非阻塞直切智谱、401/402/403/离校 8 分钟冷却、429/5xx 短退避、SQLite 持久化日 <code>100</code> 次 / 周 <code>500</code> 次 / 周 <code>150万</code> Token 软上限（周一 00:00 重置，仅 HTTP 200 计费）。</li>
+<li>更新 <code>AiPanel.tsx</code>、<code>routes.ts</code>、<code>ai-admin.ts</code>：可观测同济/智谱命中与回退计数、预算热调与一键「重新探测」。</li>
+<li><strong>浏览历史（「最近浏览」）+ 数据保留/清理瘦身</strong>：</li>
+<li><code>db.ts</code> Migration v33：新增 <code>ai_channel_usage</code> 表及 <code>items.last_viewed_at</code> / <code>view_count</code> 与索引（不复制正文，零膨胀）。</li>
+<li><code>App.tsx</code> &amp; <code>ItemView.tsx</code> &amp; <code>routes.ts</code>：点开概要抽屉或点击行内「打开原文」瞬间通过独立 <code>fetch(..., { keepalive: true })</code> 记入历史（不动 <code>read_at</code>、不动 <code>visit_watermark</code>，哪怕 0.1 秒手快关窗也稳稳留档，电脑手机共享）；左侧「我的收藏 / 已忽略」旁新增 <strong>「最近浏览」</strong>，支持搜索与顶部「清除 30 天前记录 / 清空全部历史」（只清时间戳不删帖）。</li>
+<li><code>retention.ts</code> &amp; <code>OpsPanel.tsx</code>：补实 <code>radar.db + WAL</code> 实时 MB 体积显示，新增 <code>historyDays</code>（默认 30 天，自动清理时保护近期看过的条目不被删），清理后执行 <code>PRAGMA wal_checkpoint(TRUNCATE)</code>（含 <code>busy</code> 核验重试），并新增手动 <strong>「清理并压缩体积 (<code>VACUUM</code>)」</strong> 按钮。</li>
+<li><strong>收尾清理</strong>：已删除根目录遗留临时文件 <code>-</code>，并按约定更新 <code>CONTEXT_ai_radar.md</code>。</li>
+</ul>
+<hr>
+<h3>四、实测验收结果（全部实测通过）</h3>
+<p>| 验收项 | 实测命令 / 手段 | 实测结果 |</p>
+<p>| :--- | :--- | :--- |</p>
+<p>| 类型检查 + 前端构建 | <code>npm.cmd run build</code>（<code>tsc --noEmit &amp;&amp; vite build</code>） | <strong>0 报错</strong>，4.17s 构建完成 |</p>
+<p>| 离线 Mock 单测 | <code>npm.cmd test</code>（<code>ai-radar.test.ts</code>） | <strong>17/17 全绿</strong>（覆盖物理网卡筛选、双 VIP ≤5s 切换、403 离校冷却、空 <code>content</code> 计费回退、总超时回退、并发≤2 溢出直切智谱、日预算封顶、密钥零泄露、历史 <code>no-store</code> 与清理保护） |</p>
+<p>| 校内真实直连冒烟 | 临时在内存注入密钥直测 <code>sendTongjiChat()</code>（本机开着 <code>tun0 172.19.0.1</code>） | <strong>HTTP 200 通过</strong>：经 <code>WLAN 100.78.136.128</code> → 内网 VIP <code>10.67.0.251</code>，TTFB <strong>418ms</strong> / 总耗时 <strong>429ms</strong> / <code>totalTokens=49</code>，返回流畅非空译文「OpenAI发布支持MCP的轻量级本地编码代理」 |</p>
+<p>| 单文件 exe 打包与安全核验 | <code>npm.cmd run build:exe</code> + 二进制字节扫描 + 异地空目录 CWD 拉起测试 | <code>release/AIRadar.exe</code> <strong>86.27 MB</strong>，<code>KEY_IN_EXE=False</code>（零密钥残留）；异地空目录启动 <code>SEA_OK=True</code>、<code>dbInExeDir=True</code>、<code>/api/ai</code> 与 <code>/api/items?preset=history</code>（<code>private, no-store</code>）与 <code>/api/retention</code> 均返回 200；原有生产库 <code>release/data/radar.db</code> 无损保留 |</p>
+<hr>
+<h3>五、试跑数日后的边界观察建议</h3>
+<ul>
+<li><strong>观察同济积分消耗比</strong>：目前尚未实测 <code>DeepSeek-V4.1-Flash</code> 在学校控制台精确的「token → 积分」折算率；按日 100 次跑满 2–3 天后，可以对照同济控制台剩余积分与「AI 引擎」里的 <code>k tok</code> 统计，直接在网页热调日/周上限（无需重打包）。</li>
+<li><strong>观察数据库清理节奏</strong>：当前 <code>release/data/radar.db</code>（3.29 MB + WAL 4.19 MB）在下次打开软件后，你可以到 <strong>「信源与代理 → 数据保留与清理」</strong> 点一次 <strong>「清理并压缩体积」</strong>，顺手把 4 MB 的历史 WAL 归并瘦身并观察当前真实体积。</li>
+</ul>
+<p>你希望先用 <strong>Windows 用户环境变量</strong> 还是 <strong><code>release/.env.local</code></strong> 来放 <code>TONGJI_API_KEY</code>？如果你告诉我选哪一种，我也可以直接帮你校验配置是否被 <code>AIRadar.exe</code> 正常识别（绝不打印密钥明文）。</p>
 </div></article>
 
     </section>
