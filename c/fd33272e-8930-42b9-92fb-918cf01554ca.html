@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="fd33272e-8930-42b9-92fb-918cf01554ca" data-base-prefix="./" data-turn-count="10" data-update-time="2026-11-27 08:45" data-meta-ver="0a031d9e" data-is-index="0">
+<body data-conv-id="fd33272e-8930-42b9-92fb-918cf01554ca" data-base-prefix="./" data-turn-count="13" data-update-time="2026-11-27 08:56" data-meta-ver="0a031d9e" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="OpenGym And AI Prompts Analysis">OpenGym And AI Prompts Analysis</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="skills">skills</span><span>会话 ID: fd33272e-8930-42b9-92fb-918cf01554ca | 轮次: 10 | 更新于: 2026-11-27 08:45</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="skills">skills</span><span>会话 ID: fd33272e-8930-42b9-92fb-918cf01554ca | 轮次: 13 | 更新于: 2026-11-27 08:56</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./fd33272e-8930-42b9-92fb-918cf01554ca.md" download="OpenGym_And_AI_Prompts_Analy-fd33272e.md" onclick="return downloadMarkdown(event, './fd33272e-8930-42b9-92fb-918cf01554ca.md', 'OpenGym_And_AI_Prompts_Analy-fd33272e.md')">⬇️ 下载 Markdown (.md)</a>
@@ -768,6 +768,65 @@
 <h3>一个收口追问</h3>
 <ul>
 <li><code>ai-radar/src/web</code> 扫出来的那 4 处中文输入法回车误提交候选（<code>ime-safe-enter-submit</code>）属于真能改善中文体验的小修，你要现在让我只读核实源码并顺手修掉，还是先放着等你下次打开 <code>ai-radar</code> 项目时再一并处理？</li>
+</ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>你可以直接修理掉，我有点疑惑我现在的skill很多了，但是缺少一个实时更新的skill，或者说检查skill更新的skill，不然每次都需要我来检查一下是否有skill，插件需要更新，你觉得呢</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已将 <code>ai-radar</code> 的 4 处 IME 回车误提交处理修改落盘，正在后台执行 <code>tsc --noEmit &amp;&amp; vite build</code>、单测与 <code>legacy-scan</code> 复验，完成后立即连同你关心的「Skill / 插件更新检查方案」严格评估一起汇报。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><h3>一、<code>ai-radar</code> 的 4 处 IME 中文输入法回车误提交已修完并验真（[实测]）</h3>
+<p>先调刚落地的 <code>mwg.mjs retrieve &quot;ime-safe-enter-submit&quot;</code> 拉取了标准指南，随后逐一核查源码并补齐了防护：</p>
+<ul>
+<li><strong>修改清单（4 处）</strong>：</li>
+<li><code>App.tsx</code>（顶部全局搜索框）</li>
+<li><code>RulesPanel.tsx</code>（关注关键词输入框）</li>
+<li><code>AuthModal.tsx</code>（邀请码输入框）</li>
+<li><code>PushPanel.tsx</code>（数值微调输入框）</li>
+</ul>
+<p>  *(本次修复按 <code>modern-web-guidance</code> 的 <code>ime-safe-enter-submit</code> 指南，把 <code>e.nativeEvent.isComposing</code> 与 <code>e.keyCode === 229</code> 联用，同时避开了 Safari/WebKit 在 <code>compositionend</code> 先于 <code>keydown</code> 触发时单独判 <code>isComposing</code> 失效的经典坑，兼容你 <code>ai-radar</code> 的手机局域网访问。)*</p>
+<ul>
+<li><strong>L5 实测验收全绿</strong>：</li>
+<li><code>tsc --noEmit &amp;&amp; vite build</code>：<code>exit=0</code>（1,722 modules，4.24s 完成 <code>dist/web</code> 构建）；</li>
+<li><code>npm test</code>：<code>exit=0</code>（<strong>13/13</strong> 用例通过，5/5 suites，0 失败）；</li>
+<li><code>mwg.mjs legacy-scan src/web</code>：<code>ime-safe-enter-submit</code> 由 <strong>4 处清零至 0 处</strong>（仅剩未动的 <code>src/App.tsx:1657</code> 1 处数组浅拷贝排序提示）。</li>
+<li><strong>重要生效提醒</strong>：我检测到你后台正在运行 <code>AIRadar.exe</code>（PID <code>10440</code>），而 <code>scripts/build-sea.mjs</code> 是把 <code>dist/web</code> 直接打进单文件 <code>.exe</code> 里的。为不中断你正在用的服务我没强杀进程——目前源码和 <code>dist/web</code> 已更新完毕，等你方便关掉 <code>AIRadar.exe</code> 后跑一次 <code>npm run build:exe</code>，改动就会同步进桌面可执行程序。</li>
+</ul>
+<hr>
+<h3>二、关于“缺少一个实时更新 / 检查 Skill 与插件更新的 Skill”——严格拆解</h3>
+<p>先<strong>审前提</strong>：你其实把两件风险和形态完全不同的事放在一起想了——<strong>① 自动“实时更新”</strong> vs <strong>② 自动“只读检查提醒”</strong>，以及<strong>“做成 Skill”</strong> vs <strong>“做成确定性脚本”</strong>。</p>
+<h4>1. 先看本机真实盘点（[实测] <code>local-overlay.json</code> + <code>plugins/</code>）</h4>
+<p>其实你看着有二十几个技能 + 5 个插件，但<strong>真正存在外部上游、需要查更新的独立源一共只有 6 个</strong>：</p>
+<ul>
+<li><strong><code>K-Dense-AI/claude-scientific-skills</code></strong>（1 个仓库管了你 <strong>13 个</strong>科研技能，当前基线 <code>v2.72.0</code>）</li>
+<li><strong><code>hugohe3/ppt-master</code></strong>（<code>v6.10.0</code>，联动 <code>course-ppt-lab/upstream-lock.json</code>）</li>
+<li><strong><code>larashero3-dotcom/lieflat-less-ai-tone</code></strong>（commit <code>fe77df00</code>）</li>
+<li><strong><code>mattpocock/skills</code></strong>（<code>grilling</code>，<code>v1.3.2</code>）</li>
+<li><strong>npm <code>modern-web-guidance</code></strong>（<code>v1.0.2</code>，刚落地）</li>
+<li><strong><code>agy-capsule</code></strong>（<code>v1.5.0</code>，你已有侧栏内置一键检查更新；其余 3 个插件 <code>antigravity-archive-manager</code>、<code>antigravity-dream-memory</code>、<code>antigravity-share-hub</code> 均是本地自建，无外部上游；另加 1 个 <code>wps-office-suite</code> 来自 SkillHub）</li>
+</ul>
+<h4>2. 为什么<strong>坚决不要做“自动实时更新”</strong>？</h4>
+<ul>
+<li>你自己定过的铁律非常正确（见 <code>local-overlay.json</code>）：<strong>上游更新绝不盲目覆盖</strong>。</li>
+<li>实打实的教训就在眼前：你刚刚给 <code>citation-management/scripts/format_bibtex.py</code> 打了同 key 防误删补丁，还维护着 <code>course-ppt-lab</code> 的上游哈希锁和中文裁剪薄层。如果搞“无人值守实时自动更新”，上游一次改版要么冲掉你的本地补丁，要么引入未审计的新脚本/供应链风险。</li>
+</ul>
+<h4>3. 为什么<strong>“检查更新”本身也不该做成常驻自动发现的 Skill</strong>？</h4>
+<ul>
+<li>查这 6 个上游有没有新 Tag / 新 Commit / 新 npm 版本，是 <strong>100% 确定性的机械活</strong>（几条 <code>git ls-remote</code> + 1 次 npm registry 查询，<strong>根本不需要大模型思考，也彻底绕开 GitHub API 403 限流</strong>）。</li>
+<li>你已经在严控活跃技能池注意力（刚把 <code>modern-web-guidance</code> 压到 ~78 字，避免 frontmatter 稀释）；如果为了“每隔几周查一次更新”再往 <code>.gemini/config/skills/</code> 塞一个常驻自动 Skill，等于每轮物理推导都在为“低频运维检查”白交注意力税。</li>
+</ul>
+<h4>4. 最干净、零冗余的推荐架构（<strong>脚本查 + 定时报 + 人工拍板才升级</strong>）</h4>
+<p>直接在你已有的 <code>C:\Users\&lt;USER&gt;\.gemini\skills-meta\</code>（扫描目录外，<strong>0 Skill 膨胀、0 全局规则增量</strong>）补 1 个轻量的只读脚本 <strong><code>check_updates.py</code></strong>（直接读 <code>local-overlay.json</code> 作唯一真相源）：</p>
+<ul>
+<li><strong>做什么</strong>：只读并发检查那 5 个 GitHub 源（用 <code>git ls-remote</code>，不撞 API 限流）+ 1 个 npm 包（<code>modern-web-guidance</code>）+ <code>agy-capsule</code> 本地 git 远端，5 秒内输出一张干净对照表：<code>名称 | 本地基线 | 上游最新 | 状态（最新 / 有更新）</code> + 命中 <code>local_script_patches</code> 补丁保护警告；<strong>全程严格只读，绝不自动覆盖任何文件</strong>。</li>
+<li><strong>怎么触发（二选一，都零摩擦）</strong>：</li>
+<li><strong>随手查</strong>：想看时直接说一句“帮我跑一下 <code>check_updates.py</code> 查下技能和插件更新”；</li>
+<li><strong>彻底省心免记</strong>：搭配 Antigravity 的 <code>/schedule</code> 命令，设成每 1–2 周（比如隔周周日晚）自动跑一次，<strong>只在真有新版本时提醒你</strong>，没有更新就静默不打扰。</li>
+<li><strong>真查出有更新时怎么升</strong>：继续走你已建好的安全链路——把有更新的上游拉到 <code>scratch/</code> 做功能级 diff 摘要 → 你勾选真正值得要的新特性 → 局部合入并核对 <code>local_script_patches</code> → 跑 <code>sync_overlay.py --apply</code> + <code>--check</code> 零漂移收口。</li>
+</ul>
+<hr>
+<h3>一个直接拍板问题</h3>
+<ul>
+<li>如果认可上面这个「<strong>不加新 Skill、在 <code>skills-meta/</code> 补一个纯只读 <code>check_updates.py</code>（直接复用 <code>local-overlay.json</code>）</strong>」的零冗余方案，我现在就可以直接写好并当场实测跑一遍，顺便把你现有这 6 个上游今天到底有没有新版一次性查出来；你看要现在落地吗？（装好后如果你想配每周自动巡检，可以直接在输入框用 <code>/schedule</code> 命令把这条检查设为定时任务。）</li>
 </ul>
 </div></article>
 
