@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex">
-  <title>Markdown File Verification And Prompt Check - Antigravity Share</title>
+  <title>MCP 遥测核查与优化方案评估 - Antigravity Share</title>
   <style>
     :root {
       --bg-main: #131314;
@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="899d8b5c-f2ce-45ce-b9ac-dbb1208223d1" data-base-prefix="./c/" data-turn-count="13" data-update-time="2026-11-27 12:11" data-meta-ver="adc068c5" data-is-index="1">
+<body data-conv-id="1cfc570f-8c6d-4080-b1b1-4e7216676be9" data-base-prefix="./c/" data-turn-count="4" data-update-time="2026-11-27 13:06" data-meta-ver="3c64fb87" data-is-index="1">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="./index.html">Antigravity 对话分享</a></h2>
@@ -450,223 +450,150 @@
   <main id="main">
     <header class="main-header">
       <div style="min-width:0;">
-        <h1 title="Markdown File Verification And Prompt Check">Markdown File Verification And Prompt Check</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="skills">skills</span><span>会话 ID: 899d8b5c-f2ce-45ce-b9ac-dbb1208223d1 | 轮次: 13 | 更新于: 2026-11-27 12:11</span></div>
+        <h1 title="MCP 遥测核查与优化方案评估">MCP 遥测核查与优化方案评估</h1>
+        <div class="sub-meta"><span class="header-project-badge" title="mcp">mcp</span><span>会话 ID: 1cfc570f-8c6d-4080-b1b1-4e7216676be9 | 轮次: 4 | 更新于: 2026-11-27 13:06</span></div>
       </div>
       <div class="header-actions">
-        <a class="btn" id="downloadMdBtn" href="./c/899d8b5c-f2ce-45ce-b9ac-dbb1208223d1.md" download="Markdown_File_Verification_A-899d8b5c.md" onclick="return downloadMarkdown(event, './c/899d8b5c-f2ce-45ce-b9ac-dbb1208223d1.md', 'Markdown_File_Verification_A-899d8b5c.md')">⬇️ 下载 Markdown (.md)</a>
-        <button class="btn" id="copyBtn" type="button" onclick="copyCanonicalUrl('./c/899d8b5c-f2ce-45ce-b9ac-dbb1208223d1.html', 'copyBtn', '已复制直链')">复制对话直链</button>
+        <a class="btn" id="downloadMdBtn" href="./c/1cfc570f-8c6d-4080-b1b1-4e7216676be9.md" download="MCP_遥测核查与优化方案评估-1cfc570f.md" onclick="return downloadMarkdown(event, './c/1cfc570f-8c6d-4080-b1b1-4e7216676be9.md', 'MCP_遥测核查与优化方案评估-1cfc570f.md')">⬇️ 下载 Markdown (.md)</a>
+        <button class="btn" id="copyBtn" type="button" onclick="copyCanonicalUrl('./c/1cfc570f-8c6d-4080-b1b1-4e7216676be9.html', 'copyBtn', '已复制直链')">复制对话直链</button>
       </div>
     </header>
     <section class="chat-canvas" aria-label="Conversation Content">
-      <article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>@[c:\Users\&lt;USER&gt;\Desktop\markdown\11.27.md] 先读 @CONTEXT_skills.md 获取约束与断点，勿复述历史。</p>
+      <article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>先只读读取 @mcp.md 和 @CONTEXT_agent_arch.md 获取铁律与当前断点（勿复述历史），然后一口气完成以下只读核查与方案评估，<strong>先给方案等我确认，本轮不要修改任何文件</strong>：</p>
 <ul>
-<li>单次只读核验“当前断点”磁盘状态，一口气完成勿中途请示。</li>
-<li>与 [待验证] 不符则报差异停手；一致则直推【唯一单点下一步】。</li>
-<li>禁碰【排雷墓碑】；删改前先确认；完工按【外部验证判据】自检。然后再加上查看(https://github.com/f/prompts.chat) 和</li>
+<li><strong>跑最新遥测并逐条看失败形态</strong>：</li>
+<li>用 <code>session-diagnose</code> 跑 <code>mcp-report --days 7</code>（或全量 <code>--days 0</code>），并读取 <code>C:\Users\&lt;USER&gt;\.gemini\config\tongji_mcp_metrics.jsonl</code> 原始逐条记录。</li>
+<li>核实 Kimi-K3.1-Pro 的失败究竟是“孤立长尾撞超时墙”，还是“短时间内连续故障”。</li>
+<li><strong>重点核查并对比 3 个候选优化项的真实性价比</strong>（均对照 <code>C:\Users\&lt;USER&gt;\.gemini\config\tongji_deepseek_mcp.ps1</code> 源码实测，严守零状态自包含、145s 总预算、UTF-8 BOM、双端同步等铁律）：</li>
+<li><strong>候选 A（高优先怀疑点）</strong>：检查 <code>Invoke-Probes</code> / <code>Wait-CampusJobBatch</code>——之前 L6 (<code>code_audit</code>) 实测 Kimi 在 110ms 就返回 <code>HTTP 429</code>，却因死等 DeepSeek 跑完 34s 才判重试导致剩余预算 <code>&lt; MinRetryMs(15s)</code> 错失切备 VIP 重试。评估改成“单路早失败（429/5xx/传输错）在主循环中不傻等慢队友、直接带短退避切备 VIP 发起单路重试”的实现复杂度与风险。</li>
+<li><strong>候选 B（既定满周待办）</strong>：按实测耗时分布，评估是否微调 <code>draft_struct</code>（当前 48s 撞墙 3 次）与 <code>deep_panel</code>（当前 42s 撞墙 2 次）的 Kimi <code>MaxTimeSec</code> / 输出控长，以及顺手补齐 <code>delegate_to_deepseek.json</code> 缺失的“编排子工位免调”微措辞。</li>
+<li><strong>候选 C（外部借鉴二次证伪，借鉴自 Pojun <code>llmpool</code>）</strong>：冷静评估是否真的需要跨调用熔断冷却（硬失败 401/402/403 首次熔断 / 软失败 429&#183;5xx 连败 N 次短冷却）。若真实遥测中连续失败次数极低，或因 <code>-Worker</code> 短进程必须落盘状态文件与“零状态自包含”铁律冲突、得不偿失，请直接建议放弃或仅做极简版，不要为了做而做。</li>
+<li><strong>输出与闸门</strong>：</li>
+<li>给出 A/B/C 三项的「实测依据 / 预期收益 / 破坏面与代价 / 建议取舍（做还是不做）」对比表。</li>
+<li>明确待我拍板后再正式进入修改流程（修改前必先只读执行 <code>blast-radius</code>，改后按 <code>mcp.md</code> 跑 AST 0 错、UTF-8 BOM、<code>.gemini\config</code> 与 <code>D:\tongji_plugin</code> 双端 SHA-256 一致、以及独立 stdio E2E 验收）。。。在这些之后，我发现最近的额度消耗还是不够多，是不是出了什么问题，或者说额度的消耗只能到这里了，真的有确切的提升效果吗</li>
 </ul>
 </div></article>
-<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成断点磁盘核验：<code>sync_overlay.py --check</code> 零漂移，<code>last_update_report.md</code> 6 源全最新，且 <code>skill-update-checker</code> 在 <code>config.json</code> 中已确认 <code>&quot;enabled&quot;: true</code>、<code>sidecar.log</code> 显示已于 11:00:25 启动调度。接下来将拉取 5 个目标仓库的真实源码目录树与 README，并同步提取近 7 天 <code>session-diagnose</code> 实测痛点数据。</p>
-</div></article>
-<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成 5 个目标仓库共 86 个核心源码与架构文档的只读拉取（零失败），并提取了近 7 天 <code>session-diagnose</code> 与同济 MCP 遥测基线数据。接下来将逐一精读源码并对照本地 4 规则 / 18 自动 Skill 与实测痛点做重叠与借鉴分析。</p>
-</div></article>
-<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成 5 个仓库的源码精读、本地 4 规则 / 18 自动 Skill 重叠映射及近 7 天 <code>session-diagnose</code> 痛点核验，并完成全部对比表与裁决自检。即将输出最终评估报告。</p>
-</div></article>
-<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><blockquote><strong>提示</strong>：你的消息末尾停在「<code>然后再加上查看(https://github.com/f/prompts.chat) 和</code>」，疑似还有一个未贴出的第 6 个仓库链接。本轮已先完成 <code>CONTEXT_skills.md</code> 断点核验及这 <strong>5 个仓库</strong> 的真实源码评估（全程严格只读，<strong>零装包、零改本地文件</strong>）；若后面还有第 6 个链接，直接发来即可续评。</blockquote>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成只读核查（本轮未修改任何文件，也未触发会向遥测日志追加记录的同济 MCP 调用；双端脚本当前 SHA-256 一致且均带 UTF-8 BOM：<code>9fba9a737c5ab2ef</code>，<code>58587</code> 字节）。</p>
+<p><strong>一句话核心矛盾</strong>：当前生产体验受损的根因<strong>不是</strong>节点连续故障，而是 <code>Kimi-K3.1-Pro</code> 在 <code>draft_struct</code>/<code>deep_panel</code> 中“输出 token 配额过宽 &#215; 超时墙过紧”导致 <strong>44% 的近期生产调用白等 43–49s 后空手降级</strong>；同时，低消耗是“真实日均调用量低 + Opus 接管终审 + 无状态短回包上限”叠加的结构性结果，并非脚本故障。</p>
 <hr>
-<h3>一、断点与本地痛点基线核验 <code>[实测]</code></h3>
+<h2>一、最新遥测实测与 Kimi 失败形态逐条拆解</h2>
+<p>运行 <code>diagnose.py</code> <code>mcp-report --days 7</code>（与 <code>--days 0</code> 全量完全一致，覆盖 <code>2026-11-23 16:37</code> – <code>2026-11-27 11:41</code>，共 <strong>28 条</strong>，<code>malformed=0</code>），并逐行核对 <code>tongji_mcp_metrics.jsonl</code>：</p>
+<h3>1. 总体与“测试 vs 真实生产”拆账（实测）</h3>
 <ul>
-<li><strong>当前断点一致，确认推进</strong>：</li>
-<li><code>sync_overlay.py</code> <code>--check</code>：<code>ALL OVERLAY CHECKS PASSED (0 drifts)</code>（退出码 <code>0</code>）；</li>
-<li><code>last_update_report.md</code>：2026-11-27 09:03 巡检 6 源全最新（有更新 <code>0</code>、异常 <code>0</code>）；</li>
-<li><strong><code>[待验证]</code> 项已转 <code>[已验证]</code></strong>：<code>config.json</code> 中 <code>skill-update-checker</code> 已 <code>&quot;enabled&quot;: true</code>，且 <code>sidecar.log</code> 显示已于 <code>2026-11-27T11:00:25+08:00</code> 正常启动调度（<code>CRON_TZ=Asia/Shanghai 20 */4 * * *</code>）。</li>
-<li><strong>本地规则 / Skill 体量基线</strong>：</li>
-<li><strong>4 份 <code>always_on</code> 规则</strong>（满额）：<code>core-reasoning-protocol.md</code>、<code>cross-model-reviewer.md</code>、<code>deepseek-subagent.md</code>、<code>AGENTS.md</code>；</li>
-<li><strong>18 个全局自动 Skill + 5 个后台联动 Skill（<code>disable_auto: true</code>）+ 5 个插件</strong>（见 <code>local-overlay.json</code>）。</li>
-<li><strong>近 7 天 <code>session-diagnose</code> 真实痛点数据</strong>（审计 10 场会话 / 27 次同济 MCP 调用）：</li>
-<li><strong>已健康项</strong>：长会话缓存命中率 <code>89.2%–94.1%</code>；改后验证 <code>verification_after_code_edit</code> <code>7/7 OK</code>。</li>
-<li><strong>真实痛点 A（规则偶发漏触）</strong>：<code>blast_radius_before_shared_edit</code> <code>2/5 FLAGGED</code>（改全局规则前偶漏先读 <code>blast-radius/SKILL.md</code>）。</li>
-<li><strong>真实痛点 B（同济 MCP 降级率偏高）</strong>：调用级 <code>ok=27/27</code>，但 <strong><code>degraded=10/27 (37.0%)</code></strong>，集中于 <code>Kimi-K3.1-Pro</code>（仅 <code>19/27 OK</code>：<code>timeout</code> 6 次、<code>content limit</code> 1 次、<code>HTTP 429</code> 1 次，<code>code_audit</code> <code>3/3</code> 全降级）。实查 <code>tongji_deepseek_mcp.ps1</code>（50,901 B）：<code>circuit</code> / <code>breaker</code> / <code>cooldown</code> 计数均为 <strong>0</strong>，目前缺乏跨调用熔断冷却机制。</li>
+<li><strong>全量 28 条口径</strong>：调用级 <code>ok=28/28</code>、<code>err=0/28</code>、单路降级 <code>10/28 (35.7%)</code>、Wave 2 触发 <code>15/28</code>、<strong>重试触发 <code>0/28 (0/56 探针)</code></strong>、<code>trunc=0/28</code>、<code>P50=29.9s</code>、<code>P95=74.2s</code>。</li>
+<li><strong>分模型（N=28/模型）</strong>：</li>
+<li><code>DeepSeek-V4.1-Flash</code>：<code>ok=26/28 (92.9%)</code>，<code>P50=7.4s</code>，仅在 11/23 <code>code_audit</code> 出现 1 次 <code>timeout</code>（35.6s）和 1 次 <code>thinking limit</code>（28.2s）；在 <code>draft_struct</code> 10/10 全胜且耗时仅 <strong>1.2s–3.2s</strong>。</li>
+<li><code>Kimi-K3.1-Pro</code>：<code>ok=20/28 (71.4%)</code>，<code>P50=19.4s</code>，非 OK 共 <strong>8/28</strong>（<code>timeout</code> 6 次、<code>content limit</code> 1 次、<code>HTTP 429</code> 1 次）。</li>
+<li><strong>容易被总量掩盖的真相（测试与生产拆开看）</strong>：</li>
+<li><code>L01–L10</code>（11/23 16:37–16:47，10 条）：<code>v5.4.0</code> 上线 E2E 压测批（同题 <code>in_chars</code> 重复两轮，唯一一次 <code>HTTP 429</code> 出在这里）。</li>
+<li><code>L13–L18</code>（11/23 19:49–19:55，6 条）：Codex 单场验收会话（全站仅有的 3 次 <code>delegate_to_deepseek</code> 全在这里）。</li>
+<li><strong>真正日常生产调用仅 12 条</strong>（<code>L11, L12, L19</code> + <code>L20–L28</code>），其中 <strong>11/24–11/27 四个自然日仅 9 条（日均 2.25 次）</strong>：7 次 <code>draft_struct</code> + 2 次 <code>deep_panel</code>，<strong>0 次 <code>delegate</code> / <code>math_check</code> / <code>code_audit</code> / <code>test_forge</code></strong>；且这 9 条里有 <strong>4/9 (44.4%) 发生单路降级</strong>，<strong>4 次全都是 Kimi 撞超时墙</strong>。</li>
 </ul>
-<hr>
-<h3>二、5 仓库真实源码对比总表</h3>
-<blockquote>下表除明确标 <code>[推断]</code> 的条目外，其余文件数、代码路径、协议与机制均基于 GitHub API 目录树 + 86 份原始源码直读 <strong><code>[实测]</code></strong>。</blockquote>
-<p>| 仓库 | 真实体量 / 协议 / 活跃度 <code>[实测]</code> | 源码核心本质 <code>[实测]</code> | 与本地 4 规则 / 18 自动 Skill 的重叠与冲突 | 可借鉴局部设计（不装包） | 最终裁决 |</p>
-<p>| :--- | :--- | :--- | :--- | :--- | :--- |</p>
-<p>| <strong><code>Dominic789654/awesome-deepseek-harness</code></strong> | 442⭐ &#183; TS &#183; 52 文件 &#183; 无标准 SPDX &#183; <code>2026-11-27</code> 活跃（含自动扫 <code>#dsh</code> 追加 PR） | <strong>DSH 生态大目录</strong>（<code>README.md</code> 1.99 MB / <code>README.zh-CN.md</code> 1.32 MB，标 5,649 条）+ 4 个 <code>v0.1.0</code> Cordis 示范插件（<code>dsh-code-review</code>/<code>dsh-research-loop</code>/<code>dsh-slides</code>/<code>dsh-viz</code>） | 运行时强绑定 <code>@deepseek-ai/cordis</code>（与 Antigravity/Codex 不兼容）；<code>dsh-slides</code>（CDN <code>reveal.js</code>）/ <code>dsh-viz</code>（CDN <code>echarts</code>）远弱于本地 <code>course-ppt-lab</code>+<code>ppt-master</code>、<code>scientific-visualization</code>+<code>generative_ui</code>；<code>dsh-code-review</code> / <code>auto-research-loop</code> 与 <code>cross-model-reviewer</code>、<code>blast-radius</code>、<code>literature-review</code> 重叠 | 仅留作<strong>只读生态雷达书签</strong>（盯 <code>docs/official-picks.md</code> 及偶现科研/PPT 新项目如 <code>pptwise</code>/<code>dsh-scholar</code>）；其“禁凭截断 diff 断言无问题”“调研冲突并列来源不静默择一”可口头吸收，无需改规则 | <strong>0 装包，仅作书签雷达</strong> |</p>
-<p>| <strong><code>EgoAlpha/prompt-in-context-learning</code></strong> | 2,252⭐ &#183; Notebook &#183; MIT &#183; 153 文件（81 张图）&#183; <code>2026-11-27</code>（实查近 3 commit 全为自动 <code>Hot AI Papers Update</code>） | <strong>科普与教程合集</strong>（0 生产级 Agent 代码）：① 15 份静态论文表（<code>PaperList/AgentList.md</code> 等顶部仍停在 2024.06–07）；② 2023 风格提示词基础五要素文章；③ 15 篇 LangChain <code>1.0.5~1.2.0</code> / <code>deepagents 0.3.x</code> 入门笔记（示例工具甚至裸用 <code>eval()</code>） | 论文检索被 <code>paper-lookup</code>（18 学术库实查）+ <code>citation-management</code> + <code>literature-review</code> 降维替代；提示词入门与 <code>core-reasoning-protocol</code> 重复且过浅；本机无 LangChain 业务痛点 | 无（0 增量工程价值） | <strong>直接舍弃（0 装包、0 借鉴）</strong> |</p>
-<p>| <strong><code>sonichi/sutando</code></strong> | 412⭐ &#183; Py/TS/Swift &#183; MIT &#183; <strong>3,673 文件</strong>（<code>tests</code> 2,038 / <code>skills</code> 583 含 102 目录 / <code>hooks</code> 21）&#183; <code>2026-11-27</code> 活跃 | <strong>macOS 常驻多模态语音 Stand 系统</strong>（<code>main.swift</code> + s.space + Discord/Gmail/Twilio）；含早期 <code>src/agent/agy/</code> 脚手架（<code>tmux</code> 包 <code>agy</code>，官方明注未接核心调度/无 cron/无健康检查，且非 Windows）；<code>hooks/</code> 有 21 个高工程度 Claude Code 守卫脚本 | 整体形态为 macOS 重型常驻框架，102 个 Skill 严重冲破本地 ~20 软上限；<code>REVIEW.md</code> 与 <code>blast-radius</code>+<code>cross-model-reviewer</code> 重叠；<code>detect-learned-skills.py</code> 仅做英文前 5 词频次统计，明显弱于本地 <code>/dream</code>；其 Claude Code <code>.py</code> Hook 不能直接用于 Windows Antigravity（踩中【排雷墓碑】Windows Hook 坑） | <strong>吸收 2 条纯设计模式</strong>：① <code>hooks/memory-index-guard.py</code> / <code>review-authority-guard.py</code> 的「<strong>靠记忆遵守的门禁必失守，能下沉为确定性拦截+不确定时 fail-open</strong>」（呼应痛点 A）；② <code>design-core-health-verdict.md</code> 的「单一权威状态文件 + 独立双信号佐证防误杀」 | <strong>严禁装包/引入子技能（0 装包）；仅记 2 条架构原则</strong> |</p>
-<p>| <strong><code>chu0119/Pojun</code></strong> | 581⭐ &#183; Go/Next.js/PG &#183; <strong>AGPL-3.0</strong> &#183; 1,276 文件（<code>agent</code> 179 / <code>skills</code> 25 个渗透技能 / <code>eval</code> 20 个靶场）&#183; <code>2026-11-26</code> 活跃 | <strong>AI 自主渗透/红队作战平台</strong>（Go 单体 + PG + Docker），但底层 <code>agent/</code>、<code>llmpool/</code>、<code>sidequestion/</code>、<code>eval/</code> 是极高水准的<strong>实测数据驱动长任务 Harness</strong> | 业务域完全无关（安全渗透/C2）且 <strong>AGPL-3.0 禁抄源码</strong>；其中三层态势防折叠（<code>blackboard.go</code>）↔ <code>CONTEXT_*.md</code>+墓碑、只读并行单线程写（<code>docs/AI渗透Agent调研</code>）↔ <code>best-of-n</code>/<code>subagent-pipeline</code>、反口头过关（<code>goal_gate.go</code>）↔ <code>debug-unstick</code>/<code>blast-radius</code>、输入分块防撞思考上限（<code>compaction.go</code>）↔ <code>deepseek-subagent.md</code> 均已高度印证本地体系 | <strong>本次 5 仓最高价值局部借鉴（直击实测痛点 B）</strong>：<code>llmpool/health.go</code> + <code>pool.go</code> 的<strong>两级熔断（硬失败 401–404 首次熔断 / 软失败 429&#183;5xx&#183;超时连败 3 次熔断）+ 阶梯冷却 <code>1m→5m→30m</code> + 跨调用持久化 + 提交前安全窗口</strong>，高度契合 <code>tongji_deepseek_mcp.ps1</code> 的 Kimi 高频超时降级问题（留给 <code>Desktop\mcp</code> 另案处理） | <strong>0 装包、禁抄 AGPL 代码；记下 <code>llmpool</code> 熔断冷却模式供 <code>Desktop\mcp</code> 按需借鉴</strong> |</p>
-<p>| <strong><code>f/prompts.chat</code></strong> | 178,608⭐ &#183; Next.js 16 + Prisma &#183; 1,890 文件（<code>src</code> 1,583 / <code>prompts.csv</code> 220,217 行 12 MB）&#183; <code>2026-11-27</code> 活跃 | <strong>开源社区 Prompt 托管站点</strong>（原 Awesome ChatGPT Prompts）+ 消费级角色扮演 CSV 库 + <code>packages/prompts.chat</code>（TS Builder DSL &amp; 英文正则 <code>quality.check</code>）+ 远程 MCP 插件 <code>plugins/claude/prompts.chat</code>（直连 <code>prompts.chat/api/mcp</code>） | 远程 MCP 的 <code>skill-lookup</code> 鼓励先搜社区并直接落盘安装到 <code>.claude/skills/</code>，<code>prompt-lookup</code> 要求“先搜库再自己写”，与本地「反盲目加轮子 + 20 软上限 + Overlay 先 diff 再装」铁律<strong>正面冲突</strong>；<code>quality.check</code> 靠英文元音/辅音比与 <code>act as</code> 正则打分，对中文科研/工程无意义；<code>.windsurf/skills/</code> 仅服务其自家电子书翻译与站内组件 | 无（0 本地痛点匹配；若偶发查文生图/视频提示灵感，直接网页浏览 <code>prompts.chat</code> 即可，绝不接入本地 MCP 或 Skill 池） | <strong>直接舍弃（0 装包、禁接其远程 MCP）</strong> |</p>
-<hr>
-<h3>三、关键推理与排斥原因摘要</h3>
+<h3>2. Kimi-K3.1-Pro 全部 8 次非 OK 逐条时间轴（实测）</h3>
+<p>| 行号 | 时间 | 模式 | 状态 | 耗时 | 与相邻调用间隔 / 结果 | 归因判定 |</p>
+<p>| :--- | :--- | :--- | :--- | ---: | :--- | :--- |</p>
+<p>| L01 | 11-23 16:37:25 | <code>deep_panel</code> | <code>content limit</code> | 41.6s | 22s 后 L02 <code>ok</code> (8.8s) | 单次吐满 2000 tok（有正文，进 W2） |</p>
+<p>| L06 | 11-23 16:38:34 | <code>code_audit</code> | <code>HTTP 429</code> | <strong>110ms</strong> | 前 16s L05 <code>ok</code>；1 分钟连发 6 路压测 | 网关并发限流（实测上限 2），<strong>全量唯一瞬时错</strong> |</p>
+<p>| L07 | 11-23 16:47:03 | <code>deep_panel</code> | <code>timeout</code> | 42.7s | 距 L06 隔 <strong>8.5 分钟</strong>；11s 后 L08 <code>ok</code> (4.0s) | 撞 <code>42s</code> 墙（与 L01 同题 <code>in=194</code>） |</p>
+<p>| L16 | 11-23 19:52:50 | <code>delegate</code> | <code>timeout</code> | 100.8s | 前 3 分钟 L15 <code>ok</code>；90s 后 L17 <code>ok</code> (82.6s) | 撞 <code>100s</code> 墙（开思考慢吞吐长尾） |</p>
+<p>| L20 | 11-24 22:15:35 | <code>draft_struct</code> | <code>timeout</code> | 48.6s | 距 L19 隔 <strong>25.9 小时</strong> | 撞 <code>48s</code> 墙，丢骨架仅剩 405 字校验 |</p>
+<p>| L21 | 11-25 12:06:23 | <code>draft_struct</code> | <code>timeout</code> | 48.6s | 距 L20 隔 <strong>13.8 小时</strong>（非短时连败） | 撞 <code>48s</code> 墙，丢骨架仅剩 252 字校验 |</p>
+<p>| L23 | 11-25 17:25:00 | <code>deep_panel</code> | <code>timeout</code> | 42.6s | 与 L22（20.9s <code>ok</code>）同秒并发 2 路 <code>deep_panel</code> | 撞 <code>42s</code> 墙（双路并发排队尾延迟） |</p>
+<p>| L25 | 11-26 12:21:57 | <code>draft_struct</code> | <code>timeout</code> | 48.7s | 前 18m L24 <code>ok</code> (30.6s)；后 45m L26 <code>ok</code> (26.8s) | 撞 <code>48s</code> 墙，丢骨架仅剩 235 字校验 |</p>
+<p><strong>实测结论</strong>：Kimi 失败 <strong>100% 属于“孤立长尾撞 <code>MaxTimeSec</code> 超时墙”</strong>，<strong>不存在短时间连续故障</strong>：</p>
 <ul>
-<li><strong>为什么 5 仓全部维持「0 装包」</strong>：</li>
-<li><code>session-diagnose</code> 实测证明当前 4 规则 + 18 自动 Skill + 5 后台联动体系在缓存命中（~90%）、改后自验（100%）与主流程闭环上已很稳健；5 个外部仓库里，<strong>没有任何一个打包组件</strong>能在不引入跨平台兼容负债（macOS/Swift/tmux、DSH Cordis、Docker+PG+AGPL、远程不受控社区 MCP）的前提下解决本机实测痛点。</li>
-<li><strong>为什么选 <code>Pojun</code> 的 <code>llmpool</code> 熔断模式作为唯一高优先级借鉴（且本轮不动手改）</strong>：</li>
-<li>相比泛泛的“加个新 Skill”，<code>mcp-report --days 7</code> 实测到 <code>Kimi-K3.1-Pro</code> 在 27 次调用里触发 6 次超时 + 1 次 429、<code>code_audit</code> 100% 降级，而 <code>tongji_deepseek_mcp.ps1</code> 当前完全没有状态冷却；按 <code>CONTEXT_skills.md</code> 的隔离铁律，MCP 脚本改造归属 <code>Desktop\mcp\CONTEXT_agent_arch.md</code> 且修改共享 MCP 前必须走 <code>blast-radius</code>，因此本轮严守只读边界不越界修改。</li>
-<li><strong><code>sutando</code> 与 <code>Pojun</code> 对现有体系的“反向印证”</strong> <code>[实测]</code>：</li>
-<li><code>Pojun</code> 的 <code>agent/compaction.go</code> 实测“26 节点给 65K 预算仍思考耗尽、切 6 节点 124s 收尾”直接验证了本地 <code>deepseek-subagent.md</code> 的多子题拆包原则；</li>
-<li><code>Pojun</code> 的 <code>agent/blackboard.go</code> 将 <code>hints</code> 与失败方向锁在永不折叠的 Index 层，与本地 <code>CONTEXT_*.md</code> 铁律 + <code>[排雷墓碑]</code> 完全同构；</li>
-<li><code>sutando</code> 的 <code>hooks/memory-index-guard.py</code> 与 <code>REVIEW.md</code>（检查被 diff 新激活的未改动路径）印证了本地 <code>debug-unstick</code>「硬约束替代文字规则」与 <code>blast-radius</code> 的方向。</li>
+<li><code>HTTP 401/402/403/5xx</code>、连接失败、TLS 失败全部为 <strong>0/56</strong>；</li>
+<li>看似相邻的 <code>L20→L21</code> 实隔 13.8 小时、<code>L06→L07</code> 实隔 8.5 分钟，<strong>5 分钟窗口内连续失败次数 = 0</strong>；</li>
+<li>每次超时后紧邻的下一条（最短仅隔 11s）均立刻正常返回。</li>
 </ul>
 <hr>
-<h3>四、外部验证判据自检</h3>
+<h2>二、候选 A / B / C 源码实测审计与对比</h2>
+<p>对照 <code>tongji_deepseek_mcp.ps1</code> 源码逐项核验：</p>
+<h3>关键源码发现（决定取舍的推理依据）</h3>
 <ul>
-<li>[x] <strong>覆盖范围</strong>：原定 4 仓库 + 追加的 <code>f/prompts.chat</code> 共 5 仓库均完成真实目录树与核心源码拉读（86 文件，0 拉取失败）。</li>
-<li>[x] <strong>证据标注</strong>：核心事实、本地基线与痛点数据均带 <code>[实测]</code> 依据与精确路径/数值，无编造。</li>
-<li>[x] <strong>重叠分析与红线</strong>：已对照本地 4 规则 / 18 自动 Skill / 5 联动 Skill 及近 7 天 <code>session-diagnose</code> 数据证伪痛点，<strong>0 装包、未触碰任何【排雷墓碑】、未擅自修改 <code>CONTEXT_skills.md</code></strong>。</li>
+<li><strong>候选 A 确有结构性 Bug，且和“3 路并发”规则直接耦合</strong>：</li>
+<li>在 <code>tongji_deepseek_mcp.ps1</code>（<code>Invoke-Probes</code>）与 <code>tongji_deepseek_mcp.ps1</code>（<code>Wait-CampusJobBatch</code>）中，现有重试设在<strong>整批等待屏障之后</strong>（L167→L172）。</li>
+<li>L06（<code>code_audit</code>，<code>$wave1Ms=38000</code>，<code>$MinRetryMs=15000</code>）中 Kimi 在 <code>110ms</code> 报 <code>HTTP 429</code>，但主循环傻等 DeepSeek 跑完 <code>33985ms</code>，醒来时只剩 <code>3937ms &lt; 15000ms</code>，直接放弃重试。按当前各模式实测耗时，只要另一路跑到 <code>23–38s</code>，现有重试几乎恒为死代码（实测 <code>retried=0/56</code>）。</li>
+<li>虽然全量仅出现 1 次 429（0 次在近期生产），但 <code>deepseek-subagent.md</code> 鼓励最多 3 路并发，而实测校园网关对 Kimi 的并发限流为 2——一旦真的触发 3 路并发，第 3 路几乎必然撞 429，不修 A 则切备 VIP 重试仍会哑火。</li>
+<li><strong>实现关键约束</strong>：不能在轮询循环内同步 <code>Start-Sleep 2500</code>（会阻塞慢队友读取与 deadline 判定），须改用<strong>非阻塞槽位状态机</strong>（<code>Running</code> → 立即 <code>Close-CampusJob</code> 释放句柄 → <code>Backoff</code> 记 <code>RetryAfterMs</code> + 500ms 随机抖动防双路齐撞 → 到点切 <code>AltPin</code> 重启单路 <code>curl.exe</code>），总改动 ~45–60 行，完全局部化在两函数内，保持零状态与原 JSONL 指标结构。</li>
+</ul>
+<ul>
+<li><strong>候选 B 抓住了真正的头号矛盾——<code>MaxTokens</code> 过宽与 <code>MaxTimeSec</code> 过紧自相矛盾</strong>：</li>
+<li><strong>算账揭露根因</strong>：</li>
+<li><code>deep_panel</code> Kimi（<code>tongji_deepseek_mcp.ps1</code>）：Prompt 要求“控制在 650 字符以内”，却给了 <strong><code>MaxTokens=2000</code>、<code>MaxTimeSec=42</code></strong>。L01 实测 Kimi 跑满 2000 tok 用了 <code>41.57s</code>（约 48 tok/s），只要校园 vLLM 排队多 3 秒或吞吐降 15%，必在 42s 被 <code>curl exit 28</code> 强杀丢弃全部已生成文本——L07（与 L01 同题 <code>in=194</code>）和 L23 正是这么死的。</li>
+<li><code>draft_struct</code> Kimi（<code>tongji_deepseek_mcp.ps1</code>）：要求“800 字符以内”，给了 <strong><code>MaxTokens=1700</code>、<code>MaxTimeSec=48</code></strong>。如果排队 8–10s 且吞吐 30 tok/s，48s 最多只能吐 ~1140 tok，Kimi 话稍微多写一点就直接撞 48s 空回（3/10 次发生，生产占 3/7）。</li>
+<li><strong>顺带发现的 <code>code_audit</code> 悬崖（<code>tongji_deepseek_mcp.ps1</code>）</strong>：<code>code_audit</code> 3/3 全部降级，DeepSeek 给 <code>35s</code>，实测 OK 那次是 <code>34.0s</code>、超时那次是 <code>35.6s</code>，恰卡在悬崖边。</li>
+<li><strong>预算安全裕度极充裕</strong>：总预算 <code>145s</code>（<code>$plannedDeadline=143.8s</code>），全量 15 次 Wave 2 实测耗时仅 <strong>1.0s–5.0s</strong>（即便按最坏 <code>30s+3s</code> 预留，Wave 1 仍有 <code>110s</code> 空间）。将：</li>
+<li><code>draft_struct</code>：<code>$wave1Ms: 52000 → 70000</code>，Kimi <code>MaxTimeSec: 48 → 65</code>、<code>MaxTokens: 1700 → 1400</code>；</li>
+<li><code>deep_panel</code>：<code>$wave1Ms: 52000 → 66000</code>，Kimi <code>MaxTimeSec: 42 → 60</code>、<code>MaxTokens: 2000 → 1400</code>；</li>
+<li>（可选顺手修）<code>code_audit</code>：<code>$wave1Ms: 38000 → 48000</code>，DeepSeek <code>MaxTimeSec: 35 → 45</code>；</li>
+<li>最坏总耗时 <code>70s + 33s = 103s &lt;&lt; 143.8s</code>，留足 &gt;40s 缓冲；即便 Kimi 话多触顶 <code>1400 tok</code>，也会返回 <code>content limit</code> 带着完整正文进入 Wave 2 压缩，而不是 <code>curl</code> 超时空包白等。</li>
+<li><strong><code>delegate_to_deepseek.json</code> 措辞同步注意</strong>：<code>delegate_to_deepseek.json</code> 是 Antigravity 缓存 <code>tools/list</code> 生成的副本，真源在 <code>tongji_deepseek_mcp.ps1</code>（<code>$SERVER_INSTRUCTIONS</code>）和 <code>tongji_deepseek_mcp.ps1</code>（<code>$TOOL_DELEGATE_SCHEMA</code>），须改脚本真源并重载 MCP 连接刷新缓存（不要只手改缓存 JSON）。</li>
+</ul>
+<ul>
+<li><strong>候选 C（跨调用熔断冷却）被实测数据与架构铁律双重证伪</strong>：</li>
+<li><strong>0 实测痛点</strong>：401/402/403/5xx/传输错 0 次，短窗口连续故障 0 次。</li>
+<li><strong>把超时纳入熔断会起反作用</strong>：Kimi 超时是单次长尾（L07 超时后 11s 的 L08 4s 成功），若触发冷却反而误杀后续健康调用。</li>
+<li><strong>违背铁律</strong>：每次 <code>tools/call</code> 拉起短生命周期 <code>-Worker</code> 进程（<code>tongji_deepseek_mcp.ps1</code>）。落盘状态文件直接违背 <code>mcp.md</code>“零状态自包含”铁律且引入跨宿主锁竞态；放父调度进程内存则打破 <code>-Worker</code> 纯结果契约（<code>tongji_deepseek_mcp.ps1</code>）且跨 Codex/Antigravity 无法共享。按 <code>CONTEXT_agent_arch.md</code>“0 实测痛点直接划走”铁律，应直接放弃。</li>
+</ul>
+<h3>A / B / C 综合对比表</h3>
+<p>| 候选优化项 | 实测依据 | 预期收益 | 破坏面与代价 | 建议取舍 |</p>
+<p>| :--- | :--- | :--- | :--- | :--- |</p>
+<p>| <strong>A：单路早失败非阻塞重试</strong> | L06 <code>110ms</code> 报 429 却死等 DeepSeek <code>34s</code> 致错失 <code>MinRetryMs(15s)</code>；现重试实测 <code>0/56</code> 几乎成死代码；网关 Kimi 并发上限 2 | <strong>中（防患型）</strong>：修复既有重试死代码，让 3 路并发撞 429 时能在不拖长 Wave 1 的前提下于 3s 内切备 VIP 自愈 | <strong>中低</strong>：改 <code>Invoke-Probes</code>/<code>Wait-CampusJobBatch</code> ~50 行；须严防句柄泄漏、同步 sleep 阻塞队友、deadline 越界与双路同步重试风暴；无外部协议破坏 | <strong>建议做（次高于 B，可与 B 一次打包落地）</strong> |</p>
+<p>| <strong>B：微调 <code>draft_struct</code> / <code>deep_panel</code> 超时与控长 + 补 <code>delegate</code> 措辞</strong> | 近 4 日生产降级 <code>4/9 (44.4%)</code> 全为 Kimi 撞 48s/42s 墙；<code>MaxTokens</code> 1700/2000 相对 650–800 字目标严重过宽；<code>code_audit</code> DeepSeek 卡 35s 崖 | <strong>高（立竿见影）</strong>：把近期 44% 生产超时腰斩掉，消除“白等 48s 只拿 250 字残包”的最大痛点；补齐与规则卡的最后 1 处微滞后 | <strong>极低</strong>：仅调参数表与两处 schema 文案（~10 行）；仍在 <code>103s &lt;&lt; 145s</code> 安全预算内；改 schema 后需重载 1 次 Antigravity MCP 连接 | <strong>强烈建议做（最高优先级）</strong> |</p>
+<p>| <strong>C：跨调用熔断冷却（借鉴 <code>llmpool</code>）</strong> | 401/402/403/5xx 全为 <code>0/56</code>，短窗口连续故障 <code>0</code> 次；Kimi 失败后 11s–90s 即恢复 | <strong>近零（若含超时则为负收益）</strong>：当前几乎永不触发，误熔断超时反降双路命中率 | <strong>高</strong>：违背“零状态自包含”铁律（短 <code>-Worker</code> 需落盘锁文件或破坏父子结果契约），增加维护与锁损坏风险 | <strong>建议放弃（不做）</strong> |</p>
+<hr>
+<h2>三、关于“额度消耗不够多”与“到底有没有确切提升效果”的实证回答</h2>
+<p>把 11/23 16:30 至今全部 <strong>29 场 Antigravity 主会话</strong>（经 <code>diagnose.py</code> 审计逻辑全量跑通）和全部 12 次生产调用逐条摊开看，答案非常清晰、不兜圈子：</p>
+<h3>1. 为什么额度消耗还是这么少？是不是出了问题？</h3>
+<p><strong>结论：不是脚本坏了，而是“3 个结构性上限”叠在一起，其中只有第 2 条存在可补齐的漏触发。</strong></p>
+<ul>
+<li><strong>真实调用频次远低于体感（实测）</strong>：</li>
+<li>日志里 28 条有 <strong>16 条是 11/23 测试批</strong>；<strong>11/24–11/27 这 4 天真实只调用了 9 次（日均 2.25 次）</strong>，Codex 侧在 11/23 验收后 <strong>0 次生产调用</strong>。</li>
+<li>同期 Antigravity 29 场主会话消耗了 Gemini <strong>320.5 万 output tokens / 163.7 万字符思考链 / 2695 万 uncached input tokens</strong>；而同济 MCP 同期 12 次生产调用总入参仅 <code>14,282</code> 字、总回包 <code>8,255</code> 字——体量本来就不在一个数量级。</li>
+<li><strong>最耗积分的 <code>delegate_to_deepseek</code> 在 Antigravity 侧已归零，且存在约 4 场真实漏触发（实测）</strong>：</li>
+<li>引入 <code>cross-model-reviewer.md</code> 后，11/23 晚至今 <code>swarm(add)</code> 派审 <strong>7 次</strong>，按互斥铁律，最烧同济双思考积分的 <code>delegate_to_deepseek</code> 在 Antigravity 侧变成 <strong>0 次</strong>。</li>
+<li>29 场会话里 <code>session-diagnose</code> 标了 11 场高思考量 0 调用（<code>FLAGGED</code>）：其中约 6 场属合理豁免（修 SakuraCat/音频/报错/OpenBrowser 安装/磁盘与 Dream），但有 <strong>4 场明显漏触发或偏保守</strong>（如 <code>88ca9805</code> Supermemory 原理分析与课程学习建议、<code>dafb4c69</code> 消融报告分析、<code>fd33272e</code> 项目原理拆解、<code>6522a974</code> 代码架构任务）；另外像 <code>fa66a2bf</code> 重构 AIRadar 仅在开头调了 1 次 <code>draft_struct</code>，写完代码后 <strong>0 次调 <code>code_audit</code> / <code>test_forge</code></strong>。</li>
+<li><strong>单次调用的“内重外轻”设计决定了天然消耗天花板（推断，因后台单价未落本地日志，以你此前历史观测 <code>30→100</code> 积分反推）</strong>：</li>
+<li>近期 7/9 (78%) 的生产调用都是<strong>双路全关思考</strong>的 <code>draft_struct</code>，单次双模型+Wave 2 总计仅约 3000–5000 tokens；4 天 9 次大约只消耗 <strong>10–25 积分（周额度的 1%–3%）</strong>。</li>
+<li>只要守住“无状态（不传大文件）+ 回包 ≤1800 字 + 强主模型主导”，<strong>单靠 Antigravity 日常交互前置外调，正常周消耗上限大概率就落在 50–150 积分</strong>——它天生不可能、也不应该硬凑到 1000 积分。</li>
+</ul>
+<h3>2. 真的有确切的提升效果吗？（逐条复盘 12 次生产调用，实测不吹不黑）</h3>
+<p>必须把<strong>“省 Gemini 额度”</strong>和<strong>“降盲区/提质量”</strong>彻底分开看：</p>
+<ul>
+<li><strong>对“省 Gemini 额度”：基本没有确切效果（实测）</strong>。</li>
+<li>调完同济 MCP 的下一步，Gemini 依然产出 <code>3,400–11,300 output tokens</code>（整场仍耗 6.6 万–34 万 output tokens），因为主模型拿到 500–1500 字骨架后仍要自己读本地源码、推细节、写完整代码或讲义。真正替你省 Gemini 额度的是当前 <strong>85%–94% 的高缓存命中率</strong>，不是同济 MCP。</li>
+<li><strong>对“质量与防盲区”：在“双路完整返回”时有确切增量，但近 4 天有一半被 Kimi 超时毁掉了（实测）</strong>：</li>
+<li><strong>确切正向案例（5–6/12 次）</strong>：</li>
+<li><code>e6d7cdfe</code>（<code>code_audit</code>）：直接抓出 <code>pbtxt</code> 正则误改嵌套块、恢复非原子致 FTS 重复 2 个 P0 真 Bug；</li>
+<li><code>a9fcad14</code>（<code>fast_dual</code>）：Gemini 思考链明确记录推翻了原假设，修正了 <code>blast-radius</code> 触发条件与 <code>uv run --with</code> 离线风险；</li>
+<li><code>fc732d35</code>（<code>draft_struct</code>，18.2s 双路 OK，返回 1542 字）：直接给出四元组缓存键、Windows 保留名/NFC 边界与降级不清空旧数据等可直接落地的防御设计；</li>
+<li><code>49f340ef</code>（<code>deep_panel</code>，L22 双路 OK）：给出薄透镜二次相位与微棱镜双图像骨架，且主模型在复核时抓出一处符号瑕疵形成真正的双脑交叉校验。</li>
+<li><strong>负体验/无效案例（4/12 次，占近 4 日生产的 44.4%）</strong>：</li>
+<li><code>L20</code>/<code>L21</code>/<code>L23</code>/<code>L25</code> 全部死于 Kimi 撞超时墙——白等 <strong>43–49 秒</strong>，最核心的 Kimi 骨架整路丢弃，只退回 DeepSeek 的 235–405 字泛泛条目，Gemini 只能自己从头再想一遍。</li>
+</ul>
+<p><strong>直白定位建议</strong>：</p>
+<ul>
+<li><strong>在 Antigravity 交互工作流里</strong>，把同济 MCP 定位为<strong>“免费的异构防盲区安全网”</strong>，而非“必须刷满 1000 分的省额度引擎”——先用 <strong>候选 B（+ A）</strong> 把 44% 的超时降级压下去，质量体感立刻会实打实上升；同时写完非平凡代码后多用 <code>code_audit</code> / <code>test_forge</code>（抓 Bug 性价比远高于泛泛做 <code>draft_struct</code>）。</li>
+<li><strong>如果真的想高 ROI 吃掉每周富余的 800+ 免费积分（且真正替你省主模型或替代弱免费模型）</strong>：走<strong>独立离线/后台脚本直连同济 API</strong>（绕开交互等待与主上下文限制），例如把 <code>AIRadar</code> 里的批量摘要/翻译从 <code>glm-4-flash</code> 切一部分给极快的校内 <code>DeepSeek-V4.1-Flash</code>（实测 1–3s），或用独立脚本批量预读/提炼整章论文与光学讲义 PDF（<strong>未验证</strong>：需确认同济 API 后台限流策略与你的实际离线需求，不替你提前定死）。</li>
 </ul>
 <hr>
-<h3>五、需要你确认的 2 个边界问题</h3>
+<h2>四、待你拍板的决策与修改闸门</h2>
+<p>请你确认以下两项后再进入修改流程：</p>
 <ul>
-<li><strong>缺失的第 6 个仓库</strong>：你的消息末尾停在 <code>...prompts.chat) 和</code>，是否还有第 6 个待评仓库？若要补评，请直接发链接；若无，请确认是否将本次 5 仓裁决（含更新 <code>skill-update-checker</code> 为 <code>[已验证]</code>、新增 5 仓评估结论与 <code>Pojun</code> 熔断借鉴指针）写回 <code>CONTEXT_skills.md</code>（以及同步 <code>11.27.md</code>？）。</li>
-<li><strong>痛点 A（改全局规则偶漏读 <code>blast-radius</code>）的边界</strong>：Antigravity 本地自定义 Hooks 在 Windows 下的可用性与之前 <code>claude-octopus</code> 踩过的坑相关 <code>[未验证现状]</code>——你是否希望保持现状靠 <code>session-diagnose</code> 事后复盘，还是值得另开一小步核实新版 Antigravity 是否支持轻量本地 <code>PreToolUse</code> 文件路径守卫？</li>
+<li><strong>代码修改范围</strong>：采用 <strong>方案 B + 方案 A（放弃 C）</strong>，还是 <strong>仅做最稳妥的方案 B</strong>？若做 B，是否一并把 <code>code_audit</code> 的 DeepSeek <code>MaxTimeSec</code> 从 <code>35s</code> 放宽至 <code>45s</code>（<code>$wave1Ms: 38s → 48s</code>）？</li>
+<li><strong>1000 积分定位</strong>：你更倾向于<strong>接受 MCP 作为低频高质安全网（周耗 50–150 分顺其自然）</strong>，还是希望后续把富余免费额度<strong>引流到离线批处理任务（如 AIRadar/文献预读）</strong>？</li>
+</ul>
+<p><strong>拍板后的正式执行闸门（本轮未动任何文件）</strong>：</p>
+<ul>
+<li>先严格只读触发 <code>blast-radius</code> 评估影响面；</li>
+<li>修改 <code>tongji_deepseek_mcp.ps1</code> 并同步至 <code>D:\tongji_plugin\tongji_deepseek_mcp.ps1</code>；</li>
+<li>按 <code>mcp.md</code> 依次跑完：PowerShell AST 0 错检查 → UTF-8 BOM 校验 → 双端 SHA-256 一致校验 → 独立 stdio E2E 验收（并提醒你重载 1 次 Antigravity MCP 连接以刷新 <code>delegate_to_deepseek.json</code> 缓存）→ 原地更新 <code>mcp.md</code>。</li>
 </ul>
 </div></article>
-<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>我打错了没有第六个仓库。关于同济mcp的你可以告诉我提示词，告诉我该怎么说怎么做，我在mcp项目新开一个对话进行聊天修改吧。其他的内容有需要借鉴的，我觉得需要进行二次的审查，究竟是否需要这个还是很重要的，直接舍弃的就不管它了。你说的痛点A我不太清楚有什么区别，你告诉我原理，他们各有什么优缺点，适不适合我们的运行，我们讨论一下</p>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>我觉得你的思路想的很好，确实可以将1000积分这样使用，mcp就正常使用把，能用多少就用多少，只要达到效果正向优秀即可。然后剩余的积分就用在airadar上，你可以发给我提示词，教我在资源雷达这个项目，我会先使用ai接力协议上传两个附件将原对话提炼，新开一段对话输入提示词。然后是你说的ABC，其实我不太了解，但是按照你说的难道是分立的嘛，三选一，然后也说明现在的mcp出现了问题，B确实要做，不过其他AC也可以适当进行呀。或者有没有其他的地方需要修改，有其他的思路呢，所以我希望你能进行深度的检查，然后更加严格的审视思考，然后进行修改</p>
 </div></article>
-<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>这次二次审查非常值——我刚直接翻读了 <code>tongji_mcp_metrics.jsonl</code> 的<strong>全部 28 条原始逐行记录</strong>、<code>mcp.md</code>、<code>diagnose.py</code> 以及 Antigravity 官方内置的 <code>hooks.md</code>，结果<strong>推翻了一个差点过度设计的假设</strong>，也摸清了痛点 A 的底层原理。</p>
-<p>下面分三块汇报并和你讨论定案（本轮仍严格只读，未改任何本地文件）：</p>
-<hr>
-<h3>一、对所有“潜在可借鉴项”的二次审查（实测祛魅）</h3>
-<p>| 候选借鉴项（来源） | 二次实测核查结果 <code>[实测]</code> | 究竟需不需要？ |</p>
-<p>| :--- | :--- | :--- |</p>
-<p>| <strong>1. 两级熔断 + 阶梯冷却</strong>（<code>Pojun/llmpool</code> → 同济 MCP） | 逐行核对 <code>tongji_mcp_metrics.jsonl</code> 全部 28 条时间戳：<strong>过去 7 天 Kimi 从未出现过连续 3 次失败</strong>！它的 6 次超时全是<strong>零星孤立长尾</strong>（例如 L20 与 L21 隔了 14 小时，L23 前 45 秒刚成功，L25 前后 20 分钟均成功）。<strong>照搬 <code>softTripAfter=3</code> 熔断器，过去一周触发次数 = <code>0/28</code></strong>！反倒意外揪出 2 个真实根因：① <code>draft_struct</code> 3 次超时全精准卡死在 <code>48.6s–48.7s</code>（配置 <code>MaxTimeSec=48</code> 紧贴长尾），<code>deep_panel</code> 卡在 <code>42.6s</code>（<code>MaxTimeSec=42</code>）；② <strong>脚本真实调度缺陷</strong>——L6 <code>code_audit</code> 时 Kimi 在 <strong><code>110 ms</code> 就报 <code>HTTP 429</code></strong>，本应立刻切备 VIP 重试，但 <code>tongji_deepseek_mcp.ps1</code> 死等慢队友 DeepSeek 跑完 <code>34 s</code> 才判重试，结果剩 <code>3.9 s &lt; MinRetryMs(15 s)</code> 直接错失重试窗口！ | <strong>熔断器降级为“暂不急上/仅作可选防御”</strong>（且需落盘状态，与 MCP 零状态红线有张力）；<strong>真正值得改的是「早失败单路立即重试」+「满周微调 Wave 1 超时」</strong>。 |</p>
-<p>| <strong>2. 单一权威健康裁决文件</strong>（<code>sutando/design-core-health-verdict.md</code>） | <code>sutando</code> 有 6 个独立常驻监控进程互抢重启才需要它；本机定时 sidecar 只有极简只读的 <code>skill-update-checker</code> 和 <code>dream-memory-reminder</code>，无多消费者竞争。 | <strong>不需要，直接划掉。</strong> |</p>
-<p>| <strong>3. 生态雷达书签与调研小纪律</strong>（<code>awesome-deepseek-harness</code>） | 本地已有 <code>paper-lookup</code> / <code>literature-review</code> / <code>core-reasoning-protocol</code>。 | <strong>不入库、不改规则，零成本。</strong> |</p>
-<p>| <strong>4. 事前确定性写保护守卫</strong>（<code>sutando/hooks/memory-index-guard.py</code> → 痛点 A） | Antigravity 2.0 原生支持 <code>hooks.json</code>（见下文详拆），并非不能做，但<strong>是否值得为当前低频风险承担同步开销与误拦摩擦</strong>需要权衡。 | <strong>待下方讨论定案（偏向先观察到 11/30 再定）。</strong> |</p>
-<hr>
-<h3>二、同济 MCP 改造：操作步骤与可直接复制的提示词</h3>
-<h4>你在 <code>mcp</code> 项目怎么操作</h4>
-<ul>
-<li>在 <code>c:\Users\&lt;USER&gt;\Desktop\mcp</code> 工作区<strong>新开一个对话</strong>（保持项目隔离，不混在 <code>skills</code> 项目里改）。</li>
-<li><strong>时机建议</strong>：<code>mcp.md</code> 原定 <strong>11/30 跑满一周</strong>一起收口微调；如果你现在就想先审方案或先修 L6 那个“110ms 早 429 被慢队友拖死”的调度缺陷，现在直接发下面这段提示词也完全可以——它已内置“先拿数据论证、经你确认后再改代码”的闸门。</li>
-<li><strong>注意事项</strong>：改动涉及 <code>tongji_deepseek_mcp.ps1</code>（双端同步）与可能触发的 <code>tools/list</code> 描述更新，提示词已写明先跑 <code>blast-radius</code>、改完守双端 SHA-256 一致与独立 stdio E2E，如果动了 <code>tools/list</code> 描述（如 <code>delegate_to_deepseek.json</code>）会提醒你重载 MCP 连接。</li>
-</ul>
-<h4>可直接复制发给 <code>mcp</code> 新对话的提示词</h4>
-<pre><code>先只读读取 @mcp.md 和 @CONTEXT_agent_arch.md 获取铁律与当前断点（勿复述历史），然后一口气完成以下只读核查与方案评估，**先给方案等我确认，本轮不要修改任何文件**：
-
-1. **跑最新遥测并逐条看失败形态**：
-   - 用 `session-diagnose` 跑 `mcp-report --days 7`（或全量 `--days 0`），并读取 `C:\Users\&lt;USER&gt;\.gemini\config\tongji_mcp_metrics.jsonl` 原始逐条记录。
-   - 核实 Kimi-K3.1-Pro 的失败究竟是“孤立长尾撞超时墙”，还是“短时间内连续故障”。
-
-2. **重点核查并对比 3 个候选优化项的真实性价比**（均对照 `C:\Users\&lt;USER&gt;\.gemini\config\tongji_deepseek_mcp.ps1` 源码实测，严守零状态自包含、145s 总预算、UTF-8 BOM、双端同步等铁律）：
-   - **候选 A（高优先怀疑点）**：检查 `Invoke-Probes` / `Wait-CampusJobBatch`——之前 L6 (`code_audit`) 实测 Kimi 在 110ms 就返回 `HTTP 429`，却因死等 DeepSeek 跑完 34s 才判重试导致剩余预算 `&lt; MinRetryMs(15s)` 错失切备 VIP 重试。评估改成“单路早失败（429/5xx/传输错）在主循环中不傻等慢队友、直接带短退避切备 VIP 发起单路重试”的实现复杂度与风险。
-   - **候选 B（既定满周待办）**：按实测耗时分布，评估是否微调 `draft_struct`（当前 48s 撞墙 3 次）与 `deep_panel`（当前 42s 撞墙 2 次）的 Kimi `MaxTimeSec` / 输出控长，以及顺手补齐 `delegate_to_deepseek.json` 缺失的“编排子工位免调”微措辞。
-   - **候选 C（外部借鉴二次证伪，借鉴自 Pojun `llmpool`）**：冷静评估是否真的需要跨调用熔断冷却（硬失败 401/402/403 首次熔断 / 软失败 429&#183;5xx 连败 N 次短冷却）。若真实遥测中连续失败次数极低，或因 `-Worker` 短进程必须落盘状态文件与“零状态自包含”铁律冲突、得不偿失，请直接建议放弃或仅做极简版，不要为了做而做。
-
-3. **输出与闸门**：
-   - 给出 A/B/C 三项的「实测依据 / 预期收益 / 破坏面与代价 / 建议取舍（做还是不做）」对比表。
-   - 明确待我拍板后再正式进入修改流程（修改前必先只读执行 `blast-radius`，改后按 `mcp.md` 跑 AST 0 错、UTF-8 BOM、`.gemini\config` 与 `D:\tongji_plugin` 双端 SHA-256 一致、以及独立 stdio E2E 验收）。</code></pre>
-<hr>
-<h3>三、痛点 A 深度拆解：两种机制的原理、优缺点与本机适配性</h3>
-<h4>1. 先对齐：痛点 A 到底是什么？</h4>
-<p>我们在 <code>core-reasoning-protocol.md</code> 定了铁律：改全局 <code>rules/*.md</code>、插件后端、<code>tongji_deepseek_mcp.ps1</code>、<code>.codex/AGENTS*.md</code> 等高危共享层前，<strong>必须先只读走一遍 <code>blast-radius</code></strong>（核查扩散面与跑 L4 探针）。</p>
-<p>但模型执行规则本质上是“概率性记忆”——长对话一上头，强模型容易自信跳过这步直接改文件。近 7 天 <code>session-diagnose</code> 查到：<strong>5 场改了高危共享层的会话里，3 场合规、2 场漏读 <code>blast-radius</code> 就直接改了规则文件</strong>（其中最早 2 场发生在 11/25 加硬锚点前后，较近的 3 场已 3/3 通过）。</p>
-<h4>2. 两条路线的底层原理区别（用“摄像头 vs 闸机”来理解）</h4>
-<ul>
-<li><strong>路线一（现状）：常驻文字锚点 + <code>session-diagnose</code> 事后复盘 =「事后摄像头」</strong></li>
-<li><strong>原理</strong>：</li>
-<li>事前只靠 <code>core-reasoning-protocol.md</code> 里的文字提醒让模型自觉；</li>
-<li>事后你手动跑 <code>diagnose.py</code>，脚本离线翻看 <code>transcript.jsonl</code>，检查“第一次改高危路径的 step 之前，有没有出现过 <code>read_file(.../blast-radius/SKILL.md)</code>”，没有就标 <code>[FLAGGED]</code>。</li>
-<li><strong>关键特征</strong>：<strong>完全不介入运行链路</strong>，改文件时零额外动作，但也<strong>无法在犯错那一刻拦住它</strong>。</li>
-</ul>
-<ul>
-<li><strong>路线二（借鉴 <code>sutando</code>）：Antigravity 原生 <code>hooks.json</code> 的 <code>PreToolUse</code> 守卫 =「事前门禁闸机」</strong></li>
-<li><strong>原理（经官方 <code>hooks.md</code> 核实）</strong>：</li>
-<li>先澄清一点：<strong>它和【排雷墓碑】里的 <code>claude-octopus</code> / <code>hol-guard</code> 不是一回事</strong>。那俩是给 Linux/macOS Claude Code 写的 <code>.sh</code> 钩子，搬到 Windows 失效；而 <strong>Antigravity 2.0 桌面端原生支持 <code>hooks.json</code></strong>（你的 <code>antigravity-share-hub/hooks.json</code> 已经在 Windows 上跑通了 <code>Stop</code> 钩子）。</li>
-<li>工作流程：在 <code>C:\Users\&lt;USER&gt;\.gemini\config\hooks.json</code> 配置一个 <code>PreToolUse</code> 钩子，用 <code>matcher</code> 只绑定改文件工具（如 <code>edit_file|write_file</code>，确切内部工具名需 1 次最小实测确认 <code>[未验证]</code>）。</li>
-<li>每当模型准备调用改文件工具时，<strong>宿主会先暂停工具执行</strong>，通过 <code>cmd /c</code> 调一个本地轻量 Python 3.12 脚本，把本次 <code>toolCall.args</code>（目标路径）和 <code>transcriptPath</code>（当前会话日志路径）经 <code>stdin</code> 传给脚本：</li>
-<li>目标路径不是高危共享文件 → 立刻输出 <code>{&quot;decision&quot;: &quot;allow&quot;}</code> 放行；</li>
-<li>命中高危共享文件 → 查一下 <code>transcriptPath</code> 本会话是否已读过 <code>blast-radius/SKILL.md</code>：</li>
-<li>已读过 → <code>allow</code> 放行；</li>
-<li>没读过 → 输出 <code>{&quot;decision&quot;: &quot;deny&quot;, &quot;reason&quot;: &quot;...&quot;}</code>（<strong>硬挡回</strong>，逼模型先去读 <code>blast-radius</code>）或 <code>{&quot;decision&quot;: &quot;ask&quot;, &quot;reason&quot;: &quot;...&quot;}</code>（<strong>弹窗让你一键拍板</strong>要不要放行）；</li>
-<li>脚本若遇到任何解析异常 → 遵循 <code>sutando</code> 的 <strong>fail-open</strong> 原则返回 <code>allow</code>，绝不把你正常干活卡死。</li>
-</ul>
-<h4>3. 两者优缺点对比与“适不适合我们的运行环境”</h4>
-<p>| 维度 | 路线一：文字锚点 + 事后 <code>session-diagnose</code>（现状） | 路线二：本地 <code>PreToolUse</code> Hook 事前守卫 |</p>
-<p>| :--- | :--- | :--- |</p>
-<p>| <strong>防漏效果</strong> | 软约束；强模型加了锚点后近 3 场已 3/3 合规，但理论上仍有小概率跳过 | <strong>确定性拦截</strong>，对经 <code>edit_file</code>/<code>write_file</code> 修改高危层的漏触接近 0%（但拦不住用 <code>run_command</code> 写文件的绕过路径） |</p>
-<p>| <strong>日常性能影响</strong> | <strong>0 ms 开销</strong> | <code>[实测文档约束]</code> <code>hooks.md</code> 明确 <strong>Hook 同步阻塞循环</strong>。哪怕改普通代码/Markdown，每次 <code>edit_file</code> 都要经 <code>cmd /c</code> 冷启一次 Python 3.12，增加约 <strong>50–150 ms/次</strong> 延迟 <code>[推断]</code> |</p>
-<p>| <strong>豁免灵活性（最大坑点）</strong> | 模型能读懂语义，改错别字/纯排版注释时自然豁免，零摩擦 | <strong>静态脚本只认路径不认语义</strong>：如果你只是改 <code>rules/*.md</code> 里两个错别字（规则本应豁免 <code>blast-radius</code>），设 <code>deny</code> 会强行误拦逼模型瞎读一遍；设 <code>ask</code> 则会多弹一次确认框打断你 |</p>
-<p>| <strong>隐蔽工程风险</strong> | 几乎为零 | ① <strong><code>transcriptPath</code> 刷盘时序 <code>[未验证]</code></strong>：模型刚读完 <code>blast-radius</code> 下一步立刻改文件时，若宿主还没把上一步 flush 到磁盘，Hook 会假阳性误拦；② Antigravity 升级若改动内部工具名或 payload 格式需跟着维护 |</p>
-<p>| <strong>与本机环境契合度</strong> | 极高（顺应你反臃肿、反过度微操、已有 <code>TURBO</code> 流畅体验的定位） | 中等偏低——更适合多人团队/无人值守长跑仓库，对单人高频交互且已在场把关的场景偏重 |</p>
-<h4>4. 我的倾向与建议（供讨论）</h4>
-<ul>
-<li><strong>现阶段我倾向选「路线一：维持现状，先观察到 11/30 跑 14 天全量 <code>session-diagnose</code>」</strong>：</li>
-<li>理由很直接：你 11/25 刚把 <code>blast-radius</code> 锚点加固进 <code>always_on</code> 规则，之后的 3 场高危改动会话已经是 <strong>3/3 全通过</strong>，目前<strong>尚未实证“加固后依然高频漏触”</strong>；按 <code>CONTEXT_skills.md</code>「反盲目加轮子，先用数据证伪痛点」的铁律，现在为了尚未复发的隐患引入同步阻塞 Hook 和误拦摩擦，收益可能小于维护/体验成本。</li>
-<li><strong>清晰的切换阈值</strong>：11/30（与 <code>CONTEXT_agent_arch.md</code> 的 14 天自诊同步）如果查出 <strong>11/25 之后仍出现 ≥2 次真正漏读 <code>blast-radius</code></strong>，那时再上极简 <code>PreToolUse</code> Hook，而且策略选 <strong><code>&quot;decision&quot;: &quot;ask&quot;</code>（弹窗提醒确认，而非硬 <code>deny</code> 卡死）</strong>——这样改错别字时你点一下放行，真漏了高危审查时也能把你叫醒！</li>
-</ul>
-<hr>
-<h3>四、想听你的看法（2 个收口决定）</h3>
-<ul>
-<li><strong>痛点 A 你更偏向哪种？</strong></li>
-<li><strong>A（推荐）</strong>：暂不加 Hook，保持现状观察到 11/30 跑 14 天 <code>session-diagnose</code>，若 11/25 后仍复发 ≥2 次再上轻量 <code>ask</code> 版 <code>PreToolUse</code> Hook；</li>
-<li><strong>B</strong>：现在就想先做一个 3 分钟的只读验证（测通 Antigravity <code>PreToolUse</code> 的 <code>edit_file</code> 真实 <code>matcher</code> 名与 <code>transcriptPath</code> 是否实时落盘），看清手感后再决定上不上。</li>
-<li><strong>更新状态卡确认</strong>：确认没有第 6 个仓库后，是否同意我现在把本次 5 仓终审结论（0 装包、保留 <code>skill-update-checker</code> <code>[已验证]</code>、记下同济 MCP 调度优化移交 <code>Desktop\mcp</code> 与痛点 A 观察决议）写回 <code>CONTEXT_skills.md</code>（以及是否顺手同步 <code>11.27.md</code>）？</li>
-</ul>
-</div></article>
-<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>你说的对，目前来看最近的情况没有出现，所以选A会更适合，不过B也可以同时进行啊，进行测试一下，如果B的效果很适合的话也可以加进来，两者并不是绝对二选一的。可以的，不过11.27是用来交接的不用更改，其他的你直接进行操作吧</p>
-</div></article>
-<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成临时隔离探针搭建与状态卡基线备份。接下来实机触发写文件与拦截探针，验证 <code>PreToolUse</code> 在当前会话的生效方式、工具名及拦截至效。</p>
-</div></article>
-<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已在新会话子代理中启动 <code>PreToolUse</code> 隔离探针（顺序执行拦截测试、读取 <code>blast-radius</code> 与紧接着的编辑测试），等待探针回报。</p>
-</div></article>
-<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>新会话探针实测通过：第 1 轮成功触发 <code>PreToolUse</code> 硬拦截（<code>tool call denied by pre-tool hook</code>），第 2/3 轮正常放行。接下来读取完整探针日志（检查真实工具名与 <code>transcriptPath</code> 刷盘时序）、立即删除临时 <code>.agents</code> 目录并实测冷启动延迟。</p>
-</div></article>
-<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>临时 <code>.agents</code> 目录已清理，并拿到完整 L5 实机探针数据（<code>PreToolUse</code> 热生效、硬拦截、<code>transcript_full.jsonl</code> 同步落盘及 ~96–167 ms 冷启动实测）。接下来将 5 仓终审与探针结论写回 <code>CONTEXT_skills.md</code>（不动 <code>11.27.md</code>）。</p>
-</div></article>
-<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><h3>一、<code>PreToolUse</code> Hook L5 实机探针结果（含 3 个关键实测排雷！）</h3>
-<p>本次隔离测试（临时建于 <code>Desktop\skills\.agents\hooks.json</code>，零触碰全局配置）<strong>一次性测穿了 Antigravity 2.0 Windows 原生 Hook 的全部核心特性，也当场抓出了一个极具价值的致命坑点</strong>：</p>
-<h4>1. 实测验证通过的能力 <code>[实测]</code></h4>
-<ul>
-<li><strong>精确工具名与参数结构</strong>：<code>toolCall.name</code> 为 <code>&quot;write_file&quot;</code> / <code>&quot;edit_file&quot;</code> / <code>&quot;read_file&quot;</code>（参数键直接是 <code>Path</code>、<code>Target</code>、<code>Replacement</code> 等，不是旧文档示例里的 <code>view_file</code>）。未来若要启用，精确正则应为 <strong><code>&quot;matcher&quot;: &quot;edit_file|write_file&quot;</code></strong>。</li>
-<li><strong>硬拦截真实生效</strong>：子代理第 1 轮尝试写入虚拟目标 <code>hook_probe_deny_test.txt</code> 时，在落盘前被真实拦截，返回：</li>
-</ul>
-<p>  <code>tool call denied by pre-tool hook: [HOOK_PROBE_OK] Blocked synthetic target hook_probe_deny_test.txt</code></p>
-<ul>
-<li><strong><code>transcriptPath</code> 刷盘零竞态</strong>：宿主传入的是 <strong><code>transcript_full.jsonl</code></strong>，且在下一步 <code>PreToolUse</code> 触发前已同步落盘（实测 <code>stepIdx: 7</code> 执行 <code>edit_file</code> 时，<code>step_index: 4, 5, 6</code> 均已在磁盘可读）。</li>
-<li><strong>Windows 冷启动耗时</strong>：<code>cmd /c</code> + <code>python3.12.exe</code> 10 次实测 <strong>P50 <code>95.8 ms</code> / 均值 <code>98.7 ms</code> / 最大 <code>123.5 ms</code></strong>；实际宿主相邻工具间隔（804 KB 会话日志）约 <strong><code>159–167 ms</code></strong>。若只绑定 <code>edit_file|write_file</code>，读文件/跑命令完全零开销，单次改文件延迟体感极轻。</li>
-</ul>
-<h4>2. 实机踩出的 3 个隐蔽坑点 <code>[实测]</code></h4>
-<ul>
-<li><strong>坑点 1（最关键：会话内删除 Hook 目录会 Fail-Closed 锁死当前会话工具调用）</strong>：</li>
-<li>Antigravity 会把已加载的 <code>hooks.json</code> 及<strong>其所在工作目录</strong>缓存在当前会话内存中；刚刚我们删除临时 <code>.agents/</code> 目录清场后，当前会话内存里的 <code>matcher: &quot;*&quot;</code> 钩子并未热卸载，导致随后执行 <code>edit_file</code> 更新 <code>CONTEXT_skills.md</code> 时，宿主报 <code>fork/exec cmd.exe: The directory name is invalid</code> 并 <strong>Fail-Closed 阻断了本会话后续全部工具调用</strong>。</li>
-<li><strong>安全结论与防呆铁律</strong>：</li>
-<li>磁盘上的 <code>Desktop\skills\.agents</code> <strong>已经彻底删除</strong>（<code>AGENTS_EXISTS_AFTER_CLEANUP: False</code>），<strong>新开任何对话都 100% 干净、完全不受影响</strong>；</li>
-<li>未来如果真的要上生产 Hook，<strong>绝不可用 <code>&quot;matcher&quot;: &quot;*&quot;</code></strong>（必须锁死 <code>&quot;edit_file|write_file&quot;</code>），且<strong>停用时必须先改 <code>&quot;enabled&quot;: false</code> 而不是直接删目录</strong>！</li>
-<li><strong>坑点 2（纯文本匹配 <code>blast-radius</code> 会被假阴性绕过）</strong>：</li>
-<li>实测子代理 <code>stepIdx: 2</code>（尚未调用 <code>read_file</code>）时，<code>transcript_full.jsonl</code> 里仅因 prompt 提到了 <code>blast-radius</code> 字样就命中了子串检测。真正的守卫必须像 <code>diagnose.py</code> 一样解析 JSONL 中 <code>PLANNER_RESPONSE.tool_calls</code> 的真实 <code>read_file</code> 调用。</li>
-<li><strong>坑点 3（文档小偏差）</strong>：</li>
-<li>官方 <code>hooks.md</code> 写 <code>&quot;matcher&quot;: &quot;&quot;</code> 可匹配全部工具，实测未触发；改为显式 <code>&quot;*&quot;</code> 才立即生效。</li>
-</ul>
-<hr>
-<h3>二、综合判断与当前磁盘现场状态</h3>
-<ul>
-<li><strong>对痛点 A 的最终定案</strong>：本次实机测试证明 <strong>Antigravity 原生 <code>PreToolUse</code> 技术上完全可行、延迟可控（~100–160 ms）、无 <code>transcript</code> 刷盘竞态</strong>；但同时暴露了 <strong>Fail-Closed 锁死风险</strong>（运维不当会卡死工具链）。因此你拍板的 <strong>「维持方案 A 观察到 11/30 + 保留方案 B 的实测蓝图按需启用」</strong> 是最优解——如果 11/30 14 天自诊确实复发 ≥2 次漏触，我们已经有了零踩坑的精确落地方案（全局 <code>hooks.json</code>、仅 <code>matcher: &quot;edit_file|write_file&quot;</code>、<code>decision: &quot;ask&quot;</code>、JSONL <code>tool_calls</code> 精确判定、永不直接删目录）。</li>
-<li><strong>磁盘现场核对 <code>[实测]</code></strong>：</li>
-<li><code>c:\Users\&lt;USER&gt;\Desktop\skills\.agents</code>：<strong>已彻底删除</strong>，工作区干净；</li>
-<li><code>11.27.md</code>：<strong>原封未动</strong>（SHA-256 未变）；</li>
-<li><code>CONTEXT_skills.md</code>：<strong>未被破坏</strong>（SHA-256 未变），仅因上述坑点 1，<strong>最后一步写回 <code>CONTEXT_skills.md</code> 未能在本会话落盘</strong>。</li>
-</ul>
-<hr>
-<h3>三、待落盘的 <code>CONTEXT_skills.md</code> 更新内容</h3>
-<p>因为当前这个会话的内存钩子已被已删除的 <code>.agents/</code> 锁死（新开对话即自动解除），你可以直接将下面更新后的 <code>## 2</code> 尾部与 <code>## 3</code> 替换进 <code>CONTEXT_skills.md</code>（或新开一个 <code>skills</code> 对话直接贴给我落盘；<code>## 1. 底层约束与铁律</code> 保持原样不动）：</p>
-<pre><code>- [已验证] 零额度每周更新巡检落地：单源读取 `local-overlay.json` 跑 `check_updates.py`（7 天冷却+桌面提醒），2026-11-27 09:03 首巡 6 源全最新，且 `config.json` 中 `skill-update-checker` 已 `&quot;enabled&quot;: true`、`sidecar.log` 11:00:25 正常启动调度（指针：`skills-meta/check_updates.py`、`last_update_report.md`）。
-- [已验证] Codex 桌面端 `26.1120.6357.0` 白屏崩溃定案并修复：系 `work_tab_home` 缺 `Sd8U.PR` Scope Provider 抛 `Error: Missing scope instance`，重置 `.codex-global-state.sqlite` 中 `home-composer-mode-v1=&quot;chat&quot;` 后 0 崩溃。
-- [已验证] 5 仓库源码评估与二次实测审查定案（`awesome-deepseek-harness`、`prompt-in-context-learning`、`sutando`、`Pojun`、`f/prompts.chat`）：全量 **0 装包**；`EgoAlpha` 与 `f/prompts.chat` 舍弃（后者远程 MCP 自动装 Skill 冲突铁律）；`awesome-deepseek-harness` 仅作只读雷达书签；`Pojun`（AGPL-3.0 禁抄）`llmpool` 熔断经 `tongji_mcp_metrics.jsonl` 28 条原始时间戳证伪（近 7 天 Kimi 无连败 3 次，真根因为 48s/42s 超时紧贴长尾及 L6 110ms 早 429 被慢队友拖死未重试），优化移交 `Desktop\mcp` 另案处理。
-- [已验证] Antigravity 2.0 Windows 原生 `PreToolUse` Hook L5 隔离探针定案：实测支持会话内热生效、精确 `matcher: &quot;edit_file|write_file&quot;`、`decision: &quot;deny&quot;` 真实拦截、`transcriptPath`（指向 `transcript_full.jsonl`）同步落盘零竞态、冷启动 P50 95.8 ms（端到端 ~160 ms）；同时实测排雷：① 禁删活跃 Hook 所在目录（宿主内存残留 cwd 会 Fail-Closed 锁死当前会话，停用须改 `&quot;enabled&quot;: false` 且禁挂 `&quot;*&quot;`）；② 禁纯文本子串查 `blast-radius`（须解析 `PLANNER_RESPONSE.tool_calls` 真实 `read_file`）。因 11/25 加固锚点后近 3 场高危改动 3/3 合规，暂维持方案 A 观察至 11/30（临时 `.agents` 已清场）。
-- [排雷墓碑] 整包引入 `nyldn/claude-octopus`、`hol-guard`、`DuarteSantos8/openGym` 或物理合并第三方活跃 Skill —— 根因：Windows Hook 失效或降级 `observe_only`、与现有体系重叠、私有 fork 阻碍上游升级（仅微创吸收 2 处至 `best-of-n`/`debug-unstick`）。
-- [排雷墓碑] 在 Codex `26.1120.6357.0` 空白首页切回 `Work` 标签，或用 `git rev-parse --is-inside-work-tree` 判工作区干净 —— 根因：前者触发缺 Scope 白屏；后者对脏树仍返 `true` 致误覆盖。
-- [排雷墓碑] 对 &lt;500 字短段盲调 `lieflat-less-ai-tone` 或用 `import` 模块名（如 `PIL`/`fitz`）直接传 `uv --with` —— 根因：短段消融负增益；模块名非 PyPI 发行包名导致安装报错。
-- [排雷墓碑] 在活跃 Antigravity 会话中直接删除已加载的 `hooks.json` 所在目录，或在 `PreToolUse` 里挂 `&quot;matcher&quot;: &quot;*&quot;` —— 根因：宿主内存保留原 cwd，目录消失后 `fork/exec cmd.exe` 报 `The directory name is invalid` 并 Fail-Closed 锁死当前会话工具调用（停用须先设 `&quot;enabled&quot;: false`）。
-
-## 3. 当前进度与下一步
-- **当前断点**：`sync_overlay.py --check` 零漂移、6 源巡检全最新、`skill-update-checker` 已开启调度、5 仓库源码评估（0 装包）及 `PreToolUse` Hook L5 探针均已完结且临时探针已清场 [已验证]。
-- **唯一单点下一步**：① 在 `Desktop\mcp` 新开对话按 28 条真实遥测推进同济 MCP 调度/超时优化评估；② 11/30 同步 `CONTEXT_agent_arch.md` 跑 `session-diagnose` 14 天全量自诊，依据 11/25 后 `blast_radius` 实测漏触数决定是否落地轻量 `ask` 版 `PreToolUse` Hook。
-- **外部验证判据**：`sync_overlay.py --check` 零漂移、`Desktop\skills` 无残留 `.agents/`、11/30 `diagnose.py session --days 14` 零错输出 `blast_radius_before_shared_edit` 实测分母。</code></pre>
-<blockquote>建议直接关闭本对话，然后：① 把上面那段粘进 <code>CONTEXT_skills.md</code>（或新开对话让我代写）；② 去 <code>Desktop\mcp</code> 项目新开对话贴上上一轮的同济 MCP 提示词推进即可。</blockquote>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成 <code>blast-radius</code> 只读核查、同济双核审计、<code>v5.4.1</code> 改动双端同步、AST 0 错与 8 组离线对抗 Mock 测试（全部通过），正在等待独立 stdio E2E 实机验收完成。</p>
 </div></article>
 
     </section>
