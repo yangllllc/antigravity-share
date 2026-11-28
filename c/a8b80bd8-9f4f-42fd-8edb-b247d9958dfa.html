@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="a8b80bd8-9f4f-42fd-8edb-b247d9958dfa" data-base-prefix="./" data-turn-count="8" data-update-time="2026-11-28 17:11" data-meta-ver="b949b2c2" data-is-index="0">
+<body data-conv-id="a8b80bd8-9f4f-42fd-8edb-b247d9958dfa" data-base-prefix="./" data-turn-count="10" data-update-time="2026-11-28 17:14" data-meta-ver="b949b2c2" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="Promptfoo And Adk-Go Analysis">Promptfoo And Adk-Go Analysis</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="skills">skills</span><span>会话 ID: a8b80bd8-9f4f-42fd-8edb-b247d9958dfa | 轮次: 8 | 更新于: 2026-11-28 17:11</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="skills">skills</span><span>会话 ID: a8b80bd8-9f4f-42fd-8edb-b247d9958dfa | 轮次: 10 | 更新于: 2026-11-28 17:14</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./a8b80bd8-9f4f-42fd-8edb-b247d9958dfa.md" download="Promptfoo_And_Adk-Go_Analysi-a8b80bd8.md" onclick="return downloadMarkdown(event, './a8b80bd8-9f4f-42fd-8edb-b247d9958dfa.md', 'Promptfoo_And_Adk-Go_Analysi-a8b80bd8.md')">⬇️ 下载 Markdown (.md)</a>
@@ -557,6 +557,97 @@
 <p>https://github.com/ClickHouse/loom  。https://pstack.qiwihui.com/  。https://github.com/google-gemini/gemini-cli  。(https://github.com/google-gemini/) 。https://github.com/google/skills  。https://github.com/google/ax  。 https://github.com/a2aproject/A2A  。https://github.com/ChromeDevTools  。https://github.com/google/mantis  。这次的内容有点多，你详细的看一遍把</p>
 </div></article>
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已拉取全部 11 个目标的实时元数据、仓库目录与 README。接下来进入深挖阶段，并发核查高相关目标的源码细节（<code>qiwihui/pstack-all</code> 安装脚本与规则冲突、<code>upstash/context7</code> 遥测与技能、<code>google/skills</code> 全量索引、<code>google-gemini/gemini-skills</code> 与 <code>gemini-api-cli</code>、<code>ChromeDevTools/chrome-devtools-mcp</code> 技能与本机 Chrome/Docker 环境、<code>waku-agent</code> 记忆门控、<code>ClickHouse/loom</code> 部署资源、<code>google/ax</code> 与 <code>google/mantis</code> 的 Windows 边界与技能列表）。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成全部高相关目标的深层源码与本机环境核查（发现 <code>pstack-all</code> 含 59 个 Skill 且与本地 <code>blast-radius</code> 重名、<code>/setup-pstack</code> 会新增第 5 份 <code>always_on</code> 规则；<code>google/skills</code> 220 项中 196 项为 Google Cloud 技能；本机无 Docker、物理内存 15.4 GB / 可用 6.0 GB、有 Chrome）。接下来在复核 <code>context7</code> 与 <code>chrome-devtools-mcp</code> 遥测开关源码的同时，分两组并发调同济双核交叉校验这 11 个目标的架构取舍。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成全部 <strong>11 个目标</strong>的实时元数据、目录与核心源码核查，并经两路同济双核（<code>draft_struct</code>）按本机硬约束交叉复核。下面先给全景分级总表，再逐项拆解源码证据与取舍边界（本轮严格只读，未改动任何本地文件）。</p>
+<hr>
+<h3>一、11 项全景总览与裁决</h3>
+<blockquote><strong>本机实测基线（核验时间 2026-11-28）</strong>：Antigravity 2.0 桌面端（4 份 <code>always_on</code> 规则已满额、18 自动 + 5 后台 Skill 紧贴 ~20 软上限）；物理总内存 <strong>15.4 GB / 可用 6.0 GB</strong>；系统 PATH 无 <code>node</code>/<code>python</code>/<code>go</code>/<code>docker</code>；已装 Chrome（<code>C:\Program Files\Google\Chrome\Application\chrome.exe</code>）与 <code>wsl.exe</code>；已有 <code>antigravity-dream-memory</code> + Hindsight + 离线 <code>modern-web-guidance</code> + 内置 <code>browser</code> 子代理 / OpenBrowser。</blockquote>
+<p>| 分类 | 目标 | 实测基线 | 一句话定位 | 裁决 | 核心依据 |</p>
+<p>| :--- | :--- | :--- | :--- | :---: | :--- |</p>
+<p>| <strong>工作流/代理</strong> | <a href="https://pstack.qiwihui.com/" target="_blank" rel="noopener noreferrer">pstack.qiwihui.com</a>（源码 <code>qiwihui/pstack-all</code>） | <code>7★</code> &#183; <code>v0.15.48</code> &#183; 根无 LICENSE（内含上游 MIT） | Cursor <code>pstack</code> 多端移植（含 AGY 插件） | <strong>⛔ 严禁整装</strong> | 塞 <strong>59 个 Skill</strong>（含同名 <code>blast-radius</code> 碰撞）+ 强写第 5 份 <code>always_on</code> 规则 <code>pstack-models.md</code> |</p>
+<p>| <strong>本地 Harness</strong> | <a href="https://github.com/ShenSeanChen/waku-agent" target="_blank" rel="noopener noreferrer">ShenSeanChen/waku-agent</a> | <code>2.3k★</code> &#183; <code>v0.1.17</code> &#183; MIT+OFL+Brand &#183; Python | 教学型本地个人助手（Loop+SQLite+Eval） | <strong>0 装包 / 留源码借鉴</strong> | 不替代 AGY 宿主；<strong>但 <code>consolidation.py</code> 3 条防脏记忆护栏值得移交 <code>Desktop/memory</code> 参考</strong> |</p>
+<p>| <strong>文档检索</strong> | <a href="https://github.com/upstash/context7" target="_blank" rel="noopener noreferrer">upstash/context7</a> | <code>66k★</code> &#183; <code>v4.9.1</code> &#183; MIT &#183; Node≥22.13 | 版本化库文档检索 MCP / CLI | <strong>0 装包（划走）</strong> | 仅客户端开源、后端闭源且全查询外发 <code>context7.com</code>；本机主力非快变全栈框架，0 实测痛点 |</p>
+<p>| <strong>共享记忆</strong> | <a href="https://github.com/ClickHouse/loom" target="_blank" rel="noopener noreferrer">ClickHouse/loom</a> | <code>248★</code> &#183; <code>v1.3.0</code> &#183; Apache-2.0 &#183; Docker | 企业软件工厂共享记忆与代码索引 MCP | <strong>0 装包（划走）</strong> | 硬需 Docker/WSL2+ClickHouse+独立付费 Key；本机无 Docker 且 15.4 GB 内存吃不消 |</p>
+<p>| <strong>浏览器调试</strong> | <a href="https://github.com/ChromeDevTools" target="_blank" rel="noopener noreferrer">ChromeDevTools</a>（主力 <code>chrome-devtools-mcp</code>） | 20 仓 &#183; 核心 <code>60k★</code> &#183; <code>v1.14.0</code> &#183; Apache-2.0 | Chrome 深度 Trace/LCP/内存/DOM 调试 MCP | <strong>0 常驻 / 唯一按需候选</strong> | 源码实证 <code>--no-usage-statistics</code> 可真关 Clearcut；日常已被内置 <code>browser</code> 覆盖，深查性能时再临时挂 |</p>
+<p>| <strong>Google CLI</strong> | <a href="https://github.com/google-gemini/gemini-cli" target="_blank" rel="noopener noreferrer">google-gemini/gemini-cli</a> | <code>109k★</code> &#183; <code>v0.71.1</code> &#183; Apache-2.0 &#183; Node | 企业级 GCP Code Assist 终端代理 | <strong>0 装包（官方已劝退）</strong> | README 顶栏官宣：个人/AI Pro 已于 2026-06-18 迁至 AGY CLI，且<strong>未针对 Gemini 4+ 优化</strong> |</p>
+<p>| <strong>Google 组织</strong> | <a href="https://github.com/google-gemini/" target="_blank" rel="noopener noreferrer">google-gemini/</a> | 52 仓（含 <code>gemini-skills</code> <code>4.8k★</code>、<code>gemini-api-cli</code>） | Gemini API 官方示例/工具/Skill 集合 | <strong>0 装包（按需书签）</strong> | <code>gemini-skills</code>（4 项）已内置在 AGY 官方插件库；<code>gemini-api-cli</code> 需独立 API Key |</p>
+<p>| <strong>Google 技能</strong> | <a href="https://github.com/google/skills" target="_blank" rel="noopener noreferrer">google/skills</a> | <code>25k★</code> &#183; Apache-2.0 &#183; <strong>220 项</strong> | Google 官方产品 Agent Skills 集合 | <strong>0 装包（划走）</strong> | 源码统计 <strong>196/220（89.1%）为 Google Cloud</strong>，余 24 项为 Ads/Analytics/Gerrit/Rust/LiteRT |</p>
+<p>| <strong>集群编排</strong> | <a href="https://github.com/google/ax" target="_blank" rel="noopener noreferrer">google/ax</a> | <code>15k★</code> &#183; <code>v0.3.1</code>/<code>v0.4.0-rc.2</code> &#183; Apache-2.0 &#183; Go | 类 K8s 百万级沙箱 Agent 编排控制面 | <strong>0 装包（划走）</strong> | <code>install.sh</code> 仅支持 macOS/Linux，需 Kind/GKE 容器沙箱，重度破坏性开发中 |</p>
+<p>| <strong>开放协议</strong> | <a href="https://github.com/a2aproject/A2A" target="_blank" rel="noopener noreferrer">a2aproject/A2A</a> | <code>27k★</code> &#183; <code>v1.0.1</code> &#183; Apache-2.0 &#183; AAIF | 跨企业/跨框架黑盒 Agent 互操作标准 | <strong>0 装包（纯协议）</strong> | 标准规范而非本地工具；单机原生 <code>swarm</code> + 子代理 + MCP 无需 A2A 层 |</p>
+<p>| <strong>安全审计</strong> | <a href="https://github.com/google/mantis" target="_blank" rel="noopener noreferrer">google/mantis</a> | <code>2.8k★</code> &#183; Apache-2.0 &#183; 19 Skill + ADK | 自动化漏洞发现/复现/修补管道 | <strong>0 装包（平台不兼容）</strong> | README 明示<strong>不支持原生 Windows</strong>、禁在常规宿主机运行、PR 扫描未实测、需独立 Key |</p>
+<hr>
+<h3>二、第一梯队：贴近本机工作流的 5 项深度拆解</h3>
+<h4>1. <code>pstack.qiwihui.com</code>（底层仓库 <code>qiwihui/pstack-all</code>，v0.15.48）</h4>
+<ul>
+<li><strong>是什么</strong>：个人将 Cursor 官方 <code>cursor/plugins/pstack</code>（MIT，Copyright 2026 Lauren Tan）自动转换并分发到 Claude Code / Antigravity 的镜像仓（<code>7★</code>，根无 <code>LICENSE</code>，仅 <code>pstack/LICENSE</code> 留上游协议），宣传 <code>/poteto-mode</code> 单入口路由 22 个 Playbooks + 24 条工程原则 + 分角色模型预算。</li>
+<li><strong>源码实测的 4 个硬冲突</strong>：</li>
+<li><strong>直接炸穿 Skill 容量与重名碰撞</strong>：实查 <code>harness/pstack/antigravity/skills/</code> 共含 <strong>59 个 Skill</strong>（24 条 <code>principle-*</code> 全被拆成独立 Skill + <code>arena</code>/<code>swarm</code>/<code>interrogate</code>/<code>unslop</code> 等），且内含一个 <strong><code>blast-radius</code></strong>——与你现役的 <code>blast-radius</code> 直接撞名；另带 2 个静态子代理定义（<code>poteto-agent.md</code>、<code>comment-sicko.md</code>）。</li>
+<li><strong>直接突破 4 份 <code>always_on</code> 硬封顶</strong>：其 <code>README.md</code> 明确写明 <code>/setup-pstack</code> 会在 <code>~/.gemini/config/rules/pstack-models.md</code> 写入 <code>trigger: always_on</code> 的第 5 份全局规则。</li>
+<li><strong>与本机已有护栏高度重叠</strong>：其“先审前提（<code>attack-the-premise</code>）、实证门禁（<code>prove-it-works</code>）、同一错两次固化为脚本/测试（<code>/correct</code>）、防上下文撑爆（<code>guard-the-context-window</code>）、去 AI 味（<code>unslop</code>）、多路竞技（<code>arena</code>）”均已被你现有的 <code>core-reasoning-protocol.md</code> + <code>blast-radius</code> + <code>debug-unstick</code> + <code>grilling</code> + <code>best-of-n</code> + <code>lieflat-less-ai-tone</code> 覆盖，且你的版本已按本机 Windows/科研环境实测收敛。</li>
+<li><strong>Windows 适配缺口</strong>：安装入口 <code>scripts/install-antigravity.sh</code> 是纯 Bash 脚本。</li>
+<li><strong>结论</strong>：<strong>0 装包、0 引入</strong>。</li>
+</ul>
+<h4>2. <code>ShenSeanChen/waku-agent</code>（2.3k★，v0.1.17，MIT + OFL-1.1 + Brand）</h4>
+<ul>
+<li><strong>是什么</strong>：面向教学与透明可控的 Python（<code>uv</code>）本地个人助手完整范本（~95 行核心循环 + 单文件 SQLite <code>~/.waku/state.db</code> + 本地 Cockpit 面板 + <code>waku/alwayson/</code> 事件收件箱/定时器/审批 + 确定性/LLM-as-judge 评测门禁）。</li>
+<li><strong>为什么不装</strong>：它是一个独立个人助手宿主（需独立 API Key 与 Telegram/日历/语音接入），与 Antigravity 2.0 桌面端职能重叠；不需要再维护第二套常驻助手进程。</li>
+<li><strong>本批唯一高杠杆源码微借鉴（实测读自 <code>waku/memory/</code>）</strong>：</li>
+<li><code>waku/memory/consolidation.py</code>（433 行）记录了作者在真实运行中踩出的 <strong>3 条防脏记忆硬护栏</strong>：</li>
+<li><code>is_ops_state</code>：无论摘要模型提议什么，强制丢弃余额、额度、账单、402/429、限流、工具报错与 token 计数等瞬态运行状态；</li>
+<li><code>is_memory_state</code>：强制丢弃“当前记忆里有什么/缺什么”这类记忆元状态；</li>
+<li><code>recalled</code> <strong>防回声室去重</strong>：本轮如果是基于已召回记忆回答的，把 <code>recalled</code> 传给巩固器，避免摘要模型把复述出来的旧记忆当成“新事实”二次写库。</li>
+<li><code>waku/memory/retrieval_gate.py</code>（56 行）：在每轮查库前用轻量判断“本轮到底需不需要读记忆”，避免无意义检索拖慢响应并引入无关偏置。</li>
+<li><strong>结论</strong>：<strong>0 装包</strong>；上述 3 条巩固防脏规则高度契合你 <code>Desktop/memory</code> 课题下的 <code>antigravity-dream-memory</code>，可作为纯只读架构参考留给记忆课题迭代时按需移植。</li>
+</ul>
+<h4>3. <code>upstash/context7</code>（66k★，v4.9.1，MIT）</h4>
+<ul>
+<li><strong>是什么</strong>：解决 LLM 训练数据过期导致 API 幻觉的实时版本文档拉取服务，支持 <code>ctx7</code> CLI（Node ≥22.13）+ Skill 或远程 MCP（<code>https://mcp.context7.com/mcp</code>）。</li>
+<li><strong>源码实测核清两件事</strong>：</li>
+<li><strong>架构与隐私边界</strong>：其 README 免责声明第 2 条明示<strong>开源的仅是 MCP/CLI 壳，后端 API、解析与爬取引擎全部闭源</strong>；实查 <code>packages/mcp/src/lib/telemetry-config.ts</code>，仓内 <code>telemetry*.ts</code> 属于服务端 OTel/Prometheus 可观测性配置（不同于 <code>promptfoo</code> 的客户端强制暗报），但使用它就意味着每次查文档都必须把你的库名与任务 query 发往 <code>context7.com</code> 云端，且无 API Key 易触发限流。</li>
+<li><strong>本机痛点证伪</strong>：Context7 最强的是 Next.js / Supabase / Tailwind / Cloudflare Workers 等月更破坏性 API 的全栈开发；而你主力是物理/光学推导、COMSOL/MATLAB/Zemax、Python 科研与 PPT，前端体量极小且已有离线毫秒级零遥测的 <code>modern-web-guidance</code> + <code>search_web</code> 兜底，无高频“写坏最新框架 API”实测痛点。</li>
+<li><strong>结论</strong>：<strong>0 装包、0 引入</strong>（若未来长期高强度写 React/Next.js/FastAPI 工程再按需重评）。</li>
+</ul>
+<h4>4. <code>ClickHouse/loom</code>（248★，v1.3.0，Apache-2.0）</h4>
+<ul>
+<li><strong>是什么</strong>：ClickHouse 开源的企业/软件工厂级共享记忆 + 编译器级代码符号/调用方索引 + 文档 RAG MCP 服务。</li>
+<li><strong>源码与本机实测否决依据</strong>：</li>
+<li><strong>重型基础设施门禁</strong>：Windows 端强制依赖 <strong>WSL 2 + Docker + ClickHouse（可选 Postgres）+ Python/TS/Go/C++ 索引器 + 本地 <code>bge-small</code> CPU 嵌入模型</strong>；本机实测无 <code>docker</code>，物理内存仅 <strong>15.4 GB（当前空闲 6.0 GB）</strong>，跑起 WSL2 + ClickHouse 容器会严重挤压光学仿真与桌面日常内存。</li>
+<li><strong>明确不吃订阅额度</strong>：README 原文写死 *&quot;Your agent&#39;s CLI login or subscription does not supply Loom&#39;s provider keys&quot;*（无独立 LLM API Key 时默认退化为 <code>fake-echo-1</code> 假模型），且官方定位为 *&quot;Loom is not an in-process library for one agent&#39;s short-lived memory&quot;*。</li>
+<li><strong>已有轻量化替代</strong>：单人跨会话记忆已由纯内存 FTS5 的 <code>antigravity-dream-memory</code> + Hindsight 满足。</li>
+<li><strong>结论</strong>：<strong>0 装包、0 引入</strong>。</li>
+</ul>
+<h4>5. <code>ChromeDevTools</code> 组织（20 仓，核心 <code>chrome-devtools-mcp</code> 60k★，v1.14.0，Apache-2.0）</h4>
+<ul>
+<li><strong>组织全景</strong>：除 Chrome DevTools 本体（<code>devtools-frontend</code>、<code>devtools-protocol</code>、<code>trace-engine-cli</code> 等基础设施）外，面向 AI Agent 的旗舰仓就是 <code>chrome-devtools-mcp</code>（也是 Antigravity 官方推荐插件 <code>chrome-devtools-plugin</code> 的上游）。</li>
+<li><strong>源码实测的亮点与边界</strong>：</li>
+<li><strong>遥测开关诚实（已读 <code>src/index.ts</code> 与 <code>ClearcutLogger.ts</code>）</strong>：虽默认开启 Google Clearcut 使用统计、CrUX URL 上报与 npm 更新检查，但源码实证 <code>if (serverArgs.usageStatistics) { ClearcutLogger.initialize(...); }</code>——传 <code>--no-usage-statistics</code>（或环境变量 <code>CHROME_DEVTOOLS_MCP_NO_USAGE_STATISTICS=1</code>）会<strong>彻底不初始化 <code>ClearcutLogger</code></strong>，再叠 <code>--no-performance-crux</code> 与 <code>CHROME_DEVTOOLS_MCP_NO_UPDATE_CHECKS=1</code> 即可做到真零上报。</li>
+<li><strong>为什么现在不常驻</strong>：日常网页操作与截图已由 Antigravity 内置 <code>browser</code> 子代理与 OpenBrowser 覆盖；该 MCP 真正的不可替代优势是 <strong>Performance Trace / LCP 剖析 / 源码映射 Console / Heap Snapshot 内存泄漏诊断</strong>，且仓内自带 8 个 Skill（全装会挤爆自动 Skill 上限），默认示例还依赖全局 <code>npx</code>（本机 PATH 无 <code>npx</code>，若用须走 <code>.workbuddy</code> 内置 Node 22.22.2 绝对路径）。</li>
+<li><strong>结论</strong>：<strong>当前 0 常驻、0 装 Skill</strong>；列为本批<strong>唯一“未来按需临时候选”</strong>——仅当你调试 <code>ai-radar</code> 或自建 Sidecar 遇到内置浏览器查不清的卡顿/内存泄漏/复杂网络包问题时，按需用内置 Node + 三项禁遥测参数临时挂载，用完即撤。</li>
+</ul>
+<hr>
+<h3>三、第二梯队：Google 官方 Agent 生态 6 项全景厘清</h3>
+<p>6 项均为 <strong>0 装包</strong>，核心价值在于把 Google 2026 年的 Agent 产品线版图一次看清、避免误踩旧工具或重云端套件：</p>
+<ul>
+<li><strong><code>google-gemini/gemini-cli</code>（109k★，v0.71.1，Apache-2.0）</strong>：<strong>直接划走</strong>。其 README 顶部官方公告已讲透——个人免费与 Google AI Pro/Ultra 已于 <strong>2026-06-18 迁至 Antigravity CLI</strong>，本仓专供 GCP Enterprise Code Assist，且<strong>明确未针对 Gemini 4+ 模型调优</strong>。你已在用主力 Antigravity 2.0，完全无需回头装它。</li>
+<li><strong><code>google-gemini/</code> 组织（52 仓）</strong>：梳理后主要有 4 个值得知晓坐标的仓（均无需从 GitHub 手装）：</li>
+<li><code>gemini-skills</code>（<code>4.8k★</code>，仅含 <code>gemini-api-cli</code> / <code>gemini-api-dev</code> / <code>gemini-live-api-dev</code> / <code>gemini-omni-flash-api</code> 4 个 Skill）——其 README 已注明<strong>内置在 Antigravity 官方 <code>Build with Google</code> 插件库中</strong>；</li>
+<li><code>gemini-api-cli</code>（无状态单文件 Go 二进制，支持调 Gemini 文本/多模态/媒体生成/托管 Agent 与 <code>--dry-run</code>、<code>--schema</code>）——需独立 <code>GEMINI_API_KEY</code>，适合无头脚本/CI；</li>
+<li><code>cookbook</code> / <code>genai-processors</code>——分别作 Gemini API 官方代码示例索引与流式多模态管道参考（按需网页查）；其余大量为演示模板或 <code>deprecated-generative-ai-*</code> 旧 SDK。</li>
+<li><strong><code>google/skills</code>（25k★，Apache-2.0）</strong>：实查 <code>index.json</code> 共 <strong>220 个 Skill</strong>，按顶层目录实测：<strong>196 个（89.1%）全是 <code>skills/cloud/</code>（Vertex AI / GKE / AlloyDB / BigQuery / IAM / Apigee 等 GCP 运维技能）</strong>；剩余 24 项为 <code>ads</code>（15）、<code>analytics</code>（2）、<code>developers</code>（4：<code>finding-google-skills</code>、<code>gerrit-code-review</code>、<code>migrate-to-rust</code>、<code>retrieving-developer-knowledge</code>，[未逐项拆读正文]）、<code>identity</code>（2）、<code>platform-devices</code>（1：<code>litert-google-tensor</code>）。本机无 GCP 运维/广告/Rust 迁移工作流，严禁整包安装。</li>
+<li><strong><code>google/ax</code>（15k★，v0.3.1 / v0.4.0-rc.2，Apache-2.0，Go）</strong>：Google 开源的“Agent 版 Kubernetes”声明式集群编排运行时（<code>ax.io/v1alpha1</code> 的 <code>Task</code>/<code>Workspace</code>/<code>Model</code>/<code>Gateway</code>，跑在 Agent Substrate 容器沙箱与 Kind/GKE 之上，支持 <code>ax suspend</code>/<code>resume</code>/<code>ssh</code> 与预构建 Antigravity 镜像）。源码核查 <code>install.sh</code> 仅支持 <strong>macOS 与 Linux</strong>，且顶部明确警告处于重度破坏性演进期。面向集群规模跑百万级隔离任务，与单机 Windows 桌面科研零交集。</li>
+<li><strong><code>a2aproject/A2A</code>（27k★，v1.0.1，Apache-2.0，AAIF）</strong>：Linux Foundation / AAIF 托管的 <strong>Agent2Agent 开放互操作协议规范</strong>（AgentCard 能力发现、跨公司/跨框架黑盒 Agent 协作与长任务状态管理，与 MCP 互补）。这是纯标准规范而非本地软件，单机 Antigravity 原生 <code>swarm</code> + 子代理 + MCP 已完备，仅作架构概念了解即可。</li>
+<li><strong><code>google/mantis</code>（2.8k★，Apache-2.0）</strong>：Google 开源的自动化安全漏洞发现/复现/修补方法论（19 个 <code>mantis-*</code> Skill + ADK 参考管道）。实测三重硬门槛直接否决本机部署：① README 明确 <strong>native Windows is unsupported</strong>（仅 Linux/WSL2/macOS）；② 顶部 <code>CAUTION</code> 红框严禁在含敏感数据或常规工作机上运行（会自动生成并执行高危复现代码），且 GitHub Action PR 扫描尚未经过真实项目端到端实测；③ 需独立付费 API Key，且你当前无软件漏洞挖掘业务。</li>
+</ul>
+<hr>
+<h3>四、总结与两个边界确认</h3>
+<ul>
+<li><strong>一句话结论</strong>：11 个目标全部维持 <strong>0 装包、0 新增常驻规则/Skill</strong>；唯一值得沉淀的源码级干货是 <strong><code>waku-agent</code> <code>consolidation.py</code> 的 3 条防脏记忆护栏</strong>（移交 <code>Desktop/memory</code> 按需借鉴），唯一保留作未来工具箱备选的是 <strong><code>chrome-devtools-mcp</code>（仅深查前端性能/内存泄漏时带 3 项禁遥测参数按需临挂）</strong>。</li>
+<li><strong>两个确认问题</strong>：</li>
+<li><strong>入卡范围</strong>：是否要把这批 11 项常规扫盲结果（如压缩合并为 1 条精炼摘要、把 <code>CONTEXT_skills.md</code> 累计二审仓数更新，或仅挑与 Antigravity 直接冲突的 <code>pstack-all</code>/<code>context7</code>/<code>chrome-devtools-mcp</code> 入排雷）写入 <code>CONTEXT_skills.md</code>？以及是否要把 <code>waku-agent</code> 的 3 条防脏记忆护栏顺手记个瘦指针到 <code>Desktop/memory</code> 课题（或由你下次开 <code>memory</code> 对话时直接提）？</li>
+<li><strong>需求边界核对</strong>：这一批高度集中在 Google 官方 2026 Agent 全家桶（<code>gemini-cli</code>/<code>google/skills</code>/<code>ax</code>/<code>A2A</code>/<code>mantis</code>/<code>ChromeDevTools</code>）+ 热门记忆/文档/工作流仓，是纯粹做一次全景技术雷达摸底，还是你近期有计划用独立 Gemini API Key 搭一个自动化工具/小型 Web 应用？如果真有开发计划，<code>gemini-api-cli</code> 或 <code>chrome-devtools-mcp</code> 的评估结论会随之从“划走”切为“按需启用”。</li>
+</ul>
 </div></article>
 
     </section>
