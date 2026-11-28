@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="516fe6ac-1022-4866-81b1-81998c03b3d9" data-base-prefix="./c/" data-turn-count="8" data-update-time="2026-11-28 14:20" data-meta-ver="6c8f1c11" data-is-index="1">
+<body data-conv-id="516fe6ac-1022-4866-81b1-81998c03b3d9" data-base-prefix="./c/" data-turn-count="10" data-update-time="2026-11-28 15:22" data-meta-ver="6c8f1c11" data-is-index="1">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="./index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="AI Translation API Cost Optimization">AI Translation API Cost Optimization</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64">【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64</span><span>会话 ID: 516fe6ac-1022-4866-81b1-81998c03b3d9 | 轮次: 8 | 更新于: 2026-11-28 14:20</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64">【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64</span><span>会话 ID: 516fe6ac-1022-4866-81b1-81998c03b3d9 | 轮次: 10 | 更新于: 2026-11-28 15:22</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./c/516fe6ac-1022-4866-81b1-81998c03b3d9.md" download="AI_Translation_API_Cost_Opti-516fe6ac.md" onclick="return downloadMarkdown(event, './c/516fe6ac-1022-4866-81b1-81998c03b3d9.md', 'AI_Translation_API_Cost_Opti-516fe6ac.md')">⬇️ 下载 Markdown (.md)</a>
@@ -587,6 +587,46 @@
 <ul>
 <li>领好魔搭 / 硅基流动 Key 并点「测通」时，若某家平台近期下线或改名了默认免费模型 ID（如魔搭/硅基把 <code>Qwen/Qwen2.5-7B-Instruct</code> 换成了 <code>Qwen3</code> 或带 <code>-Free</code> 后缀），直接在该槽的「模型名」框里改成控制台显示的免费模型 ID 再测通即可；如遇到任何 400/404 报错贴给我，我马上帮你调默认预设。</li>
 <li>当前 <code>ai-focus-curator.ts</code> 里「半小时精选日上限 120 条」仍同时约束精选审查与抽屉自动翻译（保护零配额分区不自动偷跑）；等你配好 3 家免费池并实跑两天后，如果觉得免费翻译池余量极大、想把「自动预译/抽屉自动翻译」从 120 条精选日限里拆出来单设更高上限（例如 300 条/日），随时告诉我再做轻量拆分。</li>
+</ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>为什么我在魔搭和腾讯云上使用不了他们的api，魔搭上是使用阿里云的api。腾讯云上我创建了api，然后他也赠送了我免费的额度，但是我填进去后没有用这是为什么</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>我刚直接读取运行状态并分别对已填的几个通道发了一次只读连通探测（零明文泄露），<strong>先报一个好消息</strong>：你填好的 <strong>硅基流动（<code>siliconflow-qwen</code>）已经实测 <code>HTTP 200</code> 连通成功</strong>！现在「智谱 + 硅基流动」已经双通道就绪了。</p>
+<p>魔搭和腾讯云没能用起来，<strong>实测抓到了非常明确的上游 <code>HTTP 401</code> 根因</strong>（而且我面板里「测通」把真实 401 报错吞成了笼统的“模型未返回有效结论”，害你没看到具体原因，这点我也记下来了）：</p>
+<hr>
+<h3>一、魔搭为什么用不了？（实测撞了<strong>两个坑</strong>）</h3>
+<ul>
+<li><strong>【核心原因 &#183; 实测】你填进去的是阿里云百炼的 <code>sk-ws-...</code>（117 位），不是魔搭令牌</strong></li>
+<li>探测日志显示你填进魔搭槽位的 Key 以 <strong><code>sk-ws-</code></strong> 开头（117 位），魔搭网关直接拒回了：</li>
+</ul>
+<p>     <code>HTTP 401: Authentication failed, please make sure that a valid ModelScope token is supplied.</code></p>
+<ul>
+<li><strong>为什么会这样？</strong> 魔搭页面上很多入口会直接引导跳去「阿里云百炼」，你在那里创建出来的 <code>sk-ws-...</code> 是<strong>阿里云百炼业务空间专属 Key</strong>（对应专属域名 <code>https://{WorkspaceId}.cn-beijing.maas.aliyuncs.com/compatible-mode/v1</code>），所以拿它去打魔搭 <code>api-inference.modelscope.cn</code> 或通用百炼域名 <code>dashscope.aliyuncs.com</code> 都会直接 401。</li>
+<li><strong>怎么选两条路（任选其一，或两条都加进池）</strong>：</li>
+<li><strong>用魔搭每日免费额度</strong>：回 https://modelscope.cn/my/myaccesstoken ，创建并复制 <strong><code>ms-</code> 开头</strong>的「魔搭访问令牌（ModelScope Access Token）」（不要点去阿里云百炼）。</li>
+<li><strong>直接用你刚建好的阿里云百炼 <code>sk-ws-</code> Key</strong>：去阿里云百炼控制台点「调用示例」，把页面上给你的那个带 <code>WorkspaceId</code> 的专属 <code>base_url</code>（形如 <code>https://xxx.cn-beijing.maas.aliyuncs.com/compatible-mode/v1</code>）和免费模型名（如 <code>qwen-flash</code> / <code>qwen-turbo</code>）填进一个新槽位即可。</li>
+<li><strong>【预设踩坑 &#183; 实测】魔搭下线了旧默认模型名 <code>Qwen/Qwen2.5-7B-Instruct</code></strong></li>
+<li>我刚实测拉取了 <code>https://api-inference.modelscope.cn/v1/models</code> 实时清单（共 38 个在线模型），确认我之前预设填的 <code>Qwen/Qwen2.5-7B-Instruct</code> 已经下线了。</li>
+<li>魔搭当前实测在线的轻快千问/DeepSeek 模型有：<strong><code>Qwen/Qwen3.8-Flash-Next</code></strong>、<code>Qwen/Qwen3.5-27B</code>、<code>Qwen/Qwen3.5-35B-A3B</code>、<code>deepseek-ai/DeepSeek-V4.1-Flash</code>。等你换上 <code>ms-</code> 令牌时，把魔搭那一行的「模型名」改成 <strong><code>Qwen/Qwen3.8-Flash-Next</code></strong> 就能通。</li>
+</ul>
+<hr>
+<h3>二、腾讯云为什么送了免费额度、建了 Key 还是用不了？</h3>
+<ul>
+<li><strong>【实测结果】</strong>：你填进腾讯云的 Key 是 <code>sk-V...</code>（51 位），但我拿它实测了腾讯云当前全部 6 个公开 OpenAI 兼容入口，<strong>全部直接返回 <code>HTTP 401</code>（鉴权就被挡在门外，还没走到扣免费额度那一步）</strong>：</li>
+<li><code>https://api.hunyuan.cloud.tencent.com/v1</code> → <code>401 Incorrect API key provided</code>（提示 Key 在 <code>console.cloud.tencent.com/hunyuan/start</code>）</li>
+<li><code>https://tokenhub.tencentcloudmaas.com/v1</code> 与 <code>/plan/v3</code> 与国际站 → <code>401 (401002) API Key 不存在或签名校验失败</code>（提示 Key 在 <code>console.cloud.tencent.com/tokenhub/apikey</code>）</li>
+<li><code>https://api.lkeap.cloud.tencent.com/v1</code> 与 <code>/plan/v3</code> 与 <code>/coding/v3</code> → <code>401 not authorized</code></li>
+<li><strong>推断最可能的 2 个原因</strong>：</li>
+<li><strong>产品线 / 端点没对上</strong>：腾讯云目前把大模型拆成了好几套互不互通的控制台——旧版<strong>混元大模型</strong>（<code>api.hunyuan.cloud.tencent.com/v1</code>）、新版送新人 100 万免费额度的 <strong>TokenHub</strong>（<code>tokenhub.tencentcloudmaas.com/v1</code>，模型名如 <code>hy4-flash</code>）、以及<strong>知识引擎 / 元器 / 混元生文应用</strong>，每套都会生成 <code>sk-</code> 开头的 51 位 Key，但<strong>跨域名互不认账</strong>，全部报 401。</li>
+<li><strong>服务未点「开通」或 Key 未绑定该模型权限</strong>：在旧版混元页或 TokenHub 领了免费体验包，但如果没点过一次「开通 API 服务」，或在创建 Key 时勾选了模型白名单漏掉 <code>hunyuan-lite</code> / Key 状态未启用，也会直接 401。</li>
+</ul>
+<hr>
+<h3>下一步最快排查（两件事）</h3>
+<ul>
+<li><strong>腾讯云你直接给我看两行信息就行</strong>：打开你刚才领免费额度、创建 <code>sk-</code> Key 的那个腾讯云页面，点开页面里的「API 调用示例 / 接入指引」，把里面的 <strong><code>base_url</code>（网址）</strong> 和 <strong><code>model</code>（模型名）</strong> 复制给我（<strong>不要发 Key 本身</strong>），我一眼就能定位它属于腾讯云哪条线并直接配通。</li>
+<li><strong>顺手要不要我一起修掉刚才抓到的 2 个程序小问题？</strong></li>
+<li>① 修复 <code>ai-settings.ts</code> 中 <code>testAiConnection</code> 吞掉真实 HTTP 报错的问题（以后点「测通」直接把 <code>HTTP 401 / 404</code> 真实原因显出来，不用盲猜）；</li>
+<li>② 把魔搭预设模型名从已下线的 <code>Qwen/Qwen2.5-7B-Instruct</code> 更新为实测在线的 <code>Qwen/Qwen3.8-Flash-Next</code>，并顺手加上「腾讯云 TokenHub」与「阿里云百炼」预设入口。你回个“修”我就一起打进新版 <code>AIRadar.exe</code>。</li>
 </ul>
 </div></article>
 
