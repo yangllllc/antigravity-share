@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="3d4d4104-df5e-4bd2-bf35-137e6017943a" data-base-prefix="./" data-turn-count="8" data-update-time="2026-11-28 10:06" data-meta-ver="6387cde8" data-is-index="0">
+<body data-conv-id="3d4d4104-df5e-4bd2-bf35-137e6017943a" data-base-prefix="./" data-turn-count="10" data-update-time="2026-11-28 10:12" data-meta-ver="6387cde8" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="Gemini小号地区更换与使用决策">Gemini小号地区更换与使用决策</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="独立对话">独立对话</span><span>会话 ID: 3d4d4104-df5e-4bd2-bf35-137e6017943a | 轮次: 8 | 更新于: 2026-11-28 10:06</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="独立对话">独立对话</span><span>会话 ID: 3d4d4104-df5e-4bd2-bf35-137e6017943a | 轮次: 10 | 更新于: 2026-11-28 10:12</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./3d4d4104-df5e-4bd2-bf35-137e6017943a.md" download="Gemini小号地区更换与使用决策-3d4d4104.md" onclick="return downloadMarkdown(event, './3d4d4104-df5e-4bd2-bf35-137e6017943a.md', 'Gemini小号地区更换与使用决策-3d4d4104.md')">⬇️ 下载 Markdown (.md)</a>
@@ -661,6 +661,50 @@
 <ul>
 <li>你提示“未发现任何通行密钥”这一步，是在<strong>同一台手机上</strong>弹出来的，还是在<strong>电脑（OpenBrowser / 浏览器）登新号</strong>时弹出来的？</li>
 <li>你注册用的手机是 <strong>iPhone 还是 Android（什么品牌）</strong>？</li>
+</ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>我刚刚一直都使用手机，但是我这个新号定位的地区还是中国这个为什么，我更改了时区，使用的也是星联加宽的ip</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p><strong>先做 1 步 10 秒核验（先确认是不是真的定错区了）</strong>：</p>
+<p>用这个新号打开 <code>https://policies.google.com/terms</code>（或 <code>https://policies.google.com/country-association-form</code>），看页面明确写着哪一个国家。</p>
+<ul>
+<li>如果那里显示 <strong><code>Japan</code></strong>，说明<strong>账号真实归属区没问题</strong>，你刚才看到的“中国”只是搜索页定位或简体中文语言偏好；</li>
+<li>如果那里确实显示 <strong><code>China</code> / <code>中国</code></strong>，那原因非常明确——<strong>手机端的硬件与网络定位信号权重，远高于“手动改时区 + 单一代理 IP”</strong>。</li>
+</ul>
+<hr>
+<h3>一、为什么改了时区、挂了日本星链家宽 IP，手机注册还是被定在中国？</h3>
+<p>在手机上（尤其是通过系统设置 / 原生 App 注册），Google 能拿到的定位维度比电脑浏览器多得多，只要命中下面任意一两条，就会直接压过你手动改的时区和 IP：</p>
+<ul>
+<li><strong>实体 SIM 卡国家码（MCC <code>460</code>）与运营商信息（权重极高，Android 尤甚）</strong></li>
+<li>手机只要插着国内移动/联通/电信 SIM 卡，系统底层（特别是 Android 的 Google Play Services）可直接读到 SIM 卡 MCC=<code>460</code>、运营商归属 <code>CN</code> 与基站国家码。这在手机上比“手动改系统时区”硬得多。</li>
+<li><strong>手机 GPS / Wi-Fi 周边热点（BSSID）定位未关</strong></li>
+<li>只要手机开着位置服务或 Wi-Fi 扫描，哪怕挂着日本家宽 IP，Google 服务通过周边国内路由器的 MAC 地址库也能秒级反推出设备物理位置在中国大陆。</li>
+<li><strong>注册过程中用到了 <code>+86</code> 手机号</strong></li>
+<li>如果注册验证时填了或自动绑定了国内 <code>+86</code> 手机号，这本身就是极强的中国地区归属信号。</li>
+<li><strong>手机代理漏流（规则模式分流 + IPv6 直出）</strong></li>
+<li><strong>规则模式（Rule）分流漂移</strong>：如 <code>tongji-mcp-and-network.md</code> 已实测过的坑，若手机端不是<strong>纯全局模式</strong>，部分 Google 后台认证/GMS 域名可能没走星链日本节点；</li>
+<li><strong>IPv6 直出漏流</strong>：国内 4G/5G 蜂窝网和校园网默认常带公网 IPv6，若手机代理未接管或屏蔽 IPv6，访问双栈 Google 接口时会直接走国内运营商 IPv6 出口——测速页看 IPv4 是日本，Google 实际收到的请求却带国内 IPv6。</li>
+<li><strong>同台手机已有中国区旧号历史 + 简体中文系统环境</strong></li>
+<li>同一手机设备 ID（Android ID / 广告与服务上下文）上若长期活跃着中国区/有中国历史的旧 Google 账号，叠加 <code>zh-CN</code> 系统语言，新建账号极易被系统归并到同一地区画像。</li>
+</ul>
+<blockquote>这也是手机注册的天然两面性：<strong>设备可信度高（容易跳过扫码发短信），但手机硬件/基站/SIM 定位泄漏也最强。</strong></blockquote>
+<hr>
+<h3>二、你现在应该怎么处理？（别重踩韩国小号的坑）</h3>
+<ul>
+<li><strong>先顺手把“同机找不到通行密钥”稳住（防锁死）</strong></li>
+<li>既然你一直只用这台手机，报“未发现任何通行密钥”大概率是：</li>
+<li><strong>Android</strong>：系统默认自动填充/通行密钥提供方没切到 <strong>Google</strong>（在 <code>设置 → 密码、通行密钥与自动填充</code> 里开启），或者手机上同时登了多个 Google 账号导致查错了旧号的密码库；</li>
+<li><strong>iPhone</strong>：<code>设置 → iCloud → 密码与钥匙串</code> 或 <code>设置 → 通用 → 自动填充与密码</code> 没全开。</li>
+<li><strong>最稳做法</strong>：验证时点 <strong>“尝试其他方式 → 输入密码”</strong>，进 <code>myaccount.google.com/security</code>，立刻补上 <strong>身份验证器（6 位动态码）+ 10 个备用码 + 辅助邮箱</strong>，再把异常 Passkey 删掉。</li>
+<li><strong>如果 <code>policies.google.com/terms</code> 实锤显示 <code>China</code>，不要现在填改区表！</strong></li>
+<li>记住韩国小号的排雷结论（<code>CONTEXT_OpenBrowser_Gemini.md</code>）：新号刚建就提交改区几乎必拒“证据不足”。</li>
+<li><strong>现实决策建议</strong>：既然你的核心需求只是<strong>留一个 Antigravity 防封备胎</strong>且你有海外支付方式，<strong>完全没必要再花几周去把一个刚出生就定在 China 的新号从头养去改区</strong>——你手里的<strong>日本大号</strong>已经过了 <code>Japan</code> 改区 + 18+ 年龄认证 + 清空付款资料，资质比这个新号高出好几个台阶，直接把它当冷备胎即可；这个新号补齐安全项、退出手机端后台后冷置即可。</li>
+</ul>
+<hr>
+<h3>帮你进一步精准定性（只需回 2 个事实）</h3>
+<ul>
+<li>你查一下新号的 <code>https://policies.google.com/terms</code>，页面写的是 <strong><code>China</code>（中国）</strong> 还是 <strong><code>Japan</code>（日本）</strong>？</li>
+<li>你这台手机是 <strong>Android 还是 iPhone</strong>，注册时是不是插着国内 SIM 卡（或用了 <code>+86</code> 验证）且没关手机定位 / 代理跑在规则模式？</li>
 </ul>
 </div></article>
 
