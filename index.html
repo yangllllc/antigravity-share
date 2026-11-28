@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="f7cdb1b6-9cc3-427f-943c-5a390a39637a" data-base-prefix="./c/" data-turn-count="22" data-update-time="2026-11-28 13:12" data-meta-ver="3c640b89" data-is-index="1">
+<body data-conv-id="f7cdb1b6-9cc3-427f-943c-5a390a39637a" data-base-prefix="./c/" data-turn-count="31" data-update-time="2026-11-28 13:22" data-meta-ver="3c640b89" data-is-index="1">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="./index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="AI Radar Context Review">AI Radar Context Review</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64">【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64</span><span>会话 ID: f7cdb1b6-9cc3-427f-943c-5a390a39637a | 轮次: 22 | 更新于: 2026-11-28 13:12</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64">【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64</span><span>会话 ID: f7cdb1b6-9cc3-427f-943c-5a390a39637a | 轮次: 31 | 更新于: 2026-11-28 13:22</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./c/f7cdb1b6-9cc3-427f-943c-5a390a39637a.md" download="AI_Radar_Context_Review-f7cdb1b6.md" onclick="return downloadMarkdown(event, './c/f7cdb1b6-9cc3-427f-943c-5a390a39637a.md', 'AI_Radar_Context_Review-f7cdb1b6.md')">⬇️ 下载 Markdown (.md)</a>
@@ -642,6 +642,71 @@
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>正在等待 Opus 7 项审查修复后的全量构建与 34 项回归测试完成，全绿后即刻备份数据库并执行原子重打包与后台静默任务部署。</p>
 </div></article>
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>Opus 7 项审查缺陷已全部闭环修复并补入自动化回归，构建与 <strong>34/34 回归测试</strong>（11 suites）全绿通过。接下来安全停止旧进程、为 <code>release/data/</code> 做迁移前只读快照备份到临时目录、原子重打 <code>AIRadar.exe</code>，并安装启动路线 A 无窗后台自启任务。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>迁移前数据库快照已安全备份至临时目录，正在后台原子重打 <code>AIRadar.exe</code> 并安装启动无窗后台自启任务，完成后立刻执行实机全面冒烟验收。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p><code>AIRadar.exe</code>（86.41 MB，23 项内嵌前端，零密钥/零测试头残留）已原子重打包成功！注册计划任务时实测非管理员令牌下 <code>AtLogOn</code> 触发器会报 <code>Access is denied</code>（0x80070005）；改用 Windows 原生当前用户登录自启项 <code>HKCU:\Software\Microsoft\Windows\CurrentVersion\Run</code> 配合 <code>wscript.exe</code> 无窗启动，免 UAC 提权且原生继承用户环境变量（含 <code>TONGJI_API_KEY</code>）。现更新脚本并立刻实机启动验收。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已切换为免 UAC 提权的当前用户无窗登录自启方案（<code>HKCU:\Software\Microsoft\Windows\CurrentVersion\Run</code> + <code>wscript.exe</code> UTF-16LE 隐藏启动器）。现在安装并启动后台服务，随即执行全链路实机冒烟校验与 34 项回归复核。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>无窗后台自启项已注册，正在等待服务启动、实机冒烟校验与 34 项回归测试输出完整结果。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已定位后台启动失败根因：<code>background-task.ps1</code> 生成 VBS 的 <code>shell.CurrentDirectory</code> 拼接缺少外层括号，被 PowerShell 数组拆成 3 行导致 VBS 语法报错。现立即修复并重新安装启动、完成全部实机冒烟校验。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>无窗后台服务已启动并通过冒烟接口查询，正在等待 34 项回归测试收尾输出。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>实机冒烟与 34/34 回归全绿通过：无窗后台服务（PID <code>7604</code>、<code>WindowTitle=&#39;&#39;</code>）已稳定运行并自动识别 <code>TONGJI_API_KEY</code>，启动即在 7.5 秒内用 2 次同济批请求完成 20 条 L2 时政严审，默认可见时政从 <code>735</code> 条压缩至 <code>73</code> 条（降噪 90%），精选时政压至 <code>2</code> 席。现更新 <code>CONTEXT_ai_radar.md</code> 并整理本地 Git 提交。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成本地提交（<code>d276057</code> 与 <code>56d9bae</code>），工作区完全干净且 <code>release/</code> 零误入。现核对最终状态卡并将全部步骤标记完成。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>全部 5 项改造已一次性落盘、完成 <code>Claude Opus 5.5 (High)</code> 严格二次盲审并闭环修复 7 项边界缺陷、原子重打包 <code>AIRadar.exe</code> 且已切换为无窗后台自启常驻运行。</p>
+<hr>
+<h3>一、本次落盘的 4 大功能模块</h3>
+<ul>
+<li><strong>采集防超时提速</strong></li>
+<li><code>http.ts</code>：走本机代理时将 <code>curl</code> 建连超时由 <code>5s</code> 放宽至最高 <code>8s</code>，减少代理抖动引发的 <code>curl exit 28</code> 假超时；</li>
+<li><code>collectors/index.ts</code>：海外轨增设 <code>≤ 4</code> 并发闸门防打爆本机代理端口，并将静态清单 <code>github-awesome-ai</code> / <code>github-selfhosted</code> 拆入独立泳道 <code>lane:github-readme</code>，不再阻塞 GitHub 热门新星与发布流。</li>
+<li><strong>国内外时政 L1/L2 深度严审（选项 A 配额）</strong></li>
+<li><code>politics-filter.ts</code>、<code>score.ts</code>、<code>enrich/index.ts</code>：</li>
+<li><strong>L1 源头与规则硬闸</strong>：裁剪 <code>cctv-news</code> 地方灌水子频道（仅留 <code>news</code> 12 条 + <code>world</code> 8 条），<code>chinanews</code> 降频至 2 小时限 10 条；拦截文旅风光/候鸟花草/兴农特产/野猪伤人/&lt;6 级常规小震与套话通稿；取消旧 <code>keepRate</code> 虚抬分，未审硬信号封顶 <code>60–64</code> 分、常规封顶 <code>≤ 48</code> 分。</li>
+<li><strong>L2 专属严审 + 选项 A 配额</strong>：<code>ai-budget-policy.ts</code> 与 <code>v35</code> 迁移原地扩至 <strong>120 条/日</strong> 并单开 <strong><code>politics: 20</code></strong>（原有 <code>tools:55 / models:25 / community:20</code> 分毫未动）；<code>ai-focus-curator.ts</code> 单独以 <code>POLITICS_STRICT_PROMPT</code> 批量送审（每批 10 条仅耗 1–2 次同济请求），<code>&lt; 4</code> 星自动归一为 <code>keep=false</code>。</li>
+<li><strong>默认零裸奔门禁</strong>：主屏与半小时精选默认只放行 <code>ai_keep=1 AND ai_quality&gt;=4</code> 的重磅时政（精选上限压至 <code>≤ 2</code> 席），无 AI 时优雅降级为仅放行 L1 硬信号；<code>v35</code> 原子迁移已对存量未审水新闻无损归档（绝不触碰已收藏/多用户收藏/已读/已浏览及已缓存译文）。</li>
+<li><strong>曝光-点击动态分配、自动静默与破格直通</strong></li>
+<li><code>personalization.ts</code>、<code>focus-selection.ts</code>、<code>routes.ts</code>、<code>retention.ts</code>：</li>
+<li>前端 <code>App.tsx</code> 通过 <code>IntersectionObserver</code> 仅在卡片可视面积 <code>≥ 60%</code> 且停留 <code>≥ 1.2s</code> 时批量上报有效曝光，后端按 <code>(item_id, day_key)</code> 去重每日每条最多写 1 次，30 天严格滑窗统计。</li>
+<li>连续 30 天曝光 <code>≥ 8</code> 次零点击零收藏进入<strong>降权</strong>（<code>-12</code> 分、单轮限 1 席），<code>≥ 15</code> 次自动<strong>静默停分</strong>（也不消耗常规自动 AI 配额），点击任意 1 条即自动解冻；静默源出现 <strong>5 星重磅 / ≥92 分突破 / ≥3 源共识</strong> 时可<strong>破格推荐</strong>（全站按自然日封顶 2 条，<code>ItemView.tsx</code> 显示「破格推荐」徽标）。</li>
+<li>在「AI 引擎」面板 <code>AiPanel.tsx</code> 新增<strong>「智能偏好分配与时政严审」</strong>控制卡，透明展示每个信源的曝光/点击/收藏/加减分与状态，支持一键恢复、手动静默与一键回退静态配额。</li>
+<li><strong>路线 A：Windows 无窗后台自启服务</strong></li>
+<li>新增 <code>background-task.ps1</code> 与无 BOM CRLF 快捷脚本 <code>安装后台自启任务.bat</code>、<code>卸载后台自启任务.bat</code>。</li>
+<li>实测非管理员令牌下 <code>Register-ScheduledTask</code> 注册 <code>AtLogOn</code> 会报 <code>0x80070005</code>（已记入排雷墓碑），故采用免 UAC 的当前用户自启项 <code>HKCU:\Software\Microsoft\Windows\CurrentVersion\Run\AIRadarBackgroundService</code> + UTF-16LE <code>release\launch-hidden.vbs</code>（<code>AUTO_OPEN_BROWSER=false</code>，零黑框、原生继承 <code>TONGJI_API_KEY</code>）。以后随时访问 <code>http://127.0.0.1:8788</code> 或双击 <code>启动AI情报雷达.bat</code> 直接开浏览器即可。</li>
+</ul>
+<hr>
+<h3>二、<code>Claude Opus 5.5 (High)</code> 二次盲审与 7 项闭环修复</h3>
+<p>本次主动派发 <code>Claude Opus 5.5 (High)</code> 做独立只读盲审，共抓出 <strong>7 条高价值边界缺陷</strong>，全部逐条核实并已修复补入回归测试（<code>ai-radar.test.ts</code> Suite 11）：</p>
+<ul>
+<li><strong>静默时政死锁</strong>：<code>cctv-news</code> 静默后新硬信号因未审无法破格、不破格又进不了 L2 → 允许未审且命中 L1 硬信号的时政在 <code>politics:20</code> 配额内送 L2（仅 5 星才破格露面）；</li>
+<li><strong>破格日上限跨频道超发</strong>：原为单次切片封顶 → 新增 <code>personalization_breakthroughs</code> 持久化表按自然日跨频道严格封顶；</li>
+<li><strong>前后端 <code>dupCount</code> 脱节</strong>：<code>FocusCandidateRow</code> 补传 <code>dupCount</code>，使 3 源共识破格帖同步获得 AI 审译；</li>
+<li><strong><code>v35</code> 清洗保护边界</strong>：补充保护 <code>read_at IS NOT NULL</code>、多用户收藏表 <code>user_item_states.starred=1</code> 与既有 <code>ai</code> 译文字段；</li>
+<li><strong>30 天曝光窗口漂移</strong>：由累计 <code>impression_count</code> 改为直接按 <code>item_impression_days</code> 30 天滑窗精确聚合；</li>
+<li><strong>VBS 中文路径编码</strong>：<code>ASCIIEncoding</code> 改为带 BOM 的 UTF-16LE（<code>UnicodeEncoding</code>）；</li>
+<li><strong>进程安全校验</strong>：路径不可读时改为 <code>catch { $false }</code> 防止误杀，启动就绪校验同时核对 PID 路径与 <code>/health</code>。</li>
+</ul>
+<hr>
+<h3>三、全链路实机验证结果（全部实测）</h3>
+<ul>
+<li><strong>构建与单测</strong>：<code>npm.cmd run build</code>（1722 模块 / 3.96s）+ <code>npm.cmd test</code> <strong>34/34 全绿</strong>（11 suites / 1.89s）。</li>
+<li><strong>单文件发布包</strong>：<code>AIRadar.exe</code>（<code>86.41 MB</code>，内嵌 <code>23</code> 前端资源），静态扫描 <code>x-ai-radar-test-ip = False</code>、长 <code>sk-</code> = <code>0</code>、<code>facb5e61 = False</code>；迁前数据库完整快照已备份至本次会话 <code>scratch/pre-v35-backup/</code>。</li>
+<li><strong>无窗后台实机运行态</strong>：</li>
+<li>进程 PID <code>7604</code> 运行中，<strong><code>WindowTitle = &#39;&#39;</code></strong>（无黑框），<code>GET /health</code> 返回 <code>200</code>；</li>
+<li>自动继承环境变量 <code>TONGJI_API_KEY</code>（<code>keySource: env</code>, <code>••••dadf</code>），启动后 <strong>7.5 秒内用 2 次同济批请求（3.26s + 4.24s）自动完成 20 条 L2 时政严审</strong>；</li>
+<li>默认可见时政从 <strong><code>735</code> 条压缩至 <code>73</code> 条（降噪 90%）</strong>，「半小时精选」构成实测 <code>tools: 18 / models: 3 / tech: 5 / politics: 2</code>（高亲和工具源自动补位，时政严格压在 2 席内）；</li>
+<li>已有 12 次点击与 5 条收藏已即时生效（<code>rss-nodeloc +12</code>、<code>github-ai-apps +12</code>、<code>github-mcp-tools +10</code>、<code>rss-hnrss +10</code>、<code>github-ai-trending +6</code>）；</li>
+<li>安全门禁实测：伪造 <code>Host: evil.example.com:8788</code> 返回 <strong><code>403</code></strong>，<code>POST /api/history/clear {}</code> 返回 <strong><code>400</code></strong>。</li>
+<li><strong>Git 与状态卡</strong>：已整理为 2 笔本地提交（<code>d276057</code> 功能 + <code>56d9bae</code> 更新 <code>CONTEXT_ai_radar.md</code>），工作区完全干净、<code>git ls-files release = 0</code>、未推送原上游 <code>origin</code>。</li>
+</ul>
+<blockquote>[!TIP]</blockquote>
+<blockquote>您现在直接打开浏览器访问 <code>http://127.0.0.1:8788</code> 即可看到清爽后的精选与时政列表；在左侧「AI 引擎 → 智能偏好分配与时政严审」里可以实时观察各信源曝光/点击/静默状态并随时一键恢复。过几天等曝光样本累积起来，如果觉得 <code>8次降权 / 15次静默</code> 节奏偏快或偏慢，随时告诉我微调即可。</blockquote>
 </div></article>
 
     </section>
