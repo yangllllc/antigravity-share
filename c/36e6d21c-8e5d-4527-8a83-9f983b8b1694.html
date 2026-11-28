@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="36e6d21c-8e5d-4527-8a83-9f983b8b1694" data-base-prefix="./" data-turn-count="15" data-update-time="2026-11-28 11:24" data-meta-ver="63095b31" data-is-index="0">
+<body data-conv-id="36e6d21c-8e5d-4527-8a83-9f983b8b1694" data-base-prefix="./" data-turn-count="20" data-update-time="2026-11-28 11:40" data-meta-ver="63095b31" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="Raytrace Bug Fixes And Audit">Raytrace Bug Fixes And Audit</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="消耗额度">消耗额度</span><span>会话 ID: 36e6d21c-8e5d-4527-8a83-9f983b8b1694 | 轮次: 15 | 更新于: 2026-11-28 11:24</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="消耗额度">消耗额度</span><span>会话 ID: 36e6d21c-8e5d-4527-8a83-9f983b8b1694 | 轮次: 20 | 更新于: 2026-11-28 11:40</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./36e6d21c-8e5d-4527-8a83-9f983b8b1694.md" download="Raytrace_Bug_Fixes_And_Audit-36e6d21c.md" onclick="return downloadMarkdown(event, './36e6d21c-8e5d-4527-8a83-9f983b8b1694.md', 'Raytrace_Bug_Fixes_And_Audit-36e6d21c.md')">⬇️ 下载 Markdown (.md)</a>
@@ -597,6 +597,37 @@
 <li><strong>严格物理定义</strong>：仅 <code>CF == 0</code> 才为 <code>is_afocal=True</code>（超量程弱面 <code>is_afocal=False</code>、各字段独立保留有限值或 <code>&#177;inf</code>，并由 <code>is_near_afocal=True</code> 提示）；还是</li>
 <li><strong>数值溢出退化定义</strong>：<code>efl</code> 溢出即 <code>is_afocal=True</code>（但仍独立保留可表示的 <code>f_obj</code> 与主面偏移）？</li>
 </ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>方案A。我觉得是否可以模仿真实环境，毕竟数值溢出很正常，不可能真的那么完美，就没有必要那么的严格在这一块上</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>收到，采用<strong>方案 A</strong>（纯本地一次性闭环全部 2 P0 + 9 P1 + 4 P2，不再发起外审），并按你的拍板锁死 <code>is_afocal</code> 语义（模仿真实工程环境：<code>CF == 0</code> 或 <code>efl</code> 溢出 <code>float64</code> 时判 <code>is_afocal = True</code>，同时各基点字段独立转换、保留符号与可表示的有限 <code>f_obj</code> / 主面偏移）。</p>
+<p>接下来先在状态卡标记 <code>1A-3.10</code> 为 <code>[已落盘待测]</code>，并一次性完成 5 个核心模块的全部 15 项修复。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成全部 2 P0 + 9 P1 + 4 P2 共 15 项核心修复落地（涵盖 <code>Ray</code> 无二次归一化拷贝与内部精确位置/方向透传、球面免开方临界角判据与自适应位宽 <code>isqrt</code>、公开 <code>interval_abcd_matrix</code>/<code>system_abcd_matrix</code>/<code>trace_paraxial_ray</code> 精确回退、<code>is_afocal</code> 溢出独立转换、反求 <code>EFL+q</code> 双约束回代、平板闭式防相消与全真实追迹、以及去固定绝对容差与 <code>re.ASCII</code>）。接下来把全部 15 项回归用例固化进 <code>tests/test_step1_gpt_final.py</code> 并离线全量运行验证。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>94/94 离线单测全部通过（<code>0.148s</code>），覆盖全部 15 项终验新反例与历史 79 项回归用例。接下来执行 <code>1A-3.10</code> 核心代码原子提交、同步刷新本地审计包并封存 <code>CONTEXT_ZemaxCompanion.md</code>。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p><strong>Step 1A 物理内核（微批次 <code>1A-1</code>~<code>1A-3.10</code>）已正式封板！</strong> 全部 <strong>2 项 P0 + 9 项 P1 + 4 项 P2</strong> 已在纯本地一次性闭环并固化回归测试，不再发起外审。</p>
+<h3>一、封板实测结果</h3>
+<ul>
+<li><strong>离线全套单测</strong>：本机 Python 3.13 运行 <code>-m unittest discover -s tests -v</code> 结果 <strong><code>Ran 94 tests in 0.148s — OK</code></strong>（零跳过、零警告失败）。</li>
+<li><strong>原子提交与磁盘状态</strong>：</li>
+<li>核心代码与测试封板提交：<code>e63e3c5</code>（修改 <code>geometry.py</code>、<code>sign_bridge.py</code>、<code>raytrace.py</code>、<code>paraxial.py</code>、<code>analysis.py</code> 与 <code>test_step1_gpt_final.py</code>）</li>
+<li>状态卡封存提交：<code>ff4d5ae</code>（<code>CONTEXT_ZemaxCompanion.md</code> 已标 <code>[已验证]</code>，工作区 <code>git status</code> clean）</li>
+<li>本地离线归档包 <code>step1_gpt_audit_pack.md</code> 已同步刷新至 <code>e63e3c5</code>（3,443 行）。</li>
+</ul>
+<hr>
+<h3>二、本次 15 项收口落地速览</h3>
+<ul>
+<li><strong>状态交接与免二次归一化（2 P0 + P1-3）</strong>：<code>Ray</code> 新增 <code>with_wavelength</code> 与保向拷贝路径（不改 <code>(L, M, N)</code> 时绝不再调 <code>normalize_direction</code>），并在不改变公开字段/<code>repr</code>/<code>==</code> 的前提下隐式携带 <code>_exact_pos</code> 与 <code>_exact_dir</code>——使紧贴球面后方 <code>3.2e-18</code> 的实平面、整机 <code>1 mm</code> 平移与拆分两次调用 <code>trace_ray_through_surface</code> 均与整机 <code>trace_ray</code> 逐比特一致。</li>
+<li><strong>免开方临界角裁判与自适应精度（P1-1 / P1-2 / P1-4）</strong>：快路径球冠近赤道根直接转精确二次代数判号（<code>Ray(0, 7/8, 7/8, 0, 1, 1)</code> 恢复 <code>OK</code>）；球面临界角先用免开方距离不变量 <code>n2^2*|v|^2 - n1^2*|w x v|^2</code> 裁决（<code>sin(i)=0.5</code> 精确临界透射不再因 <code>isqrt</code> 向下取整假 <code>TIR</code>）；<code>_exact_vector_refract</code> 按余量指数自适应扩位宽，完整跑通 <code>N = 2^-105 / 2^-250 / 2^-520</code> 平板追迹且 <code>math.isqrt</code> 对完全平方数零误差。</li>
+<li><strong>近轴公开入口统一、真实溢出退化与双约束回代（P1-5 / P1-6 / P1-7）</strong>：<code>interval_abcd_matrix</code>、<code>system_abcd_matrix</code> 与 <code>trace_paraxial_ray</code> 共享 <code>M_abs</code> / 抵消精确回退；按你的拍板，<code>is_afocal</code> 在 <code>CF == 0</code> 或 <code>efl</code> 溢出 <code>float64</code> 时判 <code>True</code>（<code>is_near_afocal=True</code>），但逐字段独立转换保留 <code>-inf</code> 符号与有限 <code>f_obj</code> / 主面偏移；<code>solve_thick_lens_radii_for_efl</code> 回代同时校验 <code>EFL</code> 与形状因子 <code>q</code>。</li>
+<li><strong>平板闭式/全真实追迹与无魔数收口（P1-8 / P1-9 / 4 P2）</strong>：<code>parallel_plate_exact_shift_closed_form</code> 采用等折射率直返 <code>0.0</code> 与无相消形式 <code>(n-n0)(n+n0) + (n0*cos U)^2</code>；<code>analyze_parallel_plate_focus_shift</code> 取消未追迹捷径（<code>trace_status</code> 100% 来自真实 <code>trace_ray</code>），消除 <code>1e-12</code> 通光与出口分类魔数；<code>ray_axis_intercept_z</code> 严守 <code>x == 0, L == 0</code> 子午前提；<code>parse_float_strict</code> 补 <code>re.ASCII</code> 拒判全角 <code>&quot;１２&quot;</code>。</li>
+</ul>
+<hr>
+<h3>三、按微批次铁律停手等待确认</h3>
+<p>Step 1A 物理核现已完全封存。你确认后，下一步直接开启微批次 <strong><code>1B</code></strong>（依铁律先过 <strong>2 题物理契约关</strong>，再落盘本机 <code>127.0.0.1</code> 零构建 HTML/Canvas 光学交互台 + ≤1 页公式↔代码映射卡）；若本次时间紧（六级优先），也可随时到此收工，下次直接从 <code>CONTEXT_ZemaxCompanion.md</code> 接力开 <code>1B</code>。</p>
+<blockquote>提示：若希望把本轮学到的 4 条“科学计算内核红队进化准则”沉淀到长期工作流中，可随时输入 <code>/learn</code>。</blockquote>
 </div></article>
 
     </section>
