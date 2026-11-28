@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="3253ff6e-128a-4556-a080-a2692e74b580" data-base-prefix="./" data-turn-count="6" data-update-time="2026-11-28 15:49" data-meta-ver="5785e4b9" data-is-index="0">
+<body data-conv-id="3253ff6e-128a-4556-a080-a2692e74b580" data-base-prefix="./" data-turn-count="13" data-update-time="2026-11-28 16:13" data-meta-ver="5785e4b9" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="API Key Configuration And Troubleshooting">API Key Configuration And Troubleshooting</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64">【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64</span><span>会话 ID: 3253ff6e-128a-4556-a080-a2692e74b580 | 轮次: 6 | 更新于: 2026-11-28 15:49</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64">【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64</span><span>会话 ID: 3253ff6e-128a-4556-a080-a2692e74b580 | 轮次: 13 | 更新于: 2026-11-28 16:13</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./3253ff6e-128a-4556-a080-a2692e74b580.md" download="API_Key_Configuration_And_Tr-3253ff6e.md" onclick="return downloadMarkdown(event, './3253ff6e-128a-4556-a080-a2692e74b580.md', 'API_Key_Configuration_And_Tr-3253ff6e.md')">⬇️ 下载 Markdown (.md)</a>
@@ -475,6 +475,61 @@
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>正在运行完整构建、38 项回归测试，并由 GPT-6.2-Astra（只读红队审稿）复核本次改动的边界与安全逻辑；完成后将自动继续打包与实机 4 槽联调。</p>
 </div></article>
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>构建与 38/38 回归测试已全部通过，GPT-6.2-Astra（Codex CLI）仍在执行只读代码审查，稍候回执后立即收口。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>GPT-6.2-Astra 跨模型只读审稿发现了 2 项 P0（跨槽脱敏遗漏与 HTTP 200 JSON 解析异常可能泄漏片段）及多项 P1/P2 边界（中文 422 关思考回退被误拦、错误体无界读取/中止重发、重定向绕过同济隔离、URL 查询串拼接与标题费用口径冲突）。正在逐条修补并补齐回归断言。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>GPT 审稿发现的 9 项 P0/P1/P2 边界与回归断言已全部落盘，正在执行完整构建与 38 项测试校验。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已修正损坏 JSON 测试用例使其精准覆盖 <code>JSON.parse</code> 异常分支，正在等待完整构建与 38 项测试结束。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>构建、38/38 回归测试与 GPT-6.2-Astra 红队复审的全部修复项均已通过。接下来执行原子重打 <code>release/AIRadar.exe</code>、无窗重启后台服务（严守不动 <code>release/data/</code> 历史数据），并修正实机魔搭与腾讯云 TokenHub 2 个槽位的模型/端点后对全部 4 个槽位做端到端实测。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>正在原子重打 <code>release/AIRadar.exe</code>、无窗重启后台服务，并对智谱 / 硅基流动 / 魔搭 / 腾讯云 TokenHub 全部 4 个通道做实机端到端测通与安全边界核验。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p><code>release/AIRadar.exe</code>（86.47 MB）已原子重打并无窗重启（<code>PID=21676</code>、<code>HealthHTTP=200</code>），实机 4 槽（智谱 / 硅基流动 / 魔搭 <code>Qwen3.8-Flash-Next</code> / 腾讯云 TokenHub 国际站 <code>hy4-flash</code>，总并发 8）端到端实测 <strong>4/4 全部连通且精准判别 3 留 / 1 拦</strong>，防 DNS 重绑定 403、<code>history/clear</code> 坏参 400、二进制零密钥残留全部通过。最后刷新 <code>CONTEXT_ai_radar.md</code> 状态卡并完成本地提交收口。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p><strong>你的判断完全正确：你的两个 API 密钥本身都没问题，是之前的预设配置与探测端点弄错了。</strong> 全部问题已排查定位、经 <strong>GPT-6.2-Astra（只读红队审稿）</strong> 复核并修补完成，已重新打包运行 <code>AIRadar.exe</code> 且实机 4 个公网槽位全部测通。</p>
+<hr>
+<h3>1. 两个 API 失败的真实根因（实测确认）</h3>
+<p>| 通道 | 你的密钥状态 | 之前失败的原因 | 现已修正为 | 实机 <code>/api/ai/test</code> 结果 |</p>
+<p>| :--- | :--- | :--- | :--- | :--- |</p>
+<p>| <strong>阿里魔搭 ModelScope</strong> | 实机库中已更新为有效 <code>ms-</code> 令牌（<code>ms-785ef57...1670</code>） | 预设仍填着已下线的旧模型 <code>Qwen/Qwen2.5-7B-Instruct</code>（魔搭直接返回 HTTP 400 <code>has no provider supported</code>），且旧版 <code>testAiConnection</code> 把真实报错吞成了通用提示 | 模型改为 <code>Qwen/Qwen3.8-Flash-Next</code>（并自动传 <code>enable_thinking: false</code>，延迟从 10.1s 降至 3.7s、省 61% Token） | <strong>通过 &#183; 4,808 ms</strong>（4/4 样本，3 留 1 拦） |</p>
+<p>| <strong>腾讯云 TokenHub</strong> | 有效密钥（<code>sk-VPoE1Ao...9IaY</code>） | 之前预设填的是旧版混元端点 <code>api.hunyuan.cloud.tencent.com/v1</code>，而前次排查又只试了国内站 <code>tokenhub.tencentmaas.com/v1</code> 和非 OpenAI 网关，漏掉了 <strong>新加坡/国际站</strong> <code>https://tokenhub-intl.tencentmaas.com/v1</code> | 端点改为 <code>https://tokenhub-intl.tencentmaas.com/v1</code>，模型改为 <code>hy4-flash</code>（并自动传 <code>thinking: { type: &quot;disabled&quot; }</code>，延迟从 10.7s 降至 5.5s、<code>reasoning_tokens=0</code>） | <strong>通过 &#183; 7,089 ms</strong>（4/4 样本，3 留 1 拦） |</p>
+<p>| <strong>硅基流动 SiliconFlow</strong> | 有效 | 原已连通 | 保持 <code>Qwen/Qwen2.5-7B-Instruct</code> | <strong>通过 &#183; 7,434 ms</strong>（4/4 样本，3 留 1 拦） |</p>
+<p>| <strong>智谱 AI</strong> | 有效 | 原已连通 | 保持 <code>glm-4-flash</code> | <strong>通过 &#183; 9,970 ms</strong>（4/4 样本，3 留 1 拦） |</p>
+<blockquote><strong>零成本红线提醒（请知悉）</strong>：魔搭（每日免费额度）、智谱 <code>glm-4-flash</code>（长期免费）、硅基流动 <code>Qwen2.5-7B</code>（开源免费层）均为持续免费；而腾讯云 <strong>TokenHub</strong>（<code>tokenhub-intl.tencentmaas.com/v1</code>）通常是<strong>新户赠送 1M 免费 Token 试用包</strong>，免费包用尽或到期后会转为按量计费。建议在腾讯云 TokenHub 控制台核对一下该密钥的免费额度余量与余额告警；如需严格绝对零支出，用完免费包后可直接在「AI 引擎 → 免费公网模型池」取消勾选该槽位。</blockquote>
+<hr>
+<h3>2. 一并解决的代码缺陷与 GPT-6.2-Astra 红队加固</h3>
+<p>在修复上述两个槽位的同时，对整条 AI 路由与测通链路做了全面排查，并由 <strong>GPT-6.2-Astra</strong> 进行了独立只读红队审稿，共修补以下关键问题：</p>
+<ul>
+<li><strong>真实上游错误透传与防冷却覆盖</strong>（<code>ai-router.ts</code>、<code>ai-settings.ts</code>）</li>
+<li>新增 <code>extractUpstreamErrorDetail</code>：有界读取上游错误响应体（上限 64 KB），优先解析 JSON <code>error.message_zh</code> / <code>error.message</code> 与错误码 <code>code</code>。</li>
+<li>修正 <code>reviewItems</code> 外层重试逻辑：依据返回瞬间各槽实时冷却状态设置 <code>nonRetryable</code>，防止单槽遇 HTTP 400/401 时无意义重发导致真实报错被第二次的“冷却中”文案覆盖；<code>testAiConnection</code> 的 <code>onBatch</code> 直接捕获并透传首个非冷却真实错误。</li>
+<li><strong>定向关思考提速 + 400/422 无参安全回退</strong>（<code>ai-router.ts</code>）</li>
+<li>新增 <code>buildFreeSlotRequestBody</code>：仅对实测支持的 <code>api-inference.modelscope.cn</code> 下 <code>Qwen/Qwen3*</code> 传 <code>enable_thinking: false</code>，仅对 <code>tokenhub*.tencentmaas.com</code> 下 <code>hy3</code>/<code>hy4*</code> 传 <code>thinking: { type: &quot;disabled&quot; }</code>（智谱、硅基流动、TokenHub 非 Hy 模型如 <code>glm-5.3-flash</code> 均不附加任何多余字段）。</li>
+<li>若某模型变体仍以 HTTP 400/422 拒绝该参数（含中文报错如“该模型不支持 thinking 参数”），且未超时中止，自动去掉参数重发 1 次；模型不存在或无关 400 绝不瞎重发。</li>
+<li><strong>GPT-6.2-Astra 发现的 P0/P1 安全与边界漏洞全部封堵</strong>（<code>tongji-transport.ts</code>、<code>ai-router.ts</code>、<code>ai-settings.ts</code>、<code>ai-dedup.ts</code>）</li>
+<li><strong>P0 跨槽全量脱敏</strong>：新增 <code>collectAllKnownAiSecrets</code>，测通单槽与日常调度/语义去重均把库内<strong>全部槽位（含已禁用槽）+ 草稿 + <code>TONGJI_API_KEY</code></strong> 送入统一脱敏出口，堵住测试 A 槽时上游回显 B 槽 Key 写入响应或运行历史的风险。</li>
+<li><strong>P0 坏 JSON 异常防泄密</strong>：<code>JSON.parse</code> 失败统一转为固定诊断文案，禁止 Node 22 <code>SyntaxError.message</code> 夹带模型原文片段写入日志与历史。</li>
+<li><strong>P1 脱敏幂等性与编码边界</strong>：修复 <code>redactSecret</code> 多次调用叠加 <code>Bearer [redacted]]]]]]</code> 的 bug，并兼容小写 <code>%2f</code> 百分号转义与 ≥4 字符短密钥；单槽内部 <code>catch</code> 改为全密钥先脱敏后截断。</li>
+<li><strong>P1 防重定向绕过同济隔离</strong>：免费池请求强制 <code>redirect: &quot;error&quot;</code>，防止公网端点 302 跳转至同济内网 VIP。</li>
+<li><strong>P2 URL 契约与界面口径</strong>：<code>resolveChatCompletionsEndpoint</code> 改用 <code>URL.pathname</code> 拼接（保留 query 参数并去重末尾 <code>/chat/completions</code>）；<code>validateAiApiKey</code> 改按 <code>hostname</code> 判断域名并拦截误填到魔搭的百炼 <code>sk-ws-</code> 密钥。</li>
+<li><strong>预设与前端面板刷新</strong>（<code>ai-settings.ts</code>、<code>AiPanel.tsx</code>）</li>
+<li><code>FREE_AI_PRESETS</code> 升级为 6 家预设（智谱 / 魔搭 <code>Qwen3.8-Flash-Next</code> / 硅基流动 / 腾讯旧混元 Lite / 腾讯云 TokenHub <code>hy4-flash</code> / 阿里云百炼 <code>qwen-flash</code>），明确区分“长期免费”与“新户赠免费包（额尽按量计费）”，同步更新提示标题、3 列卡片排版、长报错折行及单槽测通后即时刷新状态。</li>
+</ul>
+<hr>
+<h3>3. 外部验证结果（全部实测通过）</h3>
+<ul>
+<li><strong>类型检查、构建与回归测试</strong>：Node 22.22.2 下 <code>npm.cmd run build</code> 与 <code>npm.cmd test</code> <strong>38/38 全绿</strong>（新增测试固化了上述全部 P0/P1/P2 边界，见 <code>ai-radar.test.ts</code>）。</li>
+<li><strong>单文件打包与安全检查</strong>：原子重打 <code>release/AIRadar.exe</code>（86.47 MB），实测二进制零用户密钥残留、零 <code>x-ai-radar-test-ip</code> 残留；<code>git ls-files release</code> 为空；已本地提交 <code>d7e8634</code>（未推 <code>origin</code>），状态卡 <code>CONTEXT_ai_radar.md</code> 已更新。</li>
+<li><strong>后台无窗服务与实机连通</strong>：<code>AIRadar.exe</code> 已无窗后台运行（<code>PID=4952</code>、<code>WindowTitle=&#39;&#39;</code>、<code>HealthHTTP=200</code>、<code>AutoStartInstalled=True</code>、<code>tongjiHasKey=True</code>），防 DNS 重绑定 <code>403</code>、<code>POST /api/history/clear</code> 坏参 <code>400</code>；免费公网池 <strong>4 通道就绪（总并发 8）</strong>，<code>release/data/radar.db</code> 历史数据完整保留。</li>
+</ul>
+<hr>
+<h3>两个值得你确认的边界问题</h3>
+<ul>
+<li><strong>腾讯云 TokenHub 额度耗尽策略</strong>：如果你希望“哪怕免费包用完也绝对不扣费”，是否需要我再给免费池槽位加一个可选的“每日/累计调用上限”自动熔断停用阈值，还是你准备直接在腾讯云控制台关闭后付费/设消费限额？</li>
+<li><strong>后台常驻进程提醒</strong>：本次已顺手拉起新版 <code>AIRadar.exe</code> 监听 <code>http://127.0.0.1:8788</code>（你现在直接刷新网页就能看到 4 槽就绪和 6 个新预设）；由于当前是从对话后台守护拉起的，如果你重启电脑，系统会由已注册的 <code>HKCU\...\Run</code> 无窗自启脚本自动拉起新版 <code>AIRadar.exe</code>。</li>
+</ul>
 </div></article>
 
     </section>
