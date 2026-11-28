@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="3d4d4104-df5e-4bd2-bf35-137e6017943a" data-base-prefix="./" data-turn-count="6" data-update-time="2026-11-28 09:44" data-meta-ver="6387cde8" data-is-index="0">
+<body data-conv-id="3d4d4104-df5e-4bd2-bf35-137e6017943a" data-base-prefix="./" data-turn-count="8" data-update-time="2026-11-28 10:06" data-meta-ver="6387cde8" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="Gemini小号地区更换与使用决策">Gemini小号地区更换与使用决策</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="独立对话">独立对话</span><span>会话 ID: 3d4d4104-df5e-4bd2-bf35-137e6017943a | 轮次: 6 | 更新于: 2026-11-28 09:44</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="独立对话">独立对话</span><span>会话 ID: 3d4d4104-df5e-4bd2-bf35-137e6017943a | 轮次: 8 | 更新于: 2026-11-28 10:06</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./3d4d4104-df5e-4bd2-bf35-137e6017943a.md" download="Gemini小号地区更换与使用决策-3d4d4104.md" onclick="return downloadMarkdown(event, './3d4d4104-df5e-4bd2-bf35-137e6017943a.md', 'Gemini小号地区更换与使用决策-3d4d4104.md')">⬇️ 下载 Markdown (.md)</a>
@@ -603,6 +603,64 @@
 <ul>
 <li>你刚才扫码跳转到手机短信界面时，<strong>收件人栏里是带 <code>+区号</code> 的完整国际长号，还是 5–6 位短号</strong>？看一眼这个就能直接定性是“没开国际外发权限”还是“国内运营商彻底封死短号”。</li>
 <li>如果你决定先采用 <strong>“日本大号冷备留作 Antigravity 防封备胎 + 韩国小号冷置不改区 + 不买成品号”</strong> 这一方案，是否需要我顺手把这段最新决策同步更新到 <code>CONTEXT_OpenBrowser_Gemini.md</code>？（本轮未修改任何本地文件。）</li>
+</ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>为什么我使用手机注册之后都很顺利，可以在注册了通行密钥后，验证身份的时候却显示未发现任何通行密钥，是我应该在谷歌浏览器上重新登录一下，还是需要什么步骤呢</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>先拦住一个高危操作：<strong>不要去你常用的普通 Chrome（谷歌浏览器）里登录这个新号来排错</strong>——这既违反状态卡的多号隔离铁律（<code>CONTEXT_OpenBrowser_Gemini.md</code>），大概率也解决不了 Passkey 找不到的问题。</p>
+<hr>
+<h3>核心原因：通行密钥（Passkey）存在“特定密码库”里，不会自动跨端同步</h3>
+<p>通行密钥不是普通网页 Cookie，而是硬件/系统级加密凭证：</p>
+<ul>
+<li><strong>iPhone</strong> 默认存在 <strong>iCloud 钥匙串（密码 App）</strong>；</li>
+<li><strong>Android</strong> 默认存在 <strong>Google 密码管理器（或手机厂商自带密码本）</strong>；</li>
+<li><strong>Windows 电脑</strong> 默认只查本机 <strong>Windows Hello</strong>。</li>
+</ul>
+<p>所以报“未发现任何通行密钥”，本质只有两种情况：<strong>跨端查错了保险库</strong>，或<strong>同设备下系统没把正确的密码库接出来</strong>。</p>
+<hr>
+<h3>按你的实际场景对号处理</h3>
+<h4>场景 1：你在<strong>手机</strong>创建了通行密钥，现在在<strong>电脑（Windows / OpenBrowser）</strong>验证时报错</h4>
+<p>这是最常见的情况——Windows 电脑本机里根本没有你刚存在手机里的密钥。</p>
+<ul>
+<li><strong>正确操作</strong>：</li>
+<li>在电脑登录验证页不要在 Windows Hello 弹窗里死磕，点 <strong>“尝试其他方式（Try another way）”</strong> → 选 <strong>“使用手机、平板电脑或安全密钥”</strong>；电脑会弹出跨设备二维码，用<strong>刚创建密钥的手机</strong>扫码验证（<strong>要求电脑和手机都开启蓝牙</strong>，否则近场校验会失败）。</li>
+<li>如果电脑没蓝牙，或 OpenBrowser 隔离环境里调不起蓝牙扫码，直接点 <strong>“尝试其他方式” → 选“输入密码”</strong> 登录（务必用该新号<strong>专属的独立隔离环境</strong>，不要混登其他号）。</li>
+</ul>
+<h4>场景 2：你在<strong>手机</strong>创建，且现在也在<strong>同一台手机</strong>验证，却依然提示“未发现任何通行密钥”</h4>
+<p>按手机系统查 3 处开关（优先避开无痕/隐私模式，无痕模式下通常调不起 Passkey）：</p>
+<ul>
+<li><strong>如果是 iPhone (iOS)</strong>：</li>
+<li><code>设置 → [你的名字] → iCloud → 密码与钥匙串</code>（确认已开启）；</li>
+<li><code>设置 → 通用 → 自动填充与密码</code>（确认开启“自动填充密码和通行密钥”，并勾选 Apple <code>密码</code>）；</li>
+<li>尽量用系统 Safari 或原生设置/Gmail App 内完成验证，不要在第三方 App 内置网页里验。</li>
+<li><strong>如果是 Android（尤其国产 ROM：小米/华为/OPPO/vivo/荣耀）</strong>：</li>
+<li>去 <code>设置 → 密码、通行密钥与自动填充</code>（不同品牌名称略异），确认已勾选/启用 <strong>Google</strong> 作为通行密钥和自动填充提供方（很多国产系统默认只走厂商自带密码本，导致查不到存在 Google 密码管理器里的密钥）；</li>
+<li>确认手机已设置锁屏密码/指纹，且 <strong>Google Play 服务</strong> 正常运行；</li>
+<li><strong>多号冲突检查</strong>：如果你手机上还登着旧 Google 账号，验证弹窗可能默认去查<strong>旧账号的 Google 密码管理器</strong>了，导致找不到新号的密钥——直接点“尝试其他方式 → 输入密码”绕过即可。</li>
+</ul>
+<hr>
+<h3>强烈建议现在立刻做的 4 步加固（彻底防锁死）</h3>
+<p>只要能先通过 <strong>“尝试其他方式 → 输入密码”</strong>（或手机端已登录会话）进入新号的 <code>https://myaccount.google.com/security</code>，立刻按顺序做这 4 步：</p>
+<ul>
+<li><strong>补上“不挑设备和系统”的验证方式（最关键）</strong>：</li>
+<li>开启 <strong>身份验证器 App（Authenticator，6 位动态码）</strong>；</li>
+<li>生成并离线抄存 <strong>10 个一次性备用验证码（Backup codes）</strong>；</li>
+<li>绑定一个独立的<strong>辅助邮箱</strong>。</li>
+</ul>
+<p>   &gt; 有了动态码 + 备用码，以后哪怕换电脑、在 OpenBrowser 隔离环境登录、没有蓝牙，都绝不会被 Passkey 卡死。</p>
+<ul>
+<li><strong>清理异常项 &amp; 暂时关闭强制优先 Passkey</strong>：</li>
+<li>进入 <code>通行密钥和安全性密钥</code>（<code>myaccount.google.com/signinoptions/passkeys</code>），确认刚才那把密钥到底有没有入库；若用不了直接删掉，并把 <strong>“尽可能跳过密码（Skip password when possible）”</strong> 先关掉。</li>
+<li><strong>不要指望手机 Passkey 自动用到指纹浏览器</strong>：</li>
+<li>后续如果要在 OpenBrowser 里长期用这个新号，用“密码 + 身份验证器动态码”登录最稳，比 Passkey 兼容得多。</li>
+<li><strong>防串区收尾</strong>：</li>
+<li>新号安全设置全部配稳后，记得把该新号从手机端退出（或严格固定与注册时一致的单国纯净节点），防止手机日常切网把新号地区带偏。</li>
+</ul>
+<hr>
+<h3>两个定位小问题（方便进一步确认）</h3>
+<ul>
+<li>你提示“未发现任何通行密钥”这一步，是在<strong>同一台手机上</strong>弹出来的，还是在<strong>电脑（OpenBrowser / 浏览器）登新号</strong>时弹出来的？</li>
+<li>你注册用的手机是 <strong>iPhone 还是 Android（什么品牌）</strong>？</li>
 </ul>
 </div></article>
 
