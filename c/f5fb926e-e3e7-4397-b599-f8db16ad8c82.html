@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="f5fb926e-e3e7-4397-b599-f8db16ad8c82" data-base-prefix="./" data-turn-count="96" data-update-time="2026-11-25 23:52" data-meta-ver="b2729ef7" data-is-index="0">
+<body data-conv-id="f5fb926e-e3e7-4397-b599-f8db16ad8c82" data-base-prefix="./" data-turn-count="99" data-update-time="2026-11-28 09:03" data-meta-ver="b2729ef7" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="GitHub OpenBrowser 安装指南">GitHub OpenBrowser 安装指南</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="独立对话">独立对话</span><span>会话 ID: f5fb926e-e3e7-4397-b599-f8db16ad8c82 | 轮次: 96 | 更新于: 2026-11-25 23:52</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="独立对话">独立对话</span><span>会话 ID: f5fb926e-e3e7-4397-b599-f8db16ad8c82 | 轮次: 99 | 更新于: 2026-11-28 09:03</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./f5fb926e-e3e7-4397-b599-f8db16ad8c82.md" download="GitHub_OpenBrowser_安装指南-f5fb926e.md" onclick="return downloadMarkdown(event, './f5fb926e-e3e7-4397-b599-f8db16ad8c82.md', 'GitHub_OpenBrowser_安装指南-f5fb926e.md')">⬇️ 下载 Markdown (.md)</a>
@@ -1645,6 +1645,45 @@
 <li><strong>电脑端</strong>：直接访问 Google 官方 <strong><code>https://aistudio.google.com/</code></strong>（同款最新全系列 Gemini 模型、免费网页版直接对话，不受消费端 <code>p=no_access</code> 拦截）。</li>
 </ul>
 <p>*(收尾小提醒：如果测试完想切回平时主力用的 <code>SakuraCat</code>，记得先<strong>彻底退出 <code>SDKDNS</code></strong> 再打开 <code>SakuraCat</code> 并保持 <code>Rule</code> 模式，避免双 VPN 网卡冲突。)*</p>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>为什么我的账号始终都无法使用gemini，这个账号想要使用也太麻烦了把，还有必要留着这个账号嘛</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>说句最实在的话：<strong>你的吐槽完全在理——为了一个网页端聊天入口折腾这么久，性价比确实太低了，现在就该彻底停止折腾它。</strong></p>
+<hr>
+<h3>一、为什么它始终打不开？（直接说透，不画饼）</h3>
+<p>不是你漏了什么设置，而是 Google 服务端对 <code>gemini.google.com</code> 网页端挂了 <strong><code>p=no_access</code> 反滥用风控锁</strong>（就是三天前 <code>Learn more</code> 原文里那句“验证账号是否具备长期一致、无异常切换的真实活跃历史”）：</p>
+<ul>
+<li>这把锁<strong>没有人工申诉通道</strong>，清缓存、换浏览器、换 VPN 都绕不过去；</li>
+<li>它最短可能要拖到之前抓包里出现的 <strong><code>2026-12-24</code></strong>（30 天观察期），甚至有可能更久都不自动放开；</li>
+<li>哪怕今天只是过去第 3 天，对 Google 后台的风控周期来说几乎等于刚锁上，<strong>短期内大概率不会突然自己好</strong>。</li>
+</ul>
+<hr>
+<h3>二、还有必要留着这个账号吗？</h3>
+<p><strong>结论：账号本身「留着（别注销）」，但「放弃拿它折腾 Gemini 网页端」。</strong></p>
+<ul>
+<li><strong>为什么要留着（零成本，别一气之下删号）</strong>：</li>
+<li>它可能还关联着你的历史 Gmail、网盘或第三方网站注册；</li>
+<li>你已经辛苦帮它<strong>改好了日本地区</strong>且<strong>通过了 Google 年龄认证</strong>，这两个资质留着以后用 Google 其他服务（如 Play、YouTube、AI Studio、Antigravity）都挺值钱；</li>
+<li>它目前在 <strong>手机 Gemini App</strong> 和 <strong>电脑 <code>aistudio.google.com</code></strong> 上依然是完全能用的；</li>
+<li>放着不管不花一分钱，等下个月 <strong>12 月 24 日之后</strong>顺手点一次 <code>gemini.google.com</code>——开了算白捡，没开也没损失。</li>
+<li><strong>为什么要立刻放弃折腾</strong>：</li>
+<li>别再为这个号的网页版花 1 分钟排查、别再改设置、也别再天天去刷 <code>gemini.google.com</code>。</li>
+</ul>
+<hr>
+<h3>三、现在最省心的 3 个替代选择（按省事程度排）</h3>
+<ul>
+<li><strong>【最省事，0 折腾】电脑直接用 <code>https://aistudio.google.com/</code> + 手机用 Gemini App</strong></li>
+<li><code>aistudio.google.com</code> 是 Google 官方网页端，免费且直连最新全套 Gemini 模型，支持传图、传 PDF、超长上下文，不受消费端 <code>p=no_access</code> 限制。如果只是想在电脑上跟 Gemini 对话干活，它甚至比 <code>gemini.google.com</code> 更干净好用。</li>
+<li><strong>【如果你确实刚需 <code>gemini.google.com</code> 网页专属功能（如 Deep Research / Gems）】注册一个全新原生海外号</strong></li>
+<li>与其花几周等老号洗白，不如在 OpenBrowser 里开一个全新的空白隔离环境，挂着 <strong><code>韩国家宽-IEPL 01</code></strong> 或 <strong><code>日本星链家宽-IEPL 01</code></strong> 直接注册一个全新的原生号（填成年日期）；</li>
+<li><strong>前提与代价提前说清</strong>：新注册大概率需要收一次手机验证码（+86 号有时过不了）；注册成功后也别一天切四五个国家，固定一个国家节点用，基本 5 分钟就能直接进 <code>gemini.google.com</code>。</li>
+<li><strong>【换工具不内耗】</strong></li>
+<li>你电脑上本来就装着 Antigravity、ChatGPT 等主力工具，如果只是日常问答和科研辅助，完全没必要被 Google 消费端网页的风控牵着鼻子走。</li>
+</ul>
+<hr>
+<p>你目前用 Gemini 网页端，是特别需要里面某个专属功能（比如 Deep Research / Gems），还是单纯想在电脑上找个顺手的地方免费用 Gemini？如果是后者，直接把 <strong><code>aistudio.google.com</code></strong> 收藏到书签，这件事今天就可以彻底翻篇了；如果想清理掉前面装的 OpenBrowser 或启动脚本释放空间，随时告诉我一声我帮你清干净。</p>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>@[c:\Users\&lt;USER&gt;\Desktop\gemini\AI跨会话无损接力与脱水元协议.md]</p>
 </div></article>
 
     </section>

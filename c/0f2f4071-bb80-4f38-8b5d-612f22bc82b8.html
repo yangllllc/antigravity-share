@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="0f2f4071-bb80-4f38-8b5d-612f22bc82b8" data-base-prefix="./" data-turn-count="21" data-update-time="2026-11-27 20:22" data-meta-ver="f2b14306" data-is-index="0">
+<body data-conv-id="0f2f4071-bb80-4f38-8b5d-612f22bc82b8" data-base-prefix="./" data-turn-count="23" data-update-time="2026-11-28 09:03" data-meta-ver="f2b14306" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="AI Usage and Monetization Ideas">AI Usage and Monetization Ideas</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="消耗额度">消耗额度</span><span>会话 ID: 0f2f4071-bb80-4f38-8b5d-612f22bc82b8 | 轮次: 21 | 更新于: 2026-11-27 20:22</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="消耗额度">消耗额度</span><span>会话 ID: 0f2f4071-bb80-4f38-8b5d-612f22bc82b8 | 轮次: 23 | 更新于: 2026-11-28 09:03</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./0f2f4071-bb80-4f38-8b5d-612f22bc82b8.md" download="AI_Usage_and_Monetization_Id-0f2f4071.md" onclick="return downloadMarkdown(event, './0f2f4071-bb80-4f38-8b5d-612f22bc82b8.md', 'AI_Usage_and_Monetization_Id-0f2f4071.md')">⬇️ 下载 Markdown (.md)</a>
@@ -1047,6 +1047,28 @@
 <li><strong>直接推进微批次 <code>1B</code></strong>（搭好 <code>127.0.0.1</code> 轻量本地交互可视化实验台 + ≤1 页《Step 1 公式 ↔ 代码行号映射卡》，完成整个 Step 1 闭环）；</li>
 <li><strong>先把刷新后的审计包再丢给 GPT 复检一轮</strong>，确认零遗留后再开 <code>1B</code>？</li>
 </ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>可以将刷新后的再一次交给gpt</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>可以，刷新后的审计包已经准备就绪（对应提交 <code>f4e7f5e</code>，离线 <code>44/44 PASS</code>），直接拖拽上传即可：</p>
+<ul>
+<li><strong>第 2 轮复检附件</strong>：<code>step1_gpt_audit_pack.md</code></li>
+</ul>
+<hr>
+<h3>直接粘贴给 GPT 的第 2 轮回归与破防提示词</h3>
+<p>把上面的文件拖进 GPT（可以在原审计会话继续，也可以新开会话），贴下面这段话——已明确排除留到 Step 2/阶段 1 的 3 项延期接口，逼它专注验真与找<strong>本次重写是否引入了新坑</strong>：</p>
+<pre><code>这是 Zemax-Companion Step 1 核心代码（提交 f4e7f5e，离线单测 44/44 PASS）针对上一轮红队审计完成全部 P0/P1/P2 修复后的复检包。
+
+请做“第 2 轮回归核验 + 破防测试”，严格遵守：
+1. 禁止泛泛夸奖、禁止重复讨论已明确延期到后续阶段的 3 项接口（Step 2 孔径模式 EPD/STOP 与有限物距、阶段 1 局部刚体偏心倾斜架、阶段 1 参考球面波前 OPD）。
+2. 重点检验本次重写是否彻底闭合上一轮 4 项 P0（背半球、同球冠首交点、近横向光线、实际面禁反向命中 + DUMMY 虚拟段标记）与 7 项 P1 + 1 项 P2，且重点攻击新引入的代码是否存在**新的回归坑**：
+   - `raytrace.py` 直接双根求交中 `disc &lt;= disc_tol` 归零策略是否会误伤近切向实交点、或在大曲率/微曲率下产生假根；
+   - `vector_refract` 用 `|d &#215; n|^2` 与 `tir_tol` 处理临界角及异介质严格切向拒折射是否仍有漏网边界；
+   - `paraxial.py` 的相对无焦判据 `AFOCAL_REL_TOL * power_scale`、厚透镜重根容差与 `interval_abcd_matrix`（含 `include_start/end_refraction` 组合）是否存在边界错误；
+   - `analysis.py` 的 `default_collimated_launch_z`、无尾 DUMMY 像面判定、及平板局域斜率比位移在极端参数下是否翻车。
+3. 仅报告**新的可复现反例**（格式同前：`级别 | 文件与行号 | 可复现输入 | 预期 vs 实际 | 最小改法`）；若未找到新的 P0/P1 硬伤，直接给出“复检通过（附你实际验算过的 3 个最刁钻边界）”即可收口。</code></pre>
+<hr>
+<p>GPT 复检完贴回来即可：如果它给出通过（或只有极小收尾），我们就立刻进微批次 <strong><code>1B</code></strong> 把本地交互台和公式映射卡一次收齐！</p>
 </div></article>
 
     </section>
