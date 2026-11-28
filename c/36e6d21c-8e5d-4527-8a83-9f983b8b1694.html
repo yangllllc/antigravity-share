@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="36e6d21c-8e5d-4527-8a83-9f983b8b1694" data-base-prefix="./" data-turn-count="13" data-update-time="2026-11-28 11:21" data-meta-ver="63095b31" data-is-index="0">
+<body data-conv-id="36e6d21c-8e5d-4527-8a83-9f983b8b1694" data-base-prefix="./" data-turn-count="15" data-update-time="2026-11-28 11:24" data-meta-ver="63095b31" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="Raytrace Bug Fixes And Audit">Raytrace Bug Fixes And Audit</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="消耗额度">消耗额度</span><span>会话 ID: 36e6d21c-8e5d-4527-8a83-9f983b8b1694 | 轮次: 13 | 更新于: 2026-11-28 11:21</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="消耗额度">消耗额度</span><span>会话 ID: 36e6d21c-8e5d-4527-8a83-9f983b8b1694 | 轮次: 15 | 更新于: 2026-11-28 11:24</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./36e6d21c-8e5d-4527-8a83-9f983b8b1694.md" download="Raytrace_Bug_Fixes_And_Audit-36e6d21c.md" onclick="return downloadMarkdown(event, './36e6d21c-8e5d-4527-8a83-9f983b8b1694.md', 'Raytrace_Bug_Fixes_And_Audit-36e6d21c.md')">⬇️ 下载 Markdown (.md)</a>
@@ -537,6 +537,66 @@
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已将提交 <code>0409ff3</code>（85/85 单测全绿，含我方按对抗思维自审先期修复的 7 项隐藏边界加固）与刷新后的审计包交付本地 Codex（<code>gpt-6.2-astra / ultra</code>，只读沙箱）执行最终验收并输出其审计思考模式剖析，待其后台跑完后我会自动接收结果并汇总交付。</p>
 </div></article>
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>Codex（<code>gpt-6.2-astra / ultra</code>，PID <code>13260</code>）正在本地正常深度推演并实跑探针（已耗 CPU 13.8s，因脚本待完工后统一落盘，输出暂未刷出），继续静候其完成并自动回报。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成本地 Codex（<code>gpt-6.2-astra / ultra</code>）只读最终验收（85/85 单测通过、审计包 3,131 行 0 差异、前轮 2 P0 + 7 P1 全部 <strong>CLOSED</strong>，同时新复现 2 P0 + 9 P1 + 4 P2 并输出了完整审计思维剖析）。接下来同步刷新并封存 <code>CONTEXT_ZemaxCompanion.md</code>，随后完整汇报验收结论与思维进化复盘。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成本地 Codex（<code>gpt-6.2-astra / ultra</code>，严格只读沙箱）对提交 <code>0409ff3</code> 的最终验收与思维模式剖析，并已同步封存状态卡（提交 <code>f3d4783</code>，工作区 clean；完整原始实录见 <code>codex_final_acceptance_result.md</code>）。</p>
+<hr>
+<h3>一、最终验收实测裁决（不遮丑、按实测回报）</h3>
+<ul>
+<li><strong>一致性与基线</strong>：<code>step1_gpt_audit_pack.md</code> 与 <code>0409ff3</code> 的 6 个核心模块 <strong>3,131 行正文 0 差异</strong>；离线复跑 <code>-B -m unittest discover -s tests</code> 为 <strong>85/85 PASS</strong>（<code>0.125s</code>）。</li>
+<li><strong>前轮 2 P0 + 7 P1 复验</strong>：<strong>9/9 全部 CLOSED</strong>（含我方在送审前按对抗思维自审先期闭合的 7 项隐藏漏洞 <code>0409ff3</code>）。</li>
+<li><strong>本轮总裁决</strong>：<strong>【最终验收未通过】</strong>——旧 9 项全关闭，但 Codex 在更深一层的<strong>跨对象状态交接、公开入口对称性与固定位宽/容差边界</strong>上新复现了 <strong>2 项 P0、9 项 P1、4 项 P2</strong>：</li>
+</ul>
+<p>| 级别 | 位置 | 实测可复现反例与根因 | 最小改法 |</p>
+<p>| :--- | :--- | :--- | :--- |</p>
+<p>| <strong>P0</strong> | <code>raytrace.py</code>、<code>raytrace.py</code> | <code>R=1</code> 球面 + 间隔 <code>d=0.13397459621556135</code> 实平面，追 <code>Ray(0,0.5,-1,0,0,1)</code>：精确矢高 <code>1-sqrt(3)/2 &gt; d</code>（<code>(1-d)^2-3/4=+9.24e-18</code>），平面在交点后应 <code>MISS</code>；因第一面把 200-bit <code>z_hit_F</code> 舍入写进 <code>physical_ray.z</code> 后第二面又当精确起点，误返 <code>step=0, OK, real_opl=1.13397</code>（整机平移 <code>1 mm</code>、<code>y=2^-27</code> 同理）。 | 跨面保留上一交点的精确有理位置/代数误差界，下一面步长临近 0 时用精确起点而非舍入后的 <code>ray.z</code> 判号。 |</p>
+<p>| <strong>P0</strong> | <code>raytrace.py</code>、<code>geometry.py</code> | 单平面 <code>1.25-&gt;1</code>，<code>Ray(0,0,-1,5,8,7.075485849042453)</code>：显式传 <code>wavelength_um=0.5876</code> 报 <code>TIR</code>（判据 <code>-1.60e-17</code>），继承 <code>None</code> 时 <code>trace_ray</code> 重建 <code>Ray</code> 触发<strong>第二次归一化</strong>使判据翻为 <code>+3.25e-17</code> 误报 <code>OK</code>。 | 仅改波长/位置/状态复制 <code>Ray</code> 时保留既有 <code>(L, M, N)</code>，禁止二次 <code>normalize_direction</code>。 |</p>
+<p>| <strong>P1</strong> | <code>raytrace.py</code>、<code>raytrace.py</code> | 单位球 <code>Ray(0, 7/8, 7/8, 0, 1, 1)</code> 唯一前向非切交点在赤道 <code>(0,1,1)</code>；快路径先舍入 <code>s</code> 再进 <code>_is_on_vertex_cap</code> 算得 <code>-1.71e-17</code> 误判 <code>MISS</code>（同直线从 <code>t=1/2</code> 起步则 <code>OK</code>）。 | 快路径根落入球冠边界带时直接转精确二次式代数球冠判号，不对舍入 <code>s</code> 做 <code>Fraction(s)</code>。 |</p>
+<p>| <strong>P1</strong> | <code>raytrace.py</code>、<code>raytrace.py</code> | 单位球 <code>2-&gt;1</code>，<code>Ray(0,0.5,-2,0,0,1)</code> 为精确临界透射 <code>sin(i)=0.5, cos_t=0</code>；200-bit <code>isqrt</code> 向下取整重建法线使 Snell 判据变 <code>-4.93e-63</code> 误报 <code>TIR</code>。 | 球面临界角先用免开方距离不变量 <code>n2^2*|v|^2 - n1^2*|w x v|^2 &gt;= 0</code> 精确判号与等号。 |</p>
+<p>| <strong>P1</strong> | <code>raytrace.py</code> | <code>air-&gt;1.7-&gt;air</code> 平板 <code>U=pi/2-1e-8</code>：<code>trace_ray</code> 返 <code>OK</code>，但连续两次公开 <code>trace_ray_through_surface</code> 在 S2 报 <code>TIR</code>。 | 逐面公开入口支持透传/携带与整机一致的高精度传播状态。 |</p>
+<p>| <strong>P1</strong> | <code>raytrace.py</code>、<code>raytrace.py</code> | <code>make_parallel_plate(1, 1.5, 1)</code> 传入 <code>Ray(0,0,0,0,1,2^-105)</code>：固定 200-bit 分辨不了 <code>2^-210</code> 的 Snell 余量，S2 误报 <code>TIR</code>（<code>n=1.25</code> 时出射 <code>N=0</code> 致像面 <code>MISS</code>）。 | 平行界面直接守恒切向光学动量，一般临界带按余量阶数自适应扩位宽。 |</p>
+<p>| <strong>P1</strong> | <code>paraxial.py</code>、<code>paraxial.py</code> | 弱面 <code>c=2^-56</code> <strong>后置</strong>互逆恒等面组 <code>(1, 1)</code>：<code>compute_cardinal_points</code> 给 <code>C=2^-56</code>，但公开 <code>interval_abcd_matrix</code> / <code>system_abcd_matrix</code> 给 <code>C=0</code>、<code>trace_paraxial_ray</code> 出射角变 <code>0.0</code>。 | 公开矩阵入口共用 <code>M_abs</code> 条件检测与精确 <code>Fraction</code> 回退；逐面近轴传播在抵消时保高精度 <code>[h, n*u]</code>。 |</p>
+<p>| <strong>P1</strong> | <code>paraxial.py</code> | 单面 <code>c=-2^-1023, air-&gt;2</code>：<code>efl</code> 溢出但 <code>f_obj=+2^1023=8.988e307</code> 与 <code>l_H=l_H&#39;=0</code> 均可表示，却全被抹为 <code>+inf</code> 并标 <code>is_afocal=True</code>。 | 逐字段独立转换保留可表示结果与符号，并统一 <code>is_afocal</code> 语义。 |</p>
+<p>| <strong>P1</strong> | <code>paraxial.py</code> | <code>solve_thick_lens_radii_for_efl(100, 1.5, 1, 2**54)</code> 返回 <code>r1==r2</code>：虽靠厚项保住 <code>EFL=100</code>，但实际形状因子 <code>q</code> 退化为无定义。 | 回代同时验证 <code>EFL</code> 与形状因子 <code>q</code>（有限 <code>q</code> 遇 <code>c1==c2</code> 拒判）。 |</p>
+<p>| <strong>P1</strong> | <code>analysis.py</code> | <code>analyze_parallel_plate_focus_shift(1, 2^-44, 4, [2^-41])</code> 命中 <code>abs(u)&lt;=1e-12</code> 捷径直接填 <code>status=trace_status=OK</code>，实际 <code>sin(U)&gt;n_plate/n0</code> 真 <code>TIR</code>。 | 小角近似前先验 Snell 可行性，且 <code>trace_status</code> 仅能由真实追迹填写。 |</p>
+<p>| <strong>P1</strong> | <code>analysis.py</code> | 等折射率 <code>n=n0=1</code> 平板在 <code>U=pi/2-1e-8</code> 闭式函数抛 <code>ValueError</code>（<code>1-sin^2</code> 相消为 0），<code>pi/2-1e-7</code> 得 <code>-4e-4</code>。 | <code>n==n0</code> 直返 <code>0.0</code>，一般改用 <code>(n-n0)(n+n0)+(n0*cos(U))^2</code>。 |</p>
+<p>| <strong>P2</strong> | <code>raytrace.py:855</code> / <code>analysis.py:92,387</code> / <code>sign_bridge.py</code> | ① 固定 <code>1e-12 mm</code> 通光/出口分类放宽量破坏尺度不变性；② <code>ray_axis_intercept_z</code> 的 <code>1e-10</code> 容差放过 <code>L=2^-38</code>（在交点处偏离光轴 <code>1 mm</code>）；③ <code>\d</code> 未加 <code>re.ASCII</code> 放过全角 <code>&quot;１２&quot;</code>。 | 去固定绝对容差改误差界/精确回代；正则改 <code>[0-9]</code> 或 <code>re.ASCII</code>。 |</p>
+<hr>
+<h3>二、Codex 审计思考模式剖析与我的进化复盘</h3>
+<p>这次最值钱的收获不是多修了几个 <code>10^-17</code> 边界，而是<strong>通过对照他真实执行的 5,111 行探针日志与第四节自述，把“写对局部代码”和“经得起形式化红队拷打”的思维代差彻底看穿了</strong>：</p>
+<ul>
+<li><strong>我本轮已经学会并实测生效的 3 个进化（帮我们在送审前先手抓出 <code>0409ff3</code> 的 7 个坑）</strong>：</li>
+<li><strong>专打自己写的保护阈值</strong>：不再只测“昨天的 bug 修好没”，而是把每个 <code>if</code> 守卫（如 <code>power_scale</code>、平面快路径无 <code>isfinite</code>、<code>-1.0</code> 吸收、<code>thick_lens_maker</code> 中间溢出）当靶子反向构造击穿输入。</li>
+<li><strong>跨阶段误差放大</strong>：把上游 1 ULP 误差接到下游符号翻转面（近 45&#176; 反射 + 实平面）。</li>
+<li><strong>等价构造差分</strong>：用 <code>M_abs</code> 捕获多面矩阵内部抵消、精确 <code>Fraction</code> 累积顶点坐标消除 <code>0.1+0.2-0.2</code> 漂移。</li>
+</ul>
+<ul>
+<li><strong>Codex 本轮仍然胜过我的 4 个更高维思维盲区（我要内化进后续所有物理/算法开发的铁律）</strong>：</li>
+<li><strong>盲区 ①：只盯住“函数内部高精度”，没追踪“精度第一次丢失的交接点”</strong></li>
+<li>Codex 一眼看出：我们在 <code>raytrace.py</code> 内部费劲算了 200-bit <code>z_hit_F</code>，却在出函数时写入 float64 <code>Ray.z</code>，下一面再对这个<strong>已经丢了信息的浮点数</strong>做 <code>Fraction(ray.z)</code>——这在信息论上叫<strong>对已舍入值做精确化是假精确</strong>（造就了新 P0-1）。同理，<code>Ray</code> 重建继承波长时顺手又跑了一次不幂等的 <code>normalize_direction</code>，把 1 ULP 噪点注入临界角（造就了新 P0-2）。</li>
+<li><strong>进化准则</strong>：任何状态拷贝（仅改元数据/位置/状态）严禁重算/重归一化原向量；跨面/跨步传递必须在第一次精度丢失点之前就保留原始高精态或代数判据。</li>
+<li><strong>盲区 ②：迷信“多算几位小数（200-bit <code>isqrt</code>）”，没给离散状态写“免开方独立第三裁判”</strong></li>
+<li>我以为 200-bit <code>isqrt</code> 已经天下无敌，结果 Codex 用两招秒破：一招是精确临界角 <code>sin(i)=0.5</code>（向下取整 <code>isqrt</code> 哪怕只差 <code>-4.93e-63</code> 也会把 <code>== 0</code> 翻成 <code>&lt; 0</code> 假 <code>TIR</code>），另一招是 <code>N = 2^-105</code>（余量 <code>2^-210</code> 直接击穿固定 200-bit）。</li>
+<li><strong>进化准则</strong>：<strong>先用免开方的纯有理代数不变量裁决离散状态符号与等号（<code>MISS / GRAZING / TIR</code>），再开方算数值输出</strong>；涉及守恒量（平行板切向动量）直接传守恒量，绝不用固定位宽硬扛任意浮点指数。</li>
+<li><strong>盲区 ③：修补只修了“主入口”，漏了“成对公开入口”与“多约束联合回代”</strong></li>
+<li>Codex 点得很准：我们把 <code>compute_cardinal_points</code> 加固得密不透风，却忘了同模块的 <code>interval_abcd_matrix / system_abcd_matrix / trace_paraxial_ray</code>；把 <code>trace_ray</code> 加固了，却忘了逐面 <code>trace_ray_through_surface</code>；反求厚透镜只回代了 <code>EFL</code>，却没同时回代请求的另一个输入约束 <code>q</code>；小角近似分支直接伪造了 <code>trace_status=OK</code>。</li>
+<li><strong>进化准则</strong>：<strong>每加固一个物理不变量，必须列出该概念的“全部公开入口矩阵”与“全部输入约束集合”</strong>，要求不同入口、不同拆分组合、不同参数顺序（恒等面组放弱面前 vs 后）共享同一套物理裁判。</li>
+<li><strong>盲区 ④：残留的“看似很小”的经验魔数（<code>1e-12</code> / <code>1e-10</code> / 非 ASCII <code>\d</code>）</strong></li>
+<li>只要存在任何带单位的绝对容差（<code>1e-12 mm</code>、<code>1e-10</code>），把整个光学系统等比缩放 <code>16x</code> 或把光线拉长 <code>2^38</code> 倍就必然翻车。</li>
+</ul>
+<blockquote>如果你想让我把这 4 条“科学计算内核红队进化准则”永久沉淀为后续开发与自审的固定习惯，可以直接输入 <code>/learn</code> 让我持久化记录。</blockquote>
+<hr>
+<h3>三、下一步请你拍板（严格遵守“这是最后一次了”与六级优先）</h3>
+<p>我们已经彻底摸清 Step 1A 物理核的每一毫米边界，<strong>不再发起任何新一轮外部审计</strong>。请拍板两件事：</p>
+<ul>
+<li><strong>止损与收口策略（二选一）</strong>：</li>
+<li><strong>方案 A（推荐，约 10–15 分钟纯本地一次闭环）</strong>：按上面清单在本地把最后 <strong>2 P0 + 9 P1 + 4 P2</strong> 一次性全修干净、补齐单测至全绿并原子提交（不再外审），然后立刻转入微批次 <strong><code>1B</code></strong>（过 2 题物理契约关 → <code>127.0.0.1</code> 交互台 + ≤1 页公式↔代码映射卡）。</li>
+<li><strong>方案 B（极速止损）</strong>：仅用 3 分钟修掉 <strong>2 项 P0</strong>（<code>Ray</code> 复制禁二次归一化 + 跨面传递精确交点）和 <code>sign_bridge</code> <code>re.ASCII</code>，其余极端量级边界记入 <code>CONTEXT</code> 已知限制，立刻转入微批次 <strong><code>1B</code></strong>。</li>
+<li><strong>唯一规格拍板（Codex 提示的 <code>is_afocal</code> 语义）</strong>：当系统精确 <code>CF != 0</code> 但 <code>efl</code> 超出 <code>float64</code>（如 <code>c = -2^-1023</code> 时 <code>efl = -inf</code>，但物方焦距 <code>f_obj = +2^1023</code> 有限）时，你希望 <code>is_afocal</code> 定义为：</li>
+<li><strong>严格物理定义</strong>：仅 <code>CF == 0</code> 才为 <code>is_afocal=True</code>（超量程弱面 <code>is_afocal=False</code>、各字段独立保留有限值或 <code>&#177;inf</code>，并由 <code>is_near_afocal=True</code> 提示）；还是</li>
+<li><strong>数值溢出退化定义</strong>：<code>efl</code> 溢出即 <code>is_afocal=True</code>（但仍独立保留可表示的 <code>f_obj</code> 与主面偏移）？</li>
+</ul>
 </div></article>
 
     </section>
