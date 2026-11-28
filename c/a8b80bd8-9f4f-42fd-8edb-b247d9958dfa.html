@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="a8b80bd8-9f4f-42fd-8edb-b247d9958dfa" data-base-prefix="./" data-turn-count="4" data-update-time="2026-11-28 09:04" data-meta-ver="b949b2c2" data-is-index="0">
+<body data-conv-id="a8b80bd8-9f4f-42fd-8edb-b247d9958dfa" data-base-prefix="./" data-turn-count="6" data-update-time="2026-11-28 09:06" data-meta-ver="b949b2c2" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="Promptfoo And Adk-Go Analysis">Promptfoo And Adk-Go Analysis</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="skills">skills</span><span>会话 ID: a8b80bd8-9f4f-42fd-8edb-b247d9958dfa | 轮次: 4 | 更新于: 2026-11-28 09:04</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="skills">skills</span><span>会话 ID: a8b80bd8-9f4f-42fd-8edb-b247d9958dfa | 轮次: 6 | 更新于: 2026-11-28 09:06</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./a8b80bd8-9f4f-42fd-8edb-b247d9958dfa.md" download="Promptfoo_And_Adk-Go_Analysi-a8b80bd8.md" onclick="return downloadMarkdown(event, './a8b80bd8-9f4f-42fd-8edb-b247d9958dfa.md', 'Promptfoo_And_Adk-Go_Analysi-a8b80bd8.md')">⬇️ 下载 Markdown (.md)</a>
@@ -525,6 +525,33 @@
 <article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>常规 GitHub 热门仓扫盲二审，进行neon的再一次审查把，这次不要用opus了，因为没有额度了，然后再入卡</p>
 </div></article>
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已派发全新空白上下文的 <strong>Gemini 4 Neon (XHigh)</strong> 只读独立审计子代理（不使用 Opus），对三仓源码细节（含 <code>promptfoo/src/telemetry.ts</code> 全文、<code>adk-go/.agents/skills/</code>、<code>ponytail/hooks/</code> 及基准数据）与 <code>CONTEXT_skills.md</code> 约束做二次验真；待回执返回后立即裁决修正并入卡。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>空白上下文 <strong>Gemini 4 Neon (XHigh)</strong> 独立复审已完成：维持三仓 0 装包/0 引入裁决，并修正了初稿中 5 处源码与基准表述精度（含 <code>promptfoo</code> 未登录 <code>email: null</code>、<code>adk-go</code> Cloud Run 非强绑、<code>ponytail</code> <code>hooks/band/</code> 可选 Webhook、39 题题型构成与正负项并陈、AGY 额外转换 6 个 <code>.toml</code> 命令及 <code>ponytail-review</code> 覆盖边界）。接下来先做改前快照与 SHA-256 校验，再将精简校准后的结论入卡至 <code>CONTEXT_skills.md</code> 并复检。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成空白上下文 <strong>Gemini 4 Neon (XHigh)</strong> 独立复审、逐条校准修正并将三仓二审结论正式入卡至 <code>CONTEXT_skills.md</code>，所有外置校验均通过。</p>
+<h3>一、空白上下文 Neon 独立复审要点与校准（已全量吸收）</h3>
+<p>复审维持 <strong>三仓 0 装包 / 0 引入</strong>（含反对单拆 <code>ponytail-review</code>），并在通读上游完整源码后对初稿做了 5 项精确校准：</p>
+<ul>
+<li><strong><code>promptfoo/promptfoo</code> 遥测实锤补全</strong>：通读 <code>src/telemetry.ts:111-190</code>、<code>accounts.ts:51-73</code>、<code>util/fetch/index.ts:215-315</code> 与 <code>test/telemetry.test.ts:753-854</code>，确认<strong>不存在更底层拦截</strong>（<code>IS_TESTING</code> 仅关 PostHog，不支持 <code>DO_NOT_TRACK</code>）；设 <code>PROMPTFOO_DISABLE_TELEMETRY=1</code> 仍落盘随机 UUID 并向 <code>https://r.promptfoo.app/</code> 发 POST（补充精度：未登录时 <code>email</code> 字段为 <code>null</code>，但仍上报随机 UUID 与环境元数据）。</li>
+<li><strong><code>google/adk-go</code> 依赖与仓内技能校准</strong>：<code>go 1.26.10</code> 与本机 0 Go 栈属实；修正两处措辞——Cloud Run 系 README 推荐部署而非 <code>go.mod</code> 强依赖，<code>.agents/skills/adk-go-self-review/SKILL.md</code> 为 181 行（<code>adk-sample-creator</code> 仅余“贴实测输出/事实只写一次”通用习惯，无漏掉非 Go 可装资产）。</li>
+<li><strong><code>DietrichGebert/ponytail</code> <code>hooks/band/</code> 与基准/安装细节校准</strong>：</li>
+<li><strong>网络行为精度</strong>：核心 <code>hooks/*.js</code> 零默认外网，但 Claude 专属 <code>hooks/band/</code>（<code>register.tsx</code> / <code>metrics.ts</code>）含可选 Webhook <code>$.http.fetch</code>（默认空）与本地 CSV/HTML 记账，<code>/ponytail band import</code> 会后台 <code>spawn</code> 扫历史 transcript（AGY 与 Codex 不加载该模块）。</li>
+<li><strong>基准构成与正负项并陈</strong>：39 题实为 <strong>12 题 FastAPI+React + 18 题隐藏单测 + 6 小应用 + 3 示例</strong>（非全 CRUD），全程禁 Bash；正向收益确有需测带测率 <code>68%→98%</code>、注错捕获 <code>46%→66%</code>、成本 <code>-26%</code>，但隐测正确性/安全几乎持平（<code>86/90</code> vs <code>87/90</code>）、盲评回复未赢（<code>82:106, p=0.09</code>）；规则本身压的是新增代码量而非“少说人设”。</li>
+<li><strong>AGY 侵入面更重</strong>：<code>agy plugin install</code> 除 6 个 <code>skills/</code> 外，还会把 6 个 <code>commands/*.toml</code> 一并转为 skills（更重挤压 ~20 自动 Skill 软上限），且无持久化 Hook。</li>
+<li><strong>单拆 <code>ponytail-review</code> 对抗复核</strong>：初稿称“完全被 <code>blast-radius + cross-model-reviewer</code> 覆盖”过满（前者仅管共享层改前、后者不扫全仓 <code>Scale/Lean</code>）；但单拆该 101 行纯 MD 仍不成立——硬锁英文输出、面向多用户 Web PR、占 18/20 自动配额，且近 14 天 <code>session-diagnose</code> 9/9 改后验证合规、无实测过度工程化痛点（明确标为 <strong>[未跑消融 / 基于场景与现有验证基线推断]</strong>）。</li>
+</ul>
+<hr>
+<h3>二、入卡落地与外部验证自检</h3>
+<ul>
+<li><strong>改前快照与并发校验</strong>：已留快照 <code>CONTEXT_skills.md.pre-edit.bak</code>，写前核对 SHA-256（<code>1A2531B6...6A5</code>）无并发冲突。</li>
+<li><strong>变更范围</strong>（<code>CONTEXT_skills.md</code>）：更新页眉日期与会话号（<code>2026-11-28</code> / <code>a8b80bd8</code>）、在 <code>## 2</code> 追加 1 条校准后的三仓二审条目、将 <code>## 3</code> 断点“8 仓二审”同步为“11 仓二审”；<code>## 1. 底层约束与铁律</code> 字节级零改动（<code>Section1ByteIdentical=True</code>）。</li>
+<li><strong>外部验证判据实测</strong>：</li>
+<li>整卡体量：<code>31</code> 总行 / <code>24</code> 非空行（远低于 35 行软上限）；</li>
+<li><code>sync_overlay.py --check</code>：<code>ALL OVERLAY CHECKS PASSED (0 drifts)</code>（<code>ExitCode=0</code>）；</li>
+<li><code>Desktop/skills/.agents</code>：<code>False</code>（无残留）；</li>
+<li>11/30 <code>diagnose.py session --days 14</code> 自诊项保留为【默认下一步】。</li>
+</ul>
+<p>（本次 3 仓常规二审与入卡已闭环；未跑 <code>ponytail</code> 实机 A/B 消融，后续仅在 <code>ai-radar</code>/Sidecar 真实出现 AI 过度封装返工样本时再考虑针对性实测。）</p>
 </div></article>
 
     </section>

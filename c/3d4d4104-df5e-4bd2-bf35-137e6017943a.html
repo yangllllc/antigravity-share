@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>Gemini小号地区更换与使用决策 - Antigravity Share</title>
+  <style>
+    :root {
+      --bg-main: #131314;
+      --bg-sidebar: #1e1f20;
+      --bg-active: #2b2c2f;
+      --bg-bubble-user: #2b2c2f;
+      --bg-bubble-ai: #1e1f20;
+      --text-main: #e3e3e3;
+      --text-sub: #c4c7c5;
+      --accent: #a8c7fa;
+      --border: #3c4043;
+      --code-bg: #0d0e11;
+      --badge-green: #34d399;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100vh;
+    }
+    #sidebar {
+      width: 320px;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+    .sidebar-header {
+      padding: 16px 14px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-header h2 {
+      font-size: 16px;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sidebar-header a.home-link {
+      text-decoration: none;
+      color: inherit;
+    }
+    .sync-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--badge-green);
+      background: rgba(52, 211, 153, 0.1);
+      padding: 3px 8px;
+      border-radius: 12px;
+      margin-top: 8px;
+    }
+    .sidebar-tools {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .sidebar-search {
+      width: 100%;
+      background: var(--bg-main);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 12.5px;
+      outline: none;
+    }
+    .sidebar-search:focus {
+      border-color: var(--accent);
+    }
+    .sidebar-search::placeholder {
+      color: #8e918f;
+    }
+    .view-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .view-tabs {
+      display: inline-flex;
+      background: var(--bg-main);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2px;
+      gap: 2px;
+    }
+    .view-tab {
+      background: transparent;
+      color: var(--text-sub);
+      border: none;
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 11.5px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .view-tab:hover {
+      color: #fff;
+    }
+    .view-tab.active {
+      background: var(--bg-active);
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .mini-btn {
+      background: transparent;
+      color: var(--text-sub);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .mini-btn:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #fff;
+    }
+    .conv-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .group-section {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      margin-bottom: 4px;
+    }
+    .group-header {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: var(--text-sub);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 8px;
+      border-radius: 7px;
+      cursor: pointer;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 600;
+      transition: background 0.15s, color 0.15s;
+    }
+    .group-header:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #fff;
+    }
+    .group-chevron {
+      display: inline-block;
+      width: 12px;
+      font-size: 10px;
+      text-align: center;
+      transition: transform 0.15s;
+      flex-shrink: 0;
+    }
+    .group-section.collapsed .group-chevron {
+      transform: rotate(-90deg);
+    }
+    .group-icon {
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+    .group-name {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--text-main);
+    }
+    .group-count {
+      font-size: 10.5px;
+      font-weight: 500;
+      color: var(--text-sub);
+      background: rgba(255, 255, 255, 0.08);
+      padding: 1px 6px;
+      border-radius: 10px;
+      flex-shrink: 0;
+    }
+    .group-items {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      padding-left: 8px;
+      margin-left: 9px;
+      border-left: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .group-section.collapsed .group-items {
+      display: none;
+    }
+    .conv-item {
+      display: block;
+      text-decoration: none;
+      padding: 8px 10px;
+      border-radius: 8px;
+      transition: background 0.15s;
+      border: 1px solid transparent;
+      color: inherit;
+    }
+    .conv-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .conv-item.active {
+      background: var(--bg-active);
+      border-color: var(--border);
+    }
+    .conv-title {
+      font-size: 13px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #fff;
+    }
+    .conv-meta {
+      font-size: 11px;
+      color: var(--text-sub);
+      margin-top: 3px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+    }
+    .conv-meta-left {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .proj-pill {
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 999px;
+      background: rgba(168, 199, 250, 0.13);
+      color: var(--accent);
+      max-width: 115px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .empty-hint {
+      padding: 20px 12px;
+      text-align: center;
+      color: var(--text-sub);
+      font-size: 12.5px;
+    }
+    #main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .main-header {
+      padding: 16px 28px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-sidebar);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .main-header h1 {
+      font-size: 17px;
+      color: #fff;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .sub-meta {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .header-project-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--accent);
+      background: rgba(168, 199, 250, 0.14);
+      border: 1px solid rgba(168, 199, 250, 0.25);
+      padding: 1px 8px;
+      border-radius: 999px;
+      max-width: 240px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .btn {
+      background: var(--bg-active);
+      color: var(--accent);
+      border: 1px solid var(--border);
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .btn:hover { background: #3c4043; }
+    .chat-canvas {
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 28px 24px 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .turn {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .turn.user { align-items: flex-end; }
+    .turn.assistant { align-items: flex-start; }
+    .role-tag {
+      font-size: 12px;
+      color: var(--text-sub);
+      font-weight: 600;
+      padding: 0 4px;
+    }
+    .bubble {
+      max-width: 88%;
+      padding: 16px 20px;
+      border-radius: 18px;
+      line-height: 1.7;
+      font-size: 15px;
+      word-break: break-word;
+    }
+    .turn.user .bubble {
+      background: var(--bg-bubble-user);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .turn.assistant .bubble {
+      background: var(--bg-bubble-ai);
+      color: var(--text-main);
+      border-bottom-left-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .bubble p { margin: 0 0 10px 0; }
+    .bubble p:last-child { margin-bottom: 0; }
+    .bubble h1, .bubble h2, .bubble h3, .bubble h4 {
+      margin: 14px 0 8px;
+      color: var(--accent);
+      line-height: 1.4;
+    }
+    .bubble h1 { font-size: 19px; }
+    .bubble h2 { font-size: 17px; }
+    .bubble h3 { font-size: 15.5px; }
+    .bubble ul, .bubble ol { margin: 8px 0 10px 22px; }
+    .bubble li { margin: 4px 0; }
+    .bubble blockquote {
+      border-left: 3px solid var(--accent);
+      padding-left: 12px;
+      margin: 8px 0;
+      color: var(--text-sub);
+    }
+    .bubble code {
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 5px;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 13.5px;
+    }
+    .bubble pre {
+      background: var(--code-bg);
+      padding: 14px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 10px 0;
+      border: 1px solid #2b2d31;
+    }
+    .bubble pre code {
+      background: transparent;
+      padding: 0;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .bubble a { color: var(--accent); }
+    .bubble hr {
+      border: 0;
+      border-top: 1px solid var(--border);
+      margin: 14px 0;
+    }
+    @media (max-width: 820px) {
+      body { flex-direction: column; }
+      #sidebar { width: 100%; height: auto; position: static; max-height: 360px; }
+      .main-header { flex-wrap: wrap; padding: 14px 16px; }
+      .header-actions { flex-wrap: wrap; }
+      .bubble { max-width: 96%; }
+    }
+  </style>
+</head>
+<body data-conv-id="3d4d4104-df5e-4bd2-bf35-137e6017943a" data-base-prefix="./" data-turn-count="2" data-update-time="2026-11-28 09:08" data-meta-ver="6387cde8" data-is-index="0">
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
+      <div class="sync-badge" id="syncBadge">自动同步加载中...</div>
+      <div class="sidebar-tools">
+        <input type="search" id="convSearch" class="sidebar-search" placeholder="搜索对话标题或项目..." aria-label="搜索对话标题或项目" autocomplete="off">
+        <div class="view-bar">
+          <div class="view-tabs" role="tablist" aria-label="分类视图">
+            <button type="button" class="view-tab active" id="viewProjectBtn" data-view="project">按项目</button>
+            <button type="button" class="view-tab" id="viewTimeBtn" data-view="time">按时间</button>
+          </div>
+          <button type="button" class="mini-btn" id="toggleAllBtn" title="展开或折叠全部项目分组">全部折叠</button>
+        </div>
+      </div>
+    </div>
+    <nav class="conv-list" id="convList" aria-label="Conversations">
+      <noscript><div style="padding:12px;color:#c4c7c5;font-size:12px;">请启用 JavaScript 查看全部历史对话列表，或直接访问对应对话链接。</div></noscript>
+    </nav>
+  </aside>
+  <main id="main">
+    <header class="main-header">
+      <div style="min-width:0;">
+        <h1 title="Gemini小号地区更换与使用决策">Gemini小号地区更换与使用决策</h1>
+        <div class="sub-meta"><span class="header-project-badge" title="独立对话">独立对话</span><span>会话 ID: 3d4d4104-df5e-4bd2-bf35-137e6017943a | 轮次: 2 | 更新于: 2026-11-28 09:08</span></div>
+      </div>
+      <div class="header-actions">
+        <a class="btn" id="downloadMdBtn" href="./3d4d4104-df5e-4bd2-bf35-137e6017943a.md" download="Gemini小号地区更换与使用决策-3d4d4104.md" onclick="return downloadMarkdown(event, './3d4d4104-df5e-4bd2-bf35-137e6017943a.md', 'Gemini小号地区更换与使用决策-3d4d4104.md')">⬇️ 下载 Markdown (.md)</a>
+        <button class="btn" id="copyBtn" type="button" onclick="copyCanonicalUrl('./3d4d4104-df5e-4bd2-bf35-137e6017943a.html', 'copyBtn', '已复制直链')">复制对话直链</button>
+      </div>
+    </header>
+    <section class="chat-canvas" aria-label="Conversation Content">
+      <article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>先读取 @&lt;请替换为你保存后的状态卡绝对路径，如 C:\Users\&lt;USER&gt;\Desktop\gemini\CONTEXT_OpenBrowser_Gemini.md&gt; 获取全部约束与断点，勿复述历史。</p>
+<ul>
+<li>先一口气完成只读核盘（核对“当前断点”与待测项，勿中途请示）；发现未说明的磁盘差异先汇报停手。</li>
+<li>严守【铁律】、禁碰【排雷墓碑】；若本消息附有新需求或最新实况则优先执行，否则按【默认下一步】推进。</li>
+<li>涉及不可逆删改或修改共享规则/脚本前先确认（只读评估与方案讨论直接推进）；完工按【外部验证判据】或新需求标准自检。那我的小号还有必要更换地区，去寻求gemini的使用吗，还是直接舍弃，等之后购买成品号使用gemini呢</li>
+</ul>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><h3>只读核盘结果</h3>
+<p>已读取 <code>CONTEXT_OpenBrowser_Gemini.md</code> 并完成磁盘只读核验，<strong>未发现与状态卡不符的磁盘差异</strong>：</p>
+<ul>
+<li><strong>OpenBrowser 运行态</strong>：<code>OpenBrowser.exe</code> 完好且当前进程在运行。</li>
+<li><strong>启动器与配置</strong>：<code>启动OpenBrowser-VPN智能选择.cmd</code>、<code>launcher.py</code> 与 <code>launcher-config.json</code> 均在位，配置含 3 套隔离环境 ID（<code>google_profile_id</code>、<code>kr_profile_id</code>、<code>auto_profile_id</code>），与状态卡一致。</li>
+</ul>
+<hr>
+<h3>核心结论</h3>
+<p><strong>一句话先审前提</strong>：你当前被卡住的核心矛盾不是“账号地区不对”，而是 Google 网页端反滥用信任分闸门（<code>p=no_access</code>）。因此<strong>小号没有必要再专门折腾改区，但也不必注销舍弃；同时不建议为了用网页端直接买成品号</strong>——更优解是<strong>现阶段用大号替代入口等冷却，若刚需网页端则先用现有纯净家宽试自注册原生新号</strong>。</p>
+<hr>
+<h3>关键推理与方案对比</h3>
+<h4>1. 为什么小号“不必再专门改区”，但“无需注销舍弃”？</h4>
+<ul>
+<li><strong>改区 ≠ 解封网页端（实测反证）</strong>：你的日本大号已完成改区至 <code>Japan</code>、通过年龄认证并清空旧付款资料，但电脑/手机全浏览器访问 <code>gemini.google.com</code> 仍被 <code>p=no_access</code> 拦截（<code>CONTEXT_OpenBrowser_Gemini.md</code>）。这直接说明“把小号改成韩国区”并不能保证解锁网页端。</li>
+<li><strong>时间与机会成本倒挂（实测 + 推断）</strong>：小号首次改区已被拒“证据不足”，若想再审过关，必须彻底停掉手机端该小号后台登录、固定在 <code>kr-google-alt</code> + 韩国家宽连续轻度活跃数周后再提交；即便改区过了，网页端信任分仍可能继续拦截。而你的日本大号本身已拿到完整日本区 + 年龄资质，且抓包线索 <code>[4,[2026,12,24]]</code>（<strong>推断待确认</strong>）距今只剩 26 天——把精力耗在“资质更差、起点更落后”的小号上收益极低。</li>
+<li><strong>为何冷置而不注销（实测）</strong>：小号目前在手机官方 Gemini App 实测可正常问答。遵守铁律保持环境隔离、平时不碰它，维护成本为零，还能留作手机端免费额度备份。</li>
+</ul>
+<h4>2. 为什么不建议“舍弃后等买成品号”？</h4>
+<p>购买成品号本质上是<strong>花钱买一个你看不到黑历史的“二手信任分”</strong>，在你已有纯净家宽与隔离环境的条件下，反而是风险最高的选项：</p>
+<ul>
+<li><strong>二次触发 <code>p=no_access</code> 或锁号（失效机制）</strong>：市面上低价成品白号/老号多来自批量注册池或机房/共享代理；你接手后切换到新设备指纹 + 新国家家宽 IP，正好构成“跨设备跨地域环境突变”，极易在登录或改密后触发二次验证锁死，或同样吃 <code>p=no_access</code>（该闸门核心看 <code>consistent history of abuse-free activity</code>）。</li>
+<li><strong>所有权与追回隐患</strong>：原始注册设备、初始辅助邮箱或接码号码不在你手里，无法排除卖家找回或后续强校验无法自证；一旦在成品号上沉淀对话/资料或绑卡，沉没成本不可控。</li>
+<li><strong>若是带会员的成品号（如 AI Pro / 学生优惠 / 家庭组）</strong>：额外叠加黑卡退款封号、学生资质倒查回收、家庭组连坐踢出等直接经济损失风险。</li>
+</ul>
+<h4>3. 放弃“折腾小号 / 买成品号”后的两条更优路线</h4>
+<p>| 路线 | 适用场景 | 现状与依据 | 外部验证判据 |</p>
+<p>| :--- | :--- | :--- | :--- |</p>
+<p>| <strong>路线 A（推荐，零折腾）</strong>：小号冷置，日常用<strong>日本大号 <code>aistudio.google.com</code> + 大小号手机官方 App</strong>，等 <code>2026-12-24</code> 后复测 | 平时主要是电脑查资料/写代码/问答，不强依赖 <code>gemini.google.com</code> 网页端独占 UI | <strong>实测</strong>：手机 App 与大号 PC <code>aistudio.google.com</code> 均可用；<strong>推断</strong>：大号 <code>2026-12-24</code> 可能出观察窗 | ① 今日确认 <code>https://aistudio.google.com/</code> 能覆盖主力需求；② <code>2026-12-25</code> 后在固定日家宽下复测 <code>https://gemini.google.com/app</code> 是否不再跳 <code>p=no_access</code> |</p>
+<p>| <strong>路线 B（若现在就刚需电脑网页端）</strong>：用已有纯净日/韩家宽 + OpenBrowser 空白隔离环境，<strong>尝试自注册 1 个原生新号</strong> | 现在就必须用 <code>gemini.google.com</code> 网页端（如 Gems、Deep Research、网页多模态） | <strong>实测</strong>：本机日/韩家宽均 <code>proxy=false, hosting=false</code>；<strong>未验证</strong>：当前注册是否强制卡海外手机号 SMS 验证，及新号是否直接放行网页端 | 在全新空白隔离环境固定单一纯净家宽试注册；若能跳过/完成验证，实测访问 <code>https://gemini.google.com/app</code> 能否完成首轮对话且不跳 <code>p=no_access</code> |</p>
+<blockquote><strong>补充未验证项</strong>：状态卡仅记录大号已测通 <code>aistudio.google.com</code>，小号能否在电脑端用 <code>aistudio.google.com</code> 尚未验证；如需双号额度备份，后续只需在 <code>kr-google-alt</code> 挂韩国家宽测一次即可（无需改区）。</blockquote>
+<hr>
+<h3>两个关键追问（帮你定最终路线）</h3>
+<ul>
+<li><strong>真实使用边界</strong>：你执着于打通电脑 <code>gemini.google.com</code> 网页端，是因为 <strong><code>aistudio.google.com</code> 缺少你必须用的网页端功能</strong>（比如 Deep Research、Gems、NotebookLM 联动、个人对话历史同步），还是只是习惯网页端界面？</li>
+<li><strong>你说的“成品号”具体指哪一种</strong>：是指十几到几十元的<strong>普通美/日区 Google 白号/老号</strong>（只为免费版能登网页端），还是指带 <strong>Google AI Pro / 学生认证的付费成品号</strong>（因为没有海外卡或学生资格）？这两种诉求下的最稳解法会完全不同。</li>
+</ul>
+</div></article>
+
+    </section>
+  </main>
+  <script>
+    (function() {
+      var src = '../sidebar.js';
+      if (window.location.protocol !== 'file:') {
+        src += (src.indexOf('?') >= 0 ? '&' : '?') + '_t=' + Date.now();
+      }
+      var s = document.createElement('script');
+      s.src = src;
+      document.body.appendChild(s);
+    })();
+  </script>
+  <script>
+    function triggerBlobDownload(blob, filename) {
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function() { URL.revokeObjectURL(url); }, 1500);
+    }
+    function downloadMarkdown(e, relPath, filename) {
+      if (window.location.protocol === 'file:' || !window.fetch || !window.Blob) {
+        return true;
+      }
+      if (e) e.preventDefault();
+      var btn = document.getElementById('downloadMdBtn');
+      var orig = btn ? (btn.getAttribute('data-orig') || btn.innerText) : '';
+      if (btn) {
+        btn.setAttribute('data-orig', orig);
+        btn.innerText = '正在下载...';
+      }
+      var targetUrl = relPath;
+      try { targetUrl = new URL(relPath, window.location.href).href; } catch (err) {}
+      fetch(targetUrl, { cache: 'no-cache' })
+        .then(function(resp) {
+          if (!resp.ok) throw new Error('HTTP ' + resp.status);
+          return resp.text();
+        })
+        .then(function(text) {
+          var blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
+          triggerBlobDownload(blob, filename);
+          if (btn) {
+            btn.innerText = '已下载 .md';
+            setTimeout(function() { btn.innerText = orig; }, 2000);
+          }
+        })
+        .catch(function() {
+          if (btn) btn.innerText = orig;
+          var a = document.createElement('a');
+          a.href = targetUrl;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        });
+      return false;
+    }
+    function fallbackCopy(text, onDone) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try {
+        if (document.execCommand('copy')) { onDone(); }
+      } catch (e) {}
+      document.body.removeChild(ta);
+    }
+    function copyCanonicalUrl(relPath, btnId, doneLabel) {
+      var btn = document.getElementById(btnId);
+      if (!btn) return;
+      var orig = btn.getAttribute('data-orig') || btn.innerText;
+      btn.setAttribute('data-orig', orig);
+      var targetUrl = window.location.href;
+      try {
+        targetUrl = new URL(relPath, window.location.href).href;
+      } catch (e) {}
+      var onDone = function() {
+        btn.innerText = doneLabel;
+        setTimeout(function() { btn.innerText = orig; }, 2000);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(targetUrl).then(onDone, function() { fallbackCopy(targetUrl, onDone); });
+      } else {
+        fallbackCopy(targetUrl, onDone);
+      }
+    }
+  </script>
+</body>
+</html>
