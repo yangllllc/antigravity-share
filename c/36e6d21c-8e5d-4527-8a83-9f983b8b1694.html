@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="36e6d21c-8e5d-4527-8a83-9f983b8b1694" data-base-prefix="./" data-turn-count="24" data-update-time="2026-11-28 12:58" data-meta-ver="63095b31" data-is-index="0">
+<body data-conv-id="36e6d21c-8e5d-4527-8a83-9f983b8b1694" data-base-prefix="./" data-turn-count="26" data-update-time="2026-11-28 13:12" data-meta-ver="63095b31" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="Raytrace Bug Fixes And Audit">Raytrace Bug Fixes And Audit</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="消耗额度">消耗额度</span><span>会话 ID: 36e6d21c-8e5d-4527-8a83-9f983b8b1694 | 轮次: 24 | 更新于: 2026-11-28 12:58</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="消耗额度">消耗额度</span><span>会话 ID: 36e6d21c-8e5d-4527-8a83-9f983b8b1694 | 轮次: 26 | 更新于: 2026-11-28 13:12</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./36e6d21c-8e5d-4527-8a83-9f983b8b1694.md" download="Raytrace_Bug_Fixes_And_Audit-36e6d21c.md" onclick="return downloadMarkdown(event, './36e6d21c-8e5d-4527-8a83-9f983b8b1694.md', 'Raytrace_Bug_Fixes_And_Audit-36e6d21c.md')">⬇️ 下载 Markdown (.md)</a>
@@ -660,6 +660,17 @@
 <li><strong>多端策略</strong>：按本机惯例先仅在 Antigravity 试点（推荐），还是本次同时同步一份到 <code>.codex/skills/</code>？</li>
 <li><strong>正文条款</strong>：提案第 3 节的触发边界或 6 条对抗动作是否有需要增删调整的地方？</li>
 </ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>方案A，先试点。按照你说的来</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已按 <strong>方案 A（全局 Skill，先仅在 Antigravity 试点）</strong> 完成落盘与实测校验：</p>
+<ul>
+<li><strong>新建文件</strong>：<code>SKILL.md</code>（61 行 / 6,698 字节，UTF-8 无 BOM）</li>
+<li><strong>实测校验结果</strong>：</li>
+<li>YAML frontmatter（<code>name: numerical-kernel-audit</code> 与中文触发/豁免 <code>description</code>）校验通过，全局 <code>config/skills</code> 下 <strong>0 重名冲突</strong>（目录总数 24，其中自动发现池 19 ≤ 20 软顶，5 个为联动子包）。</li>
+<li>仅落盘 Antigravity 全局目录，未触碰 <code>.codex/skills/</code>、<code>skills-meta/local-overlay.json</code>、4 条 <code>always_on</code> 全局规则及 <code>消耗额度</code> 仓库（<code>git status -sb</code> 保持 <code>## master</code> 干净）。</li>
+</ul>
+<p>新会话开始后（如后续推进 Zemax-Companion Step 1B 或其他光学/数值内核模块），进入实现后验收前自审时即可自动按需触发；若试点运行一段时间觉得顺手，随时可以再决定是否同步到 <code>.codex/skills/</code>。</p>
 </div></article>
 
     </section>
