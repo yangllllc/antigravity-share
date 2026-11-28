@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>Promptfoo And Adk-Go Analysis - Antigravity Share</title>
+  <style>
+    :root {
+      --bg-main: #131314;
+      --bg-sidebar: #1e1f20;
+      --bg-active: #2b2c2f;
+      --bg-bubble-user: #2b2c2f;
+      --bg-bubble-ai: #1e1f20;
+      --text-main: #e3e3e3;
+      --text-sub: #c4c7c5;
+      --accent: #a8c7fa;
+      --border: #3c4043;
+      --code-bg: #0d0e11;
+      --badge-green: #34d399;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100vh;
+    }
+    #sidebar {
+      width: 320px;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+    .sidebar-header {
+      padding: 16px 14px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-header h2 {
+      font-size: 16px;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sidebar-header a.home-link {
+      text-decoration: none;
+      color: inherit;
+    }
+    .sync-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--badge-green);
+      background: rgba(52, 211, 153, 0.1);
+      padding: 3px 8px;
+      border-radius: 12px;
+      margin-top: 8px;
+    }
+    .sidebar-tools {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .sidebar-search {
+      width: 100%;
+      background: var(--bg-main);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 12.5px;
+      outline: none;
+    }
+    .sidebar-search:focus {
+      border-color: var(--accent);
+    }
+    .sidebar-search::placeholder {
+      color: #8e918f;
+    }
+    .view-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .view-tabs {
+      display: inline-flex;
+      background: var(--bg-main);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2px;
+      gap: 2px;
+    }
+    .view-tab {
+      background: transparent;
+      color: var(--text-sub);
+      border: none;
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 11.5px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .view-tab:hover {
+      color: #fff;
+    }
+    .view-tab.active {
+      background: var(--bg-active);
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .mini-btn {
+      background: transparent;
+      color: var(--text-sub);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .mini-btn:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #fff;
+    }
+    .conv-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .group-section {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      margin-bottom: 4px;
+    }
+    .group-header {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: var(--text-sub);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 8px;
+      border-radius: 7px;
+      cursor: pointer;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 600;
+      transition: background 0.15s, color 0.15s;
+    }
+    .group-header:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #fff;
+    }
+    .group-chevron {
+      display: inline-block;
+      width: 12px;
+      font-size: 10px;
+      text-align: center;
+      transition: transform 0.15s;
+      flex-shrink: 0;
+    }
+    .group-section.collapsed .group-chevron {
+      transform: rotate(-90deg);
+    }
+    .group-icon {
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+    .group-name {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--text-main);
+    }
+    .group-count {
+      font-size: 10.5px;
+      font-weight: 500;
+      color: var(--text-sub);
+      background: rgba(255, 255, 255, 0.08);
+      padding: 1px 6px;
+      border-radius: 10px;
+      flex-shrink: 0;
+    }
+    .group-items {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      padding-left: 8px;
+      margin-left: 9px;
+      border-left: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .group-section.collapsed .group-items {
+      display: none;
+    }
+    .conv-item {
+      display: block;
+      text-decoration: none;
+      padding: 8px 10px;
+      border-radius: 8px;
+      transition: background 0.15s;
+      border: 1px solid transparent;
+      color: inherit;
+    }
+    .conv-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .conv-item.active {
+      background: var(--bg-active);
+      border-color: var(--border);
+    }
+    .conv-title {
+      font-size: 13px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #fff;
+    }
+    .conv-meta {
+      font-size: 11px;
+      color: var(--text-sub);
+      margin-top: 3px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+    }
+    .conv-meta-left {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .proj-pill {
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 999px;
+      background: rgba(168, 199, 250, 0.13);
+      color: var(--accent);
+      max-width: 115px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .empty-hint {
+      padding: 20px 12px;
+      text-align: center;
+      color: var(--text-sub);
+      font-size: 12.5px;
+    }
+    #main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .main-header {
+      padding: 16px 28px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-sidebar);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .main-header h1 {
+      font-size: 17px;
+      color: #fff;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .sub-meta {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .header-project-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--accent);
+      background: rgba(168, 199, 250, 0.14);
+      border: 1px solid rgba(168, 199, 250, 0.25);
+      padding: 1px 8px;
+      border-radius: 999px;
+      max-width: 240px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .btn {
+      background: var(--bg-active);
+      color: var(--accent);
+      border: 1px solid var(--border);
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .btn:hover { background: #3c4043; }
+    .chat-canvas {
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 28px 24px 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .turn {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .turn.user { align-items: flex-end; }
+    .turn.assistant { align-items: flex-start; }
+    .role-tag {
+      font-size: 12px;
+      color: var(--text-sub);
+      font-weight: 600;
+      padding: 0 4px;
+    }
+    .bubble {
+      max-width: 88%;
+      padding: 16px 20px;
+      border-radius: 18px;
+      line-height: 1.7;
+      font-size: 15px;
+      word-break: break-word;
+    }
+    .turn.user .bubble {
+      background: var(--bg-bubble-user);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .turn.assistant .bubble {
+      background: var(--bg-bubble-ai);
+      color: var(--text-main);
+      border-bottom-left-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .bubble p { margin: 0 0 10px 0; }
+    .bubble p:last-child { margin-bottom: 0; }
+    .bubble h1, .bubble h2, .bubble h3, .bubble h4 {
+      margin: 14px 0 8px;
+      color: var(--accent);
+      line-height: 1.4;
+    }
+    .bubble h1 { font-size: 19px; }
+    .bubble h2 { font-size: 17px; }
+    .bubble h3 { font-size: 15.5px; }
+    .bubble ul, .bubble ol { margin: 8px 0 10px 22px; }
+    .bubble li { margin: 4px 0; }
+    .bubble blockquote {
+      border-left: 3px solid var(--accent);
+      padding-left: 12px;
+      margin: 8px 0;
+      color: var(--text-sub);
+    }
+    .bubble code {
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 5px;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 13.5px;
+    }
+    .bubble pre {
+      background: var(--code-bg);
+      padding: 14px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 10px 0;
+      border: 1px solid #2b2d31;
+    }
+    .bubble pre code {
+      background: transparent;
+      padding: 0;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .bubble a { color: var(--accent); }
+    .bubble hr {
+      border: 0;
+      border-top: 1px solid var(--border);
+      margin: 14px 0;
+    }
+    @media (max-width: 820px) {
+      body { flex-direction: column; }
+      #sidebar { width: 100%; height: auto; position: static; max-height: 360px; }
+      .main-header { flex-wrap: wrap; padding: 14px 16px; }
+      .header-actions { flex-wrap: wrap; }
+      .bubble { max-width: 96%; }
+    }
+  </style>
+</head>
+<body data-conv-id="a8b80bd8-9f4f-42fd-8edb-b247d9958dfa" data-base-prefix="./" data-turn-count="2" data-update-time="2026-11-28 08:53" data-meta-ver="b949b2c2" data-is-index="0">
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
+      <div class="sync-badge" id="syncBadge">自动同步加载中...</div>
+      <div class="sidebar-tools">
+        <input type="search" id="convSearch" class="sidebar-search" placeholder="搜索对话标题或项目..." aria-label="搜索对话标题或项目" autocomplete="off">
+        <div class="view-bar">
+          <div class="view-tabs" role="tablist" aria-label="分类视图">
+            <button type="button" class="view-tab active" id="viewProjectBtn" data-view="project">按项目</button>
+            <button type="button" class="view-tab" id="viewTimeBtn" data-view="time">按时间</button>
+          </div>
+          <button type="button" class="mini-btn" id="toggleAllBtn" title="展开或折叠全部项目分组">全部折叠</button>
+        </div>
+      </div>
+    </div>
+    <nav class="conv-list" id="convList" aria-label="Conversations">
+      <noscript><div style="padding:12px;color:#c4c7c5;font-size:12px;">请启用 JavaScript 查看全部历史对话列表，或直接访问对应对话链接。</div></noscript>
+    </nav>
+  </aside>
+  <main id="main">
+    <header class="main-header">
+      <div style="min-width:0;">
+        <h1 title="Promptfoo And Adk-Go Analysis">Promptfoo And Adk-Go Analysis</h1>
+        <div class="sub-meta"><span class="header-project-badge" title="skills">skills</span><span>会话 ID: a8b80bd8-9f4f-42fd-8edb-b247d9958dfa | 轮次: 2 | 更新于: 2026-11-28 08:53</span></div>
+      </div>
+      <div class="header-actions">
+        <a class="btn" id="downloadMdBtn" href="./a8b80bd8-9f4f-42fd-8edb-b247d9958dfa.md" download="Promptfoo_And_Adk-Go_Analysi-a8b80bd8.md" onclick="return downloadMarkdown(event, './a8b80bd8-9f4f-42fd-8edb-b247d9958dfa.md', 'Promptfoo_And_Adk-Go_Analysi-a8b80bd8.md')">⬇️ 下载 Markdown (.md)</a>
+        <button class="btn" id="copyBtn" type="button" onclick="copyCanonicalUrl('./a8b80bd8-9f4f-42fd-8edb-b247d9958dfa.html', 'copyBtn', '已复制直链')">复制对话直链</button>
+      </div>
+    </header>
+    <section class="chat-canvas" aria-label="Conversation Content">
+      <article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>先读取 @c:\Users\&lt;USER&gt;\Desktop\skills\CONTEXT_skills.md 获取全部约束与断点，勿复述历史。</p>
+<ul>
+<li>单次只读核验“当前断点”磁盘现状（含待测/未实施项），一口气完成勿中途请示；若发现未说明的磁盘差异先汇报停手。</li>
+<li>严守【铁律】、禁碰【排雷墓碑】；若本消息下方附有我的新需求或最新实况，则优先执行我的新需求，否则直推卡内【默认下一步】。</li>
+<li>删改已有成果前先确认；完工按【外部验证判据】或新需求标准自检汇报。 查看 (https://github.com/promptfoo/promptfoo)  。(https://github.com/google/adk-go)  。 (https://github.com/DietrichGebert/ponytail)</li>
+</ul>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><h3>一、当前断点磁盘核验（只读实测）</h3>
+<p>已单次只读核验 <code>CONTEXT_skills.md</code> 断点，<strong>无未说明异常差异</strong>（未改动任何磁盘文件）：</p>
+<p>| 核验项 | 实测结果 | 状态 |</p>
+<p>| :--- | :--- | :---: |</p>
+<p>| Overlay 漂移校验 | <code>python3.12.exe sync_overlay.py --check</code> 输出 <code>ALL OVERLAY CHECKS PASSED (0 drifts)</code>（<code>ExitCode=0</code>） | ✅ |</p>
+<p>| 6 上游源与巡检 Sidecar | <code>last_update_report.md</code>（2026-11-27 12:20）6 源全部最新、0 异常；<code>config.json</code> 中 <code>skill-update-checker.enabled = true</code> | ✅ |</p>
+<p>| 探针残留与规则/技能容量 | <code>Desktop/skills/.agents</code> 与 <code>.gemini/antigravity/hooks.json</code> 均不存在；<code>always_on</code> 规则 4 份满额（3 份用户规则 + Dream <code>AGENTS.md</code>），技能目录 23 个（18 自动 + 5 后台联动） | ✅ |</p>
+<p>| 本机运行时与近期基线 | 系统 PATH 无 <code>go</code>/<code>node</code>/<code>npm</code>/<code>python</code>，常见路径无 Go 运行时，桌面 0 个 Go 项目；<code>diagnose.py session --days 14</code>（10 场）中全部 9 场含代码/配置改动的会话 <code>verification_after_code_edit</code> 均为 <code>[OK]</code> | ✅ |</p>
+<p>| 细微说明与未实施项 | <code>core-reasoning-protocol.md</code> 修改时间 <code>11-27 19:58</code> 晚于状态卡 <code>18:52</code>（系 <code>9a71371f</code> 补充状态卡防膨胀条款，属已说明变更）；11/30 14 天全量自诊尚未到期，保留待实施 | ℹ️ |</p>
+<hr>
+<h3>二、三仓二审结论总览</h3>
+<p>按【反盲目加轮子 + 源码/遥测证伪痛点】铁律，并经同济双核（<code>draft_struct</code>）交叉复核，<strong>三仓建议均为：0 装包、0 代码/规则/Skill 引入</strong>。</p>
+<p>| 仓库 | 实测基线 | 定位 | 决定 | 一句话核心否决依据（源码/本机实测） |</p>
+<p>| :--- | :--- | :--- | :---: | :--- |</p>
+<p>| <a href="https://github.com/promptfoo/promptfoo" target="_blank" rel="noopener noreferrer">promptfoo/promptfoo</a> | <code>v0.126.0</code> &#183; <code>28k★</code> &#183; MIT（已并入 OpenAI）&#183; TS（74 生产依赖 + 52 开发依赖） | 声明式 YAML LLM 评测与红队安全扫描 CLI | <strong>划走（0 引入）</strong> | <strong>直触遥测红线</strong>：源码 <code>src/telemetry.ts</code> 实证即便设 <code>PROMPTFOO_DISABLE_TELEMETRY=1</code> 仍向 <code>R_ENDPOINT</code> 发 POST；且无法直连 Antigravity 桌面订阅会话，对 8 组小规模 <code>ablation-bench</code> 过重 |</p>
+<p>| <a href="https://github.com/google/adk-go" target="_blank" rel="noopener noreferrer">google/adk-go</a> | <code>v2.8.0</code> &#183; <code>9k★</code> &#183; Apache-2.0 &#183; Go（<code>go.mod</code> 要求 <code>go 1.26.10</code>） | Google 官方 Go 云原生多 Agent 后端 SDK | <strong>划走（0 引入）</strong> | <strong>技术栈零交集</strong>：本机 0 Go 运行时、0 Go 项目，面向 Cloud Run / Vertex / OTel / A2A 云端微服务，与本地光学科研与 Sidecar 栈无关 |</p>
+<p>| <a href="https://github.com/DietrichGebert/ponytail" target="_blank" rel="noopener noreferrer">DietrichGebert/ponytail</a> | <code>v5.3.3</code> &#183; <code>200k★</code> &#183; MIT &#183; 0 遥测（<code>hooks/*.js</code> 实查 <code>net_hits=0</code>） | 防 AI 过度工程化的“懒资深开发”规则/Skill 套件 | <strong>划走（0 装包）</strong> | 585 场基准测的是禁 Bash 的 FastAPI+React CRUD（正确率几乎持平、盲评回复未赢无 Skill）；整包装 Antigravity 会塞 6 个 Skill 顶穿上限且无持久 Hook，装 Codex 因 PATH 无 <code>node</code> 每次 Hook 必报错 |</p>
+<hr>
+<h3>三、逐仓源码拆解与取舍推理</h3>
+<h4>1. <code>promptfoo/promptfoo</code></h4>
+<ul>
+<li><strong>考虑过的正向场景</strong>：仓库内置 <code>.claude-plugin/marketplace.json</code> 与 4 个评测/红队 Skill，支持声明式 YAML 断言矩阵和 <code>exec:</code> 外部脚本 Provider，理论上可把 <code>ablation-bench</code> 的 <code>invoke_codex_review.ps1</code> 封装进去跑批量回归。</li>
+<li><strong>放弃原因（实测）</strong>：</li>
+<li><strong>遥测红线一票否决</strong>：直读 <code>src/telemetry.ts</code> 与 <code>src/constants.ts</code>，默认同时向 PostHog（<code>https://a.promptfoo.app</code>）与自建 <code>R_ENDPOINT</code>（<code>https://r.promptfoo.app/</code>）发送含 <code>user_id</code>、<code>email</code>、<code>nodeVersion</code>、<code>platform</code>、<code>arch</code> 的遥测；即便设置了 <code>PROMPTFOO_DISABLE_TELEMETRY=1</code>，<code>record()</code> 仍会走 <code>recordTelemetryDisabled()</code> → <code>sendEvent(&#39;feature_used&#39;, { feature: &#39;telemetry disabled&#39; })</code>——它只关了 PostHog，<strong><code>fetchWithProxy(R_ENDPOINT, ...)</code> 仍会发出一次带身份与环境信息的 HTTP POST</strong>。</li>
+<li><strong>无真实痛点且无法覆盖主场景</strong>：本机 <code>ablation-bench</code> 主测 Antigravity 桌面订阅内原生空白子代理（无对外 API Key 池），规模仅 8 组定向 <code>n=1</code> 诊断，也不做公网 LLM 应用的 OWASP 漏洞扫描。为此引入 74 个生产依赖的 CLI 属于典型“为找工具而造需求”。</li>
+<li><strong>边界条件</strong>：仅当未来你开发面向外部用户的独立 LLM API 服务并需要 CI 自动化回归/红队门禁时才值得重评，届时须在防火墙/代理层额外屏蔽 <code>r.promptfoo.app</code>。</li>
+</ul>
+<h4>2. <code>google/adk-go</code></h4>
+<ul>
+<li><strong>考虑过的正向场景</strong>：除 Go SDK 本身外，仓库 <code>.agents/skills/</code> 下藏有 <code>adk-go-self-review</code>（182 行）与 <code>adk-sample-creator</code> 两份官方维护者 Skill，检查是否能直接移植到本机。</li>
+<li><strong>放弃原因（实测）</strong>：</li>
+<li><strong>主框架完全不在本机生态</strong>：<code>go.mod</code> 硬要求 <code>go 1.26.10</code> 并强绑定 <code>cloud.google.com/go/aiplatform</code>、<code>otel</code>、<code>a2a-go</code>、<code>google.golang.org/genai</code>，本机无 Go 工具链且全部桌面项目均非 Go。</li>
+<li><strong>仓内 Skill 高度绑定 Go 语义</strong>：<code>adk-go-self-review</code> 聚焦 <code>iter.Seq2</code> 流式 <code>yield</code>、goroutine 资源释放、concurrent map write 与 Google Go Style Guide，不可直接复用。</li>
+<li><strong>零成本可留思路（不建规则/Skill）</strong>：<code>adk-go-self-review</code> 中有两条通用工程习惯值得口头记住——① <strong>绝不在写代码的同一会话里做最终自审，必须在新上下文看完整 diff</strong>（本机已由 <code>cross-model-reviewer</code> 不 <code>fork</code> 历史与 Codex <code>scheme-redteam-review</code> 实现）；② <strong>变异自检（Mutation Check）</strong>：写完关键分支（如 <code>if a &amp;&amp; b</code>）与测试后，逐个临时删掉或反转单个条件再跑测试，确认测试真的变红，专防“只测了一半条件”或“常量自洽假测试”。</li>
+</ul>
+<h4>3. <code>DietrichGebert/ponytail</code></h4>
+<ul>
+<li><strong>为什么重点深读源码</strong>：200k★、MIT、实查全部 <code>hooks/*.js</code> 零外网/零遥测，且 <code>INSTALL.md</code> 明确列出了 Antigravity CLI 与 Codex 支持，是最容易让人心动的候选。</li>
+<li><strong>逐项拆解与放弃原因（实测）</strong>：</li>
+<li><strong>基准结论不能直接外推到本机</strong>：直读 <code>benchmarks/results/2026-10-07-agentic.md</code>，其 <code>-53%</code> 代码、<code>−45%</code> 输出 token、<code>−41%</code> 耗时来自 <strong>Opus 5.5 在 FastAPI+React 业务仓库与小型 Web App 上跑的 39 题（585 场）且全程禁用 Bash（No shell, by design）</strong>。关键细项容易被首页横幅掩盖：</li>
+<li>18 道带隐藏测试的正确性/安全题上，三组几乎持平（无 Skill <code>86/90 = 95.6%</code> vs Ponytail 5 <code>87/90 = 96.7%</code>）；</li>
+<li>Sonnet 5.5 盲评“回复对忙碌开发者的可读实用度”，Ponytail 5 相对无 Skill <strong>没有显著优势，反而略逊（<code>82 : 106, p = 0.09</code>）</strong>；</li>
+<li>你的主力场景是物理/光学公式推导、COMSOL/MATLAB/Zemax、论文与 PPT、以及少量 Antigravity 工具/Sidecar，而非高频 CRUD 前端手搓组件；若把“少说多删”常驻进全局，还可能与 <code>core-reasoning-protocol.md</code> 第 0 节“复杂问题外显关键推理与放弃方案”产生行为拉扯。</li>
+<li><strong>本机平台与容量红线硬冲突</strong>：</li>
+<li><strong>Antigravity 端</strong>：按 <code>INSTALL.md</code>，装插件会一次灌入 6 个 Skill（<code>ponytail</code> / <code>ponytail-review</code> / <code>ponytail-audit</code> / <code>ponytail-debt</code> / <code>ponytail-gain</code> / <code>ponytail-help</code>），立刻突破 ~20 自动 Skill 软上限（其中 <code>ponytail-gain</code> 只打印静态 ASCII 基准图，纯占注意力）；且官方注明 Antigravity 无生命周期 Hook、档位不持久化；若把 <code>AGENTS.md</code> 贴进常驻规则，则撞破 4 份 <code>always_on</code> 硬封顶。</li>
+<li><strong>Codex 端</strong>：实查 <code>hooks/claude-codex-hooks.json</code>，3 个 Hook 全裸调 <code>node -e ...</code>，<code>INSTALL.md</code> 明确提示 PATH 无 <code>node</code> 时每次 Hook 都会报 <code>node: command not found</code>——与本机 PATH 无 <code>node</code> 现状直接冲突，且破坏 Codex“4 核技专司只读红队”的收拢定位。</li>
+<li><strong>核心价值已被本机护栏覆盖</strong>：其 <code>/ponytail-review</code> 强调的“改函数前 grep 全部调用方、追 diff 之外的破坏”已由本机 <code>blast-radius</code>（L1–L5 实测举证）+ <code>cross-model-reviewer</code> 覆盖；前端优先用浏览器原生能力不乱引包已由离线版 <code>modern-web-guidance</code> 覆盖。</li>
+<li><strong>零成本可留思路（不装包、不加规则/Skill）</strong>：如果后续开发 <code>ai-radar</code>、Sidecar 或科研脚本时担心 AI 顺手封装过度，可在当次需求里直接口头用它的两条精髓——① 按“已有代码 → 标准库/原生 → 已有依赖 → 最小代码”选方案，但绝不削边界校验与安全；② 刻意留下的简化妥协随手写一行 <code># shortcut: &lt;边界上限&gt;, &lt;触发升级条件&gt;</code> 注释，避免“以后再改”静默腐烂。</li>
+</ul>
+<hr>
+<h3>四、确认与边界追问</h3>
+<ul>
+<li><strong>是否入卡</strong>：是否需要我把本次 3 仓二审结论（含 <code>promptfoo</code> 禁用遥测仍向 <code>r.promptfoo.app</code> 发 POST 的实测排雷）精简合入 <code>CONTEXT_skills.md</code>（控制在 35 行软上限内），还是本次纯只读看完即止？</li>
+<li><strong>反查潜在真实痛点</strong>：你把这三个仓库一起丢过来，是常规 GitHub 热门仓扫盲二审，还是近期在某个具体项目（例如觉得 <code>ablation-bench</code> 手动跑对照太繁琐，或近期改 <code>ai-radar</code>/Sidecar 代码时遇到 AI 过度封装）确实卡了壳？如果有真实卡点样本，我们可以直接拿该真实案例做 1 组对照验证，而不是凭仓库 README 做决定。</li>
+</ul>
+</div></article>
+
+    </section>
+  </main>
+  <script>
+    (function() {
+      var src = '../sidebar.js';
+      if (window.location.protocol !== 'file:') {
+        src += (src.indexOf('?') >= 0 ? '&' : '?') + '_t=' + Date.now();
+      }
+      var s = document.createElement('script');
+      s.src = src;
+      document.body.appendChild(s);
+    })();
+  </script>
+  <script>
+    function triggerBlobDownload(blob, filename) {
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function() { URL.revokeObjectURL(url); }, 1500);
+    }
+    function downloadMarkdown(e, relPath, filename) {
+      if (window.location.protocol === 'file:' || !window.fetch || !window.Blob) {
+        return true;
+      }
+      if (e) e.preventDefault();
+      var btn = document.getElementById('downloadMdBtn');
+      var orig = btn ? (btn.getAttribute('data-orig') || btn.innerText) : '';
+      if (btn) {
+        btn.setAttribute('data-orig', orig);
+        btn.innerText = '正在下载...';
+      }
+      var targetUrl = relPath;
+      try { targetUrl = new URL(relPath, window.location.href).href; } catch (err) {}
+      fetch(targetUrl, { cache: 'no-cache' })
+        .then(function(resp) {
+          if (!resp.ok) throw new Error('HTTP ' + resp.status);
+          return resp.text();
+        })
+        .then(function(text) {
+          var blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
+          triggerBlobDownload(blob, filename);
+          if (btn) {
+            btn.innerText = '已下载 .md';
+            setTimeout(function() { btn.innerText = orig; }, 2000);
+          }
+        })
+        .catch(function() {
+          if (btn) btn.innerText = orig;
+          var a = document.createElement('a');
+          a.href = targetUrl;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        });
+      return false;
+    }
+    function fallbackCopy(text, onDone) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try {
+        if (document.execCommand('copy')) { onDone(); }
+      } catch (e) {}
+      document.body.removeChild(ta);
+    }
+    function copyCanonicalUrl(relPath, btnId, doneLabel) {
+      var btn = document.getElementById(btnId);
+      if (!btn) return;
+      var orig = btn.getAttribute('data-orig') || btn.innerText;
+      btn.setAttribute('data-orig', orig);
+      var targetUrl = window.location.href;
+      try {
+        targetUrl = new URL(relPath, window.location.href).href;
+      } catch (e) {}
+      var onDone = function() {
+        btn.innerText = doneLabel;
+        setTimeout(function() { btn.innerText = orig; }, 2000);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(targetUrl).then(onDone, function() { fallbackCopy(targetUrl, onDone); });
+      } else {
+        fallbackCopy(targetUrl, onDone);
+      }
+    }
+  </script>
+</body>
+</html>

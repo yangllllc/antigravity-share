@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="892d4ffb-50bd-4221-aebd-1033a0181218" data-base-prefix="./" data-turn-count="2" data-update-time="2026-11-27 20:10" data-meta-ver="a45e3599" data-is-index="0">
+<body data-conv-id="892d4ffb-50bd-4221-aebd-1033a0181218" data-base-prefix="./" data-turn-count="12" data-update-time="2026-11-27 20:28" data-meta-ver="a45e3599" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="Memory Audit And Review">Memory Audit And Review</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="memory">memory</span><span>会话 ID: 892d4ffb-50bd-4221-aebd-1033a0181218 | 轮次: 2 | 更新于: 2026-11-27 20:10</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="memory">memory</span><span>会话 ID: 892d4ffb-50bd-4221-aebd-1033a0181218 | 轮次: 12 | 更新于: 2026-11-27 20:28</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./892d4ffb-50bd-4221-aebd-1033a0181218.md" download="Memory_Audit_And_Review-892d4ffb.md" onclick="return downloadMarkdown(event, './892d4ffb-50bd-4221-aebd-1033a0181218.md', 'Memory_Audit_And_Review-892d4ffb.md')">⬇️ 下载 Markdown (.md)</a>
@@ -468,6 +468,144 @@
 </div></article>
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成只读核盘（<code>dream.ps1 status</code> 零悬空事务、12/12 沙盒-生产程序文件 SHA-256 一致、无异常磁盘差异，Sidecar 累计 <code>16.75/24 h</code>），并完成本次 <code>incremental_20261127</code> 增量抽取（排除当前会话后共 <code>16</code> 个变更对话、<code>216</code> 轮新对话、<code>14</code> 个分片批次）。</p>
 <p>当前已派发 7 路原生只读 <code>research</code> 子代理并行审查全部 14 个批次，待各分片回报后我将统一去重、核对既有规则与各课题 <code>CONTEXT_*.md</code>、裁决冲突并生成 <code>proposal.json</code> 与审阅包。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>分片进度：1/7 完成（Shard 1 已回报），等待其余 6 路分片结果。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>分片进度：2/7 完成（Shard 1–2 已回报），等待其余 5 路分片结果。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>分片进度：4/7 完成（Shard 1、2、3、7 已回报），等待其余 3 路分片（Shard 4、5、6）。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>分片进度：5/7 完成（Shard 1、2、3、4、7 已回报），等待最后 2 路分片（Shard 5、6）。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>分片进度：6/7 完成（Shard 1、2、3、4、6、7 已回报），等待最后 1 路分片（Shard 5）。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><h3>一、只读核盘与本次增量审查结论</h3>
+<ul>
+<li><strong>现网核盘通过（零异常差异、零写盘）</strong>：</li>
+<li><code>dream.ps1 status</code> 零悬空事务（<code>recovered_tx: null</code>），现网基线维持 <code>2</code> 晋升规则 / <code>6</code> 主题 / <code>21</code> 活跃条目 / <code>30</code> 水位 / <code>6</code> 快照；</li>
+<li>沙盒与生产 <code>12/12</code> 程序文件 SHA-256 全一致，插件目录零 <code>.bak</code>/临时残留；桌面提醒 Sidecar 累计 <code>16.75/24 h</code>（<code>1005</code> 分钟）；</li>
+<li>本次 <code>extract</code> + <code>stage</code> 全程仅写入暂存目录，已核验现网 <code>AGENTS.md</code>、<code>INDEX.md</code>、<code>promoted_rules.md</code>、6 份 <code>topics/*.md</code> 与 <code>watermark.json</code> 均<strong>零改动</strong>。</li>
+<li><strong>严格覆盖与降噪过滤</strong>：</li>
+<li>本次 run ID <code>incremental_20261127</code> 排除当前会话后共抽取 <strong><code>16</code> 个变更对话、<code>216</code> 轮新对话、<code>14</code> 个分片批次</strong>，经 7 路原生只读 <code>research</code> 子代理并发审查并统一去重裁决，最终收敛为 <strong><code>18</code> 条 Tier 3 操作（12 <code>update</code> + 6 <code>add</code>，0 条 Tier 1 晋升）</strong>，其中 <strong><code>12</code> 条首次启用 <code>review_after</code></strong>、<strong><code>1</code> 条首次启用 <code>confidence: &quot;low&quot;</code> + <code>[推断待确认]</code></strong>。</li>
+<li><strong>严格跳过 5 个对话</strong>：<code>5293b992</code>、<code>88ca9805</code>（Dream 自身运维/开发防自污染，CS329A 尚未另开对话起步）、<code>f7cdb1b6</code>（单项目冷启核盘）、<code>ee390fe7</code>（一次性冬季内搭购物）、<code>ebff3b19</code>（单次节点拥堵，排障方法已被 <code>MEM-NET-001</code> 覆盖）。其余对话中的单次政治 PPT 正文/个人学号姓名 PII、<code>ai-radar</code> 21 项私有修补及 8 仓库逐仓对比明细均已剥离。</li>
+<li><strong>4 处关键跨分片冲突裁决与磁盘实测纠偏</strong>：</li>
+<li><strong>Codex CLI 假不可用纠偏（<code>OP-003</code>）</strong>：<code>c8d6ff90</code> 触发 <code>WindowsApps\...\codex.exe</code> 的 UWP ACL <code>Access is denied</code> 后险些误记“本机不可直调 Codex”；经对照 <code>899d8b5c</code> 与磁盘实测，真实可执行二进制位于 <code>%LOCALAPPDATA%\OpenAI\Codex\bin\05cc0fd428644ef6\codex.exe</code>（<code>codex-cli 0.171.0-alpha.13.2</code>），且已有防污染无头封装 <code>invoke_codex_review.ps1</code>，已按实测真相修正入案。</li>
+<li><strong><code>course-ppt-lab</code> 时序覆盖与四端盘实（<code>OP-001</code> / <code>OP-012</code>）</strong>：以更晚完结的 <code>c71eb00d</code>（<code>0.5.0</code> 双引擎 + <code>native_helpers.py</code>）覆盖 <code>e1773243</code> 早先的 <code>0.4.1</code> 漂移观察，合并总卡指针与 <code>.dsh</code>/<code>.workbuddy</code> <code>0.4.0</code>（<code>ppt-master v6.9.0</code>）双向锁步红线；磁盘实测核准四端目录数为 <code>.gemini</code> 23（18 自动 + 5 后台联动）、<code>.codex</code> 5（<code>.system</code> + 4 核技，已退役 <code>course-ppt-lab</code>）、<code>.dsh</code> 36、<code>.workbuddy</code> 38。</li>
+<li><strong>Zemax 路径纠偏与跨会话时序对齐（<code>OP-010</code> / <code>OP-011</code>）</strong>：修复既有 <code>MEM-OPT-004</code> 错误路径（<code>Desktop\Zemax\</code> → <code>Desktop\gemini\Zemax\</code>）；结合上午 <code>49f340ef</code>（停啃应试课件、Zemax 实操软件与莫尔转角降回【待攻克/暂挂】，严守【已有基础】零拔高）与傍晚 <code>0f2f4071</code>（本机新启 Python 白盒 <code>Zemax-Companion</code>），精准区分两者不混淆。</li>
+<li><strong>同济 MCP 诊断→已落盘收口（<code>OP-013</code> / <code>OP-014</code>）</strong>：合并 <code>899d8b5c</code> 遥测诊断、<code>1cfc570f</code> <code>v5.4.1</code> 重构红线、<code>7240a409</code> 多物理网卡双 VIP 坑及 <code>c8d6ff90</code> 用户级 <code>TONGJI_API_KEY</code>（已布尔核验生效，零明文输出），并单独建条记录周免费积分分流策略。</li>
+</ul>
+<hr>
+<h3>二、待审提案清单（<code>incremental_20261127</code>）</h3>
+<ul>
+<li><strong><code>plan_hash</code></strong>：<code>67e57271f2ba0eb7dd0ae4558e78c0cad8ff45ac564cb71764b69386c09a72e5</code>（<code>manifest_hash</code>: <code>97ee9fa0f14edc7e</code>，覆盖批次 <code>1–14</code>，负反馈拦截 <code>0</code> 项，凭据泄露扫描 <code>0</code> 项）</li>
+<li><strong>预算预检</strong>：<code>AGENTS.md</code> 保持 <code>21/140</code> 行（<code>2,581/12,000 B</code>，0 溢出）；<code>INDEX.md</code> <code>11</code> 行 / <code>1,277 B</code>；6 个主题最终态均为 <code>25–64 / 150</code> 行（余量 <code>86–125</code> 行）。</li>
+<li><strong>审阅文件</strong>：<code>review_summary.md</code> ｜ <code>review.html</code> ｜ <code>proposal.json</code></li>
+</ul>
+<p>| <code>op_id</code> | 主题 / 目标条目 | 动作 | 核心变更摘要 | 置信度 | <code>review_after</code> |</p>
+<p>| :--- | :--- | :---: | :--- | :---: | :---: |</p>
+<p>| <code>OP-001</code> | <code>local-windows-env</code> / <code>MEM-ENV-002</code> | <code>update</code> | 刷新四端实盘目录数（<code>.gemini</code> 18+5、<code>.codex</code> 收拢 4 核技）、补 <code>skill-update-checker</code> 巡检及 <code>course-ppt-lab</code>↔<code>ppt-master</code> 双向锁步红线 | <code>high</code> | <code>2027-02-27</code> |</p>
+<p>| <code>OP-002</code> | <code>local-windows-env</code> / <code>MEM-ENV-006</code> | <code>update</code> | 闭环原悬空注记：实证 Gemini 报错与 OpenBrowser/本机无关，指向 <code>tongji-mcp-and-network</code> 的 <code>p=no_access</code> 条目 | <code>high</code> | 永久 |</p>
+<p>| <code>OP-003</code> | <code>local-windows-env</code> / <code>MEM-ENV-007</code> | <code>add</code> | 纠偏 <code>WindowsApps</code> UWP ACL 拒访坑，记录 <code>%LOCALAPPDATA%\OpenAI\Codex\bin\*\codex.exe</code> 与 <code>invoke_codex_review.ps1</code> 防污染无头调用契约 | <code>high</code> | <code>2027-05-27</code> |</p>
+<p>| <code>OP-004</code> | <code>antigravity-platform</code> / <code>MEM-AGY-002</code> | <code>update</code> | 补入 <code>always_on</code> 四规则封顶、自动 Skill <code>~20</code> 软上限及外部仓库/插件基于源码与本地遥测的二次严格审查闸门 | <code>high</code> | 永久 |</p>
+<p>| <code>OP-005</code> | <code>antigravity-platform</code> / <code>MEM-AGY-004</code> | <code>update</code> | 补充静态 <code>agents/*.md</code> 同样受限于 <code>inherit/flash/pro</code>、不可替代原生 <code>swarm</code> 异构终审 | <code>high</code> | <code>2027-05-27</code> |</p>
+<p>| <code>OP-006</code> | <code>antigravity-platform</code> / <code>MEM-AGY-005</code> | <code>add</code> | Windows 原生 <code>PreToolUse</code> Hook L5 实测契约（真实工具名、冷启 P50 <code>95.8 ms</code>、<code>transcript_full.jsonl</code> 同步刷盘、活跃回合禁删目录防 Fail-Closed 锁死、解析 <code>PLANNER_RESPONSE.tool_calls</code>） | <code>high</code> | <code>2026-12-15</code> |</p>
+<p>| <code>OP-007</code> | <code>antigravity-platform</code> / <code>MEM-AGY-006</code> | <code>add</code> | 零常驻 <code>AI跨会话无损接力与脱水元协议.md</code> 瘦指针、优先开新窗+状态卡偏好，以及 <code>transcript.jsonl</code> 忽略子代理/压缩会话禁全扫防坑（与全局规则零重叠） | <code>high</code> | 永久 |</p>
+<p>| <code>OP-008</code> | <code>optics-research-profile</code> / <code>MEM-OPT-001</code> | <code>update</code> | 补充长期企业研发/研究所去向、排除 AI 接单变现、暂不做求职调研及毕业/导师安排优先 | <code>high</code> | <code>2027-06-30</code> |</p>
+<p>| <code>OP-009</code> | <code>optics-research-profile</code> / <code>MEM-OPT-002</code> | <code>update</code> | 更新学习主轴为完整实验光路系统牵引（停啃本科应试课件、跳过非实用章节，避开孤立零散知识点与孤立元件视频） | <code>high</code> | 永久 |</p>
+<p>| <code>OP-010</code> | <code>optics-research-profile</code> / <code>MEM-OPT-003</code> | <code>update</code> | 【已有基础】零拔高；将 Zemax 实操软件与莫尔转角降回【待攻克/暂挂】，记入刚启动的白盒追迹伴随学习及光阑/光瞳/渐晕/远心/艾里斑实证卡点 | <code>high</code> | <code>2027-01-15</code> |</p>
+<p>| <code>OP-011</code> | <code>optics-research-profile</code> / <code>MEM-OPT-004</code> | <code>update</code> | 纠偏 <code>CONTEXT_Zemax.md</code> 路径为 <code>Desktop\gemini\Zemax\</code>，补入 <code>Zemax-Companion</code> 状态卡瘦指针与跨目录硬隔离红线 | <code>high</code> | <code>2027-03-31</code> |</p>
+<p>| <code>OP-012</code> | <code>ppt-video-workflow</code> / <code>MEM-PPT-002</code> | <code>update</code> | 升级为 <code>course-ppt-lab 0.5.0</code> 双引擎（<code>build_deck.py</code>/<code>native_helpers.py</code>）与 WPS/C14/G18/S11/S21/E06/E12 纯瘦指针 + <code>CONTEXT_PPT项目.md</code> 指针，更新跨端状态 | <code>high</code> | <code>2027-02-27</code> |</p>
+<p>| <code>OP-013</code> | <code>tongji-mcp-and-network</code> / <code>MEM-NET-002</code> | <code>update</code> | 补入多物理网卡 <code>Preferred</code>/枚举双 VIP 切换、用户级 <code>TONGJI_API_KEY</code> 凭据红线、<code>v5.4.1</code> 单路早失败非阻塞重试/禁硬错超时重试/禁跨调用落盘熔断及 Kimi 配额对齐超时墙 | <code>high</code> | 永久 |</p>
+<p>| <code>OP-014</code> | <code>tongji-mcp-and-network</code> / <code>MEM-NET-003</code> | <code>add</code> | 同济周免费积分定位（MCP 低频安全网，不把低消耗当故障；富余额度可选分流至 <code>ai-radar</code> 并设预算上限与免费 <code>glm-4-flash</code> 回退） | <code>high</code> | <code>2027-02-27</code> |</p>
+<p>| <code>OP-015</code> | <code>tongji-mcp-and-network</code> / <code>MEM-NET-004</code> | <code>add</code> | Gemini 网页端 <code>Something went wrong</code>（<code>p=no_access</code>）实测排障短路径（<code>Learn more</code> 锚点、<code>manifest.json</code> 误判、手机 App/浏览器二分）与可用替代入口（App / AI Studio） | <code>high</code> | <code>2026-12-25</code> |</p>
+<p>| <code>OP-016</code> | <code>tongji-mcp-and-network</code> / <code>MEM-NET-005</code> | <code>add</code> | <code>[推断待确认]</code> Gemini <code>p=no_access</code> 触发诱因推测与抓包观测的 <code>2026-12-24</code> 30 天观察窗口线索（与实测条目物理隔离） | <strong><code>low</code></strong> | <code>2026-12-25</code> |</p>
+<p>| <code>OP-017</code> | <code>antigravity-share-workflow</code> / <code>MEM-SHR-001</code> | <code>update</code> | 同步 <code>antigravity-share-hub</code> 纯 PS 5.1 三层元数据原生项目分组、<code>HttpWebRequest</code> 直连绕代理、清 6 废案、留 <code>setup_github_pages.ps1</code> 及双击本地 <code>site\index.html</code> 离线浏览 | <code>high</code> | 永久 |</p>
+<p>| <code>OP-018</code> | <code>antigravity-share-workflow</code> / <code>MEM-SHR-002</code> | <code>update</code> | 补入匿名 <code>api.github.com</code> 限流避坑（改查公开 Actions 页 + <code>curl.exe -sI</code> 验 <code>sidebar.js</code> <code>Last-Modified</code>）并加复核期 | <code>high</code> | <code>2027-02-27</code> |</p>
+<hr>
+<h3>三、人工审阅与批复方式（三选一，批复前现网零写入）</h3>
+<ul>
+<li><strong>本地审阅台一键应用（推荐）</strong>：请在你自己的<strong>独立 PowerShell 终端</strong>运行（严守墓碑，不由 Agent 代启）：</li>
+</ul>
+<pre><code>   powershell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;C:\Users\&lt;USER&gt;\.gemini\config\plugins\antigravity-dream-memory\dream.ps1&quot; review-serve --run-id incremental_20261127</code></pre>
+<ul>
+<li><strong>离线 HTML 导出</strong>：直接打开 <code>review.html</code> 勾选同意/驳回并导出 <code>decisions.json</code>，再交由 <code>dream.ps1 apply --run-id incremental_20261127 --decisions &lt;路径&gt;</code> 应用。</li>
+<li><strong>对话内直接批复</strong>：直接在这里回复（如“全部同意”，或指定“驳回 <code>OP-016</code>，其余全部同意”及理由），我代写绑定该 <code>plan_hash</code> 的 <code>decisions.json</code> 执行 <code>apply</code>，并复检 <code>check-due</code> 收敛为 <code>due: false</code> 与 Sidecar 计时归零。</li>
+</ul>
+<hr>
+<h3>四、2 个边界核对追问（供你审阅时顺手把关）</h3>
+<ul>
+<li><strong><code>OP-016</code>（首个 <code>[推断待确认]</code> 试水条目）取舍</strong>：它把未获官方证实的 <code>2026-12-24</code> 观察窗与跳节点诱因推测从实测条目 <code>OP-015</code> 隔离开并挂了 <code>2026-12-25</code> 到期复核——你是希望保留到下月复测后决定去留，还是倾向更洁癖的“无实证就不入库”、直接驳回并顺手首次实测负反馈账本？</li>
+<li><strong>待本批 <code>apply</code> 闭环后，是否顺带瘦身 <code>CONTEXT_dream_skill.md</code> <code>## 1</code></strong>：卡中 <code>## 1</code> 第 4 条仍残留早期“MVP 阶段沙盒先行，用户验收前不得改生产”等已完结历史措辞，且与全局规则/Dream 常规约定有局部重叠；如需瘦身，请明确授权，我再另提逐条 Diff 供确认。</li>
+</ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>全部同意。我觉得可以保留到下个月把，因为可以试试，如果不好的话可以及时调整。可以，瘦身很有必要</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><h3>一、<code>incremental_20261127</code> 原子落盘与外部判据全绿</h3>
+<p>已按你的批复生成绑定 <code>plan_hash</code> 与 <code>manifest_hash</code> 的 <code>decisions.json</code>（18/18 同意，含 <code>OP-016</code> 试行批注）并完成原子 <code>apply</code>，全部外部验证判据实测通过：</p>
+<p>| 验证项 | 实测结果 |</p>
+<p>| :--- | :--- |</p>
+<p>| <strong>快照与原子应用</strong> | 写前自动创建只读快照 <code>20261127_122146_706_pre_apply_incremental_20261127</code>（累计 <code>7</code> 份），<code>applied_count: 18</code>、<code>rejected_count: 0</code>、<code>drifted_files: []</code> |</p>
+<p>| <strong><code>dream.ps1 status</code></strong> | <code>recovered_tx: null</code>（零悬空事务）；<code>2</code> 晋升规则 / <code>6</code> 主题 / <code>27</code> 活跃条目（<code>+6</code>）/ <code>43</code> 水位（推进全 <code>16</code> 个会话）/ <code>review_due_count: 0</code> |</p>
+<p>| <strong>编译视图与 FTS5</strong> | <code>AGENTS.md</code> 维持 <code>21</code> 行 / <code>2,581 B</code>（零膨胀，条目数刷新为 <code>7/7/5/4/2/2</code>）；内存 FTS5（<code>29</code> 条）直检 <code>invoke_codex_review</code> 与 <code>PreToolUse</code>（含 <code>review_after: 2026-12-15</code>）均精确命中 |</p>
+<p>| <strong><code>check-due</code> 收敛</strong> | <code>due: false</code>（<code>days_since_last_run: 0.0</code>，<code>changed_conversations: 3 &lt; 5</code>，<code>pending_staged_runs: []</code>） |</p>
+<p>| <strong>Sidecar 自动归零</strong> | 20:22:19 定时心跳已实机捕获本次 <code>apply</code>（<code>last_seen_dream_run_at: 2026-11-27T12:21:46Z</code>），累计活跃计时自动由 <code>1020 min</code>（<code>17.0 h</code>）归零并进入新周期（<code>accumulated_minutes: 15</code>，零误弹 Toast） |</p>
+<p>*(注：若后续任一条需撤回——例如下月复测后决定撤掉 <code>OP-016</code> / <code>MEM-NET-005</code>——随时可执行 <code>dream.ps1 revert --run-id incremental_20261127 --item MEM-NET-005 --reason &quot;...&quot;</code>，会自动精准回退并写入负反馈账本。)*</p>
+<hr>
+<h3>二、<code>CONTEXT_dream_skill.md</code> <code>## 1</code> 瘦身逐条 Diff（待你确认后落盘）</h3>
+<p>当前 <code>CONTEXT_dream_skill.md</code> 达 <code>38</code> 行 / <code>6,603 B</code>（超 3,000 字软上限一倍以上），其中 <code>## 1</code> 存在 <strong>1 处与 <code>## 2</code> 墓碑直接冲突的旧句、2 处已完结/过时 MVP 措辞、1 处与全局规则完全重复的条款</strong>。建议将 <code>## 1</code> 由原 22 行无损精简为 <strong>5 条</strong>（每条 ≤250 字，零丢失任何活约束），同时顺手将 <code>## 2</code>/<code>## 3</code> 同步到本次 <code>incremental_20261127</code> 终态（整卡压至约 <code>18</code> 行 / <code>~2,500</code> 字符）：</p>
+<p>| 原 <code>## 1</code> 条目 | 诊断问题 | 拟修改方案 |</p>
+<p>| :--- | :--- | :--- |</p>
+<p>| <strong>旧 1 + 旧 2</strong>（核心目标 + 4 条理念长散文） | 展开占 6 行 ~550 字，属早期立项宣言 | <strong>无损压为 1 条架构铁律</strong>：保留“分层有界（Tier 1/2/3）、离线增量纠错（<code>update</code>/<code>deprecate</code> 附溯源）、反死板提取、人类兜底与负反馈闭环（高权重变更绝不静默生效）” |</p>
+<p>| <strong>旧 3.1</strong>（<code>SQLite/LevelDB 须完整拷贝含 -wal/-shm</code>） | <strong>与 <code>## 2</code> 墓碑矛盾</strong>（逐文件拷 <code>db/wal/shm</code> 已被证实读脏，现网已改在线 <code>sqlite3.backup()</code>） | <strong>修正并与旧 3.2–3.5 合并为 1 条数据安全铁律</strong>：改为“SQLite 须用只读在线 <code>sqlite3.backup()</code>、日志隔离拷贝；写前只读快照、全字段凭据脱敏、防自污染回环、严禁改动用户原生全局规则与各课题 <code>CONTEXT_*.md</code>” |</p>
+<p>| <strong>旧 4.1 + 4.2</strong>（原生强模型 + 防超时脚本分块） | 仍有效，但表述偏长 | <strong>压为 1 条算力与 I/O 铁律</strong>：仅用 Antigravity 原生强模型（禁接外部廉价小模型 API 或同济 MCP）；确定性 I/O/Diff/写盘归脚本，模型单次写盘适度分块防超时 |</p>
+<p>| <strong>旧 4.3</strong>（<code>沙盒先行：MVP 阶段...用户验收前不得改生产</code>） | <strong>已过时</strong>（早已结束 MVP 上线生产） | <strong>删旧 MVP 措辞，并入新第 5 条部署铁律</strong>：“改代码须先在 <code>sandbox/</code> 通过单测与 <code>blast-radius</code>、外置备份至 <code>program_backups\</code> 再对齐部署生产” |</p>
+<p>| <strong>旧 5</strong>（简体中文、自主推进、底层缓存完全加密不可读） | 简体中文/自主推进/不可逆确认与全局 <code>core-reasoning-protocol.md</code> <strong>完全重复</strong>；“缓存全加密”为 Day-1 已证伪顾虑 | <strong>建议删除</strong>（零信息损失） |</p>
+<p>| <strong>旧 6</strong>（路径与兼容红线） | 全部有效 | <strong>保留并吸收沙盒先测要求，作为新第 5 条</strong> |</p>
+<p><strong>拟定瘦身后的 <code>## 1</code> 完整预览（共 5 条）：</strong></p>
+<pre><code>## 1. 底层约束与铁律
+- **分层治理与人类兜底**：坚持分层有界（Tier 1 常驻规则 / Tier 2 轻量索引 / Tier 3 按需主题）、离线增量纠错（附变更溯源）、反死板提取与人类兜底闭环；任何记忆写盘与晋升不得静默生效，驳回/`revert` 须沉淀为负反馈约束。
+- **数据与系统安全底线**：读取会话 DB 须用只读在线 `sqlite3.backup()`（日志隔离拷贝），禁写入打开运行中缓存；修改记忆库前必生成只读快照；全字段凭据脱敏、防自污染回环；严禁改动原生全局规则或各课题 `CONTEXT_*.md`。
+- **算力与脚本分工**：仅用 Antigravity 原生强模型，严禁接入外部廉价小模型 API 或同济 MCP；确定性抽取、脱敏、校验、Diff 与原子写盘归纯 Python 3.12 stdlib 脚本，模型写盘适度分块防网关超时。
+- **路径与部署兼容红线**：插件 `C:\Users\&lt;USER&gt;\.gemini\config\plugins\antigravity-dream-memory\`（零临时/`.bak`，备份外置 `program_backups\`）、数据 `plugin_data\antigravity-dream-memory\`、沙盒 `sandbox\`；改代码先过沙盒单测再对齐生产哈希。
+- **接口与运行契约**：严保 `check-due` 的 `due` 契约兼容 24h 提醒 Sidecar、空 `review_after` 省略以兼容历史 CAS `revert`；`review-serve` 须由用户独立终端拉起（禁由 Agent 子进程托管）。</code></pre>
+<p>如上述 5 条无异议，回复“确认”我即原地落盘 <code>CONTEXT_dream_skill.md</code>（同步刷新 <code>## 2</code>/<code>## 3</code> 至本次 <code>incremental_20261127</code> 完结态）。另外，若你希望顺便把 <code>INDEX.md</code>/<code>AGENTS.md</code> 中 3 个扩充主题的一行概要也补上新关键词（如 <code>Codex/Hook/接力</code>、<code>Gemini 排障</code>），可一并告诉我，不提则维持现有极简概要。</p>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>确认，可以补上新的关键词。有没有必要把所有的规则都进行审视一遍？因为最近修改了好多东西，一直添加可以来次瘦身，不过要严格审视进行。如果不需要的话就算了</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><h3>一、已完成落盘与主题概要重编</h3>
+<ul>
+<li><strong>状态卡瘦身落盘</strong>：<code>CONTEXT_dream_skill.md</code> 已按你确认的 5 条铁律原地瘦身，并同步刷新 <code>## 2</code> / <code>## 3</code> 至 <code>incremental_20261127</code> 完结态（由原 <code>38</code> 行 / <code>6,603 B</code> 降至 <code>18</code> 非空行 / <code>3,949 B</code>，已彻底消除旧 <code>## 1</code> 与 <code>sqlite3.backup()</code> 墓碑的矛盾及过时 MVP/重复措辞）。</li>
+<li><strong>4 个主题概要补齐新关键词并重编</strong>（先核验 <code>governance.py</code> <code>revert_item</code> 仅逐条目比对 <code>ENTRY</code> 字段，改 frontmatter <code>summary:</code> <strong>零破坏</strong>历史 CAS <code>revert</code>）：</li>
+<li><code>local-windows-env</code>：补入 <code>Codex CLI</code>；</li>
+<li><code>antigravity-platform</code>：补入 <code>规则封顶</code>、<code>PreToolUse Hook</code>、<code>接力协议</code>；</li>
+<li><code>tongji-mcp-and-network</code>：补入 <code>周积分分流</code>、<code>Gemini 网页端排障</code>；</li>
+<li><code>ppt-video-workflow</code>：刷新为 <code>course-ppt-lab 0.5.0/WPS 渲染瘦指针</code>。</li>
+<li><code>dream.ps1 compile</code> 与 <code>status</code> 验证全绿：<code>AGENTS.md</code> 仍为 <strong><code>21</code> 行 / <code>2,611 B</code></strong>（仅增加 <code>30 B</code>，远低于 140 行 / 12,000 B 红线），<code>INDEX.md</code> 为 <code>11</code> 行 / <code>1,329 B</code>，零悬空事务。</li>
+</ul>
+<hr>
+<h3>二、全部 4 份常驻全局规则的严格只读体检与结论</h3>
+<p><strong>结论：当前不需要对全局规则动刀瘦身（维持现状即可，留待 11/30 14 天自诊看真实数据再定）。</strong></p>
+<p>以下是刚刚实测采集的逐文件体量、交叉冲突与行为遥测依据（零改盘）：</p>
+<p>| 常驻规则（4/4 满额） | 行数（非空） | 体积 / 单文件 24KB 上限 | 估算 Token / 总预算 20k | 实测状态 |</p>
+<p>| :--- | :---: | :---: | :---: | :--- |</p>
+<p>| <code>core-reasoning-protocol.md</code> | 38 (31) | 4,080 B（17.0%） | ~1.2k–1.8k | 11/27 刚过 L4 <code>blast-radius</code> + Opus 盲审，0 死条款 |</p>
+<p>| <code>cross-model-reviewer.md</code> | 34 (28) | 6,191 B（25.8%） | ~1.8k–2.7k | 11/25 刚过 GPT-6.2-Astra 审计 + 6 组验收，0 冲突 |</p>
+<p>| <code>deepseek-subagent.md</code> | 17 (15) | 3,793 B（15.8%） | ~1.1k–1.6k | 极精简；仅标题仍写 <code>v5.4.0</code>（宿主 MCP 已重载至 <code>v5.4.1</code>，无行为差） |</p>
+<p>| <code>AGENTS.md</code> | 21 (18) | 2,611 B（21.8% / 12KB） | ~0.8k–1.1k | 自动编译，仅 2 条 Tier 1 + 6 行索引 |</p>
+<p>| <strong>合计</strong> | <strong>110 (92)</strong> | <strong>16,675 B</strong> | <strong>~5.0k–7.2k（25%–36%）</strong> | <strong>预算宽裕、0 降级风险、0 硬矛盾</strong> |</p>
+<p><strong>为什么判断“目前没必要大瘦身”？</strong></p>
+<ul>
+<li><strong>体量与成本均无压迫</strong>：4 份加起来只占 20k 预算约 <code>25%–36%</code>，最大单文件才 <code>6.2 KB</code>（距 24 KB 降级阈值差近 4 倍）；同时 <code>session-diagnose</code> 近 7 天 10 场对话实测输入缓存命中率达 <strong><code>88.2%–93.0%</code></strong>，常驻规则全在前缀缓存里，硬抠几百字既几乎不省成本，也不明显减注意力负担。</li>
+<li><strong>近期规则全部生效且零冲突</strong>：</li>
+<li><code>diagnose.py session --days 7</code> 实测：改后验证 <code>10/10</code> 全绿、共享层改动前读 <code>blast-radius</code>（<code>9a71371f</code>、<code>c71eb00d</code>）全绿、MCP 卸载 6/10 正常触发（另 4 场全属 Dream 豁免 / PPT / 只读排障等正当免调）；</li>
+<li>跨文件逐条核对 <strong>0 硬矛盾</strong>：语言作用域（用户简体中文 vs 审稿英文）、<code>/dream</code> 与编排子工位免调、同济终审与 Opus 异构终审按独立交付物互斥，四边完全咬合。</li>
+<li><strong>唯一查出的 2 处微小现象均不值得单独改规则</strong>：</li>
+<li><code>deepseek-subagent.md</code> 标题写 <code>v5.4.0</code> vs 实测已重载的 <code>instructions.md</code> <code>v5.4.1</code>（纯文字版本号，零行为影响）；</li>
+<li><code>cross-model-reviewer.md</code> 与 <code>deepseek-subagent.md</code> 双向各写了一次互斥与 <code>/dream</code>/worker 豁免，属有意保留的防漏双保险，删掉一边反而增加单文件遗漏风险。</li>
+<li><strong>3 天后就有现成实证窗口</strong>：按既有计划 <strong>11/30</strong> 会跑 <code>session-diagnose</code> 14 天全量自诊（覆盖 <code>blast-radius</code> 漏触与同济 MCP 满周降级率），届时用真实数据决定是否裁减低效条款，远比现在“看着刚加了不少就手痒硬删”稳妥得多（也更契合你自己的“0 实测痛点不动刀”铁律）。</li>
+</ul>
+<hr>
+<p><strong>小确认（可选）</strong>：本次 <code>memory</code> 侧清理与核盘已全部收口，如果暂不打算现在顺手改 <code>deepseek-subagent.md</code> 那个纯标题版本号 <code>v5.4.0 → v5.4.1</code>，这里就可以直接结束；若你有别的局部规则（例如 <code>Desktop\光路\</code> 或 <code>Desktop\成像光学\</code> 的工作区 <code>AGENTS.md</code>）感觉偏长想一并只读扫一遍，告诉我路径即可。</p>
 </div></article>
 
     </section>

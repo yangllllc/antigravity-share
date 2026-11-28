@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="0f2f4071-bb80-4f38-8b5d-612f22bc82b8" data-base-prefix="./" data-turn-count="19" data-update-time="2026-11-27 18:49" data-meta-ver="f2b14306" data-is-index="0">
+<body data-conv-id="0f2f4071-bb80-4f38-8b5d-612f22bc82b8" data-base-prefix="./" data-turn-count="21" data-update-time="2026-11-27 20:22" data-meta-ver="f2b14306" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="AI Usage and Monetization Ideas">AI Usage and Monetization Ideas</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="消耗额度">消耗额度</span><span>会话 ID: 0f2f4071-bb80-4f38-8b5d-612f22bc82b8 | 轮次: 19 | 更新于: 2026-11-27 18:49</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="消耗额度">消耗额度</span><span>会话 ID: 0f2f4071-bb80-4f38-8b5d-612f22bc82b8 | 轮次: 21 | 更新于: 2026-11-27 20:22</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./0f2f4071-bb80-4f38-8b5d-612f22bc82b8.md" download="AI_Usage_and_Monetization_Id-0f2f4071.md" onclick="return downloadMarkdown(event, './0f2f4071-bb80-4f38-8b5d-612f22bc82b8.md', 'AI_Usage_and_Monetization_Id-0f2f4071.md')">⬇️ 下载 Markdown (.md)</a>
@@ -890,6 +890,163 @@
 若某维度确实无硬伤，直接写“该维度核查通过（附你验算过的 1 个具体边界）”，严禁为了挑刺而编造问题。</code></pre>
 <hr>
 <p>等 GPT 审完后，把它的回复直接贴回来即可——我会<strong>逐条独立复算核验</strong>（真 bug 立刻修并补回归测试，误判直接列出反证驳回），闭环后再继续推进微批次 <strong><code>1B</code></strong>。</p>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>【需修正】球面求交能把背半球当作光学表面，并以 OK 继续追迹。 这是进入 Step 2 前最先要修的问题。另有两个已复现的错误会改变光线状态：近掠射时，前方交点被算到身后；恰好处在临界角的透射光线被判为全反射。</p>
+<p>我逐行比对了审计包与本机的 6 个核心模块，内容一致。原有 30/30 项单测复跑通过。下列数值来自对该版本的只读复算，未修改源码。长度单位均为 mm。球面反例用 \(P=(y,z)\)、\(v=(M,N)\) 表示，省略的 \(x,L\) 均为零，方向由 Ray 归一化。P0 表示会追错物理路径且仍可返回 OK，P1 表示会改变状态或分析结论，P2 表示有限适用域或精度问题。</p>
+<ul>
+<li>光学符号、反射与 OPL</li>
+</ul>
+<p>近轴符号桥、单反射、双反射及混合折反：该维度核查通过。 我用 \(h_0=10^{-4}\)、\(U_0=2\times10^{-6}\,\mathrm{rad}\) 发射 3D 光线，把出射光线投回末个有效面的顶点平面，再与矩阵作用于 \([h,n_\mathrm{eff}U]\) 的结果比较。三种反射系统的高度差均小于 \(3.1\times10^{-16}\) mm，第二状态分量差均小于 \(1.2\times10^{-17}\)。[sign_bridge.py 104–130 (line 104)](C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/sign_bridge.py:104) &#183; [surfaces.py 176–213 (line 176)](C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/surfaces.py:176) &#183; [paraxial.py 168–182 (line 168)](C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/paraxial.py:168)</p>
+<p>验算系统</p>
+<p>结果</p>
+<p>空气中单凹面镜 \(R=-100,\ d=-50\)</p>
+<p>\(z_{F&#39;}=-50\)。取 \(h=10\)，精确交轴于 \(-49.7481092370\)，所以按项目的全局坐标定义，\(LA_z=+0.2518907630\)。若报沿出射传播方向的纵向差，则为负值。</p>
+<p>空气中双镜 \(R_1=-100,\ d_1=-10,\ R_2=+80\)</p>
+<p>有符号折射率依次为 \(+1,-1,+1\)。矩阵为 \(\bigl[\begin{smallmatrix}0.8&amp;-10\\0.04&amp;0.75\end{smallmatrix}\bigr]\)，第二次反射后恢复正向传播。</p>
+<p>浸没折反系统：\(1.25\to1.5\) 折射面 \(R=50\)，走 \(+10\) 到 \(R=-100\) 镜，再走 \(-10\) 返回 \(R=50\) 界面，出射到 \(1.25\)</p>
+<p>有符号折射率为 \(+1.25,+1.5,-1.5,-1.25\)。矩阵为 \(\bigl[\begin{smallmatrix}0.74&amp;-12\\0.0377&amp;0.74\end{smallmatrix}\bigr]\)，与 3D 小光线一致。</p>
+<p>OPL 有一处 P0，触发条件是把反向延长当成实际命中。</p>
+<p>文件与行号</p>
+<p>可复现输入</p>
+<p>预期物理结果 vs 实际行为</p>
+<p>最小改法</p>
+<p>P0 [raytrace.py 100–105、215–221 (line 100)](C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/raytrace.py:100) &#183; [analysis.py 84–99 (line 84)](C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/analysis.py:84)</p>
+<p>空气→玻璃平面在 \(z=0\)，光线从 \(z=+1\) 沿 \(+Z\) 发射。另取 make_m0_single_sphere(image_distance=-10) 的轴上光线。</p>
+<p>第一例前方没有界面，代码却返回 OK，回到 \(z=0\) 折射，<code>OPL=-1</code>。第二例允许虚拟像面时，玻璃中的有向外推量 \(-15\) 合理，但 opl_img=-15 无法作为实际走过的光程。两个用途共用同一成功状态和累计量。</p>
+<p>给传播段显式区分实际传播与虚拟延长。实际段只接受容差内非负的总 step；虚拟段保留有向量及标记。凹面光束的默认发射平面放到有效球冠上游，或显式声明它是相位参考面。</p>
+<p>ds&lt;0 本身正确。 同一面 \(R=-100\) 的镜子，取 \(h=10,\ z_\mathrm{start}=-10\)，得到 ds=-0.5012562893，入射总步长 +9.4987437107，反射后到 \(z=-50\) 的步长 +50.5089221537，总 OPL 60.0076658644。两段均为实际传播。对 ds 或总 step 一律取绝对值，会破坏这组结果或虚拟外推的相位符号。OpticStudio 也明确区分反射后的实际与虚拟传播。[raytrace.py 85–105 (line 85)](C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/raytrace.py:85) &#183; <a href="https://optics.ansys.com/hc/en-us/articles/42661754065171-How-to-model-a-beam-splitter-in-Sequential-Mode" target="_blank" rel="noopener noreferrer">Ansys 顺序模式反射厚度约定</a></p>
+<ul>
+<li>球面求交、矢量折反射与厚透镜逆解</li>
+</ul>
+<p>文件与行号</p>
+<p>可复现输入</p>
+<p>预期物理结果 vs 实际行为</p>
+<p>最小改法</p>
+<p>P0 误收背半球 [raytrace.py 89–105 (line 89)](C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/raytrace.py:89)</p>
+<p>\(R=+10,\ z_v=0\)，半口径 9。\(P=(40,0),\ v=(-2,1)\)。</p>
+<p>两个整球交点是 \((8,16)\)、\((0,20)\)。规定的顶点侧球冠要求 \(1-c(z-z_v)\ge0\)，两点均不合格，应 MISS。代码在 \((8,16)\) 返回 OK 并折射；该点还能通过半口径检查。</p>
+<p>求出两根，先筛球冠，再筛传播方向和口径。仅验整球方程残差抓不住此错。</p>
+<p>P0 同一球冠跳过首次命中 [raytrace.py 95–105 (line 95)](C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/raytrace.py:95)</p>
+<p>\(R=-10\)，半口径 9。\(P=(-16,-8),\ v=(2,1)\)。</p>
+<p>两个前向交点都在顶点侧球冠。先到 \((-8,-4)\)，步长 \(\sqrt{80}=8.944272\)；代码直接到 \((0,0)\)，步长 17.888544。<code>sign(G)</code> 选中离顶点切平面较近的根，跳过了光线先碰到的表面。</p>
+<p>在通过球冠筛选的候选根中，实际传播取从光线起点算起的最小非负根，并允许容差内零步长。</p>
+<p>P0 近横向光线算出球外假交点 [raytrace.py 82–104 (line 82)](C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/raytrace.py:82)</p>
+<p>\(R=10,\ P=(-12,2),\ v=(1,10^{-9})\)。</p>
+<p>从原始光线解二次方程，首交步长 5.999999992，\(y=-6.000000008\)。代码先向切平面外推约 \(2\times10^9\) mm，再相减，得到 step=-16.284271、\(y=-28.284271\)，甚至超出整球半径。令 \(N=0\) 则返回 None，而横向光线实际在 \((-6,2)\) 命中。</p>
+<p>球面直接从光线起点列方程。令 \(\mathbf r=(x,y,z-z_v)\)，求 \(cs^2+2(c\mathbf r\cdot\mathbf v-N)s+c|\mathbf r|^2-2r_z=0\)，用稳定双根公式。平面单独处理平行和共面。</p>
+<p>P1 精确相切被判未命中 [raytrace.py 89–98 (line 89)](C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/raytrace.py:89)</p>
+<p>\(R=13,\ P=(-17,20),\ v=(5,-12)\)。</p>
+<p>在 \((-12,8)\) 相切，步长 13。切点半径向量 \((-12,-5)\) 与方向点积为零。实算判别式 −5.55e−17，代码返回 None。</p>
+<p>判别式按两项的浮点误差界复判，误差带内确认重根。求交层保留切触，交互层再决定切触是否跨介质。</p>
+<p>P1 临界透射误判 TIR [raytrace.py 143–150 (line 143)](C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/raytrace.py:143)</p>
+<p>平面法线 \(+Z\)，\(n_1=1.5625,\ n_2=1.5,\ v=(24,7)/25\)。</p>
+<p>\(n_1\sin i=1.5625(24/25)=1.5\)，透射沿切线，\(\cos t=0\)。代码算出 cos2_t=-2.22e-16，返回 None，上层报 TIR。把未归一化的 24 改为 \(24-10^{-9}\) 或 \(24+10^{-9}\)，两侧分别正常透射、全反射。</p>
+<p>对 Snell 判别式使用量级相关的舍入误差界；临界带内复判或归零，保留明确超临界的 TIR。</p>
+<p>P1 等折射率界面改变方向 [raytrace.py 143–155 (line 143)](C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/raytrace.py:143)</p>
+<p>两侧均为空气，面法线 \(+Z\)，\(v=(1,10^{-9})\)，后方 1 mm 再放平面。</p>
+<p>光线应原方向穿过。代码在 1-cos_i&#178; 中丢掉法向小量，得到 \(N&#39;=0\)，下一面报 MISS。另取严格切向入射、\(1\to1.5\)，翻转同一几何法线会让返回的 \(N&#39;\) 在 &#177;0.745356 间翻转。</p>
+<p>相同折射率直接返回入射方向；严格切触使用已知的介质侧或独立切触状态。</p>
+<p>P1 厚透镜逆解拒绝实重根 [paraxial.py 310–322 (line 310)](C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/paraxial.py:310)</p>
+<p>参数按 (target_efl, nd, thickness, q)。取 (4,1.5,6,0) 和 (-12,1.5,6,2)。</p>
+<p>两例判别式都为零。第一例 \(R_1=2,R_2=-2\)，回代 \(f&#39;=4\)；第二例为厚负弯月镜 \(R_1=-2,R_2=-6\)，回代 \(f&#39;=-12\)。代码对两例均抛出 No real thick spherical lens。</p>
+<p>接受零判别式并返回重根。微负值按系数的舍入误差复判，明显负值继续拒绝。</p>
+<p>三处容易误改的边界也做了对照：</p>
+<p>近平面与 \(G\approx0\)：\(P=(5,-10),v=(0,1)\)，取 \(c=0,\pm10^{-13}\)，交点 \(z=0,\pm1.25\times10^{-12}\)，连续趋于平面。顶点起射取 \(N=10^{-10},c=0.01\)，有 \(G\approx10^{-10}\)，正确返回零步长。精确 \(G=0\) 时判别式为 \(-c^2\rho^2\)；给 G 硬塞一个正下限会制造假根。[raytrace.py 85–105 (line 85)](C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/raytrace.py:85)</p>
+<p>矢量反射与普通入射的法线翻转：\(v=(0,0.6,0.8)\)，法线取 \(\pm Z\)，两次反射均得到 \((0,0.6,-0.8)\)；空气到 \(n=1.5\) 的两次折射也一致。严格掠射时反射方向保持切向。[raytrace.py 135–176 (line 135)](C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/raytrace.py:135)</p>
+<p>负焦距的普通解支成立：取 (-100,1.5,12,2)，得到 \((-31.196330,-93.588989)\)，回代 \(f&#39;=-100\)。另一强弯曲解约为 \((-2.137004,-6.411011)\)，同样满足焦距。当前函数选择与薄透镜极限连续的一支，有明确依据。[paraxial.py 284–322 (line 284)](C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/paraxial.py:284)</p>
+<ul>
+<li>近轴核与分析层</li>
+</ul>
+<p>文件与行号</p>
+<p>可复现输入</p>
+<p>预期物理结果 vs 实际行为</p>
+<p>最小改法</p>
+<p>P1 有限焦距变成无焦 [paraxial.py 199–217、264–266 (line 199)](C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/paraxial.py:199)</p>
+<p>空气→1.5 单球面，\(R=10^{12}\)。</p>
+<p>\(C=5\times10^{-13}\,\mathrm{mm}^{-1}\)，\(f&#39;=3\times10^{12}\)。返回对象的矩阵保留了这个 \(C\)，同时却报告 power=0, is_afocal=True；球差分析随即拒算。</p>
+<p>保留实际 \(C\)，区分严格无焦和数值上接近无焦。多面功率抵消时按计算误差估计可靠性。</p>
+<p>P1 有限交轴报无穷 [analysis.py 75–81、145–152 (line 75)](C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/analysis.py:75)</p>
+<p>默认 M0，<code>heights=[1e-13]</code>。另直接输入 Ray(1,1,0,0,-1,1)。</p>
+<p>M0 的光线趋于 \(z=150\) 交轴，预期 \(LA\approx0\)，实际 status=OK, la=inf。另例全程 \(x=1\)，只穿过 \(y=0\) 平面，却被报告在 \(z=1\) 交光轴。</p>
+<p>对有限非零斜率保留交点；数值极限用近轴极限或不确定标记。子午专用入口同时校验位置和方向属于该子午面。</p>
+<p>P1 未定义像面也报告像面量 [surfaces.py 137–154 (line 137)](C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/surfaces.py:137) &#183; [analysis.py 141–152 (line 141)](C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/analysis.py:141)</p>
+<p>将默认 M0 截至第一个折射面，追 \(h=10\)。系统构造合法。</p>
+<p>最终折射面的光线仍给出正确 \(LA=-1.343889\)，但代码把表面坐标 10、到表面光程 1.010205 报作 y_img, opl_img。原设计 \(z=150\) 像面的实际值为 −0.0910211, 225.006907。</p>
+<p>让分析显式接收像面索引或参考面。缺少像面时仍可返回出射交轴和 LA，像面量留空。</p>
+<p>P1 平板出射线的虚交点与板内实交点混用 [analysis.py 185–196、233–244 (line 185)](C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/analysis.py:185)</p>
+<p>\(d=10,n=1.5,z_0=2,U=30^\circ\)。</p>
+<p>光线实际在玻璃内 \(z=3.265986\) 穿轴。出板后已发散，反向延长交于 \(z=5.876276\)。函数返回 OK, z_exact=5.876276，没有字段说明这是出射共轭的虚截距。</p>
+<p>用相对末面的有向射线参数标出实、虚、平行。若接口承诺实际穿轴位置，检查交点是否落在对应传播段内。</p>
+<p>P2 远焦距平板位移丢精度 [analysis.py 233–235 (line 233)](C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/analysis.py:233)</p>
+<p>\(d=1,n=1.5,z_0=10^{16},U=30^\circ\)。</p>
+<p>闭式位移 0.3876275643，当前用两个大坐标相减，返回 exact_shift=2.0。</p>
+<p>从入口、出口的局部斜率直接算 \(d(1-\tan U_g/\tan U)\)，单独保存位移。</p>
+<p>中间 DUMMY 与非空气基点通过。 物、像方均为 \(1.25\)，玻璃为 \(1.5\)，前后半径 \(+50,-40\)。在 10 mm 玻璃间隔中插入 DUMMY，把厚度拆为 \(3+7\)，ABCD 四个元素逐项不变，\(z_{F&#39;}=119.4339623\)。单界面 \(1.25\to1.5,R=50\) 也正确给出 \(z_{F&#39;}=300\)。首尾 DUMMY 被排除出基点的顶点跨度，符合该函数的定义。[paraxial.py 149–182、220–238 (line 149)](C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/paraxial.py:149)</p>
+<p>平板分析的介质边界要保留。 analyze_parallel_plate_focus_shift 固定构造空气—玻璃—空气系统。在两侧相同的浸没介质 \(n_0=1.25\) 中，取 \(d=10,n_g=1.5\)，近轴位移应为 \(d(1-n_0/n_g)=1.666667\)，我用通用追迹核复算一致。空气专用函数返回 3.333333。若扩展到浸没系统，最小改法是传入环境折射率，同时修改基准光路和闭式参考。[analysis.py 185–196 (line 185)](C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/analysis.py:185) &#183; [surfaces.py 308–324 (line 308)](C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/surfaces.py:308)</p>
+<ul>
+<li>Step 2 / Step 3 / Zemax 对表的接口返工点</li>
+</ul>
+<p>下表列出能用具体输入证明的接口缺口。严重度按后续功能开始使用该接口时评定。</p>
+<p>文件与行号</p>
+<p>复现或推导依据</p>
+<p>后续需要的结果 vs 当前行为</p>
+<p>最小改法</p>
+<p>P1 光阑与系统孔径缺少主从关系 [surfaces.py 78–84、145–165、232–239 (line 232)](C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/surfaces.py:232) &#183; [raytrace.py 223–225 (line 223)](C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/raytrace.py:223)</p>
+<p>make_m0_single_sphere(epd=20) 的第一面就是 STOP，半口径为 25。轴上平行光 \(h=11\) 直至 \(h=25\) 均通过。系统也接受两个 is_stop=True。</p>
+<p>按指定 EPD，归一化边缘光线是 \(h=10\)；按现有物理开口反求，入瞳直径是 50。两种结果会给出不同的 F/# 和艾里斑。任意发射光线通过几何通光口，本身是合理行为。</p>
+<p>明确选择“指定 EPD”或“由 STOP 求孔径”，解析唯一 STOP，分开保存系统孔径与机械通光口。按入瞳采样的入口使用该约定。<a href="https://optics.ansys.com/hc/en-us/articles/42661773116435-Converting-sequential-surfaces-to-non-sequential-objects" target="_blank" rel="noopener noreferrer">Ansys 系统孔径与实际光阑</a></p>
+<p>P1 基点矩阵不能直接当作到 STOP 的矩阵 [paraxial.py 155–178 (line 155)](C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/paraxial.py:155)</p>
+<p>空气→1.5，\(R=50\)，之后 10 mm 放 DUMMY STOP。发射 \(h=1,U=0\)。</p>
+<p>到 STOP 的高度为 0.933333，逐面追迹正确。对这段调用 system_abcd_matrix 会排除末尾 STOP，矩阵给出高度 1。直接用于入出瞳、主光线或远心判据都会漏掉平移。</p>
+<p>增加指定起止面及面前/面后状态的区间矩阵；基点函数继续显式选择首末有效面。</p>
+<p>P1 色散接入后，近轴与实光线可悄悄使用不同波长 [geometry.py 62–70 (line 62)](C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/geometry.py:62) &#183; [raytrace.py 299–314 (line 299)](C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/raytrace.py:299) &#183; [surfaces.py 202–212 (line 202)](C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/surfaces.py:202)</p>
+<p>在现有 Material.index 接口代入测试介质 \(n(\lambda)=1.5+0.5876-\lambda\)。系统设 \(\lambda=0.4876\,\mu m\)，\(R=50\)，直接构造默认 Ray。</p>
+<p>系统近轴核用 \(n=1.6\)，焦点 133.333333；默认 Ray 自带 0.5876，3D 核用 \(n=1.5\)，小光线焦点约 150。当前常数玻璃掩盖了差异。</p>
+<p>在发射入口统一解析有效波长，默认继承系统，显式逐光线波长仍可覆盖。现有 Material.index(wavelength) 接口可直接承载 Sellmeier。</p>
+<p>P1 公差与折叠系统缺少局部坐标架 [surfaces.py 78–84、169–174 (line 169)](C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/surfaces.py:169) &#183; [raytrace.py 82–87、249–255 (line 249)](C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/raytrace.py:249)</p>
+<p>给平面镜施加 \(45^\circ\) 倾斜，法线 \((0,1,1)/\sqrt2\)，轴上光沿 \(+Z\) 入射。</p>
+<p>物理出射方向为 \((0,-1,0)\)。<code>vector_reflect</code> 可正确算出；当前 Surface 只能表达轴向顶点，系统内平面镜只会返回 \(-Z\)。下一局部面的正常入射也可能被全局 \(N=0\) 拦截。</p>
+<p>在表面求交入口加入局部刚体变换，在局部系求交、判孔径和法线，再变回全局。引入倾斜、偏心公差或 .zmx 坐标断点时需要此接口。</p>
+<p>P1 FFT 缺少共同相位参考 [geometry.py 55–70 (line 55)](C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/geometry.py:55) &#183; [raytrace.py 32–45 (line 32)](C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/raytrace.py:32) &#183; [analysis.py 141–145 (line 141)](C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/analysis.py:141)</p>
+<p>在空气中，从同一理想等相位球面取 \(P_1=(0,0),P_2=(6,2)\)，都指向球心 \((0,10)\)，初始 OPL 均取零。在 \(z=4\) 平面读数。</p>
+<p>两条光线的平面 OPL 为 4、<code>2.5</code>，相差 −1.5；相对于理想会聚参考球，波前误差恰为零。把 opl_img 直接送入 FFT 会给理想波前制造像差。</p>
+<p>在光束分析层记录共同发射波前、视场、波长、瞳坐标和参考光线，统一延拓到参考球后求 OPD。现有 SurfaceHit 可保留逐段数据。<a href="https://optics.ansys.com/hc/en-us/articles/43071050784147-How-do-OPD-Reference-settings-in-System-Explorer-Advanced-section-affect-wavefront-calculation" target="_blank" rel="noopener noreferrer">Ansys 波前参考设置</a></p>
+<p>P2 无穷远物不能直接放入有限顶点链 [surfaces.py 89–90、137–147、169–174 (line 89)](C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/surfaces.py:89)</p>
+<p>尝试把无穷远物作为首个 OBJ，构造 Surface(&quot;OBJ&quot;, thickness=inf)。</p>
+<p>构造报 ValueError。若解析器只将 inf 放行，后续全局顶点又会全部变为无穷。现有平行光扇能模拟无穷远物，但系统处方无法保存该物方共轭。</p>
+<p>在 OpticalSystem 上独立表示有限物距或无穷远场角；有限顶点链从首个有限参考面开始。</p>
+<p>修复顺序：先用“背半球误收、同球冠首次命中、近横向假交点”锁住求交，再明确实际段与虚拟段的 OPL 契约。这四项会污染后续所有命中记录。现有折反符号桥和基点公式应保留。文中的 Zemax 对照已核对公开约定，尚未用 OpticStudio 对同一处方逐面导出数值比对。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>GPT 这一轮红队审计含金量极高——我刚才在本地 Python 里<strong>逐条独立复现了它的全部 12 组反例，100% 全部实锤</strong>（同时也印证了我们原有的折反符号桥、单/双反射、浸没折反矩阵和中间 <code>DUMMY</code> 基点完全正确）。先停下来审核心代码再做前端，这一步直接帮你避开了后面 Step 2/3 的连环返工！</p>
+<p>我已执行微批次 <strong><code>1A-3.5</code>（核心核加固 + 永久回归锁定）</strong>，并按防断纪律完成本地原子提交并停手汇报：</p>
+<hr>
+<h3>一、已落地修复清单（全部实测闭环）</h3>
+<p>| 级别 | GPT 抓出的硬伤 | 已落地的修复（文件指针） |</p>
+<p>| :---: | :--- | :--- |</p>
+<p>| <strong>P0 &#215; 3</strong> | 球面求交误收背半球、同球冠跳过首次命中、近横向光线先外推至切平面爆误差 | 重写 <code>raytrace.py</code> 的 <code>intersect_spherical_surface</code>：改为<strong>从光线起点直接解稳定双根</strong>（零切平面外推），先严格按顶点球冠 $1-c(z-z_v)\ge 0$ 筛除背半球，实际传播再取<strong>最小非负根</strong>；平面分支单独处理平行/共面。 |</p>
+<p>| <strong>P0 &#215; 1</strong> | 实际折射面把反向延长当 <code>OK</code> 且给出 <code>OPL=-1</code>，与虚拟像面混用 | 实际 <code>REFRACT/REFLECT</code> 面默认严禁反向命中（<code>step&lt;0</code> 判 <code>MISS</code>）；仅 <code>DUMMY</code> 面默认允许虚拟投影并显式标注 <code>SurfaceHit.is_virtual</code>、<code>RayTraceResult.has_virtual_segment</code> 与 <code>real_opl=None</code>；<code>trace_collimated_fan</code> 对凹前表面自动把默认发射面上游外移。 |</p>
+<p>| <strong>P1 &#215; 3</strong> | 精确相切判 <code>MISS</code>、临界角透射误判 <code>TIR</code>、等折射率近掠射丢精度/异介质切向法线翻转 | <code>raytrace.py</code>：球面判别式与 Snell 判别式改用 float64 量级误差带（<code>|d&#215;n|^2</code> 计算 $\sin^2 i$）；等折射率面直通；异介质严格切向入射统一拒折射防符号翻转。 |</p>
+<p>| <strong>P1 &#215; 2</strong> | 厚透镜逆解拒绝精确重根（<code>disc==0</code>）；大半径 <code>R=1e12</code> 被硬切为无焦 | <code>paraxial.py</code> &amp; <code>paraxial.py</code>：接受浮点误差带内重根；无焦判据改为相对抵消比 $|C|\le 10^{-13}\sum|\Phi_i|$，既保留 <code>R=1e12</code> 有限焦距又能准确识别开普勒望远镜无焦。 |</p>
+<p>| <strong>P1 &#215; 2 + P2</strong> | <code>h=1e-13</code> 交轴报 <code>inf</code>、非子午线未拦截；无像面误报末折射面为像面；平板板内穿轴未标虚拟与远焦 <code>z0=1e16</code> 大数相消 | <code>analysis.py</code>：<code>ray_axis_intercept_z</code> 同验 <code>x=0, L=0</code> 且取消 <code>1e-15</code> 人为截断；无尾 <code>DUMMY</code> 时像面量置 <code>None</code>；平板位移改用局域斜率比 $d(1-\text{slope}_{\text{glass}}/\text{slope}_{\text{exit}})$ 消除大数相消，并新增 <code>crossing_kind</code> 与可选环境折射率 <code>n_ambient</code>。 |</p>
+<p>| <strong>Step 2/3 钩子</strong> | 多 <code>STOP</code> 未禁、缺区间矩阵到 <code>DUMMY STOP</code>、色散后默认 <code>Ray</code> 波长可能与系统错配 | <code>surfaces.py</code> 强制唯一 <code>STOP</code>；<code>paraxial.py</code> 新增 <code>interval_abcd_matrix</code>；<code>geometry.py</code> 改 <code>Ray.wavelength_um=None</code> 默认继承系统波长。 |</p>
+<h3>二、有意暂缓到对应后续阶段的 3 项架构建议（避免过度设计）</h3>
+<p>GPT 在第 4 节提到的 3 项后续接口已在 <code>CONTEXT_ZemaxCompanion.md</code> 中留档，按对应阶段落地、不在 Step 1 提前膨胀代码：</p>
+<ul>
+<li><strong>系统孔径模式（指定 <code>EPD</code> vs <code>Float by STOP</code>）与有限/无穷远物共轭</strong> → 留到 <strong>Step 2</strong>（光阑与入出瞳章节）；</li>
+<li><strong>表面局部刚体坐标架（倾斜/偏心/坐标断点）</strong> → 留到 <strong>阶段 1 公差与折叠光路</strong>；</li>
+<li><strong>公共参考球面波前 OPD</strong> → 留到 <strong>阶段 1 FFT-MTF</strong>（现有 <code>SurfaceHit</code> 逐段数据已可无损衔接）。</li>
+</ul>
+<hr>
+<h3>三、验证回执与下一步拍板</h3>
+<ul>
+<li><strong>永久回归锁死</strong>：新增 <code>test_step1_gpt_redteam.py</code>（将 GPT 全部 P0/P1/P2 反例与 Step 2/3 钩子固化为 14 项测试），全套离线单测 <strong><code>44/44 PASS</code></strong>（耗时 <code>0.006s</code>）。</li>
+<li><strong>防断状态已同步</strong>：本地 Git 原子提交 <strong><code>f4e7f5e</code></strong>，状态卡 <code>CONTEXT_ZemaxCompanion.md</code> 已更新，审计包 <code>step1_gpt_audit_pack.md</code> 也已同步刷新至最新修复版。</li>
+</ul>
+<p>请你拍板下一步：</p>
+<ul>
+<li><strong>直接推进微批次 <code>1B</code></strong>（搭好 <code>127.0.0.1</code> 轻量本地交互可视化实验台 + ≤1 页《Step 1 公式 ↔ 代码行号映射卡》，完成整个 Step 1 闭环）；</li>
+<li><strong>先把刷新后的审计包再丢给 GPT 复检一轮</strong>，确认零遗留后再开 <code>1B</code>？</li>
+</ul>
 </div></article>
 
     </section>
