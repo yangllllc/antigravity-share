@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>AI Translation API Cost Optimization - Antigravity Share</title>
+  <style>
+    :root {
+      --bg-main: #131314;
+      --bg-sidebar: #1e1f20;
+      --bg-active: #2b2c2f;
+      --bg-bubble-user: #2b2c2f;
+      --bg-bubble-ai: #1e1f20;
+      --text-main: #e3e3e3;
+      --text-sub: #c4c7c5;
+      --accent: #a8c7fa;
+      --border: #3c4043;
+      --code-bg: #0d0e11;
+      --badge-green: #34d399;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100vh;
+    }
+    #sidebar {
+      width: 320px;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+    .sidebar-header {
+      padding: 16px 14px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-header h2 {
+      font-size: 16px;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sidebar-header a.home-link {
+      text-decoration: none;
+      color: inherit;
+    }
+    .sync-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--badge-green);
+      background: rgba(52, 211, 153, 0.1);
+      padding: 3px 8px;
+      border-radius: 12px;
+      margin-top: 8px;
+    }
+    .sidebar-tools {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .sidebar-search {
+      width: 100%;
+      background: var(--bg-main);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 12.5px;
+      outline: none;
+    }
+    .sidebar-search:focus {
+      border-color: var(--accent);
+    }
+    .sidebar-search::placeholder {
+      color: #8e918f;
+    }
+    .view-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .view-tabs {
+      display: inline-flex;
+      background: var(--bg-main);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2px;
+      gap: 2px;
+    }
+    .view-tab {
+      background: transparent;
+      color: var(--text-sub);
+      border: none;
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 11.5px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .view-tab:hover {
+      color: #fff;
+    }
+    .view-tab.active {
+      background: var(--bg-active);
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .mini-btn {
+      background: transparent;
+      color: var(--text-sub);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .mini-btn:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #fff;
+    }
+    .conv-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .group-section {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      margin-bottom: 4px;
+    }
+    .group-header {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: var(--text-sub);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 8px;
+      border-radius: 7px;
+      cursor: pointer;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 600;
+      transition: background 0.15s, color 0.15s;
+    }
+    .group-header:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #fff;
+    }
+    .group-chevron {
+      display: inline-block;
+      width: 12px;
+      font-size: 10px;
+      text-align: center;
+      transition: transform 0.15s;
+      flex-shrink: 0;
+    }
+    .group-section.collapsed .group-chevron {
+      transform: rotate(-90deg);
+    }
+    .group-icon {
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+    .group-name {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--text-main);
+    }
+    .group-count {
+      font-size: 10.5px;
+      font-weight: 500;
+      color: var(--text-sub);
+      background: rgba(255, 255, 255, 0.08);
+      padding: 1px 6px;
+      border-radius: 10px;
+      flex-shrink: 0;
+    }
+    .group-items {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      padding-left: 8px;
+      margin-left: 9px;
+      border-left: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .group-section.collapsed .group-items {
+      display: none;
+    }
+    .conv-item {
+      display: block;
+      text-decoration: none;
+      padding: 8px 10px;
+      border-radius: 8px;
+      transition: background 0.15s;
+      border: 1px solid transparent;
+      color: inherit;
+    }
+    .conv-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .conv-item.active {
+      background: var(--bg-active);
+      border-color: var(--border);
+    }
+    .conv-title {
+      font-size: 13px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #fff;
+    }
+    .conv-meta {
+      font-size: 11px;
+      color: var(--text-sub);
+      margin-top: 3px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+    }
+    .conv-meta-left {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .proj-pill {
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 999px;
+      background: rgba(168, 199, 250, 0.13);
+      color: var(--accent);
+      max-width: 115px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .empty-hint {
+      padding: 20px 12px;
+      text-align: center;
+      color: var(--text-sub);
+      font-size: 12.5px;
+    }
+    #main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .main-header {
+      padding: 16px 28px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-sidebar);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .main-header h1 {
+      font-size: 17px;
+      color: #fff;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .sub-meta {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .header-project-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--accent);
+      background: rgba(168, 199, 250, 0.14);
+      border: 1px solid rgba(168, 199, 250, 0.25);
+      padding: 1px 8px;
+      border-radius: 999px;
+      max-width: 240px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .btn {
+      background: var(--bg-active);
+      color: var(--accent);
+      border: 1px solid var(--border);
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .btn:hover { background: #3c4043; }
+    .chat-canvas {
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 28px 24px 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .turn {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .turn.user { align-items: flex-end; }
+    .turn.assistant { align-items: flex-start; }
+    .role-tag {
+      font-size: 12px;
+      color: var(--text-sub);
+      font-weight: 600;
+      padding: 0 4px;
+    }
+    .bubble {
+      max-width: 88%;
+      padding: 16px 20px;
+      border-radius: 18px;
+      line-height: 1.7;
+      font-size: 15px;
+      word-break: break-word;
+    }
+    .turn.user .bubble {
+      background: var(--bg-bubble-user);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .turn.assistant .bubble {
+      background: var(--bg-bubble-ai);
+      color: var(--text-main);
+      border-bottom-left-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .bubble p { margin: 0 0 10px 0; }
+    .bubble p:last-child { margin-bottom: 0; }
+    .bubble h1, .bubble h2, .bubble h3, .bubble h4 {
+      margin: 14px 0 8px;
+      color: var(--accent);
+      line-height: 1.4;
+    }
+    .bubble h1 { font-size: 19px; }
+    .bubble h2 { font-size: 17px; }
+    .bubble h3 { font-size: 15.5px; }
+    .bubble ul, .bubble ol { margin: 8px 0 10px 22px; }
+    .bubble li { margin: 4px 0; }
+    .bubble blockquote {
+      border-left: 3px solid var(--accent);
+      padding-left: 12px;
+      margin: 8px 0;
+      color: var(--text-sub);
+    }
+    .bubble code {
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 5px;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 13.5px;
+    }
+    .bubble pre {
+      background: var(--code-bg);
+      padding: 14px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 10px 0;
+      border: 1px solid #2b2d31;
+    }
+    .bubble pre code {
+      background: transparent;
+      padding: 0;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .bubble a { color: var(--accent); }
+    .bubble hr {
+      border: 0;
+      border-top: 1px solid var(--border);
+      margin: 14px 0;
+    }
+    @media (max-width: 820px) {
+      body { flex-direction: column; }
+      #sidebar { width: 100%; height: auto; position: static; max-height: 360px; }
+      .main-header { flex-wrap: wrap; padding: 14px 16px; }
+      .header-actions { flex-wrap: wrap; }
+      .bubble { max-width: 96%; }
+    }
+  </style>
+</head>
+<body data-conv-id="516fe6ac-1022-4866-81b1-81998c03b3d9" data-base-prefix="./" data-turn-count="2" data-update-time="2026-11-28 13:46" data-meta-ver="6c8f1c11" data-is-index="0">
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
+      <div class="sync-badge" id="syncBadge">自动同步加载中...</div>
+      <div class="sidebar-tools">
+        <input type="search" id="convSearch" class="sidebar-search" placeholder="搜索对话标题或项目..." aria-label="搜索对话标题或项目" autocomplete="off">
+        <div class="view-bar">
+          <div class="view-tabs" role="tablist" aria-label="分类视图">
+            <button type="button" class="view-tab active" id="viewProjectBtn" data-view="project">按项目</button>
+            <button type="button" class="view-tab" id="viewTimeBtn" data-view="time">按时间</button>
+          </div>
+          <button type="button" class="mini-btn" id="toggleAllBtn" title="展开或折叠全部项目分组">全部折叠</button>
+        </div>
+      </div>
+    </div>
+    <nav class="conv-list" id="convList" aria-label="Conversations">
+      <noscript><div style="padding:12px;color:#c4c7c5;font-size:12px;">请启用 JavaScript 查看全部历史对话列表，或直接访问对应对话链接。</div></noscript>
+    </nav>
+  </aside>
+  <main id="main">
+    <header class="main-header">
+      <div style="min-width:0;">
+        <h1 title="AI Translation API Cost Optimization">AI Translation API Cost Optimization</h1>
+        <div class="sub-meta"><span class="header-project-badge" title="【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64">【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64</span><span>会话 ID: 516fe6ac-1022-4866-81b1-81998c03b3d9 | 轮次: 2 | 更新于: 2026-11-28 13:46</span></div>
+      </div>
+      <div class="header-actions">
+        <a class="btn" id="downloadMdBtn" href="./516fe6ac-1022-4866-81b1-81998c03b3d9.md" download="AI_Translation_API_Cost_Opti-516fe6ac.md" onclick="return downloadMarkdown(event, './516fe6ac-1022-4866-81b1-81998c03b3d9.md', 'AI_Translation_API_Cost_Opti-516fe6ac.md')">⬇️ 下载 Markdown (.md)</a>
+        <button class="btn" id="copyBtn" type="button" onclick="copyCanonicalUrl('./516fe6ac-1022-4866-81b1-81998c03b3d9.html', 'copyBtn', '已复制直链')">复制对话直链</button>
+      </div>
+    </header>
+    <section class="chat-canvas" aria-label="Conversation Content">
+      <article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>先读取 @C:\Users\&lt;USER&gt;\Desktop\ai-radar\CONTEXT_ai_radar.md 获取全部约束与断点，勿复述历史。</p>
+<ul>
+<li>先一口气完成只读核盘（核对“当前断点”与待测项，勿中途请示）；发现未说明的磁盘差异先汇报停手。</li>
+<li>严守【铁律】、禁碰【排雷墓碑】；若本消息附有新需求或最新实况则优先执行，否则按【默认下一步】推进。</li>
+<li>涉及不可逆删改或修改共享规则/脚本前先确认（只读评估与方案讨论直接推进）；完工按【外部验证判据】或新需求标准自检。我刚刚查看了一下。我发现有点问题，外文中文翻译不应该用我的tongji的积分去浪费，他可以使用在审查上，翻译这种事情应该交给免费的渠道才对，因为他的技术含量不高，我只要看的懂在讲什么东西就可以了。是不是搞错目标了。然后是翻译的话质谱一个不够，是不是可以使用两个号的两个api一起进行，或者和其他的免费ai模型一起进行，可以分配一下这样吗？你觉得怎么样，我们讨论一下</li>
+</ul>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><h3>只读核盘速报（零改动）</h3>
+<ul>
+<li><strong>磁盘差异（先汇报、已停手）</strong>：<code>git status --short</code> 发现 1 处未提交改动 <code>M</code> <code>CONTEXT_ai_radar.md</code>（相对 <code>56d9bae</code> 为状态卡压缩排版差异，<code>src/</code> 与 <code>tests/</code> 无改动）；<code>git ls-files release</code> 为空。</li>
+<li><strong>服务与现场实测</strong>：<code>AIRadar.exe</code>（PID <code>21108</code>，无窗）运行正常，<code>http://127.0.0.1:8788/health</code> HTTP 200；<code>release/data/radar.db</code>（4.21 MB + WAL 0.27 MB）完整。</li>
+<li><strong>实测路由耗电证据</strong>（取自 <code>/api/ai</code> 与 <code>airadar.log</code>）：</li>
+<li>当前公网备用已配智谱 <code>glm-4-flash</code>（<code>batchSize=5</code>、<code>concurrency=2</code>、<code>timeoutSec=30</code>），但本次进程仅在连通测试触发了 1 次（4 条耗时 <code>9.5s</code>），日常几乎闲置。</li>
+<li>同济 <code>DeepSeek-V4.1-Flash</code> 今日已耗 <strong>28 次 / 43,823 tokens</strong>（本周 <strong>51 次 / 82,046 tokens</strong>）；日志实测不仅 2 批时政 L2 严审走了同济（3.2~4.2s），连 <strong>4 次点开详情页的全文翻译（<code>translate-single</code>）也全走了同济</strong>（0.7~1.1s）。</li>
+</ul>
+<hr>
+<h3>核心判断：你没搞错目标，确实该把“审查”和“翻译”拆开</h3>
+<p><strong>一句话点明核心矛盾</strong>：现有路由器 <code>ai-router.ts</code> 是<strong>按单一优先级排队（同济优先 → 单一备用回退）</strong>，没有<strong>按任务含金量分流</strong>，导致高推理含量的「语义审查」与低技术含量的「纯外文翻译」共用同济周积分，同时让免费的智谱通道闲置。</p>
+<p>回看代码里的 4 类调用，现状一目了然：</p>
+<ul>
+<li><strong>高价值审查</strong>（<code>ai-focus-curator.ts</code> 精选审校 / 时政 L2 严审）：需要准确判断 <code>keep/noise</code>、1–5 星打分、避免时政水文漏网——这才是同济 <code>DeepSeek-V4.1-Flash</code> 真正该干的活。</li>
+<li><strong>纯翻译（目前在白烧同济积分的三处重灾区）</strong>：</li>
+<li>详情抽屉全文译 <code>translateSingleItem</code>（<code>ai-settings.ts</code>）：单次喂最多 2400 字正文、吐 500 字译文，Token 消耗大、技术含量低，却默认先走同济。</li>
+<li>列表批量纯补译 <code>translateBatchForList</code>（<code>ai-settings.ts</code>）：同样没设 <code>skipTongji</code>，默认先走同济。</li>
+<li>手动全库外文翻译 <code>backfillAi(mode=&quot;english&quot;)</code>（<code>ai-admin.ts</code>）：直接走 <code>reviewItems()</code> 且不跳同济。</li>
+<li><strong>语义去重</strong>（<code>ai-dedup.ts</code>）：此前已经硬隔离，不占同济额度。</li>
+</ul>
+<blockquote><strong>一个值得提前对齐的省额度细节</strong>：在「高价值审查（<code>reviewItems</code>）」本身里，模型已经把外文标题和摘要读进上下文了，顺带在同一个 JSON 里输出 ≤48 字的 <code>titleZh</code> 和 ≤80 字 <code>takeaway</code> 边际成本极低（只多几十个输出 token），反而省掉一次对免费池的二次 HTTP 往返。<strong>真正该硬切去免费渠道的是“纯翻译”</strong>：详情抽屉全文翻译（<code>summaryZh</code>）、列表补译、手动外文批量译，以及无需审查只想先看懂的分区外文。</blockquote>
+<hr>
+<h3>讨论一：任务路由矩阵怎么改最合理？</h3>
+<p>在严守 <code>CONTEXT_ai_radar.md</code>「AI 零成本红线（绝不强制依赖同济，离校/无 Key 时可优雅降级）」的前提下，建议改为<strong>按 <code>purpose</code> 分流</strong>：</p>
+<p>| 任务类型 | 路由策略 | 理由 |</p>
+<p>| :--- | :--- | :--- |</p>
+<p>| <strong><code>review</code>（精选审校 / 时政 L2 严审）</strong> | <strong>同济优先 → 免费公网池回退</strong> | 把同济周积分和快响应（3~4s/批）集中花在精准去噪、打分和时政 L2 门禁；离校/触顶仍能无缝回退免费池。 |</p>
+<p>| <strong><code>translate</code>（详情全文译 / 列表纯补译 / 手动外文译）</strong> | <strong>仅走免费公网池（硬跳过同济）</strong> | 零消耗同济积分；技术门槛低，7B~9B 免费模型完全足以做到流畅看懂。 |</p>
+<p>| <strong><code>dedup</code>（语义去重）</strong> | <strong>仅走免费公网池（维持现状）</strong> | 保持不占同济额度，直接复用同一套免费池的容灾能力。 |</p>
+<p>同时可以顺手<strong>解耦预算账本</strong>：目前 <code>ai-budget-policy.ts</code> 的日限 120 条把“审查”和“抽屉自动翻译”混扣在一起；纯翻译彻底免费化后，建议让 <code>focusBudget(120/日)</code> 只管审查，纯翻译走独立的宽松上限（或仅受免费池并发/防呆上限约束），不再抢审查配额。</p>
+<hr>
+<h3>讨论二：智谱一个不够，用“双智谱号”还是“多家免费模型混用分配”？</h3>
+<p><strong>先说结论</strong>：<strong>强烈优先「多家异构免费模型池（Free Provider Pool）」，不建议专门为了扩容去搞“双智谱号”</strong>；但我们在架构上把池子做成通用的「多槽位列表」，<strong>天然同时兼容“异构多厂商”和“填入你已有的第二个合法账号”</strong>。</p>
+<h4>关键推理与方案对比</h4>
+<ul>
+<li><strong>为什么智谱单号会觉得不够？</strong></li>
+<li>并非总额度不够（智谱 Flash 系列长期免费），而是卡在<strong>单账号免费层并发上限低（公开资料通常为 1~2 并发）+ 响应偏慢</strong>（刚才实测 4 条耗时 <code>9.5s</code>）。多批同时跑或连点几篇外文抽屉，很容易排队堵车或触发 <code>429</code>。</li>
+<li><strong>推荐方案：异构多厂商免费池（OpenAI 兼容统一接入）</strong></li>
+<li>现有预设 <code>ai-settings.ts</code> 里本来就内置了 3 家国内直连免费渠道，实务上还可以加 1~2 家大厂免费层作为补充（注：以下额度为联网检索到的公开政策，<strong>你当前账号的实测 RPM/模型 ID 均属未验证，接入前需实机测试</strong>）：</li>
+<li><strong>智谱 AI</strong>（<code>glm-4-flash</code> / 最新免费 Flash）：长期免费、无日次硬顶，适合低并发兜底（单槽并发设 <code>1~2</code>）。</li>
+<li><strong>阿里魔搭 ModelScope</strong>（<code>Qwen/Qwen2.5-7B-Instruct</code> 等）：实名后每日约 2000 次免费、按日刷新，中文科技翻译表现很稳（单槽并发设 <code>2</code>）。</li>
+<li><strong>硅基流动 SiliconFlow</strong>（免费层 7B/8B/9B 开源模型 + 新户赠额度）：国内直连速度快、OpenAI 兼容度高（单槽并发设 <code>2</code>）。</li>
+<li><strong>可选大厂补充</strong>：腾讯混元 <code>hunyuan-lite</code>（长期免费、长上下文）或百度千帆 <code>ERNIE-Speed</code>（兼容 OpenAI 接口）。</li>
+<li><strong>收益</strong>：3 家各 1~2 并发就能拼出 <strong>4~6 路真实并发</strong>，互不共享限流桶，且一家限流/维护时其余槽位照常工作。</li>
+<li><strong>考虑过但放弃（或不作主力）的方案与原因</strong>：</li>
+<li><strong>专门注册两个智谱号轮询（不推荐作主力）</strong>：① 同一台电脑、同一出口 IP 高频轮询多号，有触发智谱同源风控/限流甚至连坐封号风险（且国内平台实名/手机号绑定）；② 共享同一故障域，智谱晚高峰变慢或抽风时双号一起慢。如果你<strong>本来就有亲友/个人现成的合法第二账号</strong>，填进通用池里跑是可以的，但不值得专门为并发去养同厂商小号。</li>
+<li><strong>纯传统免费机器翻译（Google/Bing 网页逆向等）</strong>：虽然快且不要 Key，但非官方逆向接口极易失效、被限流或强依赖代理（违背国内直连稳定原则），且无法生成 1~2 句大白话 <code>takeaway</code>，AI 专业术语也经常翻得生硬；7B 级免费 LLM 已经足够快且直接复用现有 <code>/chat/completions</code> 协议，零额外维护成本。</li>
+<li><strong>本地跑 Ollama 小模型</strong>：零网限，但常驻吃内存/显存，与 <code>AIRadar.exe</code> 轻量无窗常驻后台的定位冲突（不过现有 <code>allowNoAuthLocal</code> 已留好口子，以后随时可当池里的一个本地槽）。</li>
+</ul>
+<h4>池内“分配”怎么设计最稳、不过度设计？</h4>
+<ul>
+<li><strong>最闲槽优先（按单槽独立并发上限分配）</strong>：每个免费槽位各自配置 <code>baseUrl / model / apiKey / maxConcurrency / enabled</code>；派单时选未冷却且 <code>inFlight / maxConcurrency</code> 最小的槽位（天然让快、并发高的渠道多干活，不把智谱压爆）。</li>
+<li><strong>单槽独立 429 退避冷却 + 失败换槽</strong>：某槽报 <code>429</code> 或 <code>5xx</code>/超时，只冷却该槽（如 60s 指数退避，上限 10 分钟），该次请求立刻换池内另一个健康槽重试（<strong>最多换槽 1~2 次</strong>，防雪崩放大）。</li>
+<li><strong>严守现有安全边界</strong>：每个槽位独立校验 <code>apiKeyOrigin</code>、严禁把 <code>agi.tongji.edu.cn</code> 或校内 VIP 填进免费池绕过同济路由与账本；放弃“按质量动态投票/强制 <code>response_format</code>（防小厂商 400）/自动轮换养号”等过度设计，继续沿用当前正则提取 JSON + 严格字段校验。</li>
+</ul>
+<hr>
+<h3>进入改造前，想先和你敲定 2 个边界问题</h3>
+<ul>
+<li><strong>如果某次你只配了同济、或者所有免费翻译槽位全挂/429 了，纯翻译应该怎么表现？</strong></li>
+<li><strong>A（推荐，严格守积分）</strong>：纯翻译直接报错提示“免费翻译通道暂不可用”，<strong>绝不偷偷借用同济积分</strong>；</li>
+<li><strong>B</strong>：仅允许「用户手动点击单条翻译」在免费池全挂时兜底借用 1 次同济，批量/自动翻译仍严格禁走同济。</li>
+<li><strong>你手头目前有哪些现成免费渠道（或愿意注册哪几家）？</strong></li>
+<li>目前实测你已配好 <strong>智谱 1 个 Key</strong>；魔搭 ModelScope（需阿里云实名）或硅基流动 SiliconFlow 你是否已有/愿意顺手领 1~2 个免费 Key？这决定了第一版免费池是做「极简 2~4 槽列表（一键套用预设填 Key 即并跑）」，以及要不要顺手把 <code>CONTEXT_ai_radar.md</code> &#167;1 中关于同济优先用于翻译的旧表述一并修订（同时确认是否要把当前未提交的 <code>CONTEXT_ai_radar.md</code> 差异一并处理）。</li>
+</ul>
+</div></article>
+
+    </section>
+  </main>
+  <script>
+    (function() {
+      var src = '../sidebar.js';
+      if (window.location.protocol !== 'file:') {
+        src += (src.indexOf('?') >= 0 ? '&' : '?') + '_t=' + Date.now();
+      }
+      var s = document.createElement('script');
+      s.src = src;
+      document.body.appendChild(s);
+    })();
+  </script>
+  <script>
+    function triggerBlobDownload(blob, filename) {
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function() { URL.revokeObjectURL(url); }, 1500);
+    }
+    function downloadMarkdown(e, relPath, filename) {
+      if (window.location.protocol === 'file:' || !window.fetch || !window.Blob) {
+        return true;
+      }
+      if (e) e.preventDefault();
+      var btn = document.getElementById('downloadMdBtn');
+      var orig = btn ? (btn.getAttribute('data-orig') || btn.innerText) : '';
+      if (btn) {
+        btn.setAttribute('data-orig', orig);
+        btn.innerText = '正在下载...';
+      }
+      var targetUrl = relPath;
+      try { targetUrl = new URL(relPath, window.location.href).href; } catch (err) {}
+      fetch(targetUrl, { cache: 'no-cache' })
+        .then(function(resp) {
+          if (!resp.ok) throw new Error('HTTP ' + resp.status);
+          return resp.text();
+        })
+        .then(function(text) {
+          var blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
+          triggerBlobDownload(blob, filename);
+          if (btn) {
+            btn.innerText = '已下载 .md';
+            setTimeout(function() { btn.innerText = orig; }, 2000);
+          }
+        })
+        .catch(function() {
+          if (btn) btn.innerText = orig;
+          var a = document.createElement('a');
+          a.href = targetUrl;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        });
+      return false;
+    }
+    function fallbackCopy(text, onDone) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try {
+        if (document.execCommand('copy')) { onDone(); }
+      } catch (e) {}
+      document.body.removeChild(ta);
+    }
+    function copyCanonicalUrl(relPath, btnId, doneLabel) {
+      var btn = document.getElementById(btnId);
+      if (!btn) return;
+      var orig = btn.getAttribute('data-orig') || btn.innerText;
+      btn.setAttribute('data-orig', orig);
+      var targetUrl = window.location.href;
+      try {
+        targetUrl = new URL(relPath, window.location.href).href;
+      } catch (e) {}
+      var onDone = function() {
+        btn.innerText = doneLabel;
+        setTimeout(function() { btn.innerText = orig; }, 2000);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(targetUrl).then(onDone, function() { fallbackCopy(targetUrl, onDone); });
+      } else {
+        fallbackCopy(targetUrl, onDone);
+      }
+    }
+  </script>
+</body>
+</html>
