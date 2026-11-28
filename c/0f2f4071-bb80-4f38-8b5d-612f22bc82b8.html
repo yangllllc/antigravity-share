@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="0f2f4071-bb80-4f38-8b5d-612f22bc82b8" data-base-prefix="./" data-turn-count="24" data-update-time="2026-11-28 09:30" data-meta-ver="f2b14306" data-is-index="0">
+<body data-conv-id="0f2f4071-bb80-4f38-8b5d-612f22bc82b8" data-base-prefix="./" data-turn-count="26" data-update-time="2026-11-28 09:44" data-meta-ver="f2b14306" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="AI Usage and Monetization Ideas">AI Usage and Monetization Ideas</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="消耗额度">消耗额度</span><span>会话 ID: 0f2f4071-bb80-4f38-8b5d-612f22bc82b8 | 轮次: 24 | 更新于: 2026-11-28 09:30</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="消耗额度">消耗额度</span><span>会话 ID: 0f2f4071-bb80-4f38-8b5d-612f22bc82b8 | 轮次: 26 | 更新于: 2026-11-28 09:44</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./0f2f4071-bb80-4f38-8b5d-612f22bc82b8.md" download="AI_Usage_and_Monetization_Id-0f2f4071.md" onclick="return downloadMarkdown(event, './0f2f4071-bb80-4f38-8b5d-612f22bc82b8.md', 'AI_Usage_and_Monetization_Id-0f2f4071.md')">⬇️ 下载 Markdown (.md)</a>
@@ -1096,6 +1096,40 @@
 <p>| <strong>P2</strong> | [raytrace.py 125–131、318–324](&lt;C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/raytrace.py:125&gt;) | 唯一面为 \(z=0\) 的平面 DUMMY。轴上光线从 \(z=2^{-42}\) 向右发射，初始 OPL 为零。 | 返回 <code>step=−2⁻⁴&#178;</code>，同时 <code>has_virtual_segment=False, real_opl=−2⁻⁴&#178;</code>。零初始值下出现负的实际光程。 | 对小负步长统一处理：保留负步长时标记虚拟；吸附为零时，步长和 OPL 增量同步归零。 |</p>
 <p>| <strong>P2</strong> | [analysis.py 95–100、331–345](&lt;C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/analysis.py:95&gt;) | <code>Ray(0,2**-1030,0,0,-2**-1030,1)</code>。平板另取 <code>d=10,n=2,z0=2,U=2**-1074</code>。 | 第一例精确交轴于 \(z=1\)，代码先算 <code>N/M</code> 溢出，返回 <code>inf</code>。第二例位移在当前精度下为 5，代码因两斜率下溢而抛 <code>ZeroDivisionError</code>。 | 交轴采用缩放比值，避免中间溢出；平板在极小角度用连续的近轴极限。 |</p>
 <p>| <strong>P2</strong> | [analysis.py 110–113](&lt;C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/analysis.py:110&gt;) | <code>trace_collimated_fan(make_concave_mirror(), np.array([1.,2.]))</code>。 | 同样的两个高度传列表时两条光线均 <code>OK</code>；传 NumPy 数组时，<code>not heights</code> 抛出真假值歧义的 <code>ValueError</code>，整束未发射。 | 用 <code>len(heights) == 0</code> 判空。 |</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>这一轮复检太值了——GPT 抓出的 15 项反例（4 P0 + 8 P1 + 3 P2）暴露出一个<strong>非常经典的数值工程根因</strong>：上一轮为了修相切/临界角而引入的固定魔法容差（<code>max(..., 1.0)</code>、<code>CAP_TOL=1e-12</code>、<code>tir_tol</code> 等），在极端发射距离、弱曲率和亚正规数下反而制造了新的假阳性。</p>
+<p>这一次我<strong>没有继续微调容差打补丁</strong>，而是直接从第一性原理做根治重构，已完成微批次 <strong><code>1A-3.6</code></strong> 并全部实测通过：</p>
+<hr>
+<h3>一、从根源拔除 15 项硬伤的核心改动</h3>
+<ul>
+<li><strong>球面求交彻底消除“魔法容差”（根治 P0 #1 / #2 / #3 + P1 #5）</strong>：</li>
+<li><code>raytrace.py</code> 改用<strong>发射距离无关的球心横距判别式</strong> $\Delta = 1 - |\mathbf{w}\times\mathbf{v}|^2$（其中 $\mathbf{w}=(cr_x,cr_y,cr_z-1)$），不管起点后移到 $z=-16384$ 还是 $z=-10^9$ 都不随 $z^2$ 失真；</li>
+<li>凡落入极窄浮点不确定带（相切、$b\approx 0$ 弱曲率、赤道球冠 $1-cz\approx 0$），直接调用 Python 标准库 <strong><code>fractions.Fraction</code> 精确有理数复判</strong>（常规光线零开销，极值边界无任意阈值）；唯一保留的相切量化守卫也收紧为距离无关且 $b\to 0$ 归零的 <code>2*ulp(1)*min(b^2, |v|^2)</code>。</li>
+<li><strong>虚拟 <code>DUMMY</code> 与真实物理光路彻底解耦（根治 P0 #4 + P2 #13）</strong>：</li>
+<li><code>raytrace.py</code> 的 <code>trace_ray</code> 单独维护 <code>physical_ray</code>（始终钉在最近一次非虚拟真实交互处），虚拟 <code>DUMMY</code> 投影绝不回退 <code>physical_ray</code>，因此插入任何参考面都不再改变下游实际面的可达性；且凡 <code>step &lt; 0</code> 均严格标 <code>is_virtual=True, real_opl=None</code>。</li>
+<li><strong>Snell 临界角、<code>GRAZING</code> 状态与等折射率精确化（根治 P1 #5 / #6）</strong>：</li>
+<li>等折射率捷径收紧为精确 <code>n_before == n_after</code>；临界带用精确 <code>Fraction</code> 判定 $n_2^2|\mathbf{d}|^2|\mathbf{n}|^2 - n_1^2|\mathbf{d}\times\mathbf{n}|^2$；</li>
+<li><code>geometry.py</code> 新增独立状态 <code>RayStatus.GRAZING</code>（异介质严格切向 <code>cos_i==0</code> 不再冒充 <code>TIR</code>），任何正法向分量（如 $2^{-51}$）均正常透射。</li>
+<li><strong>近轴核与分析层全量闭环（根治 P1 #7~#12 + P2 #14~#15）</strong>：</li>
+<li><code>paraxial.py</code>：厚透镜逆解改无量纲判别式 $1 + d(q^2-1)/(nf&#39;)$；无焦判据在抵消带内用精确 <code>Fraction</code> 重算 $ABCD$ 矩阵（既保留 <code>c=2^-44</code> 有限焦距又识别开普勒望远镜无焦）；<code>interval_abcd_matrix</code> 显式拒绝同面 <code>(False, False)</code> 反向区间。</li>
+<li><code>analysis.py</code>：凹面默认发射面改防相消矢高式并改 <code>len(heights)==0</code> 兼容 NumPy 数组；<code>analyze_spherical_aberration</code> 独立按末有效面与指定像面的命中状态取值（下游截光不再抹掉上游有效值）；<code>ray_axis_intercept_z</code> 缩放比值防溢出；平板近掠射（$\pi/2 - 10^{-8}$）改对称入射斜率比并在极小角（$2^{-1074}$）平滑回落近轴极限。</li>
+</ul>
+<hr>
+<h3>二、验证与防断回执</h3>
+<ul>
+<li><strong>永久回归锁死</strong>：新增 <code>test_step1_gpt_round2.py</code>（15 项 GPT 第 2 轮反例 + 2 项自构边界反例全覆盖），离线全套 <strong><code>59/59 PASS</code></strong>（耗时 <code>0.010s</code>）。</li>
+<li><strong>防断状态已同步</strong>：本地 Git 原子提交 <strong><code>71656da</code></strong>，状态卡 <code>CONTEXT_ZemaxCompanion.md</code> 已更新，审计包 <code>step1_gpt_audit_pack.md</code> 也已刷新至 <code>71656da</code>。</li>
+</ul>
+<hr>
+<h3>下一步拍板</h3>
+<p>核心物理核经过两轮极严苛的红队锤炼已经非常扎实（59 项回归全绿）：</p>
+<ul>
+<li><strong>推荐直接推进微批次 <code>1B</code></strong>：搭建 <code>127.0.0.1</code> 本地交互可视化实验台（含中英术语切换，可实时拖动 M0 单球面、透镜弯曲 $q$、平行平板大孔径、凹面镜与玻璃哑铃）+ 产出 <strong>≤1 页《Step 1 公式 ↔ 代码行号映射卡》</strong>，先把 Step 1 完整闭环用起来；</li>
+<li>如果你希望先让 GPT 对刷新后的 <code>step1_gpt_audit_pack.md</code> 做一次第 3 轮快速签收，现在也可以直接发过去。</li>
+</ul>
+<p>你来定怎么走？</p>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>我希望你在经过gpt的两次检查后能够吸取经验，为什么他能检查出来，是他的思路有什么额外的东西嘛，为什么我们想不到呢。然后自己先进行再一次的严格审查，可以配合opus一起，然后最后再让gpt进行验收这样。因为一直的反复确实有点浪费额度了。</p>
 </div></article>
 
     </section>

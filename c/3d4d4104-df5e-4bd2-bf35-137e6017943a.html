@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="3d4d4104-df5e-4bd2-bf35-137e6017943a" data-base-prefix="./" data-turn-count="4" data-update-time="2026-11-28 09:30" data-meta-ver="6387cde8" data-is-index="0">
+<body data-conv-id="3d4d4104-df5e-4bd2-bf35-137e6017943a" data-base-prefix="./" data-turn-count="6" data-update-time="2026-11-28 09:44" data-meta-ver="6387cde8" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="Gemini小号地区更换与使用决策">Gemini小号地区更换与使用决策</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="独立对话">独立对话</span><span>会话 ID: 3d4d4104-df5e-4bd2-bf35-137e6017943a | 轮次: 4 | 更新于: 2026-11-28 09:30</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="独立对话">独立对话</span><span>会话 ID: 3d4d4104-df5e-4bd2-bf35-137e6017943a | 轮次: 6 | 更新于: 2026-11-28 09:44</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./3d4d4104-df5e-4bd2-bf35-137e6017943a.md" download="Gemini小号地区更换与使用决策-3d4d4104.md" onclick="return downloadMarkdown(event, './3d4d4104-df5e-4bd2-bf35-137e6017943a.md', 'Gemini小号地区更换与使用决策-3d4d4104.md')">⬇️ 下载 Markdown (.md)</a>
@@ -544,6 +544,65 @@
 <ul>
 <li><strong>账号现状确认</strong>：你现在这台电脑登录 <strong>Antigravity 的主力号</strong>，是状态卡里那个已经改到日本区的“日本大号”，还是<strong>第三个账号</strong>？（如果是第三个账号，日本大号是否实际试过登 Antigravity，还是因为看到 <code>gemini.google.com</code> 报 <code>p=no_access</code> 就一直没试过？）</li>
 <li><strong>扩容原因与支付条件</strong>：你想多一个 Antigravity 账号，是因为<strong>单号 5 小时配额经常打满</strong>，还是想留一个<strong>防封备胎</strong>？另外你自己手头有没有可用的<strong>外币信用卡（Visa/Mastercard）等合规海外支付方式</strong>？</li>
+</ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>，我的日本大号还没有试过。留一个防封备胎，有海外支付方式。我怎么使用指纹浏览器注册谷歌邮箱需要扫码，但是国内的手机发出去的短信都接收不到，那这个该怎么办。还有其他的方式注册新的谷歌账号嘛</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>先按你的最新补充纠偏一件事：<strong>你手里其实已经有一个现成的“防封备胎”，没必要在没用上它之前，先去硬撞新注册风控墙。</strong></p>
+<hr>
+<h3>一、先看最高性价比的现实：日本大号已经是现成防封备胎</h3>
+<p>你确认了三个关键条件：① <strong>日本大号还没试过登 Antigravity</strong>；② <strong>目标只是留一个防封备胎</strong>；③ <strong>你有合规海外支付方式</strong>。</p>
+<p>对照状态卡（<code>CONTEXT_OpenBrowser_Gemini.md</code>）：</p>
+<ul>
+<li>你的日本大号<strong>已经完成 <code>Japan</code> 改区 + 通过 Google 18+ 年龄认证 + 清空旧付款资料</strong>——这三项刚好就是开通并使用 Antigravity 付费订阅的前置门槛。</li>
+<li><strong>关键失效机制提醒（为什么现在别拿它和主力号高频混切）</strong>：既然定位是<strong>防封备胎</strong>，最怕的就是“还没派上用场，先把备胎和主力号关联死了”。<strong>不要</strong>把日本大号加进当前电脑的 Antigravity 切号工具里和主力号来回横跳；正确用法是<strong>继续冷备隔离</strong>——平时仅在独立 OpenBrowser 日区环境（固定纯净日家宽）偶尔轻度正常用 Google 服务/AI Studio 维持正常历史，等 <code>2026-12-24</code> 后复测网页端状态；<strong>真到主力号出问题时</strong>，再正式接班并用你的海外支付方式给它开日本区 Google AI Pro。</li>
+</ul>
+<hr>
+<h3>二、为什么指纹浏览器注册 Google 会强制扫码发短信，且国内手机发出去收不到？</h3>
+<p>这是两个叠加原因：</p>
+<ul>
+<li><strong>为什么 PC 指纹浏览器容易触发“扫码主动发短信”？</strong></li>
+<li>Google 近年对高风险新注册流程启用了<strong>上行短信验证（QR Code Outbound SMS）</strong>——不再是 Google 发验证码给你，而是要求真机扫码向 Google 指定网关主动发一条含校验串的短信，以核验真实终端与号码。</li>
+<li><strong>新建空白指纹浏览器环境</strong>（零历史 Cookie/设备信任沉淀）在 Google 看来本身就接近自动化批量注册特征；若此时节点不是纯净家宽（回看实测，只有 <code>日本星链家宽-IEPL 01</code> 和 <code>韩国家宽-IEPL 01</code> 是 <code>proxy=false, hosting=false</code>），或浏览器语言仍为中文却挂海外节点，几乎必触发最严验证。</li>
+</ul>
+<ul>
+<li><strong>为什么国内 <code>+86</code> 手机扫码发出去后收不到回执？（运营商侧硬阻断）</strong></li>
+<li><strong>原因 A（权限默认关闭）</strong>：国内移动/联通/电信手机卡默认常只开“国际短信接收”，<strong>未开通国际及港澳台短信发送功能</strong>；发出后要么直接发送失败，要么被网关静默丢弃。</li>
+<li><strong>原因 B（海外短号/验证网关被拦）</strong>：Google 扫码跳转的收件人如果是 <strong>5–6 位海外短号（Short Code）</strong>，国内三大运营商基本不支持向境外短号发送短信；即便显示“已发送”，实际在国际短信网关已被拦截，Google 永远收不到。</li>
+</ul>
+<hr>
+<h3>三、如果仍想新注册一个 Google 账号，有哪些更稳的正规方式？</h3>
+<blockquote><strong>先排雷</strong>：不要用接码平台/VoIP 虚拟号注册“防封备胎”——Google 对接码号段风控极严，就算侥幸过审也极易二次锁号，而且号码会回收，完全不适合绑你的海外卡当备用号。</blockquote>
+<p>按实操可行性从高到低：</p>
+<h4>方式 1：改走手机端官方原生入口注册（最推荐，优先试）</h4>
+<p>手机原生系统/官方 App 带有真实移动设备信号，风控阈值明显低于 PC 空白指纹浏览器，经常会退回传统的<strong>“Google 给你发验证码”</strong>（国内卡收国际短信的成功率远高于外发），部分干净网络下甚至会出现手机号“跳过（Skip）”选项：</p>
+<ul>
+<li><strong>iOS 入口</strong>：<code>设置</code> → <code>App</code> → <code>邮件</code> → <code>邮件账户</code> → <code>添加账户</code> → <code>Google</code> → 左下角 <code>创建账号</code> → <code>个人用途</code>。</li>
+<li><strong>Android（含 GMS）入口</strong>：<code>设置</code> → <code>Google</code>（或 <code>密码与账号</code>）→ <code>添加账号</code> → <code>创建账号</code>。</li>
+<li><strong>备选入口</strong>：手机官方 <strong>Gmail App</strong> 或 <strong>YouTube App</strong> → 右上角头像 → <code>添加其他账号</code> → <code>Google</code> → <code>创建账号</code>。</li>
+<li><strong>操作防坑要点</strong>：</li>
+<li>注册全程在手机端开启<strong>单一纯净目标国家宽节点</strong>（如日家宽或韩家宽，不要开着中国直连注册，否则初始账号地区可能落入不支持区）。</li>
+<li>注册成功后，立刻补上<strong>辅助邮箱</strong>并记牢账密，然后<strong>在手机上退出该新号</strong>，后续改放到电脑 OpenBrowser 独立空白环境固定同国节点维护（避免手机端多号混登串区）。</li>
+</ul>
+<h4>方式 2：排查国际短信发送权限（仅当收件人是完整国际长号时有效）</h4>
+<ul>
+<li>扫二维码打开短信草稿后，先看收件人栏：</li>
+<li>若是 <strong>带 <code>+</code> 和国家区号的完整长号</strong>（如 <code>+44...</code>、<code>+1...</code>、<code>+852...</code>）：联系运营商 App/客服确认并免费开通 <strong>“国际及港澳台短信发送”</strong> 功能（发一条扣约 0.8–1 元国际短信费），再试 1 次；若同运营商仍静默丢包，换另一家运营商的家人实体卡尝试（注册完可解绑换回，但勿短时连刷）。</li>
+<li>若是 <strong>5–6 位短号</strong>：国内 <code>+86</code> 卡基本无解，不要继续浪费短信费，直接换方式 1 或方式 3。</li>
+</ul>
+<h4>方式 3：合规海外实体 SIM / eSIM 保号卡（最治本）</h4>
+<ul>
+<li>如果你长期要维护海外开发账号且已有海外支付方式，办一张正规海外运营商的<strong>实体 SIM 或支持内地漫游的 eSIM 保号卡</strong>（非 VoIP，支持收发国际短信）是最彻底的解法——能正常过双向国际短信验证，且号码永久归你本人控制，后续遇二次风控也能自证。</li>
+</ul>
+<h4>方式 4：PC 端指纹浏览器辅助调整（不保证能跳过扫码）</h4>
+<ul>
+<li>若非要在 OpenBrowser 网页端试：先确认启动器检测出口确实是纯净日/韩家宽，将该隔离环境的浏览器语言设为与出口国一致（如 <code>ja-JP</code> 或 <code>en-US</code>），避免一新建空环境就秒开注册页连续试错。但客观而言，<strong>移动端原生入口的通过率通常远高于 PC 指纹浏览器</strong>。</li>
+</ul>
+<hr>
+<h3>下一步确认（帮你快速落盘）</h3>
+<ul>
+<li>你刚才扫码跳转到手机短信界面时，<strong>收件人栏里是带 <code>+区号</code> 的完整国际长号，还是 5–6 位短号</strong>？看一眼这个就能直接定性是“没开国际外发权限”还是“国内运营商彻底封死短号”。</li>
+<li>如果你决定先采用 <strong>“日本大号冷备留作 Antigravity 防封备胎 + 韩国小号冷置不改区 + 不买成品号”</strong> 这一方案，是否需要我顺手把这段最新决策同步更新到 <code>CONTEXT_OpenBrowser_Gemini.md</code>？（本轮未修改任何本地文件。）</li>
 </ul>
 </div></article>
 
