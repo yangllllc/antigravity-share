@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="a8b80bd8-9f4f-42fd-8edb-b247d9958dfa" data-base-prefix="./" data-turn-count="14" data-update-time="2026-11-28 17:51" data-meta-ver="b949b2c2" data-is-index="0">
+<body data-conv-id="a8b80bd8-9f4f-42fd-8edb-b247d9958dfa" data-base-prefix="./" data-turn-count="16" data-update-time="2026-11-28 17:56" data-meta-ver="b949b2c2" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="Promptfoo And Adk-Go Analysis">Promptfoo And Adk-Go Analysis</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="skills">skills</span><span>会话 ID: a8b80bd8-9f4f-42fd-8edb-b247d9958dfa | 轮次: 14 | 更新于: 2026-11-28 17:51</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="skills">skills</span><span>会话 ID: a8b80bd8-9f4f-42fd-8edb-b247d9958dfa | 轮次: 16 | 更新于: 2026-11-28 17:56</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./a8b80bd8-9f4f-42fd-8edb-b247d9958dfa.md" download="Promptfoo_And_Adk-Go_Analysi-a8b80bd8.md" onclick="return downloadMarkdown(event, './a8b80bd8-9f4f-42fd-8edb-b247d9958dfa.md', 'Promptfoo_And_Adk-Go_Analysi-a8b80bd8.md')">⬇️ 下载 Markdown (.md)</a>
@@ -656,6 +656,48 @@
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成候选仓库高含金量 <code>SKILL.md</code> 原文与本机自研核心技能（<code>blast-radius</code> / <code>debug-unstick</code> / <code>best-of-n</code> / <code>subagent-pipeline</code> / <code>numerical-kernel-audit</code>）的逐项深读对照，从中筛出了 5 条零装包、可迁移的底层机制思路。接下来派发全新空白上下文的 <strong>Gemini 4 Neon (XHigh)</strong> 只读独立复审，双向拷打这批 11 项的“0 装包裁决”与“5 条思路的真实含金量（防伪需求/高误报）”，复审收敛后再统一入卡。</p>
 </div></article>
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已派发空白上下文 <strong>Gemini 4 Neon (XHigh)</strong> 独立复审子代理，正在对照本机 <code>diagnose.py</code> 与 <code>CONTEXT_skills.md</code> 对这批 11 项的 0 装包裁决及提炼出的 5 条 Skill 思路做压力测试；收到回执后立即汇总裁决并入卡。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>空白上下文 <strong>Gemini 4 Neon (XHigh)</strong> 复审已完成：确认 11 项 0 装包无误杀，同时把 5 条候选思路压测收敛为 <strong>3 条真高杠杆增量</strong>（并顺手在本地 <code>diagnose.py</code> 抓出一个真实并发判定漏洞，淘汰了物理场景高误报的 <code>grounded_numbers</code> 与与 Dream 机制冲突的 <code>retrieval_gate</code>）。下面先核验 <code>diagnose.py</code> 对应源码行并给 <code>CONTEXT_skills.md</code> 做改前快照，随后落盘入卡。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>你的直觉很准：<strong>“0 装包”不等于“没思路”</strong>。我剔除纯 GCP/纯平台项后，集中深读了 <code>pstack-all</code>（11 个核心 Skill）、<code>google/mantis</code>（5 个反思/评判/索引 Skill）、<code>google/skills</code>（非云端与评测飞轮 Skill）及 <code>waku-agent</code>（<code>evals.md</code>/<code>consolidation.py</code>/<code>TEMPLATE.md</code>）原文，并与本机自研核心技能和 <code>diagnose.py</code> 逐行对照，再经空白上下文 <strong>Gemini 4 Neon (XHigh)</strong> 对抗压测，结果非常惊喜——不仅淘出了 <strong>3 条真高杠杆、零膨胀的落地思路</strong>，还顺手抓出了本机 <code>diagnose.py</code> 里一个<strong>真实存在的并发判定 Bug</strong>，同时也已按要求完成入卡。</p>
+<hr>
+<h3>一、真正有用的 3 条本区高杠杆增量（0 新规则、0 新 Skill）</h3>
+<p>| # | 借鉴来源 | 对本机的真实增量（附源码证据） | 零膨胀落地方式 |</p>
+<p>| :---: | :--- | :--- | :--- |</p>
+<p>| <strong>1</strong> | <code>waku-agent</code> <code>evals.md</code> (<code>turn_evals.py</code> 的 <code>errors_handled</code>) | <strong>顺藤摸瓜抓出本地真 Bug</strong>：实读 <code>diagnose.py</code>，当一轮<strong>并发</strong>调用 <code>read_file</code> + <code>run_command</code> 时，首条 <code>GENERIC</code>（往往是 <code>read_file</code> 的返回）进入 L383 后，L391 立刻把 <code>pending_cmd_step = None</code>，导致紧随其后的 <code>run_command</code> 失败结果被<strong>完全漏扫</strong>！补修该并发扫描后，可顺手增加<strong>“末轮命令/写文件失败且无后续工具恢复”</strong>的低噪告警（专抓静默吞错）。 | 直接修现有 <code>diagnose.py</code>（~25 行纯 Python），不加任何新 Skill/规则 |</p>
+<p>| <strong>2</strong> | <code>pstack-all</code> <code>benchmark-checklist</code> + <code>principle-explain-the-number</code> | 补齐 <code>ablation-bench</code> 与光学/性能实测的定量方法论盲区：跑定量性能/延迟/临界消融前强制过 5 项——<strong>① 先写决策门槛与噪声底；② 交替跑 <code>A/B/A/B</code> 报中位数与区间；③ 实测瓶颈（“为何不能快一倍”，猜代码不算）；④ 计数报错（<code>Did it error?</code>）；⑤ 核验工作真跑在计时区内（<code>Did it even happen?</code>）</strong>。定性抓明显缺口仍保持 <code>n=1</code> 省额度。 | 在 <code>ablation-bench/</code> 写一份纯按需参考清单（零常驻 Token） |</p>
+<p>| <strong>3</strong> | <code>pstack-all</code> <code>correct</code>（*Prove each new check fails on a real past mistake*） | 你的 <code>debug-unstick</code> &#167;B.6 已有“固化后删旧文字”，但缺一道硬门禁：<strong>新守卫上线前必须先拿历史上真实翻车样本回放“证红”，再拿合规样本“证绿”</strong>。直接对接 11/30 的 <code>PreToolUse</code> Hook 决策——如果决定上 <code>ask</code> 版 Hook，先用历史真实漏触 <code>blast-radius</code> 的 <code>transcript_full.jsonl</code> 离线回放打穿，确认零误杀再启用。 | 并入 11/30 Hook 验收判据（零新增文档） |</p>
+<h4>附：跨课题移交与 1 句顺手微调</h4>
+<ul>
+<li><strong>移交 <code>Desktop/memory</code>（源自 <code>waku-agent/waku/memory/consolidation.py</code> + <code>mantis-reflect</code>）</strong>：保留 3 项极轻裁剪版给 <code>antigravity-dream-memory</code> 下次迭代——① 防单轮纯引用旧 <code>MEM-*/RULE-*</code> 凑齐 Tier 1 <code>sources</code>（防回声室自举）；② 在 <code>dream/SKILL.md</code> 明确区分“瞬态运维状态（额度/偶发 429）”与“持久系统根因（如 <code>MEM-AGY-003</code>）”；③ 缺失/截断 transcript 显式浮出 <code>missing_transcript</code>/<code>retry_sessions</code>，绝不静默当零发现。</li>
+<li><strong>日后顺手补 1 句（源自 <code>pstack-all</code> <code>arena</code> Phase E）</strong>：给 <code>best-of-n</code> 补一句“若 N 路有效方案方向严重发散，判定 Phase A 欠约束并重帧重跑，禁止强行拼接缝合”。</li>
+</ul>
+<hr>
+<h3>二、压测后明确淘汰的“初看很美但会坑我们”的思路</h3>
+<p>经过空白 Neon 对抗审查，以下看似诱人的思路<strong>明确不借鉴</strong>，避免反向劣化：</p>
+<ul>
+<li><strong>淘汰 <code>waku-agent</code> 的 <code>grounded_numbers</code>（自动查回复数字是否全出自工具输出）</strong>：你的主力场景包含光学/物理公式推导、COMSOL/数值换算、物理常数、比例（如 <code>89.1%</code>）与状态码，这些新算数字天然不会逐字出现在上一步工具输出里，强上正则必然大面积误报。</li>
+<li><strong>淘汰 <code>waku-agent</code> 的 <code>retrieval_gate</code>（每轮先调小模型判是否查记忆）</strong>：<code>waku</code> 是因为默认每轮盲注全量记忆才需要门控；你的 <code>antigravity-dream-memory</code> 已经是常驻索引 + 按需 <code>read_file</code>/FTS5 拉取，不存在每轮盲注痛点，照搬纯属画蛇添足。</li>
+<li><strong>淘汰“硬正则直接吞掉所有含 429 轮次”</strong>：如果粗暴过滤含 <code>429</code>/报错的对话，会把类似 <code>MEM-AGY-003</code>（Vertex 安全误杀）或同济 MCP L6 慢队友拖死根因这类高价值系统性故障一并盲掉，改为区分“瞬态运维 vs 持久根因”。</li>
+<li><strong>淘汰 <code>pstack</code> 的其余重复机制</strong>：保质期（Dream 已有 <code>review_after</code>）、审批流（已有 <code>review-serve</code>）、收窄触发描述（已有 <code>local-overlay.json</code>）、先查扩散面与 L1–L5 举证（已有 <code>blast-radius</code>）、固化后删旧文字（已有 <code>debug-unstick</code> &#167;B.6）均已覆盖，绝不重造。</li>
+<li><strong>11 项 0 装包复核补充红线</strong>：经 Neon 复查确认 11 项维持 0 装包无误杀；特别补注一条——将来即使按需临时用 <code>chrome-devtools-mcp</code>，<strong>不要直接装 Antigravity 官方商店版 <code>chrome-devtools-plugin</code></strong>（未核实其是否透传 3 个零遥测参数），而应通过 WorkBuddy 内置 Node 22 绝对路径显式带 <code>--no-usage-statistics --no-performance-crux</code> 与 <code>CHROME_DEVTOOLS_MCP_NO_UPDATE_CHECKS=1</code> 临时启停。</li>
+</ul>
+<hr>
+<h3>三、入卡完成与外部验证自检</h3>
+<ul>
+<li><strong>安全入卡</strong>：已留改前快照 <code>CONTEXT_skills.md.pre-edit-2.bak</code>，将前 3 批 11 仓压缩归档、追加本批 11 项（累计 <strong>22 项外部二审（仓/站/组织/协议）全 0 装包</strong>）与 3 条提纯真增量至 <code>CONTEXT_skills.md</code>，并同步更新 <code>## 3</code> 断点与验证判据。</li>
+<li><strong>实测校验通过</strong>：</li>
+<li><code>## 1. 底层约束与铁律</code> 字节级零改动（<code>Section1ByteIdentical=True</code>）；</li>
+<li>整卡体量维持 <code>31</code> 总行 / <code>24</code> 非空行（远低于 35 行软上限，净增 <code>0</code> 行）；</li>
+<li><code>sync_overlay.py --check</code> 输出 <code>ALL OVERLAY CHECKS PASSED (0 drifts)</code>（<code>ExitCode=0</code>），<code>Desktop/skills/.agents</code> 无残留。</li>
+</ul>
+<hr>
+<h3>下一步确认</h3>
+<p>两个本区立即可落地的轻量升级（均 0 新 Skill、0 新常驻规则，不碰上游包）你希望现在直接做，还是留到 11/30 跑 14 天自诊时一并处理？</p>
+<ul>
+<li><strong>修复 <code>diagnose.py</code> 并发工具 <code>GENERIC</code> 漏扫 Bug</strong> + 补充末轮未恢复命令/写盘失败告警（附真实历史会话实跑对比）；</li>
+<li>在 <code>ablation-bench/</code> 落一份轻量定量基准 5 项清单（另顺手给 <code>best-of-n</code> 补 1 句“严重发散即重帧”）。</li>
+</ul>
 </div></article>
 
     </section>
