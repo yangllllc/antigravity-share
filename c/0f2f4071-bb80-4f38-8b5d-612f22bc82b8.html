@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="0f2f4071-bb80-4f38-8b5d-612f22bc82b8" data-base-prefix="./" data-turn-count="26" data-update-time="2026-11-28 09:44" data-meta-ver="f2b14306" data-is-index="0">
+<body data-conv-id="0f2f4071-bb80-4f38-8b5d-612f22bc82b8" data-base-prefix="./" data-turn-count="28" data-update-time="2026-11-28 09:53" data-meta-ver="f2b14306" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="AI Usage and Monetization Ideas">AI Usage and Monetization Ideas</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="消耗额度">消耗额度</span><span>会话 ID: 0f2f4071-bb80-4f38-8b5d-612f22bc82b8 | 轮次: 26 | 更新于: 2026-11-28 09:44</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="消耗额度">消耗额度</span><span>会话 ID: 0f2f4071-bb80-4f38-8b5d-612f22bc82b8 | 轮次: 28 | 更新于: 2026-11-28 09:53</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./0f2f4071-bb80-4f38-8b5d-612f22bc82b8.md" download="AI_Usage_and_Monetization_Id-0f2f4071.md" onclick="return downloadMarkdown(event, './0f2f4071-bb80-4f38-8b5d-612f22bc82b8.md', 'AI_Usage_and_Monetization_Id-0f2f4071.md')">⬇️ 下载 Markdown (.md)</a>
@@ -1130,6 +1130,51 @@
 <p>你来定怎么走？</p>
 </div></article>
 <article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>我希望你在经过gpt的两次检查后能够吸取经验，为什么他能检查出来，是他的思路有什么额外的东西嘛，为什么我们想不到呢。然后自己先进行再一次的严格审查，可以配合opus一起，然后最后再让gpt进行验收这样。因为一直的反复确实有点浪费额度了。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>我先跑了一轮自建的对抗不变量 Fuzz 探针（已现场揪出并修掉 5 处新暗坑，测试升至 68/68 PASS），现已把全部 6 个核心模块交给 <strong>Claude Opus 5.5 (High)</strong> 做联合严格红队复审，预计片刻返回结果（急用可回复“跳过”）。</p>
+<p>[Open the Swarm UI](sidecar://swarm/swarm_board/?auto_open=false)</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>你问到点子上了——如果只修 bug 不复盘<strong>“为什么 GPT 能抓到、我们之前为什么没想到”</strong>，到了 Step 2/3 还会继续反复耗额度。</p>
+<hr>
+<h3>一、复盘根因：GPT 并不是“更聪明”，而是多跑了 5 套可复制的对抗探针</h3>
+<p>拆解 GPT 两轮共 27 条实锤反例，我复盘出两个非常具体的盲区：</p>
+<ul>
+<li><strong>我们之前的盲点</strong>：</li>
+<li><strong>正向验收偏误</strong>：我写的 30 项单测主要在验证“典型物理场景能算对”（M0、哑铃、透镜弯曲、凹面镜），没有<strong>“假设代码必有 bug、写独立脚本专门去击穿它”</strong>；</li>
+<li><strong>补丁二阶盲区</strong>：第一轮修完后，我引入了 <code>max(..., 1.0)</code>、<code>CAP_TOL=1e-12</code>、<code>tir_tol</code>、<code>AFOCAL_REL_TOL</code> 等硬编码阈值，却没把每个新加的 <code>if</code> 分支当靶子反问“什么输入刚好卡在阈值里而结论相反？”。</li>
+<li><strong>GPT 实际用的 5 套“破防不变量探针”</strong>（完全可以由我们自己跑，不用把额度浪费在来回传包上）：</li>
+<li><strong>平移不变性</strong>：把光线起点沿自身直线退后 <code>5000R</code>，<code>MISS/OK</code> 和交点坐标绝不能漂移；</li>
+<li><strong>恒等插入不变性</strong>：往光路里插一个惰性 <code>DUMMY</code> 面或零厚度抵消面组，下游实际面的可达性与焦距绝不能改变；</li>
+<li><strong>临界边界紧夹</strong>：对相切、赤道、临界角、重根分别喂 <code>精确值 - 2^-49</code>、<code>精确值</code>、<code>精确值 + 2^-49</code>；</li>
+<li><strong>极值与溢出压测</strong>：喂 <code>2^-56 / 2^56 / 1e200 / 1e-200 / 2^-1074</code>、NumPy <code>int64/float32</code> 标量；</li>
+<li><strong>物理守恒与独立预言机（Oracle）</strong>：用 <code>Fraction</code> 独立算根、用 <strong>3D 斜光线光路可逆性</strong>（正向追完反向追回起点对比坐标与 OPL）做交叉验真。</li>
+</ul>
+<p>我已把这条<strong>“每步物理核送外审前必先自跑 5 轴不变量 Fuzz 探针并固化进 <code>tests/</code>”</strong>写进了 <code>CONTEXT_ZemaxCompanion.md</code> 第 1 节铁律。</p>
+<hr>
+<h3>二、现学现用：我刚自跑三波不变量 Fuzz，现场先替 GPT 截杀了 7 个新坑！</h3>
+<p>*(诚实交代：按你的要求我先派发了 Claude Opus 5.5 做联合复审，但它在读取 6 个文件期间超过 150 秒硬超时出口未返回结果，已按护栏收口回收工位——本轮审查未获 Opus 5.5 回执，由我用三波可执行对抗 Fuzz 探针独立兜底完成。)*</p>
+<p>要是刚才直接发给 GPT，下面这 <strong>7 个被我自己探针揪出的真 bug</strong> 大概率会被第 3 轮直接打回来，现在已全部就地修复并固化成永久测试：</p>
+<ul>
+<li><strong>【P0/P1】float64 相切球面误折射 48&#176;</strong>：<code>R=13</code> 相切光线打到折射球面时，因浮点 <code>v&#183;n = 5.55e-17 ≠ 0</code>，竟被送进 Snell 折射拐了 48&#176;！现由 <code>raytrace.py</code> 求交层直接透传双根标记 <code>is_tangent</code>，与真正正法向 <code>2^-51</code> 透射彻底解耦，相切严格返回 <code>RayStatus.GRAZING</code>。</li>
+<li><strong>【P0/P1】方向归一化 <code>1e200</code> 溢出成零向量、<code>1e-200</code> 下溢崩溃</strong>：<code>geometry.py</code> 原先直接算 <code>L^2+M^2+N^2</code> 会在 <code>1e200</code> 溢出为 <code>inf</code> 静默返回 <code>(0,0,0)</code>；现改为 <code>max</code> 预缩放 + <code>math.hypot</code>，覆盖 <code>2^-1070 ~ 1e308</code> 全范围。</li>
+<li><strong>【P1】厚透镜逆解超大 <code>q=1e200</code> 静默返回假平玻璃 / <code>0*inf=nan</code></strong>：<code>paraxial.py</code> 已隔离 <code>d==0</code> 分支并拦截曲率溢出，杜绝拿 <code>r1=r2=inf</code> 冒充 <code>EFL=100</code>。</li>
+<li><strong>【P1】前置 <code>DUMMY STOP</code> 紧贴凹面镜导致全光束 <code>MISS</code></strong>：<code>raytrace.py</code> 升级为<strong>任何惰性 <code>DUMMY</code> 面都不移动 <code>physical_ray</code></strong> + <code>analysis.py</code> 扫描至首个有效面计算凹面发射上游，直接从数学上保证“插任意不截光 <code>DUMMY</code> 零影响下游光路”（为 Step 2 Zemax 顶点 <code>STOP</code> 扫清大雷）。</li>
+<li><strong>【P1】NumPy <code>int64</code> / <code>float32</code> 标量报错</strong>：<code>sign_bridge.py</code> 改为识别 <code>numbers.Real</code>，兼容 <code>np.arange</code> / <code>float32</code>。</li>
+<li><strong>【P2】亚正规曲率 <code>c=1e-320</code> 造成 <code>is_afocal=False</code> 却 <code>efl=inf</code></strong>：<code>paraxial.py</code> 补齐溢出一致守卫，确保 <code>is_afocal == math.isinf(efl)</code> 永不违背。</li>
+<li><strong>【契约加固】<code>SurfaceHit</code> 显式携带 <code>surface_mode</code></strong>：<code>real_opl</code> 不再间接依赖 <code>cos_i</code>，中间虚拟 <code>DUMMY</code> 侧探不污染下游真实光程、虚拟实际面严格清空 <code>real_opl</code>。</li>
+</ul>
+<p>同时在 <code>test_step1_invariants.py</code> 中固化了 <strong>40 组 3D 斜光线光路可逆性（误差 <code>&lt;1e-10</code>）</strong>、<strong>150 组随机平移不变性</strong>、空气隙平板 TIR 及折反系统区间矩阵组合不变性测试。</p>
+<hr>
+<h3>三、现在可以交给 GPT 做最终验收了</h3>
+<ul>
+<li><strong>实测状态</strong>：离线全套 <strong><code>71/71 PASS</code></strong>（耗时 <code>0.034s</code>），本地 Git 原子提交 <strong><code>f35d529</code></strong>，状态卡 <code>CONTEXT_ZemaxCompanion.md</code> 已同步。</li>
+<li><strong>最终验收附件</strong>：<code>step1_gpt_audit_pack.md</code>（已刷新至 <code>f35d529</code>）</li>
+</ul>
+<p>直接附给 GPT 的收官验收词：</p>
+<pre><code>这是 Zemax-Companion Step 1 核心代码（提交 f35d529，离线单测 71/71 PASS）完成第 2 轮全部 15 项修复 + 自建 5 轴不变量 Fuzz（含平移不变、惰性 DUMMY 插入不变、双根相切 GRAZING、3D 光路可逆性、方向归一化与厚透镜溢出防护）后的最终验收包。
+
+请仅针对实际存在的 P0/P1 物理路径、状态或数值逻辑错误做最终签收核查（仍不重复讨论已延期的 Step 2/阶段 1 架构项，不挑风格）。若无新的 P0/P1 可复现反例，请直接给出【最终验收通过】及你验算过的关键边界即可。</code></pre>
+<p>GPT 验收一签收，我们就立刻开跑微批次 <strong><code>1B</code></strong>（本地交互实验台 + ≤1 页公式映射卡），把整个 Step 1 漂亮收官！</p>
 </div></article>
 
     </section>
