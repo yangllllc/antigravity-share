@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="3d4d4104-df5e-4bd2-bf35-137e6017943a" data-base-prefix="./c/" data-turn-count="10" data-update-time="2026-11-28 10:12" data-meta-ver="6387cde8" data-is-index="1">
+<body data-conv-id="3d4d4104-df5e-4bd2-bf35-137e6017943a" data-base-prefix="./c/" data-turn-count="12" data-update-time="2026-11-28 10:16" data-meta-ver="6387cde8" data-is-index="1">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="./index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="Gemini小号地区更换与使用决策">Gemini小号地区更换与使用决策</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="独立对话">独立对话</span><span>会话 ID: 3d4d4104-df5e-4bd2-bf35-137e6017943a | 轮次: 10 | 更新于: 2026-11-28 10:12</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="独立对话">独立对话</span><span>会话 ID: 3d4d4104-df5e-4bd2-bf35-137e6017943a | 轮次: 12 | 更新于: 2026-11-28 10:16</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./c/3d4d4104-df5e-4bd2-bf35-137e6017943a.md" download="Gemini小号地区更换与使用决策-3d4d4104.md" onclick="return downloadMarkdown(event, './c/3d4d4104-df5e-4bd2-bf35-137e6017943a.md', 'Gemini小号地区更换与使用决策-3d4d4104.md')">⬇️ 下载 Markdown (.md)</a>
@@ -706,6 +706,34 @@
 <li>你查一下新号的 <code>https://policies.google.com/terms</code>，页面写的是 <strong><code>China</code>（中国）</strong> 还是 <strong><code>Japan</code>（日本）</strong>？</li>
 <li>你这台手机是 <strong>Android 还是 iPhone</strong>，注册时是不是插着国内 SIM 卡（或用了 <code>+86</code> 验证）且没关手机定位 / 代理跑在规则模式？</li>
 </ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>写着中国，是安卓手机，开着wifi连校园网，然后用的是国内的卡。确实是跑在规则模式</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>原因已经 <strong>100% 坐实</strong>，四个高权重中国定位信号正好同时叠满了：</p>
+<ul>
+<li><strong>安卓 GMS 直读国内 SIM 卡</strong>：手机插着国内卡，Google Play Services 可直接拿到 SIM 卡国家码（MCC <code>460</code>）与运营商归属 <code>CN</code>，权重远高于手动改时区。</li>
+<li><strong>校园网 Wi-Fi 双重泄漏</strong>：一方面 Wi-Fi 周边热点库（BSSID）直接暴露物理位置在国内；另一方面校园网普遍分配公网 IPv6（见 <code>tongji-mcp-and-network.md</code> 实测记录），手机端极易出现 IPv6 直出漏流。</li>
+<li><strong>代理跑在规则模式（Rule）</strong>：Google/GMS 后台认证与地区判定域名并未全部强制走日本星链家宽出口。</li>
+<li><strong>同机旧号设备画像</strong>：同一台安卓手机上原有 Google 账号历史与简体中文环境叠加，直接把新号初始 ToS Country 锚定在了 <code>China</code>。</li>
+</ul>
+<p>而你同机遇到的 <strong>“未发现任何通行密钥”</strong>，在安卓端也正好对应两大常见点：<code>设置 → 密码、通行密钥与自动填充</code> 里默认提供方没切到 <strong>Google</strong>，或弹窗去查了手机上已登录的<strong>旧账号</strong>密码库。</p>
+<hr>
+<h3>建议立刻执行的收口步骤（止损、不白费精力）</h3>
+<ul>
+<li><strong>处置刚注册的这个“中国区新号”</strong></li>
+<li><strong>千万别现在提交改区表</strong>（刚建号即申诉必重演韩国小号“证据不足”被拒，见 <code>CONTEXT_OpenBrowser_Gemini.md</code>）。</li>
+<li>验证页点 <strong>“尝试其他方式 → 输入密码”</strong> 进 <code>myaccount.google.com/security</code>，顺手补好<strong>辅助邮箱 + 身份验证器（6 位动态码）+ 10 个备用码</strong>，删掉异常 Passkey，然后<strong>从手机系统账号里退出/移除该新号</strong>，冷置即可（不用注销，也不用花几周去养它改区）。</li>
+<li><strong>不要再在这台插国内卡、连校园网、登过旧号的安卓主力机上继续试注册新号</strong>；未来如果真的需要从零建干净海外区号，物理前提必须是拔除国内 SIM（或仅用合规海外实体/eSIM 卡）+ 非国内 IPv6 漏流网络 + 全局纯净家宽 + 干净隔离设备，但你现在根本用不着走这么重的流程。</li>
+</ul>
+<ul>
+<li><strong>定案你的 Antigravity 防封备胎路线（最稳、零折腾）</strong></li>
+<li><strong>唯一主力防封备胎 = 已有的“日本大号”</strong>：它已经实测通过 <code>Japan</code> 改区 + 18+ 年龄认证 + 清空旧付款资料，且你手头有海外支付方式，资质远优于需要从零养区的新号或高风险成品号。</li>
+<li><strong>保鲜纪律</strong>：平时<strong>不要</strong>把它加进本机 Antigravity 切号工具和当前主力号高频混切；只在电脑 OpenBrowser 独立日区环境（固定走纯净 <code>日本星链家宽-IEPL 01</code>）偶尔轻度正常用 AI Studio 等服务保持健康历史，等 <strong><code>2026-12-24</code></strong> 后顺手复测 <code>gemini.google.com</code> 网页端；<strong>真到主力号出问题时</strong>再正式启用并绑海外卡订阅日本区 Pro。</li>
+<li><strong>韩国小号 + 今天的新号</strong>：均退出手机后台冷置，不买第三方成品号。</li>
+</ul>
+<hr>
+<h3>下一步确认</h3>
+<p>如果认可这套定案，是否需要我把本次结论（确认<strong>日本大号作为 Antigravity 冷备胎</strong>、弃折腾韩国小号与新号改区、不买成品号，并补记“安卓插国内卡 + 校园网 Wi-Fi + 规则模式注册会锚定中国区”的排雷根因）精简同步到 <code>CONTEXT_OpenBrowser_Gemini.md</code>？（我只更新 <code>## 2</code> 和 <code>## 3</code>，绝不触碰 <code>## 1</code> 铁律。）</p>
 </div></article>
 
     </section>
