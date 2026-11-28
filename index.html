@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="36e6d21c-8e5d-4527-8a83-9f983b8b1694" data-base-prefix="./c/" data-turn-count="6" data-update-time="2026-11-28 10:55" data-meta-ver="63095b31" data-is-index="1">
+<body data-conv-id="36e6d21c-8e5d-4527-8a83-9f983b8b1694" data-base-prefix="./c/" data-turn-count="8" data-update-time="2026-11-28 11:01" data-meta-ver="63095b31" data-is-index="1">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="./index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="Raytrace Bug Fixes And Audit">Raytrace Bug Fixes And Audit</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="消耗额度">消耗额度</span><span>会话 ID: 36e6d21c-8e5d-4527-8a83-9f983b8b1694 | 轮次: 6 | 更新于: 2026-11-28 10:55</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="消耗额度">消耗额度</span><span>会话 ID: 36e6d21c-8e5d-4527-8a83-9f983b8b1694 | 轮次: 8 | 更新于: 2026-11-28 11:01</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./c/36e6d21c-8e5d-4527-8a83-9f983b8b1694.md" download="Raytrace_Bug_Fixes_And_Audit-36e6d21c.md" onclick="return downloadMarkdown(event, './c/36e6d21c-8e5d-4527-8a83-9f983b8b1694.md', 'Raytrace_Bug_Fixes_And_Audit-36e6d21c.md')">⬇️ 下载 Markdown (.md)</a>
@@ -492,6 +492,41 @@
 </div></article>
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已将 Batch <code>1A-3.8</code> 核心修复（84/84 离线单测全绿）提交给 Claude Opus 5.5 做只读异构终审，请稍候（若急用可直接回复“跳过”以当前已核实版本收口）。</p>
 <p>[Open the Swarm UI](sidecar://swarm/swarm_board/?auto_open=false)</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成 <code>1A-3.8</code> 核心代码与测试原子提交（<code>8afb933</code>）、回收超时的异构复审工位并刷新状态卡与审计包。接下来提交状态卡封存改动并确认工作区完全干净。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成微批次 <strong><code>1A-3.8</code></strong> 的全部 <strong>2 项 P0、7 项 P1</strong> 修复与回归封存（核心提交 <code>8afb933</code>，状态卡封存提交 <code>cc45db3</code>，工作区 <code>git status</code> clean）。本轮核验磁盘基线与 <code>CONTEXT_ZemaxCompanion.md</code> 完全一致（无未说明差异），并在修复前实机逐条复现了全部 9 项反例。</p>
+<blockquote>注：本轮已派发 Claude Opus 5.5 做只读异构终审，因超过 150s 硬截止未回帖，已按护栏回收工位未采信，本次交付结论均经同济双核前置校验与本机 84 项单测及 5 轴 Fuzz 实测验证。</blockquote>
+<hr>
+<h3>一、9 项缺陷修复与关键推理摘要（均为本机实测）</h3>
+<p>| 编号 | 模块与位置 | 根因与修复方案（含放弃的替代路线） | 实测验证结果 |</p>
+<p>| :--- | :--- | :--- | :--- |</p>
+<p>| <strong>P0-1</strong> | <code>raytrace.py</code> | 远起点下 <code>rz + s*N</code> 与 <code>z_hit - z_vertex</code> 发生长步长相消。放弃纯浮点 <code>u = u_perp &#177; sqrt(disc)*v</code>（在 <code>c -&gt; 0</code> 近平面极限除以 <code>c</code> 会反过来大数相消），改为精确 <code>Fraction</code> 系数 + 200-bit <code>math.isqrt</code>（按 <code>2|aF*eF| &lt;= bF^2</code> 自动切换 Vieta 与直算）重建局部坐标、近顶点矢高 <code>c*(x^2+y^2)/(1+nz)</code> 与精确法线，并在反射分量相消时走纯有理反射 <code>d - 2*(d&#183;n)/(n&#183;n)*n</code>。 | <code>z0 = -1, -50, -500, -10000, -1e9</code> 及 <code>z_vertex = 1e8</code> 下反射分量均逐比特一致为 <code>N&#39; = +2.839838042946139e-14</code>，不可达 <code>z=0</code> 平面全报 <code>MISS</code>。 |</p>
+<p>| <strong>P0-2</strong> | <code>raytrace.py</code>、<code>raytrace.py</code> | 移除随起点 <code>bF</code> 变化的负判别式 <code>tangent_bound</code>：精确 <code>discF &lt; 0</code> 严格返回 <code>MISS</code>；精确相切 <code>discF == 0</code> 在反射镜上同步判 <code>GRAZING</code>（绝不产出 <code>OK</code> 反射）。 | <code>x = 2^-26, y = 1, R = 1</code> 在 <code>z0 = 0.5, 0, -1, -10000</code> 全报 <code>MISS, real_opl=None</code>；精确相切镜面报 <code>GRAZING</code>。 |</p>
+<p>| <strong>P1-1</strong> | <code>raytrace.py</code> | <code>trace_ray</code> 以精确 <code>Fraction</code> 顶点坐标追踪上一物理面 <code>(z_vertex_F, curvature, geom)</code>，当连续面几何完全重合时零步长复用命中点与局部法线，仍严格执行孔径遮挡与新方向切向检查；非重合反向根仍严格 <code>MISS</code>。 | <code>R=10</code> 零间隔 <code>air-&gt;1.5-&gt;air</code> 返 <code>OK</code>、<code>step=[5.050125628933801, 0.0]</code>、出射恢复 <code>+Z</code>；下游小孔径仍 <code>VIGNETTED</code>、真反向 <code>-1e-6</code> 仍 <code>MISS</code>；40 组 3D 偏斜重合双面误差 <code>&lt; 1e-13</code>。 |</p>
+<p>| <strong>P1-2</strong> | <code>raytrace.py</code> | 用精确代数判号 <code>_sign_p_plus_q_sqrt_d</code> 在转浮点前直接完成 <code>s &gt;= 0</code>、球冠 <code>1 - c*(rz + s*N) &gt;= 0</code> 与双根排序判定（覆盖 <code>discF == 0</code> 与 <code>discF &gt; 0</code> 两类赤道根）。 | <code>k = 1, 3, 17, 1000, 1e6</code> 全稳返 <code>GRAZING</code>；非相切赤道根 <code>(0, 1+k, 1+k)</code> 全稳返 <code>OK</code>。 |</p>
+<p>| <strong>P1-3</strong> | <code>raytrace.py</code>、<code>raytrace.py</code> | 仅对无限通光（或 <code>not check_aperture</code>）的惰性 <code>DUMMY</code> 平面在 <code>N == 0</code> 且精确共面 <code>Fraction(ray.z) == z_vertex_F</code> 时记录 <code>step = 0</code> 参考点并继续；有限孔径、离面平行与物理面保持 <code>MISS</code>。 | 插入无限通光 <code>z=2</code> <code>DUMMY</code> 后与原系统 <code>y, M, N, real_opl</code> 14 位一致；<code>z=3</code> 离面与有限孔径 <code>DUMMY</code> 仍 <code>MISS</code>。 |</p>
+<p>| <strong>P1-4</strong> | <code>raytrace.py</code>、<code>analysis.py</code>、<code>analysis.py</code> | <code>trace_ray</code> 在近掠入射/临界带（<code>cos_i &lt;= 1e-4</code> 或 <code>cos_t &lt;= 1e-4</code>）跨面维护 200-bit 精确有理方向（保守向下 <code>isqrt</code> 满足 <code>|d&#39;|^2 &lt;= |d|^2</code>，既不丢余量也不造假透射）；<code>analyze_parallel_plate_focus_shift</code> 改为校验完整 <code>res.is_ok</code>，并新增 <code>trace_status</code> 与 <code>analytic_shift</code> 区分追迹状态与解析预测。 | <code>U = pi/2 - 1e-8 / 1e-10 / 1e-11</code> 下 <code>trace_ray</code> 与分析函数均返 <code>OK</code>，S2 出射 <code>N</code> 逐比特恢复入射 <code>N</code>，且时间反演可逆。 |</p>
+<p>| <strong>P1-5</strong> | <code>paraxial.py</code>、<code>paraxial.py</code>、<code>paraxial.py</code> | 移除 <code>compute_cardinal_points</code> 与 <code>thick_lens_maker</code> 中破坏恒等插入不变性的 <code>4 * eps * scale</code> 强制清零分支，严格以 <code>CF == 0</code>（或焦距溢出非有限）判 <code>is_afocal=True</code>；新增 <code>CardinalPoints.is_near_afocal</code> 仅标记抵消敏感性。 | 弱面 <code>c = 2^-50</code> 与前置 <code>c = 1</code> 恒等面组后 <code>power</code>、<code>efl = 2^51</code>、<code>matrix_abcd</code> 完全一致，<code>is_afocal = False</code>，后者标记 <code>is_near_afocal = True</code>。 |</p>
+<p>| <strong>P1-6</strong> | <code>paraxial.py</code> | 扩大 <code>need_exact</code> 触发条件覆盖传输段 <code>|A - 1|</code>、<code>｜D - 1｜</code>、<code>｜A｜</code>、<code>｜D｜</code> 及 <code>z_F / z_F&#39; / z_H / z_H&#39;</code> 相消，全部基点改由精确 <code>Fraction</code> 导出。 | <code>n=2, d=1, R1=2^56, R2=inf</code> 得 <code>l_H_prime = -0.5, z_H_prime = 0.5</code>（反向面组 <code>D-1</code> 得 <code>l_H = +0.5</code>），与 <code>thick_lens_maker</code> 逐位一致。 |</p>
+<p>| <strong>P1-7</strong> | <code>paraxial.py</code> | <code>solve_thick_lens_radii_for_efl</code> 将最终返回的 float64 <code>(r1, r2)</code> 经 <code>radius_to_curvature</code> 回代精确 <code>Fraction</code> 厚透镜光焦度公式，若 <code>phi_real == 0</code>、非有限、异号或相对误差 <code>&gt; 1e-6</code> 显式抛 <code>ValueError</code>。 | <code>d=0, q=2^50 / 2^54 / 1e200</code> 均抛 <code>ValueError</code>；可表征大 <code>q</code>（如 <code>d=0, q=1e6</code> 或依赖厚项的 <code>d=1e-10, q=2^54</code>）正常返回且回代焦距吻合 <code>100.0</code>。 |</p>
+<hr>
+<h3>二、契约校准说明与外部验收结果</h3>
+<ul>
+<li><strong>同步校准的 3 组旧单测契约</strong>（原断言直接绑定已被本次 GPT 验收判为缺陷的旧放宽阈值）：</li>
+<li><code>test_step1_gpt_redteam.py</code> 与 <code>test_step1_invariants.py</code>：因 <code>R=13, P=(0,-17,20), v=(0,5,-12)</code> 在 float64 量化后精确有理判别式为 <code>-6.83e-17 &lt; 0</code>（小于 P0-2 反例 <code>-2^-52</code> 且大于 <code>-2^-54</code>），已改为严格断言其返回 <code>None/MISS</code>，并用精确二进制/45&#176;相切（<code>discF == 0</code>）验证折射与反射均返 <code>GRAZING</code>。</li>
+<li><code>test_step1_gpt_redteam.py</code>：改用精确二进制半径 <code>R=64, 32, d=96</code>（<code>CF == 0</code>）验严格 <code>is_afocal=True</code>，原十进制 <code>R=100, 50, d=150</code>（量化 <code>CF = -6.245e-19</code>）改为验证 <code>is_afocal=False</code> 且 <code>is_near_afocal=True</code>。</li>
+<li><code>test_step1_invariants.py</code>：将 <code>d=0, q=1e200</code> 拆为验证可表征 <code>q=1e6</code> 回代焦距准确 + 拒判 <code>q=2^54 / 1e200</code>。</li>
+<li><strong>离线全套测试与交付物</strong>：</li>
+<li>新增 <code>test_step1_gpt_final.py</code>（13 项回归 + 5 轴不变量压测），实测本机 Python 3.13 运行 <code>-m unittest discover -s tests -v</code> 结果：<strong><code>Ran 84 tests in 0.111s — OK</code></strong>；另独立跑通 7 组 450+ 随机样本对抗 Fuzz（全绿）。</li>
+<li>已刷新未入库审计包 <code>step1_gpt_audit_pack.md</code> 至提交 <code>8afb933</code>（3024 行，6 个核心模块逐行带号），可直接交由 GPT 复验签收。</li>
+</ul>
+<hr>
+<h3>三、留给下一步的两个边界确认问题</h3>
+<ul>
+<li><strong>名义相切 / 十进制无焦系统的显式表达</strong>：目前内核按严格精确 float64 输入语义判定（<code>discF &lt; 0 -&gt; MISS</code>、<code>CF != 0 -&gt; is_afocal=False</code> + <code>is_near_afocal=True</code>），完全满足平移不变性与恒等插入不变性。后续进入 Step 1B 交互台或 Step 2 导入 <code>.zmx</code> 处方时，你是否希望在 UI/报告层把 <code>is_near_afocal=True</code>（如十进制 <code>R=100, 50, d=150</code> 望远镜）高亮提示为“浮点量化近无焦”，而内核继续保持严格数学语义？</li>
+<li><strong>微批次推进节奏</strong>：现在是先把刷新后的 <code>step1_gpt_audit_pack.md</code> 送给 GPT 做最终签收，还是直接进入微批次 <code>1B</code>（先过 2 题物理契约关，再做 <code>127.0.0.1</code> 交互台与 ≤1 页公式↔代码映射卡）？</li>
+</ul>
 </div></article>
 
     </section>
