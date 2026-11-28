@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="516fe6ac-1022-4866-81b1-81998c03b3d9" data-base-prefix="./c/" data-turn-count="7" data-update-time="2026-11-28 14:17" data-meta-ver="6c8f1c11" data-is-index="1">
+<body data-conv-id="516fe6ac-1022-4866-81b1-81998c03b3d9" data-base-prefix="./c/" data-turn-count="8" data-update-time="2026-11-28 14:20" data-meta-ver="6c8f1c11" data-is-index="1">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="./index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="AI Translation API Cost Optimization">AI Translation API Cost Optimization</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64">【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64</span><span>会话 ID: 516fe6ac-1022-4866-81b1-81998c03b3d9 | 轮次: 7 | 更新于: 2026-11-28 14:17</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64">【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64</span><span>会话 ID: 516fe6ac-1022-4866-81b1-81998c03b3d9 | 轮次: 8 | 更新于: 2026-11-28 14:20</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./c/516fe6ac-1022-4866-81b1-81998c03b3d9.md" download="AI_Translation_API_Cost_Opti-516fe6ac.md" onclick="return downloadMarkdown(event, './c/516fe6ac-1022-4866-81b1-81998c03b3d9.md', 'AI_Translation_API_Cost_Opti-516fe6ac.md')">⬇️ 下载 Markdown (.md)</a>
@@ -541,6 +541,53 @@
 <p>[Open the Swarm UI](sidecar://swarm/swarm_board/?auto_open=false)</p>
 </div></article>
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>Claude Opus 5.5 通道当前触发第三方配额限流（429），已回收工位并完成主模型自审与 2 处边界加固（单槽测通幽灵冷却清理、前端未保存草稿状态徽标），正在重跑 37 项回归测试、原子重打 <code>release/AIRadar.exe</code> 并重启实机验收。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已按 <strong>选项 A</strong> 完成全量改造、37 项回归验证、原子重打 <code>release/AIRadar.exe</code> 并完成无窗后台重启与本地提交（<code>9799cc9</code>，未推送 <code>origin</code>，<code>release/data/radar.db</code> 零损耗）。</p>
+<blockquote>说明：本轮派出的 Claude Opus 5.5 (High) 跨模型复审工位触发第三方配额限流（429），已回收工位并由主模型完成边界自审（补修了单槽测通 401 后遗留幽灵冷却、前端改域名后未保存徽标 2 处边界）后收口。</blockquote>
+<hr>
+<h3>一、已落地改动与实机验收</h3>
+<ul>
+<li><strong>严格按任务分流（选项 A，零误烧同济积分）</strong></li>
+<li><strong>高价值审查（<code>review</code>）</strong>：精选审校、时政 L2 严审继续走 <strong>同济 <code>DeepSeek-V4.1-Flash</code> 优先 → 免费公网模型池透明回退</strong>（审校顺带产 40 字标题免二次往返）。</li>
+<li><strong>纯外文翻译 &amp; 语义去重（<code>translate</code> / <code>dedup</code>）</strong>：点开详情全文翻译 <code>translateSingleItem</code>、列表纯补译 <code>translateBatchForList</code>、手动全库外文翻译 <code>backfillAi(&quot;english&quot;)</code> 与语义去重 <code>ai-dedup.ts</code> <strong>硬跳过同济</strong>；即使免费池全槽限流/冷却或未配 Key，也绝不借用同济积分。</li>
+<li><strong>免费公网多槽模型池（FreeProviderPool）</strong></li>
+<li>路由调度（<code>ai-router.ts</code>、<code>ai-settings.ts</code>）：支持最多 12 个免费槽位，按 <code>inFlight / maxConcurrency</code> 最闲优先 + 轮询破平自动分配；单槽遇 <code>429 / 401 / 5xx / 连续超时</code> 仅冷却该槽并立即换槽（有界 ≤3 次），不拖垮其余通道；跨 origin 换域名自动清旧 Key，<code>routes.ts</code> 拦截把同济域名/VIP 夹带进免费池。</li>
+<li>前端多槽面板（<code>AiPanel.tsx</code>、<code>types.ts</code>）：新增 4 家国内直连一键预设卡片、单槽独立「测通」按钮、单槽并发/超时调节、实时命中与冷却状态，并保留全部原有数据（你原有的智谱 <code>••••H3Aq</code> 已自动无损升级为 <code>#1</code> 槽）。</li>
+<li>状态锚点已同步更新至 <code>CONTEXT_ai_radar.md</code>。</li>
+<li><strong>实测验收结果</strong></li>
+<li><code>npm.cmd run build &amp;&amp; npm.cmd test</code>（Node 22）：<strong>37 / 37 全绿</strong>（新增 3 组 v36 专项回归覆盖选项 A 硬隔离、1/2/2 并发比例分发、429/401 换槽与全冷不回同济、旧库升级与单槽测通，见 <code>ai-radar.test.ts</code>）。</li>
+<li>实机服务：<code>release/AIRadar.exe</code>（86.46 MB）无窗运行（PID <code>19440</code>，<code>WindowTitle=&#39;&#39;</code>，<code>HealthHTTP=200</code>）；实查 <code>/api/ai</code> 确认 <code>#1</code> 槽智谱 <code>••••H3Aq</code> 自动就绪（<code>freePoolReadyCount=1, maxConc=2, tongjiHasKey=True</code>）；<code>DNS 重绑定=403</code>、<code>history/clear 坏参=400</code>、EXE 零密钥/测试头残留、<code>git ls-files release</code> 为空。</li>
+</ul>
+<hr>
+<h3>二、手把手教你领免费 API 并填多个渠道（推荐 3 家并跑，总并发 2 → 6）</h3>
+<p>刷新打开 http://127.0.0.1:8788 → 点左侧 <strong>「AI 引擎」</strong> → 往下滚到 <strong>「免费公网模型池」</strong>，你会看到你原来的 <strong>#1 智谱 AI &#183; GLM-4-Flash（已存 <code>••••H3Aq</code>）</strong> 已经在列表里了。按下面步骤直接往上加就行，<strong>完全不会覆盖原有智谱</strong>：</p>
+<h4>第 1 步：去领 2~3 个免费 API Key（任选，国内直连无需代理）</h4>
+<blockquote>注：以下各平台免费额度与页面入口基于公开文档整理，具体以你登录控制台当期显示与单槽「测通」实测为准。</blockquote>
+<ul>
+<li><strong>推荐先领 &#183; 阿里魔搭 ModelScope（每日约 2000 次免费，按日刷新）</strong></li>
+<li>打开：https://modelscope.cn/my/myaccesstoken （或在面板「魔搭」预设卡点 <strong>「去领 Key ↗」</strong>）</li>
+<li>用阿里云/支付宝登录并确认已完成实名认证 → 在「访问令牌」页复制 <code>ms-</code> 开头的 Token。</li>
+<li><strong>推荐加配 &#183; 硅基流动 SiliconFlow（速度快，7B/9B 免费模型免单 + 新户赠额度）</strong></li>
+<li>打开：https://cloud.siliconflow.cn/account/ak （或在面板「硅基流动」预设卡点 <strong>「去领 Key ↗」</strong>）</li>
+<li>手机号注册登录 → 在「API 密钥」点新建密钥，复制 <code>sk-</code> 开头的密钥。</li>
+<li><strong>可选加配 &#183; 腾讯混元 Hunyuan-Lite（大厂长期免费 &#183; 256K 上下文）</strong></li>
+<li>打开：https://console.cloud.tencent.com/hunyuan/api-key （或在面板「腾讯混元」预设卡点 <strong>「去领 Key ↗」</strong>）</li>
+<li>微信/腾讯云登录开通混元大模型 → 在「API Key 管理」新建并复制 <code>sk-</code> 密钥。</li>
+</ul>
+<h4>第 2 步：在 AI 情报雷达里把多个渠道填进池子（4 下点击）</h4>
+<ul>
+<li>在「免费公网模型池」上方的 4 张一键预设卡片里，点 <strong>阿里魔搭</strong> 卡片的 <strong>「+ 添加到池」</strong>（会在下方新增 <code>#2</code> 行，自动填好端点 <code>https://api-inference.modelscope.cn/v1</code>、模型 <code>Qwen/Qwen2.5-7B-Instruct</code> 和并发 <code>2</code>）。</li>
+<li>把领到的 <code>ms-xxxx</code> 粘贴到 <code>#2</code> 行的 <strong>API Key</strong> 框里，点这一行右上角的 <strong>「测通」</strong>；看到绿色「连通正常 &#183; xxx ms」即验证通过。</li>
+<li>同样点 <strong>硅基流动</strong>（或 <strong>腾讯混元</strong>）的 <strong>「+ 添加到池」</strong>，粘贴 Key 并点该行 <strong>「测通」</strong>。</li>
+<li>全部填完后，点卡片下方的 <strong>「保存配置」</strong> —— 顶栏立即变成 <strong>「3 通道就绪 &#183; 总并发 6」</strong>，外文翻译与语义去重会自动在 3 家之间均衡分摊、单家限流自动换槽。</li>
+</ul>
+<blockquote>小提示：如果你以后也想把智谱的并发压稳一点，可以把 <code>#1 智谱</code> 右侧的「并发」改成 <code>1</code>（避免智谱偶发 429），让魔搭（<code>2</code>）+ 硅基流动（<code>2</code>）扛主力并发；如果你手头本就有第二个合法智谱号，点智谱卡片的「+ 添加到池」同样能新增 <code>#2</code> 槽，但<strong>优先混用不同厂商更稳、更不易触发同 IP 风控</strong>。</blockquote>
+<hr>
+<h3>下一步可顺手确认的 2 个边界</h3>
+<ul>
+<li>领好魔搭 / 硅基流动 Key 并点「测通」时，若某家平台近期下线或改名了默认免费模型 ID（如魔搭/硅基把 <code>Qwen/Qwen2.5-7B-Instruct</code> 换成了 <code>Qwen3</code> 或带 <code>-Free</code> 后缀），直接在该槽的「模型名」框里改成控制台显示的免费模型 ID 再测通即可；如遇到任何 400/404 报错贴给我，我马上帮你调默认预设。</li>
+<li>当前 <code>ai-focus-curator.ts</code> 里「半小时精选日上限 120 条」仍同时约束精选审查与抽屉自动翻译（保护零配额分区不自动偷跑）；等你配好 3 家免费池并实跑两天后，如果觉得免费翻译池余量极大、想把「自动预译/抽屉自动翻译」从 120 条精选日限里拆出来单设更高上限（例如 300 条/日），随时告诉我再做轻量拆分。</li>
+</ul>
 </div></article>
 
     </section>
