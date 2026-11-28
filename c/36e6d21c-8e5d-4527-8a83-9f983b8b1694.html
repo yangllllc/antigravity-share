@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>Raytrace Bug Fixes And Audit - Antigravity Share</title>
+  <style>
+    :root {
+      --bg-main: #131314;
+      --bg-sidebar: #1e1f20;
+      --bg-active: #2b2c2f;
+      --bg-bubble-user: #2b2c2f;
+      --bg-bubble-ai: #1e1f20;
+      --text-main: #e3e3e3;
+      --text-sub: #c4c7c5;
+      --accent: #a8c7fa;
+      --border: #3c4043;
+      --code-bg: #0d0e11;
+      --badge-green: #34d399;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100vh;
+    }
+    #sidebar {
+      width: 320px;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+    .sidebar-header {
+      padding: 16px 14px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-header h2 {
+      font-size: 16px;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sidebar-header a.home-link {
+      text-decoration: none;
+      color: inherit;
+    }
+    .sync-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--badge-green);
+      background: rgba(52, 211, 153, 0.1);
+      padding: 3px 8px;
+      border-radius: 12px;
+      margin-top: 8px;
+    }
+    .sidebar-tools {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .sidebar-search {
+      width: 100%;
+      background: var(--bg-main);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 12.5px;
+      outline: none;
+    }
+    .sidebar-search:focus {
+      border-color: var(--accent);
+    }
+    .sidebar-search::placeholder {
+      color: #8e918f;
+    }
+    .view-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .view-tabs {
+      display: inline-flex;
+      background: var(--bg-main);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2px;
+      gap: 2px;
+    }
+    .view-tab {
+      background: transparent;
+      color: var(--text-sub);
+      border: none;
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 11.5px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .view-tab:hover {
+      color: #fff;
+    }
+    .view-tab.active {
+      background: var(--bg-active);
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .mini-btn {
+      background: transparent;
+      color: var(--text-sub);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .mini-btn:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #fff;
+    }
+    .conv-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .group-section {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      margin-bottom: 4px;
+    }
+    .group-header {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: var(--text-sub);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 8px;
+      border-radius: 7px;
+      cursor: pointer;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 600;
+      transition: background 0.15s, color 0.15s;
+    }
+    .group-header:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #fff;
+    }
+    .group-chevron {
+      display: inline-block;
+      width: 12px;
+      font-size: 10px;
+      text-align: center;
+      transition: transform 0.15s;
+      flex-shrink: 0;
+    }
+    .group-section.collapsed .group-chevron {
+      transform: rotate(-90deg);
+    }
+    .group-icon {
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+    .group-name {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--text-main);
+    }
+    .group-count {
+      font-size: 10.5px;
+      font-weight: 500;
+      color: var(--text-sub);
+      background: rgba(255, 255, 255, 0.08);
+      padding: 1px 6px;
+      border-radius: 10px;
+      flex-shrink: 0;
+    }
+    .group-items {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      padding-left: 8px;
+      margin-left: 9px;
+      border-left: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .group-section.collapsed .group-items {
+      display: none;
+    }
+    .conv-item {
+      display: block;
+      text-decoration: none;
+      padding: 8px 10px;
+      border-radius: 8px;
+      transition: background 0.15s;
+      border: 1px solid transparent;
+      color: inherit;
+    }
+    .conv-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .conv-item.active {
+      background: var(--bg-active);
+      border-color: var(--border);
+    }
+    .conv-title {
+      font-size: 13px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #fff;
+    }
+    .conv-meta {
+      font-size: 11px;
+      color: var(--text-sub);
+      margin-top: 3px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+    }
+    .conv-meta-left {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .proj-pill {
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 999px;
+      background: rgba(168, 199, 250, 0.13);
+      color: var(--accent);
+      max-width: 115px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .empty-hint {
+      padding: 20px 12px;
+      text-align: center;
+      color: var(--text-sub);
+      font-size: 12.5px;
+    }
+    #main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .main-header {
+      padding: 16px 28px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-sidebar);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .main-header h1 {
+      font-size: 17px;
+      color: #fff;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .sub-meta {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .header-project-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--accent);
+      background: rgba(168, 199, 250, 0.14);
+      border: 1px solid rgba(168, 199, 250, 0.25);
+      padding: 1px 8px;
+      border-radius: 999px;
+      max-width: 240px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .btn {
+      background: var(--bg-active);
+      color: var(--accent);
+      border: 1px solid var(--border);
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .btn:hover { background: #3c4043; }
+    .chat-canvas {
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 28px 24px 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .turn {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .turn.user { align-items: flex-end; }
+    .turn.assistant { align-items: flex-start; }
+    .role-tag {
+      font-size: 12px;
+      color: var(--text-sub);
+      font-weight: 600;
+      padding: 0 4px;
+    }
+    .bubble {
+      max-width: 88%;
+      padding: 16px 20px;
+      border-radius: 18px;
+      line-height: 1.7;
+      font-size: 15px;
+      word-break: break-word;
+    }
+    .turn.user .bubble {
+      background: var(--bg-bubble-user);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .turn.assistant .bubble {
+      background: var(--bg-bubble-ai);
+      color: var(--text-main);
+      border-bottom-left-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .bubble p { margin: 0 0 10px 0; }
+    .bubble p:last-child { margin-bottom: 0; }
+    .bubble h1, .bubble h2, .bubble h3, .bubble h4 {
+      margin: 14px 0 8px;
+      color: var(--accent);
+      line-height: 1.4;
+    }
+    .bubble h1 { font-size: 19px; }
+    .bubble h2 { font-size: 17px; }
+    .bubble h3 { font-size: 15.5px; }
+    .bubble ul, .bubble ol { margin: 8px 0 10px 22px; }
+    .bubble li { margin: 4px 0; }
+    .bubble blockquote {
+      border-left: 3px solid var(--accent);
+      padding-left: 12px;
+      margin: 8px 0;
+      color: var(--text-sub);
+    }
+    .bubble code {
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 5px;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 13.5px;
+    }
+    .bubble pre {
+      background: var(--code-bg);
+      padding: 14px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 10px 0;
+      border: 1px solid #2b2d31;
+    }
+    .bubble pre code {
+      background: transparent;
+      padding: 0;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .bubble a { color: var(--accent); }
+    .bubble hr {
+      border: 0;
+      border-top: 1px solid var(--border);
+      margin: 14px 0;
+    }
+    @media (max-width: 820px) {
+      body { flex-direction: column; }
+      #sidebar { width: 100%; height: auto; position: static; max-height: 360px; }
+      .main-header { flex-wrap: wrap; padding: 14px 16px; }
+      .header-actions { flex-wrap: wrap; }
+      .bubble { max-width: 96%; }
+    }
+  </style>
+</head>
+<body data-conv-id="36e6d21c-8e5d-4527-8a83-9f983b8b1694" data-base-prefix="./" data-turn-count="6" data-update-time="2026-11-28 10:55" data-meta-ver="63095b31" data-is-index="0">
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
+      <div class="sync-badge" id="syncBadge">自动同步加载中...</div>
+      <div class="sidebar-tools">
+        <input type="search" id="convSearch" class="sidebar-search" placeholder="搜索对话标题或项目..." aria-label="搜索对话标题或项目" autocomplete="off">
+        <div class="view-bar">
+          <div class="view-tabs" role="tablist" aria-label="分类视图">
+            <button type="button" class="view-tab active" id="viewProjectBtn" data-view="project">按项目</button>
+            <button type="button" class="view-tab" id="viewTimeBtn" data-view="time">按时间</button>
+          </div>
+          <button type="button" class="mini-btn" id="toggleAllBtn" title="展开或折叠全部项目分组">全部折叠</button>
+        </div>
+      </div>
+    </div>
+    <nav class="conv-list" id="convList" aria-label="Conversations">
+      <noscript><div style="padding:12px;color:#c4c7c5;font-size:12px;">请启用 JavaScript 查看全部历史对话列表，或直接访问对应对话链接。</div></noscript>
+    </nav>
+  </aside>
+  <main id="main">
+    <header class="main-header">
+      <div style="min-width:0;">
+        <h1 title="Raytrace Bug Fixes And Audit">Raytrace Bug Fixes And Audit</h1>
+        <div class="sub-meta"><span class="header-project-badge" title="消耗额度">消耗额度</span><span>会话 ID: 36e6d21c-8e5d-4527-8a83-9f983b8b1694 | 轮次: 6 | 更新于: 2026-11-28 10:55</span></div>
+      </div>
+      <div class="header-actions">
+        <a class="btn" id="downloadMdBtn" href="./36e6d21c-8e5d-4527-8a83-9f983b8b1694.md" download="Raytrace_Bug_Fixes_And_Audit-36e6d21c.md" onclick="return downloadMarkdown(event, './36e6d21c-8e5d-4527-8a83-9f983b8b1694.md', 'Raytrace_Bug_Fixes_And_Audit-36e6d21c.md')">⬇️ 下载 Markdown (.md)</a>
+        <button class="btn" id="copyBtn" type="button" onclick="copyCanonicalUrl('./36e6d21c-8e5d-4527-8a83-9f983b8b1694.html', 'copyBtn', '已复制直链')">复制对话直链</button>
+      </div>
+    </header>
+    <section class="chat-canvas" aria-label="Conversation Content">
+      <article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>先读取 @C:\Users\&lt;USER&gt;\Desktop\gemini\消耗额度\CONTEXT_ZemaxCompanion.md 获取全部约束与断点，勿复述历史。</p>
+<ul>
+<li>单次只读核验“当前断点”磁盘现状（含待测/未实施项），一口气完成勿中途请示；若发现未说明的磁盘差异先汇报停手。</li>
+<li>严守【铁律】、禁碰【排雷墓碑】；若本消息下方附有我的新需求或最新实况，则优先执行我的新需求，否则直推卡内【默认下一步】。</li>
+<li>删改已有成果前先确认；完工按【外部验证判据】或新需求标准自检汇报。<strong>【最终验收未通过】</strong> 审计包的 6 个核心模块与提交 <code>f35d529</code> 逐行一致，离线单测复跑 <strong>71/71 PASS</strong>。另复现 <strong>2 项 P0、7 项 P1</strong>。最直接的阻断项是：同一条光线沿原直线把发射点后移到 10 m，程序把反射方向的轴向分量算反，随后将物理上不可达的平面记为 <code>OK</code>。</li>
+</ul>
+<p>以下长度单位为 mm，方向由 <code>Ray</code> 归一化。</p>
+<h3>P0：不存在的物理命中被记为 <code>OK</code></h3>
+<p>| 级别 | 文件与行号 | 可复现输入 | 预期 vs 实际 | 最小改法 |</p>
+<p>|---|---|---|---|---|</p>
+<p>| <strong>P0</strong> | [raytrace.py 148–156、248–259](&lt;C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/raytrace.py:248&gt;) | \(R=+1\) 球面镜，随后放一个同顶点、无限通光的实际平面 \(z=0\)。轴向入射，\(y=0.7071067811865576\)，分别从 \(z=-1,-10000\) 发射。 | 解析反射方向 \(N&#39;=2y^2-1=+2.8398380\times10^{-14}\)。命中镜面时 \(z=0.2928932&gt;0\)，反射后无法回到 \(z=0\)。近起点正确报 <code>MISS</code>；远起点算出 \(N&#39;=-1.54543\times10^{-13}\)，随后以 <code>OK</code> 在平面上记录了 <strong>\(1.89522\times10^{12}\)</strong> 的正步长。 | 将长距离 <code>step</code> 与局部交点分别计算。用局部球面约束或高精度坐标重建求法线，避免从已舍入的长步长减回微小矢高。 |</p>
+<p>| <strong>P0</strong> | [raytrace.py 133–140、465–480](&lt;C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/raytrace.py:133&gt;) | \(R=1\) 球面镜，轴向光线 \(x=2^{-26},y=1\)。分别从 \(z=0.5,-1\) 发射。 | 整条直线满足 \(x^2+y^2=1+2^{-52}&gt;R^2\)，两次都应 <code>MISS</code>。实测前者 <code>MISS</code>，后者却在 \(z=1\) 反射并返回 <code>OK, real_opl=2</code>。有理数判别式已经精确为 \(-2^{-52}\)，随后被随起点变化的 <code>tangent_bound</code> 改判成重根。 | 精确负判别式返回 <code>MISS</code>。若需兼容量化后的名义相切输入，应单独表达这种不确定性，不能让它产生成功的镜面命中。 |</p>
+<h3>P1：终止状态、焦距或基点错误</h3>
+<p>| 级别 | 文件与行号 | 可复现输入 | 预期 vs 实际 | 最小改法 |</p>
+<p>|---|---|---|---|---|</p>
+<p>| <strong>P1</strong> | [raytrace.py 236–259](&lt;C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/raytrace.py:236&gt;) | 两个完全重合的 \(R=10\) 球面，介质依次为空气→1.5→空气，间隔为零。发射 <code>Ray(0,1,-5,0,0,1)</code>。 | 两次折射应在同一点发生，出射方向恢复 \(+Z\)。第一面返回 \(z=0.05012562893380057\)；从该点重求第二面，近根为 <code>−1.14281e−16</code>，被剔除，整条光线 <code>MISS</code>。 | 对已确认重合的连续界面复用上一命中点，以零步长执行第二次交互。保留对真正反向根的拒绝。 |</p>
+<p>| <strong>P1</strong> | [raytrace.py 141–142、159–168](&lt;C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/raytrace.py:159&gt;) | 空气→1.5，\(R=1\)。发射 <code>Ray(-k,1,1-k,1,0,1)</code>，取 \(k=1,3\)。 | 两条是同一直线，都严格相切于球冠赤道 \((0,1,1)\)，应同为 <code>GRAZING</code>。实际依次为 <code>GRAZING</code>、<code>MISS</code>。第二次先将精确重根转为浮点数，再用该近似根做有理数球冠检查，算出球冠余量 <code>−9.61e−17</code>。 | 对精确重根，先用有理根完成球冠侧判定，再转换输出坐标和步长。 |</p>
+<p>| <strong>P1</strong> | [raytrace.py 184–193、587–594](&lt;C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/raytrace.py:184&gt;) | A、B 均为 \(R=10\) 球面，顶点在 \(z=0,1\)。A 两侧均为空气，B 为空气→1.5。发射 <code>Ray(0,-12,2,0,1,0)</code>，再在 A、B 之间插入无限通光的 DUMMY 平面 \(z=2\)。 | 原系统在 \(y=-6\) 过 A、\(y=-\sqrt{19}\) 到 B，返回 <code>OK</code>。新增参考面包含整条光线，却因 <code>N==0</code> 报 <code>MISS</code>，B 不再被追迹。 | 对无限通光的惰性 DUMMY 单独处理共面情形，可记录零步长参考点并继续。 |</p>
+<p>| <strong>P1</strong> | [raytrace.py 330–353](&lt;C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/raytrace.py:330&gt;) &#183; [analysis.py 342–345、379–389](&lt;C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/analysis.py:342&gt;) | 空气—1.25—空气平行板，\(d=1,\ z_0=4,\ U=\pi/2-10^{-8}\)。用分析函数的同一条入射光线调用 <code>trace_ray</code>。 | 平行板出射方向应恢复入射方向，出射 Snell 判别式约为 <strong>\(+1.00\times10^{-16}\)</strong>。第一面保存的已舍入方向使第二面重算为 <strong>\(-1.67\times10^{-16}\)</strong>，通用追迹报 <code>TIR</code>；分析函数只检查第一面，返回 <code>OK</code> 和位移 <code>0.9999999867</code>。 | 在临界带保留足够精度的入射信息，或对平行界面组合从原始入射方向求出射。分析结果应能区分解析预测和完整追迹状态。 |</p>
+<p>| <strong>P1</strong> | [paraxial.py 306–335](&lt;C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/paraxial.py:306&gt;) | 空气→2 单面，\(c=2^{-50}\)。在前方插入零间隔、同曲率 \(c=1\) 的空气→2→空气恒等面组。 | 两个系统的矩阵逐项相同，精确 \(C=2^{-50}\)，均应有 \(f&#39;=2^{51}\)。原系统给出有限焦距；插入恒等面组后返回 <code>power=0, is_afocal=True, efl=inf</code>，同一返回对象的矩阵仍保留非零 \(C\)。 | 精确复算后用 <code>CF == 0</code> 判定严格无焦；抵消尺度只标记数值敏感性。 |</p>
+<p>| <strong>P1</strong> | [paraxial.py 368–393](&lt;C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/paraxial.py:368&gt;) | 空气中的平凸厚透镜，\(n=2,\ d=1,\ R_1=2^{56},\ R_2=\infty\)。 | 精确 \(A=1-2^{-57},\ C=2^{-56}\)，故末面到像方主面的距离 \(l_{H&#39;}=(A-1)/C=-0.5\)。<code>thick_lens_maker</code> 得到 <code>−0.5</code>，<code>compute_cardinal_points</code> 却先把 \(A\) 舍入为 1，返回 <code>0.0</code>，主面位置错 <strong>0.5 mm</strong>。 | 当 \(A-1\) 或 \(D-1\) 出现相消时，也触发高精度复算，直接求主面偏移量。 |</p>
+<p>| <strong>P1</strong> | [paraxial.py 502–504、531–541](&lt;C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/paraxial.py:531&gt;) | <code>solve_thick_lens_radii_for_efl(100, 1.5, 0, 2**54)</code>。 | 返回的两个半径完全相同，均为 <code>5.551115123125783e−15</code>。因为 \(d=0,c_1=c_2\)，返回处方的光焦度精确为零，回代焦距为 <code>inf</code>，目标是 <strong>100</strong>。现有“半径均有限”断言无法发现这一结果。 | 用<strong>实际返回的半径</strong>回代验证光焦度。若浮点表示已丢失所需曲率差，显式拒绝该组参数。 |</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成基线 71/71 单测核验（与状态卡及 <code>f35d529</code> 磁盘完全一致，无未说明差异），并在本机实测复现了全部 2 项 P0 与 7 项 P1 反例。接下来核查 3 处与历史单测契约的边界碰撞，并联调同济双核审校 9 项修复的数学与状态机设计。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成历史单测碰撞点核查与同济双核方案校验，定型 9 项缺陷的无启发式阈值修复架构（远起点自适应 <code>Fraction+isqrt</code> 局部坐标与法线、纯代数有理判别式与球冠判定、重合面零步长复用、<code>trace_ray</code> 临界带高精度方向传播、以及严格 <code>CF==0</code> / <code>A-1</code> 复算 / 半径回代验真）。接下来在状态卡标记 <code>1A-3.8</code> 为 <code>[已落盘待测]</code> 并实施三个核心模块的代码修复。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成 <code>zc/raytrace.py</code>、<code>zc/paraxial.py</code> 与 <code>zc/analysis.py</code> 的核心修复并实机验证全部 9 项 P0/P1 反例精确闭合（唯一变动的 4 条旧单测均为历史放宽阈值与严格契约的预期碰撞）。接下来补齐顶点极小矢高精修、同步校准那 3 组旧契约测试，并新增 <code>tests/test_step1_gpt_final.py</code> 固化全部 9 项回归用例与加强版 5 轴不变量 Fuzz 探针。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成全部 9 项 P0/P1 回归测试与 7 组高强度 5 轴对抗 Fuzz 实测（82/82 全绿，0.082s）。接下来将远顶点偏移、非相切赤道根与 3D 偏斜重合面压测永久固化入 <code>tests/test_step1_gpt_final.py</code>，并核验异构审稿模型可用性以启动终审收口。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已将 Batch <code>1A-3.8</code> 核心修复（84/84 离线单测全绿）提交给 Claude Opus 5.5 做只读异构终审，请稍候（若急用可直接回复“跳过”以当前已核实版本收口）。</p>
+<p>[Open the Swarm UI](sidecar://swarm/swarm_board/?auto_open=false)</p>
+</div></article>
+
+    </section>
+  </main>
+  <script>
+    (function() {
+      var src = '../sidebar.js';
+      if (window.location.protocol !== 'file:') {
+        src += (src.indexOf('?') >= 0 ? '&' : '?') + '_t=' + Date.now();
+      }
+      var s = document.createElement('script');
+      s.src = src;
+      document.body.appendChild(s);
+    })();
+  </script>
+  <script>
+    function triggerBlobDownload(blob, filename) {
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function() { URL.revokeObjectURL(url); }, 1500);
+    }
+    function downloadMarkdown(e, relPath, filename) {
+      if (window.location.protocol === 'file:' || !window.fetch || !window.Blob) {
+        return true;
+      }
+      if (e) e.preventDefault();
+      var btn = document.getElementById('downloadMdBtn');
+      var orig = btn ? (btn.getAttribute('data-orig') || btn.innerText) : '';
+      if (btn) {
+        btn.setAttribute('data-orig', orig);
+        btn.innerText = '正在下载...';
+      }
+      var targetUrl = relPath;
+      try { targetUrl = new URL(relPath, window.location.href).href; } catch (err) {}
+      fetch(targetUrl, { cache: 'no-cache' })
+        .then(function(resp) {
+          if (!resp.ok) throw new Error('HTTP ' + resp.status);
+          return resp.text();
+        })
+        .then(function(text) {
+          var blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
+          triggerBlobDownload(blob, filename);
+          if (btn) {
+            btn.innerText = '已下载 .md';
+            setTimeout(function() { btn.innerText = orig; }, 2000);
+          }
+        })
+        .catch(function() {
+          if (btn) btn.innerText = orig;
+          var a = document.createElement('a');
+          a.href = targetUrl;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        });
+      return false;
+    }
+    function fallbackCopy(text, onDone) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try {
+        if (document.execCommand('copy')) { onDone(); }
+      } catch (e) {}
+      document.body.removeChild(ta);
+    }
+    function copyCanonicalUrl(relPath, btnId, doneLabel) {
+      var btn = document.getElementById(btnId);
+      if (!btn) return;
+      var orig = btn.getAttribute('data-orig') || btn.innerText;
+      btn.setAttribute('data-orig', orig);
+      var targetUrl = window.location.href;
+      try {
+        targetUrl = new URL(relPath, window.location.href).href;
+      } catch (e) {}
+      var onDone = function() {
+        btn.innerText = doneLabel;
+        setTimeout(function() { btn.innerText = orig; }, 2000);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(targetUrl).then(onDone, function() { fallbackCopy(targetUrl, onDone); });
+      } else {
+        fallbackCopy(targetUrl, onDone);
+      }
+    }
+  </script>
+</body>
+</html>
