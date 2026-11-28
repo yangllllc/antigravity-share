@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="0f2f4071-bb80-4f38-8b5d-612f22bc82b8" data-base-prefix="./" data-turn-count="23" data-update-time="2026-11-28 09:03" data-meta-ver="f2b14306" data-is-index="0">
+<body data-conv-id="0f2f4071-bb80-4f38-8b5d-612f22bc82b8" data-base-prefix="./" data-turn-count="24" data-update-time="2026-11-28 09:30" data-meta-ver="f2b14306" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="AI Usage and Monetization Ideas">AI Usage and Monetization Ideas</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="消耗额度">消耗额度</span><span>会话 ID: 0f2f4071-bb80-4f38-8b5d-612f22bc82b8 | 轮次: 23 | 更新于: 2026-11-28 09:03</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="消耗额度">消耗额度</span><span>会话 ID: 0f2f4071-bb80-4f38-8b5d-612f22bc82b8 | 轮次: 24 | 更新于: 2026-11-28 09:30</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./0f2f4071-bb80-4f38-8b5d-612f22bc82b8.md" download="AI_Usage_and_Monetization_Id-0f2f4071.md" onclick="return downloadMarkdown(event, './0f2f4071-bb80-4f38-8b5d-612f22bc82b8.md', 'AI_Usage_and_Monetization_Id-0f2f4071.md')">⬇️ 下载 Markdown (.md)</a>
@@ -1069,6 +1069,33 @@
 3. 仅报告**新的可复现反例**（格式同前：`级别 | 文件与行号 | 可复现输入 | 预期 vs 实际 | 最小改法`）；若未找到新的 P0/P1 硬伤，直接给出“复检通过（附你实际验算过的 3 个最刁钻边界）”即可收口。</code></pre>
 <hr>
 <p>GPT 复检完贴回来即可：如果它给出通过（或只有极小收尾），我们就立刻进微批次 <strong><code>1B</code></strong> 把本地交互台和公式映射卡一次收齐！</p>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p><strong>复检未通过。</strong> 审计包的 6 个模块与提交 <code>f4e7f5e</code> 逐行一致，离线单测复跑 <strong>44/44 PASS</strong>。最严重的新反例是：一条始终从球外掠过的光线，仅把发射点沿原直线后移，结果就从 <code>MISS</code> 变成了 <code>OK</code>。</p>
+<p>以下均为本次实际复现。长度单位为 mm，\(P=(y,z)\)、\(v=(M,N)\) 省略了为零的 \(x,L\)，球面顶点默认为 \(z=0\)。</p>
+<h3>P0：追错物理路径，仍返回 <code>OK</code></h3>
+<p>| 级别 | 文件与行号 | 可复现输入 | 预期 vs 实际 | 最小改法 |</p>
+<p>|---|---|---|---|---|</p>
+<p>| <strong>P0</strong> | [raytrace.py 133–158](&lt;C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/raytrace.py:133&gt;) | 球面镜 \(R=2^{-10}\)，\(y=2R,\ v=(0,1)\)。分别从 \(z=-1\) 和 \(z=-16384\) 发射。 | 光线离轴始终为两倍半径，两次都应 <code>MISS</code>。实测近起点 <code>MISS</code>，远起点 <code>OK</code>，假命中 \((2R,R)\)。将远起点光线改为 \(y=R/2\)，正确首交 \(z=0.000130834567\)，实际为 <code>0.000976562456</code>，几乎走到球心平面。 | 用光线到球心的横向距离判定是否相交，避免判别式误差带随发射距离平方增长。误差带内复判符号，不能直接归零。 |</p>
+<p>| <strong>P0</strong> | [raytrace.py 139–156](&lt;C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/raytrace.py:139&gt;) | 弱曲率镜 \(c=2^{-30}\)，横向光线 \(v=(1,0)\)，从 \(P=(0,+2^{-20})\) 或 \(P=(0,-2^{-20})\) 发射。 | 正号时从球内出发，首交步长 \(\sqrt{2Rz-z^2}=45.254833996\)；负号时整条光线在球外，应 <code>MISS</code>。实际两者均在起点 <code>OK</code>，<code>step=0</code>。此处 \(b=0\)，<code>max(...,1)</code> 把正负判别式均压成零，<code>q==0</code> 随即造出零根。 | 去掉与系数无关的 <code>1.0</code> 下限。<code>b==0</code> 时直接按 \(s^2=-e/c\) 判定；只有起点确实位于表面才接受零步长。 |</p>
+<p>| <strong>P0</strong> | [raytrace.py 160–167](&lt;C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/raytrace.py:160&gt;) | \(R=1,\ P=(-2,1+2^{-40}),\ v=(1,0)\)。 | 整条光线固定在赤道面后方，顶点侧球冠无交点。实际在 \(y=-1\) 返回 <code>OK</code>。这里 \(1-cz=-2^{-40}\) 可精确判负，且判别式接近 1，错误单独来自 <code>CAP_TOL=1e-12</code>。 | 球冠侧判定使用该次运算的误差界，边界内复判。有确定负号的候选根直接剔除。 |</p>
+<p>| <strong>P0</strong> | [raytrace.py 298–323、442–458](&lt;C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/raytrace.py:298&gt;) | 默认参数。轴上光从 \(z=-1\) 向右，先过实际平面 A(<code>z=0</code>)，再到实际折射面 B(<code>z=-5</code>)。另一次仅在两者之间插入无限通光的平面 DUMMY(<code>z=-10</code>)。 | 从 A 出射后无法向前碰到 B。无 DUMMY 时为 <code>MISS</code>；插入后为 <code>OK</code>，步长依次 <code>+1, −10, +5</code>，B 被执行折射并标为 <code>is_virtual=False</code>。全程虚拟标志正确置位，但 B 的实际可达性已被参考面改变。 | 保留最近一次实际交互的位置和出射方向。虚拟 DUMMY 可记录参考交点；下一实际面须从实际光路校验可达性。 |</p>
+<h3>P1：折射状态、近轴结果与分析结论错误</h3>
+<p>| 级别 | 文件与行号 | 可复现输入 | 预期 vs 实际 | 最小改法 |</p>
+<p>|---|---|---|---|---|</p>
+<p>| <strong>P1</strong> | [raytrace.py 222–244](&lt;C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/raytrace.py:222&gt;) | 法线 \(+Z\)。① \(n_1=2,n_2=1,\ M=0.5+2^{-49},\ N=\sqrt{1-M^2}\)。② \(n_1=1+2^{-50},n_2=1,\ v=(1,2^{-28})\)。 | 对输入方向重新高精度归一化，Snell 判别式分别为 \(-7.15\times10^{-15}\)、\(-1.76\times10^{-15}\)，均应 TIR。① 被 <code>tir_tol</code> 吸收，完整追迹返回 <code>OK</code> 切向透射；② 被 <code>isclose</code> 当作等折射率，原方向直通。 | 等折射率捷径使用精确相等。临界带内按实际切向分量和介质折射率高精度复判，确认负值后返回 TIR。 |</p>
+<p>| <strong>P1</strong> | [raytrace.py 226–228、375–378](&lt;C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/raytrace.py:226&gt;) | \(R=1\)，光线从顶点入射，空气→1.5，\(v=(1,2^{-51})\)。另取严格切向 \(v=(1,0)\)。 | 第一条有确定的正法向分量，应透射，\(N&#39;\approx0.745356\)；代码报 <code>TIR</code>。第二条可按项目约定拒绝切触跨界，但也报 <code>TIR</code>。空气入玻璃在这两例中均不可能全反射。 | 有可靠非零法向分量时执行 Snell。将“切触未跨界”与“全反射”分开返回。 |</p>
+<p>| <strong>P1</strong> | [paraxial.py 383–397](&lt;C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/paraxial.py:383&gt;) | <code>solve_thick_lens_radii_for_efl(1, n, 2*n, 0)</code>，其中 \(n=1+2^{-26}\)。 | 除去正因子 \((n-1)^2\)，判别式恰为 \(1-d/(nf&#39;)=-1\)，无实解。代码返回 \(R_1=+2^{-26},R_2=-2^{-26}\)。代回本项目的 <code>thick_lens_maker</code> 得到 <strong>光焦度 0、焦距无穷</strong>，目标却是 1。 | 对无量纲判别式 \(1+d(q^2-1)/(nf&#39;)\) 判断符号，仅对真正接近重根的输入复判。 |</p>
+<p>| <strong>P1</strong> | [paraxial.py 187–198、259–265](&lt;C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/paraxial.py:259&gt;) | 空气→2 单面，\(c=2^{-44}\)。第二份处方仅在前方插入零间隔的抵消面组：空气→2→空气，两面均 \(c=1\)。 | 两份处方的 ABCD <strong>逐项完全相同</strong>，\(C=2^{-44}\)，像方焦距应均为 \(2^{45}\)。代码先报 <code>35184372088832</code>，插入恒等面组后报 <code>is_afocal=True, efl=inf</code>。变化只来自 \(\sum|\phi_i|\)。 | 将抵消指标用于标记计算条件。若它会改变有限焦距的分类，复算 \(C\)；可确认的非零 \(C\) 保留有限焦距。 |</p>
+<p>| <strong>P1</strong> | [paraxial.py 177–198](&lt;C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/paraxial.py:177&gt;) | 空气→1.5 单面 \(R=50\)。<code>interval_abcd_matrix(sys,0,0,include_start_refraction=False,include_end_refraction=False)</code>。 | 返回 <code>n_in=1.5, n_out=1.0</code>，端点定义为同一面的面后→面前，矩阵却是单位阵。若支持这个方向，逆矩阵应有 \(C=-0.01\)；若只支持正序，该调用应报错。 | 对同一面明确处理四种端点组合。双 <code>False</code> 返回逆矩阵，或显式拒绝反向区间。 |</p>
+<p>| <strong>P1</strong> | [analysis.py 110–118](&lt;C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/analysis.py:110&gt;) | 单凹面镜 \(R=-2^{56}\)，<code>heights=[2**29]</code>，使用默认发射面。 | 稳定公式给出的矢高约为 2，表面在 \(z\approx-2\)。<code>R-sqrt(R&#178;-h&#178;)</code> 相消为零，默认发射面落在 <code>−1</code>，已越过镜面，光扇返回 <code>MISS</code>。 | 用 \(h(|c|h)/(1+\sqrt{1-(|c|h)^2})\) 求矢高，再向上游留余量。 |</p>
+<p>| <strong>P1</strong> | [analysis.py 165–175、185–206](&lt;C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/analysis.py:185&gt;) | 空气→1.5 单面 \(R=50\)。在 \(z=10\) 放 DUMMY 并显式指定 <code>image_surface_index=1</code>，在 \(z=20\) 再放半口径 1 的 DUMMY。追 \(h=10\)。 | 指定像面已成功命中，逐面记录为 <code>y=9.391124677, OPL=14.525791206</code>。后一参考面截光后，分析却将先前已测得的 <code>y_img</code>、<code>opl_img</code> 和已确定的 LA 全置为 <code>None</code>。 | 分别按指定像面和末有效面的命中状态取值，保留全程终止状态。 |</p>
+<p>| <strong>P1</strong> | [raytrace.py 235–250](&lt;C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/raytrace.py:235&gt;) &#183; [analysis.py 311–335](&lt;C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/analysis.py:311&gt;) | <code>analyze_parallel_plate_focus_shift(1,1.5,4,[π/2−1e−8])</code>，两侧空气。 | 平行平板出射方向应与入射方向相同，\(N_\mathrm{out}\approx10^{-8}\)，闭式位移 <code>0.9999999910557281</code>。实测第二面返回 <code>OK, N=0</code>，下一平面 <code>MISS</code>，位移为空。 | 平板分析利用切向光学动量守恒及同环境平行出射条件，以入射斜率计算位移；避免从已舍入的中间方向反推微小出射法向量。 |</p>
+<h3>P2：可重复触发的精度与输入回归</h3>
+<p>| 级别 | 文件与行号 | 可复现输入 | 预期 vs 实际 | 最小改法 |</p>
+<p>|---|---|---|---|---|</p>
+<p>| <strong>P2</strong> | [raytrace.py 125–131、318–324](&lt;C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/raytrace.py:125&gt;) | 唯一面为 \(z=0\) 的平面 DUMMY。轴上光线从 \(z=2^{-42}\) 向右发射，初始 OPL 为零。 | 返回 <code>step=−2⁻⁴&#178;</code>，同时 <code>has_virtual_segment=False, real_opl=−2⁻⁴&#178;</code>。零初始值下出现负的实际光程。 | 对小负步长统一处理：保留负步长时标记虚拟；吸附为零时，步长和 OPL 增量同步归零。 |</p>
+<p>| <strong>P2</strong> | [analysis.py 95–100、331–345](&lt;C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/analysis.py:95&gt;) | <code>Ray(0,2**-1030,0,0,-2**-1030,1)</code>。平板另取 <code>d=10,n=2,z0=2,U=2**-1074</code>。 | 第一例精确交轴于 \(z=1\)，代码先算 <code>N/M</code> 溢出，返回 <code>inf</code>。第二例位移在当前精度下为 5，代码因两斜率下溢而抛 <code>ZeroDivisionError</code>。 | 交轴采用缩放比值，避免中间溢出；平板在极小角度用连续的近轴极限。 |</p>
+<p>| <strong>P2</strong> | [analysis.py 110–113](&lt;C:/Users/&lt;USER&gt;/Desktop/gemini/消耗额度/zc/analysis.py:110&gt;) | <code>trace_collimated_fan(make_concave_mirror(), np.array([1.,2.]))</code>。 | 同样的两个高度传列表时两条光线均 <code>OK</code>；传 NumPy 数组时，<code>not heights</code> 抛出真假值歧义的 <code>ValueError</code>，整束未发射。 | 用 <code>len(heights) == 0</code> 判空。 |</p>
 </div></article>
 
     </section>
