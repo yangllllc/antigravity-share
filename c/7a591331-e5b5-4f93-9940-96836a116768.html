@@ -427,7 +427,7 @@
     }
   </style>
 </head>
-<body data-conv-id="7a591331-e5b5-4f93-9940-96836a116768" data-base-prefix="./" data-turn-count="6" data-update-time="2026-11-28 18:01" data-meta-ver="9e92642c" data-is-index="0">
+<body data-conv-id="7a591331-e5b5-4f93-9940-96836a116768" data-base-prefix="./" data-turn-count="16" data-update-time="2026-11-28 18:13" data-meta-ver="9e92642c" data-is-index="0">
   <aside id="sidebar">
     <div class="sidebar-header">
       <h2><a class="home-link" href="../index.html">Antigravity 对话分享</a></h2>
@@ -451,7 +451,7 @@
     <header class="main-header">
       <div style="min-width:0;">
         <h1 title="AI Radar 总体审查与修补">AI Radar 总体审查与修补</h1>
-        <div class="sub-meta"><span class="header-project-badge" title="【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64">【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64</span><span>会话 ID: 7a591331-e5b5-4f93-9940-96836a116768 | 轮次: 6 | 更新于: 2026-11-28 18:01</span></div>
+        <div class="sub-meta"><span class="header-project-badge" title="【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64">【资源雷达成品整合包】FreebieRadar-1.0.0-win-x64</span><span>会话 ID: 7a591331-e5b5-4f93-9940-96836a116768 | 轮次: 16 | 更新于: 2026-11-28 18:13</span></div>
       </div>
       <div class="header-actions">
         <a class="btn" id="downloadMdBtn" href="./7a591331-e5b5-4f93-9940-96836a116768.md" download="AI_Radar_总体审查与修补-7a591331.md" onclick="return downloadMarkdown(event, './7a591331-e5b5-4f93-9940-96836a116768.md', 'AI_Radar_总体审查与修补-7a591331.md')">⬇️ 下载 Markdown (.md)</a>
@@ -475,6 +475,86 @@
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>Typecheck passed cleanly; waiting for the Vite build and the expanded regression test suite (45 tests) to complete.</p>
 </div></article>
 <article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>Removed the residual <code>/api/me/*</code> auth middleware so retired <code>/api/me/*</code> and <code>/api/ingest*</code> endpoints return clean 404 JSON, and added <code>url_key</code> to the test fixtures. Waiting for the build and all 45 tests to complete.</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>Added <code>last_seen_at</code> to the new test fixtures; waiting for the build and all 45 unit/regression tests to complete.</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>Fixed <code>digest.ts</code> to also respect the flattened <code>ai_keep</code> column, disabled Tongji in the mocked <code>backfillAi</code> test, and aligned the <code>/related</code> and reservation-expiry test assertions. Waiting for the build and all 45 tests to finish.</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>Fixed <code>fallbackFetchImpl</code> forwarding in <code>backfillAi</code> and gave the 620 pagination fixture rows distinct non-numeric titles so they are not collapsed by <code>TitleDeduper</code>. Waiting for the build and all 45 tests to complete.</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>Increased the pagination fixture to 630 distinct items so <code>offset=605</code> returns a full 20-item page; waiting for the build and all 45 tests to finish.</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成全部确认缺陷修复，构建（<code>tsc --noEmit &amp;&amp; vite build</code>）及 45/45 单测与新增回归用例全绿，<code>git ls-files release</code> 为空。下一步将重打包 <code>release/AIRadar.exe</code> 并在隔离临时库上执行实机冒烟与安全自检。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>Rebuilding <code>release/AIRadar.exe</code> with Node 22 SEA (<code>npm.cmd run build:exe</code>); waiting for completion before running residue scan and isolated smoke tests.</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成 <code>release/AIRadar.exe</code> 重打包、零密钥残留扫描、隔离库实机冒烟校验及 <code>CONTEXT_ai_radar.md</code> 状态同步，全部 5 项步骤已收口。</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>已完成 <code>ai-radar</code> 全仓健康检查（含实机库只读副本取证 + <code>GPT-6.2-Astra</code> 红队审计交叉复核），所有确认的真实缺陷已修复并固化进回归测试，状态已同步至 <code>CONTEXT_ai_radar.md</code>。</p>
+<h3>一、核心发现与已落地修复（均经代码复核与测试验证）</h3>
+<h4>P0：成本熔断、安全暴露与审核一致性</h4>
+<ul>
+<li><strong>赠额免费槽防超额按量扣费（TokenHub / 百炼）</strong>：实机库中已启用腾讯云 TokenHub 国际站 <code>hy4-flash</code>（免费包耗尽后按量计费）。在 <code>ai-router.ts</code>、<code>ai-settings.ts</code> 与 <code>AiPanel.tsx</code> 中对 <code>tokenhub*</code> / <code>dashscope*</code> 槽位默认开启 <strong>40 次/日、300 次累计</strong> 持久化硬上限（<code>ai_channel_usage</code> 原子预占，触顶自动熔断换槽，且 <code>testAiConnection</code> 共用同一账本，前端可查看实时用量与调整上限）。</li>
+<li><strong>同济周 Token 原子硬上限与结算容错</strong>：原逻辑只原子扣减请求次数，Token 仅在事后追加且结算报错被吞。已在 <code>ai-router.ts</code> 改为单事务同时原子预占 <code>req_count + 1</code> 与保守估算 <code>token_est</code>，并按剩余预算钳位 <code>maxTokens</code>；结算落库失败时保留保守预占并触发 300s 同济退避冷却。</li>
+<li><strong>手动补译/补审与统计口径断裂（含实机库 226 条预译项）</strong>：实机库中有 226 条 <code>translatedOnly</code>（<code>ai IS NOT NULL AND ai_keep IS NULL</code>）此前被 <code>aiStats().pending</code> 和 <code>backfillAi(&quot;pending&quot;)</code> 漏掉，同时在最近样本中被误判为红叉拦截；旧版 <code>backfillAi(&quot;english&quot;)</code> 还会跳过时政严审并覆盖 <code>ai_keep</code>/<code>summaryZh</code>。已在 <code>ai-admin.ts</code> 拆清语义：<code>mode=&quot;english&quot;</code> 仅走免费池补译 <code>titleZh</code>/<code>takeaway</code> 且保留 <code>ai_keep=NULL</code>；<code>pending</code>/<code>recent</code>/<code>rejected</code> 纳管 <code>ai_keep IS NULL</code>，时政条目分流走 <code>POLITICS_STRICT_PROMPT</code> 并经共享 <code>applyVerdictToItem</code> 强制 <code>&lt;4★ =&gt; keep=0</code>、保留 <code>summaryZh</code> 并合并 AI 标签。</li>
+<li><strong>单机退役路由彻底下线与 API 404 收口</strong>：在 <code>routes.ts</code>、<code>index.ts</code> 与 <code>OpsPanel.tsx</code> 移除旧版多用户/OAuth/邀请码/Push/CookieRunner/外部领取器路由（<code>/api/cookies*</code>、<code>/api/external-tools</code>、<code>/api/push*</code>、<code>/api/ingest*</code>、<code>/api/me/*</code>、<code>/api/admin/invites|users|...</code>），并在 SPA 兜底前增加 <code>app.all(&quot;/api/*&quot;, 404 JSON)</code>。</li>
+<li><strong>Reddit <code>r/LocalLLaMA</code> 与社区 RSS 纵深防噪</strong>：在 <code>collectors/index.ts</code> 为 <code>rss-reddit-localllama</code> 种子补开 <code>communityFilter: true</code>，并在 <code>collectors/rss.ts</code> 对 <code>kindHint=&quot;community&quot;</code> 源默认启用社区防噪（覆盖存量库旧配置）。</li>
+<li><strong>启动日志脱敏</strong>：在 <code>index.ts</code> 移除控制台直接打印明文 6 位 <code>mobile.pin</code>（改为仅在网页「手机同步」卡片内查看）。</li>
+</ul>
+<h4>P1 / P2：并发一致性、安全加固、采集与前端体验</h4>
+<ul>
+<li><strong>并发与事务</strong>：<code>ai-budget-policy.ts</code> <code>commitAutoAiItem</code> 严格要求预占所有权 <code>del.changes === 1</code> 防过期迟到覆盖与双扣；<code>ai-router.ts</code> 引入 <code>cooldownGen</code> 防止并发慢速 200 清空最新 429/401 冷却；<code>db.ts</code> <code>migrate()</code> 在 <code>BEGIN IMMEDIATE</code> 锁内重检 <code>user_version</code>。</li>
+<li><strong>单实例生命周期与优雅停服</strong>：<code>index.ts</code>、<code>cron.ts</code> 与 <code>background-task.ps1</code> 将后台调度与启动采集延后至端口监听成功后执行（防双开副实例误触数据库），新增 <code>data/.shutdown-token</code> + 仅限回环的 <code>POST /api/system/shutdown</code>（停调度、关 HTTP、WAL checkpoint + <code>closeDb</code>），<code>/health</code> 增加 <code>pid</code> 核验。</li>
+<li><strong>鉴权、代理与流式上限</strong>：<code>mobile-access.ts</code> 升级为带 30 天服务端过期校验的 <code>v2.&lt;exp&gt;.&lt;hmac&gt;</code> Cookie；<code>network-settings.ts</code> 与 <code>NetworkProxyCard.tsx</code> 脱敏回显代理凭据并在未改动时保留原认证；<code>security.ts</code> 修复 <code>/api/items/:id/view</code> 误落入 60/min 写限流桶的问题（恢复 240/min）；<code>http.ts</code> 直连 <code>curl</code> 强制 <code>--noproxy *</code> 并为响应体增加 12 MB 上限（<code>tongji-transport.ts</code> 增加 2 MB 上限）。</li>
+<li><strong>清理、聚类、采集与报表</strong>：<code>retention.ts</code> 清理过期簇根前自动提拔最高分存活成员（或置空单存活者）并裁减历史 <code>runs</code>；<code>focus-selection.ts</code> 与 <code>routes.ts</code> 修复 <code>/api/items/:id/related</code> 过滤被拦截/屏蔽成员、解除 <code>merge=1</code> 分页 600 条硬顶、只读统计不再误写 <code>personalization_breakthroughs</code>；<code>collectors/index.ts</code> 修复种子不覆盖用户改名、自定义 RSS 重名 slug 自动递增后缀及 <code>persist</code> 保留 AI 标签；<code>collectors/github.ts</code> 优先走 <code>raw.githubusercontent.com</code> 规避未认证 REST 403；<code>collectors/v2ex.ts</code> 保留底层真实报错；<code>digest.ts</code>、<code>hot.ts</code> 与 <code>ai-dedup.ts</code> 全面对齐 AI Radar 5 形态、时政严审与去 <code>freebie</code> 残留；<code>package.json</code> 修正 <code>engines.node</code> 为 <code>&gt;=22.19.0</code>。</li>
+<li><strong>前端稳健性</strong>：<code>App.tsx</code> 增加页面可见时 20s 静默轮询与切回刷新、曝光失败队列重排与跨日清空、单条已读请求串行化加失败回滚、修复热词面板死预设跳转；<code>ItemView.tsx</code> 为手动翻译加 <code>activeItemIdRef</code> 防止切帖串态。</li>
+</ul>
+<hr>
+<h3>二、外部验证判据自检（区分实测 / 未验证）</h3>
+<ul>
+<li><strong>[实测通过] Typecheck + 前端构建 + 单元/回归测试</strong>：Node <code>v22.22.2</code> 下 <code>npm.cmd run build &amp;&amp; npm.cmd test</code> <strong>45/45 全绿</strong>（原 38 项 + <code>ai-radar.test.ts</code> 新增 7 组覆盖上述 P0/P1 修复的回归测试）。</li>
+<li><strong>[实测通过] 仓库与脚本规范</strong>：<code>git ls-files release</code> 为 <code>0</code>；根目录 3 个 <code>.bat</code> 均为严格 CRLF 且无 BOM；<code>background-task.ps1</code> <code>-Action status</code> 正常执行。</li>
+<li><strong>[实测通过] 重打包与零泄露扫描</strong>：<code>npm.cmd run build:exe</code> 原子生成 <code>AIRadar.exe</code>（86.42 MB）；扫描 <code>x-ai-radar-test-ip</code> 及全部 6 个实机密钥（<code>TONGJI_API_KEY</code> + 实机库 AI Keys）命中数为 <strong>0</strong>。</li>
+<li><strong>[实测通过] 隔离临时库实机冒烟</strong>：以临时 <code>DATABASE_PATH</code> 启动重建后的 <code>AIRadar.exe</code>（<code>release/data/radar.db</code> 字节大小与修改时间前后完全一致、零触碰）：</li>
+<li><code>/health</code> 返回 <code>ok: true</code> 且 <code>pid</code> 匹配；</li>
+<li><code>/api/cookies</code>、<code>/api/external-tools</code>、<code>/api/push</code>、<code>/api/ingest</code>、<code>/api/admin/invites</code>、<code>/api/me/push</code>、<code>/api/nonexistent-endpoint</code> 全部返回 <code>404</code> JSON；</li>
+<li>伪造 <code>Host: evil.example.com</code> 返回 <code>403</code>；</li>
+<li><code>/api/history/clear</code> 坏参（负数/空体/互斥参数）返回 <code>400</code>；</li>
+<li>启动标准输出零 <code>mobile.pin</code> 泄露；</li>
+<li>错误停服令牌返回 <code>401</code>，携带 <code>.shutdown-token</code> 调用 <code>POST /api/system/shutdown</code> 返回 <code>200</code>、进程退出码 <code>0</code> 且自动清理令牌文件。</li>
+<li><strong>[未验证 / 需实机操作提醒]</strong>：</li>
+<li>本轮按核盘原状态保持后台服务停服（<code>ProcessRunning=False</code>，<code>AutoStartInstalled=True</code>），未对线上 4 家外部免费模型 API 发起真实联网请求；</li>
+<li>软件层虽已给 TokenHub 国际站默认加上 <code>40次/日 &#183; 300次累计</code> 硬上限，仍建议去腾讯云 TokenHub 控制台核实关闭按量后付费；</li>
+<li>手机同步 Cookie 升级为带 30 天 TTL 的 <code>v2</code> 后，<strong>已配对的安卓手机下次打开需重输一次 6 位 PIN 或重扫一次二维码</strong>。</li>
+</ul>
+<hr>
+<h3>三、两个边界决策想和你确认</h3>
+<ul>
+<li><strong><code>industry</code> 板块高分 AI 条目的归属</strong>：在实机库副本的 103 条被隐藏 <code>industry</code> 活跃条目中，混有高分 AI 技术/算力动态（例如谷歌新一代 TPU、Kimi 面向科学家提供最高 2 万美元 API 额度、Claude ML 研究安全评测），它们因规则落入 <code>industry</code> 而在默认列表彻底不可见。你是希望<strong>继续整块隐藏</strong>，还是把“芯片算力发布 / 模型 API 政策 / AI 安全评测”这类非财报内容重新路由进 <code>models</code> 或 <code>tech</code>？</li>
+<li><strong>本地提交与后台拉起</strong>：目前这批 33 个文件的改动留在本地工作区（未 <code>git commit</code>，绝未 <code>push</code>），后台服务处于停服状态。需要我现在帮你做一次本地提交，并执行 <code>scripts/background-task.ps1 -Action start</code> 拉起新版后台服务吗？</li>
+</ul>
+</div></article>
+<article class="turn user" data-role="user"><div class="role-tag">User</div><div class="bubble"><p>@[c:\Users\&lt;USER&gt;\Desktop\gemini\AI跨会话无损接力与脱水元协议.md]</p>
+</div></article>
+<article class="turn assistant" data-role="assistant"><div class="role-tag">Antigravity Assistant</div><div class="bubble"><p>【轨迹自检】来源：本地当前会话 | 业务轮次：1轮 | 业务锚点：单轮业务（早期过程已压缩）：“这次我先不加要求，你自己进行一遍总体的查看，看看是否有问题出现，有的话就进行弥补修改，可以借用gpt进行帮助” | 实盘核验：已核磁盘与旧卡(+git状态) | 状态：⚠️早期历史截断</p>
+<h3>落盘回执与增量 Diff</h3>
+<ul>
+<li>状态卡：<code>CONTEXT_ai_radar.md</code>（<strong>已直接落盘，无需手动复制保存状态卡</strong>）</li>
+<li><strong>铁律变动</strong>：无变动（保留既有 7 条原文未删改；因早期对话经过压缩，建议开新对话前快速扫一眼 <code>## 1</code> 核对旧铁律）。</li>
+<li><strong>资产与墓碑变更</strong>：<code>## 2</code> 合并旧里程碑控至 7 条（≤8 上限），新增 11-28 全仓体检与 GPT-6.2-Astra 红队加固条目（指向工作区 33 文件修改与 <code>tests/ai-radar.test.ts</code>），并将已锁死回归数更新为 45 项。</li>
+<li><strong>断点推进</strong>：从 <code>d7e8634</code> v36.1 推进至全仓加固完成、45/45 测绿、<code>release/AIRadar.exe</code>（86.42 MB）重打并隔离库冒烟通过（工作区 33 文件待按需本地提交，<code>release/data/radar.db</code> 零改动，后台保持停服）。</li>
+</ul>
+<h3>&#167;3 断点速览</h3>
+<ul>
+<li><strong>当前断点</strong>：[已验证] <code>d7e8634</code> 工作区 33 文件全仓加固待按需提交；Node 22 <code>build</code> + 45/45 测全绿；<code>release/AIRadar.exe</code>（86.42 MB）已重打且隔离临时库冒烟全过（零密钥/PIN 泄露、退役路由 404、DNS 重绑定 403、优雅停服）；<code>release/data/radar.db</code> 未动，服务停服（<code>AutoStartInstalled=True</code>）。</li>
+<li><strong>默认下一步</strong>：确认是否本地提交工作区改动并拉起后台服务（手机 v2 Cookie 需重输 1 次 PIN）；确认 <code>industry</code> 高分 AI 贴是否改路由；在腾讯云 TokenHub 控制台关后付费；不动 <code>release/data/</code>、不推 <code>origin</code>。</li>
+<li><strong>外部验证判据</strong>：Node 22 下 <code>npm.cmd run build &amp;&amp; npm.cmd test</code> 45/45 绿；<code>git ls-files release</code> 为空；<code>AIRadar.exe</code> 零密钥/测试头残留、退役路由 404、DNS 重绑定 403、<code>history/clear</code> 坏参 400、<code>.shutdown-token</code> 优雅退服。</li>
+</ul>
+<h3>一键冷启动唤醒 Prompt（本地 Agent）</h3>
+<pre><code>先读取 @C:\Users\&lt;USER&gt;\Desktop\ai-radar\CONTEXT_ai_radar.md 获取全部约束与断点，勿复述历史。
+1. 先一口气完成只读核盘（核对“当前断点”与待测项，勿中途请示）；发现未说明的磁盘差异先汇报停手。
+2. 严守【铁律】、禁碰【排雷墓碑】；若本消息附有新需求或最新实况则优先执行，否则按【默认下一步】推进。
+3. 涉及不可逆删改或修改共享规则/脚本前先确认（只读评估与方案讨论直接推进）；完工按【外部验证判据】或新需求标准自检。</code></pre>
 </div></article>
 
     </section>
